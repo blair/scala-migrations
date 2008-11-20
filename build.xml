@@ -1,0 +1,76 @@
+<project name="scala-migrations" default="jar">
+
+    <property file="build.properties"/>
+
+    <filelist id="src_compile.filelist" dir=".">
+        <file name="${scala.lib.dir}/scala-library.jar"/>
+    </filelist>
+
+    <path id="src_compile.classpath">
+        <filelist refid="src_compile.filelist"/>
+    </path>
+
+    <path id="test_compile.classpath">
+        <filelist refid="src_compile.filelist"/>
+        <path location="build/src"/>
+        <path location="${junit.jar}"/>
+    </path>
+
+   <taskdef resource="scala/tools/ant/antlib.xml">
+        <classpath>
+            <pathelement location="${scala.lib.dir}/scala-compiler.jar"/>
+            <pathelement location="${scala.lib.dir}/scala-library.jar"/>
+        </classpath>
+    </taskdef>
+
+    <target name="src_compile">
+        <mkdir dir="build/src"/>
+        <scalac srcdir="src/main"
+                destdir="build/src"
+                classpathref="src_compile.classpath"
+                target="jvm-1.5"
+                unchecked="on"
+                deprecation="on">
+            <include name="**/*.scala"/>
+        </scalac>
+    </target>
+
+    <target name="test_compile">
+        <mkdir dir="build/test"/>
+        <scalac srcdir="src/test"
+                destdir="build/test"
+                classpathref="test_compile.classpath"
+                target="jvm-1.5"
+                unchecked="on"
+                deprecation="on">
+            <include name="**/*.scala"/>
+        </scalac>
+    </target>
+
+    <target name="jar" depends="src_compile">
+        <jar destfile="scala-migrations.jar"
+             basedir="build/src">
+        </jar>
+    </target>
+
+    <target name="tests" depends="src_compile, test_compile">
+        <junit printsummary="yes" haltonerror="yes" haltonfailure="yes">
+            <classpath>
+                <path refid="test_compile.classpath"/>
+                <path location="build/test"/>
+                <path location="${derby.jar}"/>
+            </classpath>
+
+            <formatter type="plain" usefile="false"/>
+
+            <batchtest>
+                <fileset dir="build/test" includes="**/*Tests.class"/>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+</project>
