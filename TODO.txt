@@ -2,3 +2,5 @@
   without actually running it.
 
 * Replace all uses of System.out.println with a logging system.
+
+* Add the ability to add foreign key constraints to tables.
