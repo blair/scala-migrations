@@ -310,6 +310,9 @@ object Migrator
   }
 }
 
+/**
+ * This class migrates the database into the desired state.
+ */
 class Migrator private (jdbc_url : String,
                         jdbc_login : Option[Tuple2[String,String]],
                         adapter : DatabaseAdapter,
@@ -317,12 +320,37 @@ class Migrator private (jdbc_url : String,
 {
   import Migrator._
 
+  /**
+   * Construct a migrator to a database that does not need a username
+   * and password.
+   * @param jdbc_url the JDBC URL to connect to the database
+   * @param adapter a concrete DatabaseAdapter that the migrator uses
+   *        to handle database specific features
+   * @param schema_name_opt an optional schema name used to qualify
+   *        all table names in the generated SQL; if Some(), then all
+   *        table names are qualified with the name, otherwise, table
+   *        names are unqualified
+   */
   def this(jdbc_url : String,
            adapter : DatabaseAdapter,
            schema_name_opt : Option[String]) = {
     this(jdbc_url, None, adapter, schema_name_opt)
   }
 
+  /**
+   * Construct a migrator to a database that does not need a username
+   * and password.
+   * @param jdbc_url the JDBC URL to connect to the database
+   * @param jdbc_username the username to log into the database
+   * @param jdbc_password the password associated with the database
+   *        username
+   * @param adapter a concrete DatabaseAdapter that the migrator uses
+   *        to handle database specific features
+   * @param schema_name_opt an optional schema name used to qualify
+   *        all table names in the generated SQL; if Some(), then all
+   *        table names are qualified with the name, otherwise, table
+   *        names are unqualified
+   */
   def this(jdbc_url : String,
            jdbc_username : String,
            jdbc_password : String,
@@ -357,6 +385,9 @@ class Migrator private (jdbc_url : String,
 
   /**
    * Get a list of table names in the schema.
+   *
+   * @return a set of table names; no modifications of the case of
+   *         table names is done
    */
   def table_names : scala.collection.Set[String] =
   {
@@ -451,6 +482,8 @@ class Migrator private (jdbc_url : String,
 
   /**
    * Get a sorted list of all the installed migrations.
+   *
+   * @return an array of version numbers of installed migrations
    */
   def get_installed_migrations : Array[Long] =
   {
