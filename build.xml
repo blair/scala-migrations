@@ -35,7 +35,7 @@
         </scalac>
     </target>
 
-    <target name="test_compile">
+    <target name="test_compile" depends="src_compile">
         <mkdir dir="build/test"/>
         <scalac srcdir="src/test"
                 destdir="build/test"
@@ -53,7 +53,7 @@
         </jar>
     </target>
 
-    <target name="tests" depends="src_compile, test_compile">
+    <target name="tests" depends="test_compile">
         <junit printsummary="yes" haltonerror="yes" haltonfailure="yes">
             <classpath>
                 <path refid="test_compile.classpath"/>
