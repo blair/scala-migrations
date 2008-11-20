@@ -23,7 +23,7 @@ class JavaMigrator private (migrator : Migrator)
            schema_name : String) = {
     this(new Migrator(jdbc_url,
                       adapter,
-                      if (schema_name == null) None else Some(schema_name)))
+                      if (schema_name eq null) None else Some(schema_name)))
   }
 
   /**
@@ -48,7 +48,7 @@ class JavaMigrator private (migrator : Migrator)
                       jdbc_username,
                       jdbc_password,
                       adapter,
-                      if (schema_name == null) None else Some(schema_name)))
+                      if (schema_name eq null) None else Some(schema_name)))
   }
 
   /**
