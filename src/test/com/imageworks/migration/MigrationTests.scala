@@ -16,7 +16,7 @@ class MigrationTests
   def set_up() : Unit =
   {
     val db_name = System.currentTimeMillis.toString
-    val url = "jdbc:derby:" + db_name + ";create=true"
+    val url = "jdbc:derby:test-databases/" + db_name + ";create=true"
 
     // The default schema for a Derby database is "APP".
     migrator = new Migrator(url, new DerbyDatabaseAdapter, Some("APP"))
