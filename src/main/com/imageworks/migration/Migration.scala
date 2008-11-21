@@ -108,7 +108,7 @@ abstract class Migration
                  column_names.mkString("_and_")
                }
 
-    (name, opts)
+    (adapter.quote_table_name(schema_name_opt, name), opts)
   }
 
   final
