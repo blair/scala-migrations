@@ -168,12 +168,7 @@ abstract class Migration
 
     val (name, opts) = index_name(table_name, column_names, options : _*)
 
-    val sql = new java.lang.StringBuilder(256)
-               .append("DROP INDEX ")
-               .append(adapter.quote_column_name(name))
-               .append(" ON ")
-               .append(adapter.quote_table_name(schema_name_opt, table_name))
-               .toString
+    val sql = adapter.remove_index_sql(schema_name_opt, table_name, name)
 
     execute(sql)
   }

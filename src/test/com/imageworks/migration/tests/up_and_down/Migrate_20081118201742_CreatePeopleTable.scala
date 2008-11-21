@@ -14,10 +14,13 @@ class Migrate_20081118201742_CreatePeopleTable
       t.varchar("last_name", Limit(255), NotNull)
       t.integer("age", Limit(3), NotNull)
     }
+
+    add_index("people", "pk_people", Unique)
   }
 
   def down : Unit =
   {
+    remove_index("people", "pk_people")
     drop_table("people")
   }
 }

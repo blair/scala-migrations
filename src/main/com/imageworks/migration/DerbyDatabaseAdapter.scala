@@ -44,4 +44,12 @@ class DerbyDatabaseAdapter
         new DefaultVarcharColumnDefinition(column_name, options)
     }
   }
+
+  def remove_index_sql(schema_name_opt : Option[String],
+                       table_name : String,
+                       index_name : String) : String =
+  {
+    "DROP INDEX " +
+    quote_column_name(index_name)
+  }
 }

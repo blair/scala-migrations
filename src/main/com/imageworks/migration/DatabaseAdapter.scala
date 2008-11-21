@@ -26,4 +26,17 @@ class DatabaseAdapter
       '"' + table_name.toUpperCase + '"'
     }
   }
+
+  /**
+   * Different databases require different SQL to drop an index.
+   *
+   * @param schema_name_opt the optional schema name to qualify the
+   *        table name
+   * @param table_name the name of the table with the index
+   * @param index_name the name of the index
+   * @return the SQL to drop the index
+   */
+  def remove_index_sql(schema_name_opt : Option[String],
+                       table_name : String,
+                       index_name : String) : String
 }
