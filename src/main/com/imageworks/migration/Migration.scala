@@ -149,6 +149,14 @@ abstract class Migration
   }
 
   final
+  def add_index(table_name : String,
+                column_name : String,
+                options : IndexOption*) : Unit =
+  {
+    add_index(table_name, Array(column_name), options : _*)
+  }
+
+  final
   def remove_index(table_name : String,
                    column_names : Array[String],
                    options : Name*) : Unit =
@@ -168,6 +176,14 @@ abstract class Migration
                .toString
 
     execute(sql)
+  }
+
+  final
+  def remove_index(table_name : String,
+                   column_name : String,
+                   options : Name*) : Unit =
+  {
+    remove_index(table_name, Array(column_name), options : _*)
   }
 
 }
