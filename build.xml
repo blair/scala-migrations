@@ -70,6 +70,7 @@
     </target>
 
     <target name="clean">
+        <delete file="scala-migrations.jar"/>
         <delete dir="build"/>
         <delete dir="test-databases"/>
     </target>
