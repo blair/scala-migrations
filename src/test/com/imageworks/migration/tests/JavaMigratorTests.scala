@@ -1,4 +1,4 @@
-package com.imageworks.migration
+package com.imageworks.migration.tests
 
 import org.junit.Assert._
 import org.junit.{Before,
@@ -25,14 +25,14 @@ class JavaMigratorTests
   @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
   def test_duplicate_descriptions_throw_exception : Unit =
   {
-    java_migrator.install_all_migrations("com.imageworks.migration.duplicate_descriptions",
+    java_migrator.install_all_migrations("com.imageworks.migration.tests.duplicate_descriptions",
                                     false)
   }
 
   @Test { val expected = classOf[DuplicateMigrationVersionException] }
   def test_duplicate_versions_throw_exception : Unit =
   {
-    java_migrator.install_all_migrations("com.imageworks.migration.duplicate_versions",
+    java_migrator.install_all_migrations("com.imageworks.migration.tests.duplicate_versions",
                      false)
   }
 
@@ -43,7 +43,7 @@ class JavaMigratorTests
     assertEquals(0, java_migrator.table_names.size)
 
     // Migrate down the whole way.
-    java_migrator.remove_all_migrations("com.imageworks.migration.up_and_down",
+    java_migrator.remove_all_migrations("com.imageworks.migration.tests.up_and_down",
                                         false)
 
     // An empty array of Strings so that table_names.toArray returns
@@ -55,14 +55,14 @@ class JavaMigratorTests
     assertFalse(java_migrator.table_names.toArray(ea).find(_.toLowerCase == "people").isDefined)
 
     // Apply all the migrations.
-    java_migrator.install_all_migrations("com.imageworks.migration.up_and_down",
+    java_migrator.install_all_migrations("com.imageworks.migration.tests.up_and_down",
                                          false)
 
     assertEquals(2, java_migrator.table_names.size)
     assertTrue(java_migrator.table_names.toArray(ea).find(_.toLowerCase == "people").isDefined)
 
     // Migrate down the whole way.
-    java_migrator.remove_all_migrations("com.imageworks.migration.up_and_down",
+    java_migrator.remove_all_migrations("com.imageworks.migration.tests.up_and_down",
                                         false)
 
     // There should only be the schema migrations table now.

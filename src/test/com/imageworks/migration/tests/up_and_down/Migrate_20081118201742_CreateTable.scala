@@ -1,4 +1,4 @@
-package com.imageworks.migration.up_and_down
+package com.imageworks.migration.tests.up_and_down
 
 import com.imageworks.migration.Migration
 

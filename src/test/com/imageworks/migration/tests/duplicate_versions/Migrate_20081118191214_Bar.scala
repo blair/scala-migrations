@@ -1,4 +1,4 @@
-package com.imageworks.migration.duplicate_versions
+package com.imageworks.migration.tests.duplicate_versions
 
 import com.imageworks.migration.Migration
 

@@ -1,8 +1,8 @@
-package com.imageworks.migration.duplicate_versions
+package com.imageworks.migration.tests.duplicate_descriptions
 
 import com.imageworks.migration.Migration
 
-class Migrate_20081118191214_Foo
+class Migrate_20081118191214_FooBar
   extends Migration
 {
   def up : Unit = { }

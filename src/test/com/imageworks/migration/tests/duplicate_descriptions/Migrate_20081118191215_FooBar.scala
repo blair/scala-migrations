@@ -1,4 +1,4 @@
-package com.imageworks.migration.duplicate_descriptions
+package com.imageworks.migration.tests.duplicate_descriptions
 
 import com.imageworks.migration.Migration
 

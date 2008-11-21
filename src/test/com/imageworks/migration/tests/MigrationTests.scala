@@ -1,4 +1,4 @@
-package com.imageworks.migration
+package com.imageworks.migration.tests
 
 import org.junit.Assert._
 import org.junit.{Before,
@@ -26,7 +26,7 @@ class MigrationTests
   def test_duplicate_descriptions_throw_exception : Unit =
   {
     migrator.migrate(InstallAllMigrations,
-                     "com.imageworks.migration.duplicate_descriptions",
+                     "com.imageworks.migration.tests.duplicate_descriptions",
                      false)
   }
 
@@ -34,7 +34,7 @@ class MigrationTests
   def test_duplicate_versions_throw_exception : Unit =
   {
     migrator.migrate(InstallAllMigrations,
-                     "com.imageworks.migration.duplicate_versions",
+                     "com.imageworks.migration.tests.duplicate_versions",
                      false)
   }
 
@@ -46,7 +46,7 @@ class MigrationTests
 
     // Migrate down the whole way.
     migrator.migrate(RemoveAllMigrations,
-                     "com.imageworks.migration.up_and_down",
+                     "com.imageworks.migration.tests.up_and_down",
                      false)
 
     // There should only be the schema migrations table now.
@@ -55,7 +55,7 @@ class MigrationTests
 
     // Apply all the migrations.
     migrator.migrate(InstallAllMigrations,
-                     "com.imageworks.migration.up_and_down",
+                     "com.imageworks.migration.tests.up_and_down",
                      false)
 
     assertEquals(2, migrator.table_names.size)
@@ -63,7 +63,7 @@ class MigrationTests
 
     // Migrate down the whole way.
     migrator.migrate(RemoveAllMigrations,
-                     "com.imageworks.migration.up_and_down",
+                     "com.imageworks.migration.tests.up_and_down",
                      false)
 
     // There should only be the schema migrations table now.
