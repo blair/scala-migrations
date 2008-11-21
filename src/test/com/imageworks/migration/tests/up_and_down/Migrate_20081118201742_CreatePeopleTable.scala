@@ -2,7 +2,7 @@ package com.imageworks.migration.tests.up_and_down
 
 import com.imageworks.migration.Migration
 
-class Migrate_20081118201742_CreateTable
+class Migrate_20081118201742_CreatePeopleTable
   extends Migration
 {
   def up : Unit =
