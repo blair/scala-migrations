@@ -111,6 +111,7 @@ abstract class Migration
     (name, opts)
   }
 
+  final
   def add_index(table_name : String,
                 column_names : Array[String],
                 options : IndexOption*) : Unit =
@@ -147,6 +148,7 @@ abstract class Migration
     execute(sql)
   }
 
+  final
   def remove_index(table_name : String,
                    column_names : Array[String],
                    options : Name*) : Unit =
