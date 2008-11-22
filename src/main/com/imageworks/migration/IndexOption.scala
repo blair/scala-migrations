@@ -12,7 +12,7 @@ case class Name(name : String)
     throw new IllegalArgumentException("The index name cannot be null.")
   }
 
-  if (name.length == 0) {
+  if (name.isEmpty) {
     throw new IllegalArgumentException("The index name cannot be empty.")
   }
 }

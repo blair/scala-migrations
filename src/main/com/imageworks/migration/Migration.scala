@@ -116,7 +116,7 @@ abstract class Migration
                 column_names : Array[String],
                 options : IndexOption*) : Unit =
   {
-    if (column_names.length == 0) {
+    if (column_names.isEmpty) {
       throw new IllegalArgumentException("Adding an index requires at " +
                                          "least one column name.")
     }
@@ -161,7 +161,7 @@ abstract class Migration
                    column_names : Array[String],
                    options : Name*) : Unit =
   {
-    if (column_names.length == 0) {
+    if (column_names.isEmpty) {
       throw new IllegalArgumentException("Removing an index requires at " +
                                          "least one column name.")
     }
