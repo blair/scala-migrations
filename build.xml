@@ -13,6 +13,7 @@
     <path id="test_compile.classpath">
         <filelist refid="src_compile.filelist"/>
         <path location="build/src"/>
+        <path location="${hamcrest.jar}"/>
         <path location="${junit.jar}"/>
     </path>
 

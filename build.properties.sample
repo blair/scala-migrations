@@ -4,5 +4,8 @@ scala.lib.dir = /usr/local/lib
 # The path to the Derby database jar file.  Used for the test suite.
 derby.jar = /shots/spi/home/java/db-derby-10.4.2.0-bin/lib/derby.jar
 
+# The path to the Hamcrest jar file.  Used for the test suite.
+hamcrest.jar = /shots/spi/home/java/hamcrest-all-1.1.jar
+
 # The path to the JUnit jar file.  Used for the test suite.
 junit.jar = /shots/spi/home/java/junit4.5/junit-4.5.jar
