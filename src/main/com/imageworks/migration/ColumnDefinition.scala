@@ -75,7 +75,7 @@ class ColumnDefinition(name : String,
    * If the column can or cannot be null.
    */
   private
-  val not_null_opt =
+  val not_null_opt : Option[Boolean] =
   {
     var n1 : Option[Boolean] = None
 
