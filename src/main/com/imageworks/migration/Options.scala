@@ -75,6 +75,12 @@ case object Nullable
   extends ColumnOption
 
 /**
+ * Specify that the column is a primary key.
+ */
+case object PrimaryKey
+  extends ColumnOption
+
+/**
  * Specify that the index on the requires that all the values indexed
  * are unique.
  */

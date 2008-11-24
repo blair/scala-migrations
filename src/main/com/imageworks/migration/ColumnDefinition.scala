@@ -99,6 +99,22 @@ class ColumnDefinition(name : String,
     n1
   }
 
+  /**
+   * If the column is a primary key.
+   */
+  private
+  val is_primary_key : Boolean =
+  {
+    var is_primary = false
+
+    for (option @ PrimaryKey <- options) {
+      options -= option
+      is_primary = true
+    }
+
+    is_primary
+  }
+
   protected
   def sql : String
 
@@ -113,6 +129,15 @@ class ColumnDefinition(name : String,
       System.out.println(message)
     }
 
+    // Warn about illegal combinations in some databases.
+    if (is_primary_key &&
+        not_null_opt.isDefined &&
+        not_null_opt.get == false) {
+      val message = "Specifying a PRIMARY KEY and a NULL column is not " +
+                    "supported in all databases."
+      System.out.println(message)
+    }
+
     val sb = new java.lang.StringBuilder()
                .append(name)
                .append(' ')
@@ -123,8 +148,15 @@ class ColumnDefinition(name : String,
       sb.append(default.get)
     }
 
-    if (not_null_opt.getOrElse(false)) {
-      sb.append(" NOT NULL")
+    if (is_primary_key) {
+      sb.append(" PRIMARY KEY")
+    }
+
+    // Not all databases, such as Derby, support specifying NULL for a
+    // column that may have NULL values.
+    not_null_opt match {
+      case Some(true) => sb.append(" NOT NULL")
+      case _ =>
     }
 
     sb.toString
