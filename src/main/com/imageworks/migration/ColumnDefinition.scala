@@ -75,7 +75,7 @@ class ColumnDefinition(name : String,
    * If the column can or cannot be null.
    */
   private
-  val not_null =
+  val not_null_opt =
   {
     var n1 : Option[Boolean] = None
 
@@ -96,7 +96,7 @@ class ColumnDefinition(name : String,
       }
     }
 
-    n1.getOrElse(false)
+    n1
   }
 
   protected
@@ -123,7 +123,7 @@ class ColumnDefinition(name : String,
       sb.append(default.get)
     }
 
-    if (not_null) {
+    if (not_null_opt.getOrElse(false)) {
       sb.append(" NOT NULL")
     }
 
