@@ -138,6 +138,13 @@ class ColumnDefinition(name : String,
       System.out.println(message)
     }
 
+    // Warn when different options are used that specify the same
+    // behavior so one can be removed.
+    if (is_primary_key && not_null_opt.isDefined && not_null_opt.get == true) {
+      val message = "Specifying PrimaryKey and NotNull is redundant."
+      System.out.println(message)
+    }
+
     val sb = new java.lang.StringBuilder()
                .append(name)
                .append(' ')
