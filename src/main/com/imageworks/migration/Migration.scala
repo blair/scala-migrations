@@ -130,7 +130,6 @@ abstract class Migration
   final
   def execute(sql : String) : Unit =
   {
-    System.out.println("Executing '" + sql + "'")
     connection.createStatement.execute(sql)
   }
 

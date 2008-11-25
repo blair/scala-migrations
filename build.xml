@@ -60,6 +60,9 @@
                 <path refid="test_compile.classpath"/>
                 <path location="build/test"/>
                 <path location="${derby.jar}"/>
+                <path location="${log4jdbc.jar}"/>
+                <path location="${slf4j-api.jar}"/>
+                <path location="${slf4j-impl.jar}"/>
             </classpath>
 
             <formatter type="plain" usefile="false"/>

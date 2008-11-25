@@ -320,6 +320,9 @@ class Migrator private (jdbc_url : String,
 {
   import Migrator._
 
+  // Load the log4jdbc database wrapper driver.
+  Class.forName("net.sf.log4jdbc.DriverSpy")
+
   /**
    * Construct a migrator to a database that does not need a username
    * and password.
@@ -365,13 +368,21 @@ class Migrator private (jdbc_url : String,
   private
   def with_connection[T](f : java.sql.Connection => T) : T =
   {
+    // Use the log4jdbc database wrapper to log all JDBC commands.
+    val url = if (jdbc_url.startsWith("jdbc:log4")) {
+                jdbc_url
+              }
+              else {
+                "jdbc:log4" + jdbc_url
+              }
+
     val connection =
       jdbc_login match {
         case Some((username, password)) => {
-          java.sql.DriverManager.getConnection(jdbc_url, username, password)
+          java.sql.DriverManager.getConnection(url, username, password)
         }
         case None => {
-          java.sql.DriverManager.getConnection(jdbc_url)
+          java.sql.DriverManager.getConnection(url)
         }
       }
 
