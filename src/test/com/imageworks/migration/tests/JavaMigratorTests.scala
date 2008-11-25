@@ -58,7 +58,7 @@ class JavaMigratorTests
     java_migrator.install_all_migrations("com.imageworks.migration.tests.up_and_down",
                                          false)
 
-    assertEquals(2, java_migrator.table_names.size)
+    assertEquals(3, java_migrator.table_names.size)
     assertTrue(java_migrator.table_names.toArray(ea).find(_.toLowerCase == "people").isDefined)
 
     // Migrate down the whole way.

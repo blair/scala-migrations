@@ -51,6 +51,7 @@ class MigrationTests
 
     // There should only be the schema migrations table now.
     assertEquals(1, migrator.table_names.size)
+    assertFalse(migrator.table_names.find(_.toLowerCase == "locations").isDefined)
     assertFalse(migrator.table_names.find(_.toLowerCase == "people").isDefined)
 
     // Apply all the migrations.
@@ -58,8 +59,20 @@ class MigrationTests
                      "com.imageworks.migration.tests.up_and_down",
                      false)
 
-    assertEquals(2, migrator.table_names.size)
+    assertEquals(3, migrator.table_names.size)
+    assertTrue(migrator.table_names.find(_.toLowerCase == "location").isDefined)
     assertTrue(migrator.table_names.find(_.toLowerCase == "people").isDefined)
+
+    // Rollback a single migration.
+    migrator.migrate(RollbackMigration(1),
+                     "com.imageworks.migration.tests.up_and_down",
+                     false)
+
+    // There should only be the schema migrations and location tables
+    // now.
+    assertEquals(2, migrator.table_names.size)
+    assertTrue(migrator.table_names.find(_.toLowerCase == "location").isDefined)
+    assertFalse(migrator.table_names.find(_.toLowerCase == "people").isDefined)
 
     // Migrate down the whole way.
     migrator.migrate(RemoveAllMigrations,

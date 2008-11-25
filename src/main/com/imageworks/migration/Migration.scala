@@ -1,5 +1,60 @@
 package com.imageworks.migration
 
+/**
+ * A Tuple2 like class for containing a table name and a list of colum
+ * names.
+ */
+class TableColumnDefinition(val table_name : String,
+                            val column_names : Array[String])
+
+/**
+ * A container class for storing the table and column names a foreign
+ * key reference is on.
+ */
+class On(definition : TableColumnDefinition)
+{
+  val table_name = definition.table_name
+  val column_names = definition.column_names
+}
+
+/**
+ * A container class for storing the table and column names a foreign
+ * key reference references.
+ */
+class References(definition : TableColumnDefinition)
+{
+  val table_name = definition.table_name
+  val column_names = definition.column_names
+}
+
+/**
+ * Due to the JVM erasure, the scala.Predef.ArrowAssoc.->
+ * method generates a Tuple2 and the following cannot be distinguished
+ *
+ *   "table_name" -> "column1"
+ *
+ *   "table_name" -> ("column1", "column2")
+ *
+ * After erasure a Tuple2[String,String] is identical to a
+ * Tuple2[String,Tuple2[String,String]].  So to work around this, the
+ * -> operator is redefined to operate only on String's, which
+ * effectively removes the type from the first type of the Tuple2 and
+ * allows it to be overloaded on the second type of the Tuple2.  The
+ * MigrationArrowAssoc class has the new -> method.
+ */
+class MigrationArrowAssoc(s : String)
+{
+  def `->`(other : String) : TableColumnDefinition =
+  {
+    new TableColumnDefinition(s, Array(other))
+  }
+
+  def `->`(other : Tuple2[String,String]) : TableColumnDefinition =
+  {
+    new TableColumnDefinition(s, Array(other._1, other._2))
+  }
+}
+
 abstract class Migration
 {
   /**
@@ -42,6 +97,35 @@ abstract class Migration
    * users of this migration framework.
    */
   var schema_name_opt : Option[String] = None
+
+  /**
+   * Override the -> implicit definition to create a
+   * MigrationArrowAssoc instead of a scala.Predef.ArrowAssoc.  See
+   * the above comment on the MigrationArrowAssoc class why this is
+   * done.
+   */
+  implicit def stringToMigrationArrowAssoc(s : String) : MigrationArrowAssoc =
+  {
+    new MigrationArrowAssoc(s)
+  }
+
+  /**
+   * Convert a table and column name definition into a On foreign key
+   * instance.
+   */
+  def on(definition : TableColumnDefinition) : On =
+  {
+    new On(definition)
+  }
+
+  /**
+   * Convert a table and column name definition into a References
+   * foreign key instance.
+   */
+  def references(definition : TableColumnDefinition) : References =
+  {
+    new References(definition)
+  }
 
   final
   def execute(sql : String) : Unit =
@@ -179,6 +263,181 @@ abstract class Migration
                    options : Name*) : Unit =
   {
     remove_index(table_name, Array(column_name), options : _*)
+  }
+
+  /**
+   * Given a foreign key relationship, create a name for it, using a
+   * Name() if it is provided in the options.
+   *
+   * @param on the table and columns the foreign key contraint is on
+   * @param references the table and columns the foreign key contraint
+   *        references
+   * @options a varargs list of ForeignKeyOption's
+   * @return a Tuple2 with the caclulated name or the overriden name
+   *         from a Name and the remaining options
+   */
+  private
+  def foreign_key_name(on : On,
+                       references : References,
+                       options : ForeignKeyOption*) : Tuple2[String,List[ForeignKeyOption]] =
+  {
+    var opts = options.toList
+
+    var fk_name_opt : Option[String] = None
+
+    for (opt @ Name(name) <- opts) {
+      opts -= opt
+      if (fk_name_opt.isDefined && fk_name_opt.get != name) {
+        val message = "Redefining the foreign key name from '" +
+                      fk_name_opt.get +
+                      "' to '" +
+                      name +
+                      "'."
+        System.out.println(message)
+      }
+      fk_name_opt = Some(name)
+    }
+
+    val name = fk_name_opt.getOrElse {
+                 "fk_" +
+                 on.table_name +
+                 "_" +
+                 on.column_names.mkString("_") +
+                 "_" +
+                 references.table_name +
+                 "_" +
+                 references.column_names.mkString("_")
+               }
+
+    (adapter.quote_table_name(schema_name_opt, name), opts)
+  }
+
+  def add_foreign_key(on : On,
+                      references : References,
+                      options : ForeignKeyOption*) : Unit =
+  {
+    if (on.column_names.length == 0) {
+      throw new IllegalArgumentException("Adding a foreign key constraint " +
+                                         "requires at least one column name " +
+                                         "in the table adding the constraint.")
+    }
+
+    if (references.column_names.length == 0) {
+      throw new IllegalArgumentException("Adding a foreign key constraint " +
+                                         "requires at least one column name " +
+                                         "from the table being referenced.")
+    }
+
+    var (name, opts) = foreign_key_name(on, references, options : _*)
+
+    val quoted_on_column_names = on.column_names.map {
+                                   adapter.quote_column_name(_)
+                                 }.mkString(", ")
+
+    val quoted_references_column_names = references.column_names.map {
+                                           adapter.quote_column_name(_)
+                                         }.mkString(", ")
+
+    var on_delete_opt : Option[OnDelete] = None
+
+    for (opt @ OnDelete(action) <- opts) {
+      if (on_delete_opt.isDefined && action != on_delete_opt.get.action) {
+        val message = "Overriding the ON DELETE action from '" +
+                      on_delete_opt.get.action +
+                      "' to '" +
+                      action +
+                      "'."
+        System.out.println(message)
+      }
+      opts -= opt
+      on_delete_opt = Some(opt)
+    }
+
+    var on_update_opt : Option[OnUpdate] = None
+
+    for (opt @ OnUpdate(action) <- opts) {
+      if (on_update_opt.isDefined && action != on_update_opt.get.action) {
+        val message = "Overriding the ON UPDATE action from '" +
+                      on_update_opt.get.action +
+                      "' to '" +
+                      action +
+                      "'."
+        System.out.println(message)
+      }
+      opts -= opt
+      on_update_opt = Some(opt)
+    }
+
+    val sql = new java.lang.StringBuilder(256)
+               .append("ALTER TABLE ")
+               .append(adapter.quote_table_name(schema_name_opt,
+                                                on.table_name))
+               .append(" ADD CONSTRAINT ")
+               .append(name)
+               .append(" FOREIGN KEY (")
+               .append(quoted_on_column_names)
+               .append(") REFERENCES ")
+               .append(adapter.quote_table_name(schema_name_opt,
+                                                references.table_name))
+               .append(" (")
+               .append(quoted_references_column_names)
+               .append(")")
+
+    on_delete_opt match {
+      case Some(on_delete) => {
+        sql.append(" ON DELETE ")
+        sql.append(on_delete.action.sql)
+      }
+      case None =>
+    }
+
+    on_update_opt match {
+      case Some(on_update) => {
+        sql.append(" ON UPDATE ")
+        sql.append(on_update.action.sql)
+      }
+      case None =>
+    }
+
+    execute(sql.toString)
+  }
+
+  def add_foreign_key(references : References,
+                      on : On,
+                      options : ForeignKeyOption*) : Unit =
+  {
+    add_foreign_key(on, references, options : _*)
+  }
+
+  def remove_foreign_key(on : On,
+                         references : References,
+                         options : Name*) : Unit =
+  {
+    if (on.column_names.length == 0) {
+      throw new IllegalArgumentException("Removing a foreign key constraint " +
+                                         "requires at least one column name " +
+                                         "in the table adding the constraint.")
+    }
+
+    if (references.column_names.length == 0) {
+      throw new IllegalArgumentException("Removing a foreign key constraint " +
+                                         "requires at least one column name " +
+                                         "from the table being referenced.")
+    }
+
+    var (name, opts) = foreign_key_name(on, references, options : _*)
+
+    execute("ALTER TABLE " +
+            adapter.quote_table_name(schema_name_opt, on.table_name) +
+            " DROP CONSTRAINT " +
+            name)
+  }
+
+  def remove_foreign_key(references : References,
+                         on : On,
+                         options : Name*) : Unit =
+  {
+    remove_foreign_key(on, references, options : _*)
   }
 
 }
