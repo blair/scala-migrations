@@ -1,2 +1,11 @@
 * Enable a dry-run pass so that the SQL can be printed or logged
   without actually running it.
+
+* Add remaining common migration operations:
+  * Renaming a table.
+  * Adding a column.
+  * Renaming a column.
+  * Changing a column to a different type.
+  * Removing a column.
+
+* Add a grant/revoke persmission system.
