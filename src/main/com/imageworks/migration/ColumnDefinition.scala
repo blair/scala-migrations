@@ -115,6 +115,22 @@ class ColumnDefinition(name : String,
     is_primary
   }
 
+  /**
+   * If the column is unique.
+   */
+  private
+  val is_unique : Boolean =
+  {
+    var unique = false
+
+    for (option @ Unique <- options) {
+      options -= option
+      unique = true
+    }
+
+    unique
+  }
+
   protected
   def sql : String
 
@@ -144,6 +160,10 @@ class ColumnDefinition(name : String,
       val message = "Specifying PrimaryKey and NotNull is redundant."
       System.out.println(message)
     }
+    if (is_primary_key && is_unique) {
+      val message = "Specifying PrimaryKey and Unique is redundant."
+      System.out.println(message)
+    }
 
     val sb = new java.lang.StringBuilder()
                .append(name)
@@ -157,6 +177,10 @@ class ColumnDefinition(name : String,
 
     if (is_primary_key) {
       sb.append(" PRIMARY KEY")
+    }
+
+    if (is_unique) {
+      sb.append(" UNIQUE")
     }
 
     // Not all databases, such as Derby, support specifying NULL for a

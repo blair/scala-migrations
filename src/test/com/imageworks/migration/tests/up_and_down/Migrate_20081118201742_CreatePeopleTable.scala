@@ -9,6 +9,7 @@ class Migrate_20081118201742_CreatePeopleTable
   {
     create_table("people") { t =>
       t.varbinary("pk_people", PrimaryKey, Limit(16))
+      t.integer("employee_id", Unique)
       t.integer("ssn", NotNull)
       t.varchar("first_name", Limit(255), NotNull)
       t.char("middle_initial", Limit(1), Nullable)

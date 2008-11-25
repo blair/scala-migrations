@@ -85,7 +85,8 @@ case object PrimaryKey
  * are unique.
  */
 case object Unique
-  extends IndexOption
+  extends ColumnOption
+  with IndexOption
 
 /**
  * This class is defined to prevent ant from recompiling this source
