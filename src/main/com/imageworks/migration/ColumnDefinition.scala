@@ -170,7 +170,7 @@ class ColumnDefinition(name : String,
       System.out.println(message)
     }
 
-    val sb = new java.lang.StringBuilder()
+    val sb = new java.lang.StringBuilder(512)
                .append(name)
                .append(' ')
                .append(sql)
