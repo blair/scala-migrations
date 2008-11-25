@@ -59,8 +59,9 @@ class ColumnDefinition(name : String,
       options -= option
 
       if (limit_.isDefined && limit_.get != length) {
-        val message = "Redefining the limit for the XXX column " +
-                      "from '" +
+        val message = "Redefining the limit for the '"
+                      name +
+                      "' column from '" +
                       limit_.get +
                       "' to '" +
                       length +
@@ -89,7 +90,9 @@ class ColumnDefinition(name : String,
         options -= option
 
         if (n1.isDefined && n1 != n2) {
-          val message = "Redefining the XXX column's nullability."
+          val message = "Redefining the '" +
+                        name +
+                        "' column's nullability."
           System.out.println(message)
         }
         n1 = n2
@@ -139,7 +142,9 @@ class ColumnDefinition(name : String,
   {
     // Warn for any unused options.
     if (! options.isEmpty) {
-      val message = "The following options for the XXX column are unused: " +
+      val message = "The following options for the '" +
+                    name +
+                    "' column are unused: " +
                     options +
                     '.'
       System.out.println(message)
