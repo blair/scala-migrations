@@ -217,7 +217,7 @@ abstract class Migration
                                 adapter.quote_column_name(_)
                               }.mkString(", ")
 
-    val sql = new java.lang.StringBuilder(256)
+    val sql = new java.lang.StringBuilder(512)
                .append("CREATE ")
                .append(if (unique) "UNIQUE " else "")
                .append("INDEX ")
@@ -368,7 +368,7 @@ abstract class Migration
       on_update_opt = Some(opt)
     }
 
-    val sql = new java.lang.StringBuilder(256)
+    val sql = new java.lang.StringBuilder(512)
                .append("ALTER TABLE ")
                .append(adapter.quote_table_name(schema_name_opt,
                                                 on.table_name))
