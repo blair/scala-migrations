@@ -1,4 +1,2 @@
 * Enable a dry-run pass so that the SQL can be printed or logged
   without actually running it.
-
-* Replace all uses of System.out.println with a logging system.

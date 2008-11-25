@@ -1,9 +1,14 @@
 package com.imageworks.migration
 
+import org.slf4j.LoggerFactory
+
 abstract
 class ColumnDefinition(name : String,
                        protected var options : List[ColumnOption])
 {
+  private final
+  val logger = LoggerFactory.getLogger(this.getClass)
+
   /**
    * If a default is specified for the column.
    */
@@ -22,14 +27,9 @@ class ColumnDefinition(name : String,
       options -= option
 
       if (default.isDefined && default.get != value) {
-        val message = "Redefining the default value for the '" +
-                      name +
-                      "' column from '" +
-                      default.get +
-                      "' to '" +
-                      value +
-                      "'."
-        System.out.println(message)
+        logger.warn("Redefining the default value for the '{}' column " +
+                    "from '{}' to '{}'.",
+                    Array[AnyRef](name, default.get, value))
       }
       default = Some(value)
     }
@@ -59,14 +59,11 @@ class ColumnDefinition(name : String,
       options -= option
 
       if (limit_.isDefined && limit_.get != length) {
-        val message = "Redefining the limit for the '"
-                      name +
-                      "' column from '" +
-                      limit_.get +
-                      "' to '" +
-                      length +
-                      "'."
-        System.out.println(message)
+        logger.warn("Redefining the limit for the '{}' column " +
+                    "from '{}' to '{}'.",
+                    Array[AnyRef](name,
+                                  scala.Predef.int2Integer(limit_.get),
+                                  scala.Predef.int2Integer(length)))
       }
       limit_ = Some(length)
     }
@@ -90,10 +87,11 @@ class ColumnDefinition(name : String,
         options -= option
 
         if (n1.isDefined && n1 != n2) {
-          val message = "Redefining the '" +
-                        name +
-                        "' column's nullability."
-          System.out.println(message)
+          logger.warn("Redefining the '{}' column's nullability " +
+                      "from {} to {}.",
+                      Array[AnyRef](name,
+                                    if (n1.get) "NOT NULL" else "NULL",
+                                    if (n2.get) "NOT NULL" else "NULL"))
         }
         n1 = n2
       }
@@ -142,32 +140,27 @@ class ColumnDefinition(name : String,
   {
     // Warn for any unused options.
     if (! options.isEmpty) {
-      val message = "The following options for the '" +
-                    name +
-                    "' column are unused: " +
-                    options +
-                    '.'
-      System.out.println(message)
+      logger.warn("The following options for the '{}' column are " +
+                  "unused: {}.",
+                  name,
+                  options)
     }
 
     // Warn about illegal combinations in some databases.
     if (is_primary_key &&
         not_null_opt.isDefined &&
         not_null_opt.get == false) {
-      val message = "Specifying PrimaryKey and Nullable in a column is not " +
-                    "supported in all databases."
-      System.out.println(message)
+      logger.warn("Specifying PrimaryKey and Nullable in a column is not " +
+                  "supported in all databases.")
     }
 
     // Warn when different options are used that specify the same
     // behavior so one can be removed.
     if (is_primary_key && not_null_opt.isDefined && not_null_opt.get == true) {
-      val message = "Specifying PrimaryKey and NotNull is redundant."
-      System.out.println(message)
+      logger.warn("Specifying PrimaryKey and NotNull is redundant.")
     }
     if (is_primary_key && is_unique) {
-      val message = "Specifying PrimaryKey and Unique is redundant."
-      System.out.println(message)
+      logger.warn("Specifying PrimaryKey and Unique is redundant.")
     }
 
     val sb = new java.lang.StringBuilder(512)

@@ -1,5 +1,7 @@
 package com.imageworks.migration
 
+import org.slf4j.LoggerFactory
+
 /**
  * A Tuple2 like class for containing a table name and a list of colum
  * names.
@@ -57,6 +59,9 @@ class MigrationArrowAssoc(s : String)
 
 abstract class Migration
 {
+  private final
+  val logger = LoggerFactory.getLogger(this.getClass)
+
   /**
    * Concrete migration classes must define this method to migrate the
    * database up to a new migration.
@@ -174,12 +179,9 @@ abstract class Migration
     for (opt @ Name(name) <- opts) {
       opts -= opt
       if (index_name_opt.isDefined && index_name_opt.get != name) {
-        val message = "Redefining the index name from '" +
-                      index_name_opt.get +
-                      "' to '" +
-                      name +
-                      "'."
-        System.out.println(message)
+        logger.warn("Redefining the index name from '{}' to '{}'.",
+                    index_name_opt.get +
+                    name)
       }
       index_name_opt = Some(name)
     }
@@ -287,12 +289,9 @@ abstract class Migration
     for (opt @ Name(name) <- opts) {
       opts -= opt
       if (fk_name_opt.isDefined && fk_name_opt.get != name) {
-        val message = "Redefining the foreign key name from '" +
-                      fk_name_opt.get +
-                      "' to '" +
-                      name +
-                      "'."
-        System.out.println(message)
+        logger.warn("Redefining the foreign key name from '{}'' to '{}'.",
+                    fk_name_opt.get,
+                    name)
       }
       fk_name_opt = Some(name)
     }
@@ -341,12 +340,9 @@ abstract class Migration
 
     for (opt @ OnDelete(action) <- opts) {
       if (on_delete_opt.isDefined && action != on_delete_opt.get.action) {
-        val message = "Overriding the ON DELETE action from '" +
-                      on_delete_opt.get.action +
-                      "' to '" +
-                      action +
-                      "'."
-        System.out.println(message)
+        logger.warn("Overriding the ON DELETE action from '{}' to '{}'.",
+                    on_delete_opt.get.action,
+                    action)
       }
       opts -= opt
       on_delete_opt = Some(opt)
@@ -356,12 +352,9 @@ abstract class Migration
 
     for (opt @ OnUpdate(action) <- opts) {
       if (on_update_opt.isDefined && action != on_update_opt.get.action) {
-        val message = "Overriding the ON UPDATE action from '" +
-                      on_update_opt.get.action +
-                      "' to '" +
-                      action +
-                      "'."
-        System.out.println(message)
+        logger.warn("Overriding the ON UPDATE action from '{}' to '{}'.",
+                    on_update_opt.get.action,
+                    action)
       }
       opts -= opt
       on_update_opt = Some(opt)

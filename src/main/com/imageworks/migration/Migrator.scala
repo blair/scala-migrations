@@ -1,5 +1,8 @@
 package com.imageworks.migration
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 private
 case class VersionAndClass(version : Long, clazz : Class[_ <: Migration])
 
@@ -152,7 +155,8 @@ object Migrator
    */
   private
   def find_migrations(package_name : String,
-                      search_sub_packages : Boolean) : Array[VersionAndClass] =
+                      search_sub_packages : Boolean,
+                      logger : Logger) : Array[VersionAndClass] =
   {
     // Ask the current class loader for the resource corresponding to
     // the package, which can refer to a directory, a jar file
@@ -258,12 +262,9 @@ object Migrator
       }
       else {
         class_names -= class_name
-        val message = "Skipping '" +
-                      class_name +
-                      "' because it does not match '" +
-                      re_str +
-                      "'."
-        System.out.println(message)
+        logger.debug("Skipping '{}' because it does not match '{}'.",
+                     class_name,
+                     re_str)
       }
     }
 
@@ -287,21 +288,20 @@ object Migrator
           }
           catch {
             case e : java.lang.NoSuchMethodException => {
-              val message = "Unable to find a no-argument constructor for '" +
-                            class_name +
-                            "': " +
-                            e
-              System.out.println(e)
+              logger.debug("Unable to find a no-argument constructor for '" +
+                           class_name +
+                           "'",
+                           e)
             }
           }
         }
       }
       catch {
         case e => {
-          val message = "Unable to load class '" +
-                        class_name +
-                        "'."
-          System.out.println(message)
+          logger.debug("Unable to load class '" +
+                       class_name +
+                       "'.",
+                       e)
         }
       }
     }
@@ -322,6 +322,9 @@ class Migrator private (jdbc_url : String,
 
   // Load the log4jdbc database wrapper driver.
   Class.forName("net.sf.log4jdbc.DriverSpy")
+
+  private final
+  val logger = LoggerFactory.getLogger(this.getClass)
 
   /**
    * Construct a migrator to a database that does not need a username
@@ -431,12 +434,9 @@ class Migrator private (jdbc_url : String,
                     direction : MigrationDirection,
                     version_update_opt : Option[Tuple2[java.sql.Connection,Long]]) : Unit =
   {
-    val message = "Migrating " +
-                  direction.str +
-                  " with '" +
-                  migration_class.getName +
-                  "'."
-    System.out.println(message)
+    logger.info("Migrating {} with '{}'.",
+                direction.str,
+                migration_class.getName)
 
     val migration = migration_class.getConstructor().newInstance()
     with_connection { connection =>
@@ -463,8 +463,6 @@ class Migrator private (jdbc_url : String,
                          table_name +
                          " WHERE version = ?"
           }
-
-        System.out.println("Executing '" + sql + "'.")
 
         val statement = schema_connection.prepareStatement(sql)
         statement.setLong(1, version)
@@ -513,11 +511,11 @@ class Migrator private (jdbc_url : String,
         }
         catch {
           case e : java.lang.NumberFormatException => {
-            val message = "Ignoring install migration with unparsable " +
-                          "version number '" +
-                          version_str +
-                          "'."
-            System.out.println(message)
+            logger.warn("Ignoring installed migration with unparsable " +
+                        "version number '" +
+                        version_str +
+                        "'.",
+                        e)
           }
         }
       }
@@ -547,13 +545,12 @@ class Migrator private (jdbc_url : String,
     // This will prevent concurrent migrations from running.
     with_connection { schema_connection =>
       {
+        logger.debug("Getting an exclusive lock on the '{}' table.",
+                     schema_migrations_table_name)
         val sql = "LOCK TABLE " +
                   adapter.quote_table_name(schema_name_opt,
                                            schema_migrations_table_name) +
                   " IN EXCLUSIVE MODE"
-        System.out.println("Getting an exclusive lock with '" +
-                           sql +
-                           "'.")
         val statement = schema_connection.prepareStatement(sql)
         statement.execute()
       }
@@ -568,22 +565,21 @@ class Migrator private (jdbc_url : String,
       // unless the migration needs to be rolled back.
       val installed_migrations = get_installed_migrations
       val available_migrations = find_migrations(package_name,
-                                                 search_sub_packages)
+                                                 search_sub_packages,
+                                                 logger)
       val available_versions = available_migrations.map(_.version)
 
       for (installed_migration <- installed_migrations) {
         if (! available_versions.contains(installed_migration)) {
-          val message = "The migration version '" +
-                        installed_migration +
-                        "' is installed but there is no migration class " +
-                        "available to back it out."
-          System.out.println(message)
+          logger.warn("The migration version '{}' is installed but " +
+                      "there is no migration class available to back " +
+                      "it out.",
+                      installed_migration)
         }
       }
 
       if (available_migrations.isEmpty) {
-        System.out.println("No migrations found, nothing to do.")
-        return
+        logger.info("No migrations found, nothing to do.")
       }
 
       case class InstallRemove(install_versions : Array[Long],
@@ -638,10 +634,11 @@ class Migrator private (jdbc_url : String,
                           Some((schema_connection, version_and_class.version)))
           }
           case None => {
-            val message = "The database has migration version " +
+            val message = "The database has migration version '" +
                           remove_version +
-                          " installed but there is no migration class " +
+                          "' installed but there is no migration class " +
                           "available with that version."
+            logger.error(message)
             throw new MissingMigrationClass(message)
           }
         }
