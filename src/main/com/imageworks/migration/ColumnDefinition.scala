@@ -133,7 +133,7 @@ class ColumnDefinition(name : String,
     if (is_primary_key &&
         not_null_opt.isDefined &&
         not_null_opt.get == false) {
-      val message = "Specifying a PRIMARY KEY and a NULL column is not " +
+      val message = "Specifying PrimaryKey and Nullable in a column is not " +
                     "supported in all databases."
       System.out.println(message)
     }
