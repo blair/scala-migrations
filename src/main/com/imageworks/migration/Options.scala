@@ -15,22 +15,22 @@ package com.imageworks.migration
  * The base trait for all column options.  This is not a sealed class
  * so database specific column options can be defined.
  */
-abstract trait ColumnOption
+trait ColumnOption
 
 /**
  * The base trait for all foreign key options.
  */
-sealed abstract trait ForeignKeyOption
+sealed trait ForeignKeyOption
 
 /**
  * The base trait for all index options.
  */
-sealed abstract trait IndexOption
+sealed trait IndexOption
 
 /**
  * The base trait for all table options.
  */
-sealed abstract trait TableOption
+sealed trait TableOption
 
 /**
  * A default value for a column.
