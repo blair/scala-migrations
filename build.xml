@@ -13,7 +13,7 @@
 
     <path id="test_compile.classpath">
         <filelist refid="src_compile.filelist"/>
-        <path location="build/src"/>
+        <path location="build/main"/>
         <path location="${hamcrest.jar}"/>
         <path location="${junit.jar}"/>
     </path>
@@ -26,9 +26,9 @@
     </taskdef>
 
     <target name="src_compile">
-        <mkdir dir="build/src"/>
+        <mkdir dir="build/main"/>
         <scalac srcdir="src/main"
-                destdir="build/src"
+                destdir="build/main"
                 classpathref="src_compile.classpath"
                 target="jvm-1.5"
                 unchecked="on"
@@ -51,7 +51,7 @@
 
     <target name="jar" depends="src_compile">
         <jar destfile="scala-migrations.jar"
-             basedir="build/src">
+             basedir="build/main">
         </jar>
     </target>
 
