@@ -368,8 +368,8 @@ class Migrator private (jdbc_url : String,
          schema_name_opt)
   }
 
-  private
-  def with_connection[T](f : java.sql.Connection => T) : T =
+  // http://lampsvn.epfl.ch/trac/scala/ticket/1543
+  private[migration] def with_connection[T](f : java.sql.Connection => T) : T =
   {
     // Use the log4jdbc database wrapper to log all JDBC commands.
     val url = if (jdbc_url.startsWith("jdbc:log4")) {
