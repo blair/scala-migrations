@@ -12,14 +12,19 @@ class MigrationTests
   private
   var migrator : Migrator = _
 
+  private
+  var url : String = _
+
   @Before
   def set_up() : Unit =
   {
     val db_name = System.currentTimeMillis.toString
-    val url = "jdbc:derby:test-databases/" + db_name + ";create=true"
+    url = "jdbc:derby:test-databases/" + db_name
+
+    val url_ = url + ";create=true"
 
     // The default schema for a Derby database is "APP".
-    migrator = new Migrator(url, new DerbyDatabaseAdapter, Some("APP"))
+    migrator = new Migrator(url_, new DerbyDatabaseAdapter, Some("APP"))
   }
 
   @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
