@@ -432,4 +432,65 @@ abstract class Migration
     remove_foreign_key(on, references, options : _*)
   }
 
+  final
+  def grant(table_name : String,
+            grantees : Array[String],
+            privileges : GrantPrivilegeType*) : Unit =
+  {
+    if (grantees.isEmpty) {
+      throw new IllegalArgumentException("Granting permissions requires " +
+                                         "at least one grantee.")
+    }
+
+    if (privileges.isEmpty) {
+      throw new IllegalArgumentException("Granting permissions requires " +
+                                         "at least one privilege.")
+    }
+
+    val sql = adapter.grant_sql(schema_name_opt,
+                                table_name,
+                                grantees,
+                                privileges : _*)
+
+    execute(sql)
+  }
+
+  final
+  def grant(table_name : String,
+            grantee : String,
+            privileges : GrantPrivilegeType*) : Unit =
+  {
+    grant(table_name, Array(grantee), privileges : _*)
+  }
+
+  final
+  def revoke(table_name : String,
+             grantees : Array[String],
+             privileges : GrantPrivilegeType*) : Unit =
+  {
+    if (grantees.isEmpty) {
+      throw new IllegalArgumentException("Revoking permissions requires " +
+                                         "at least one grantee.")
+    }
+
+    if (privileges.isEmpty) {
+      throw new IllegalArgumentException("Revoking permissions requires " +
+                                         "at least one privilege.")
+    }
+
+    val sql = adapter.revoke_sql(schema_name_opt,
+                                 table_name,
+                                 grantees,
+                                 privileges : _*)
+
+    execute(sql)
+  }
+
+  final
+  def revoke(table_name : String,
+             grantee : String,
+             privileges : GrantPrivilegeType*) : Unit =
+  {
+    revoke(table_name, Array(grantee), privileges : _*)
+  }
 }

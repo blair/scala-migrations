@@ -88,4 +88,88 @@ class MigrationTests
     assertEquals(1, migrator.table_names.size)
     assertFalse(migrator.table_names.find(_.toLowerCase == "people").isDefined)
   }
+
+  @Test
+  def test_grant_and_revoke : Unit =
+  {
+    // create a second user, make a table
+    migrator.migrate(MigrateToVersion(200811241940L),
+                     "com.imageworks.migration.tests.grant_and_revoke",
+                     false)
+
+    // "reboot" database for database property changes to take effect by
+    // shutting down the database
+    val shutdown_url = url + ";shutdown=true"
+    val shutdown_migrator = new Migrator(shutdown_url,
+                                         new DerbyDatabaseAdapter,
+                                         Some("APP"))
+    try {
+      shutdown_migrator.with_connection { _ => () }
+    }
+    catch {
+      // Connection shuts the database down, but also throws an exception
+      // java.sql.SQLNonTransientConnectionException: Database '...' shutdown.
+      case e : java.sql.SQLNonTransientConnectionException =>
+    }
+
+    // new connection with test user
+    val test_migrator = new Migrator(url, "test", "password", new DerbyDatabaseAdapter, Some("APP"))
+
+    val select_sql = "SELECT name FROM APP.location"
+
+    def run_select : Unit = {
+      test_migrator.with_connection { connection =>
+        val statement = connection.prepareStatement(select_sql)
+        val rs = statement.executeQuery
+        rs.close()
+        statement.close()
+      }
+    }
+
+    // try to select table, should give a permissions error
+    try {
+      run_select
+
+      // failure if got here
+      fail("SELECT permission failure expected")
+    }
+    catch {
+      case e : java.sql.SQLSyntaxErrorException => // expected
+    }
+
+    // new connection with APP user
+    val migrator2 = new Migrator(url, "APP", "password", new DerbyDatabaseAdapter, Some("APP"))
+
+    // perform grants
+    migrator2.migrate(MigrateToVersion(200811261513L),
+                     "com.imageworks.migration.tests.grant_and_revoke",
+                     false)
+
+    // try to select table, should succeed now that grant has been given
+    try {
+      run_select
+    }
+    catch {
+      case e : java.sql.SQLSyntaxErrorException =>
+        // failure if got here
+        fail("SELECT permission failure unexpected")
+    }
+
+    // preform revoke
+    migrator2.migrate(RollbackMigration(1),
+                     "com.imageworks.migration.tests.grant_and_revoke",
+                     false)
+
+    // try to select table, should give a permissions error again
+    try {
+      run_select
+
+      // failure if got here
+      fail("SELECT permission failure expected")
+    }
+    catch {
+      case e : java.sql.SQLSyntaxErrorException => // expected
+    }
+
+  }
 }

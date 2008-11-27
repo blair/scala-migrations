@@ -33,6 +33,11 @@ sealed trait IndexOption
 sealed trait TableOption
 
 /**
+ * The base trait for all grant privilege types.
+ */
+sealed abstract trait GrantPrivilegeType
+
+/**
  * A default value for a column.
  */
 case class Default(value : String)
@@ -108,6 +113,65 @@ case object PrimaryKey
 case object Unique
   extends ColumnOption
   with IndexOption
+
+/**
+ * Maps to GRANT ALL PRIVILEGES.
+ */
+case object AllPrivileges
+  extends GrantPrivilegeType
+
+/**
+ * Maps to GRANT DELETE.
+ */
+case object DeletePrivilege
+  extends GrantPrivilegeType
+
+/**
+ * Maps to GRANT INSERT.
+ */
+case object InsertPrivilege
+  extends GrantPrivilegeType
+
+/**
+ * Maps to GRANT TRIGGER.
+ */
+case object TriggerPrivilege
+  extends GrantPrivilegeType
+
+/**
+ * A base class for all privileges that take a list of columns to affect.
+ */
+abstract case class PrivilegeWithColumns(columns : Seq[String])
+  extends GrantPrivilegeType
+
+/**
+ * Maps to GRANT REFERENCES.
+ */
+case class ReferencesPrivilege(override val columns : Seq[String])
+  extends PrivilegeWithColumns(columns)
+
+/**
+ * Maps to GRANT SELECT.
+ */
+case class SelectPrivilege(override val columns : Seq[String])
+  extends PrivilegeWithColumns(columns)
+
+/**
+ * Maps to GRANT UPDATE.
+ */
+case class UpdatePrivilege(override val columns : Seq[String])
+  extends PrivilegeWithColumns(columns)
+
+// These next three are here as case objects to allow
+// a no-parameters form in user code
+case object ReferencesPrivilege
+  extends GrantPrivilegeType
+
+case object SelectPrivilege
+  extends GrantPrivilegeType
+
+case object UpdatePrivilege
+  extends GrantPrivilegeType
 
 /**
  * This class is defined to prevent ant from recompiling this source

@@ -76,4 +76,41 @@ class OracleDatabaseAdapter
     quote_table_name(schema_name_opt, table_name)
   }
 
+  override
+  def grant_sql(schema_name_opt : Option[String],
+                table_name : String,
+                grantees : Array[String],
+                privileges : GrantPrivilegeType*) : String =
+  {
+    // Check that no columns are defined for any SELECT privs
+    for {
+      SelectPrivilege(columns) <- privileges
+      if !columns.isEmpty
+    } {
+      val message = "Oracle does not support granting select to " +
+                    "individual columns"
+      throw new IllegalArgumentException(message)
+    }
+
+    super.grant_sql(schema_name_opt, table_name, grantees, privileges : _*)
+  }
+
+  override
+  def revoke_sql(schema_name_opt : Option[String],
+                 table_name : String,
+                 grantees : Array[String],
+                 privileges : GrantPrivilegeType*) : String =
+  {
+    // Check that no columns are defined for any privs with columns
+    for {
+      PrivilegeWithColumns(columns) <- privileges
+      if !columns.isEmpty
+    } {
+      val message = "Oracle does not support revoking permissions from " +
+                    "individual columns"
+      throw new IllegalArgumentException(message)
+    }
+
+    super.revoke_sql(schema_name_opt, table_name, grantees, privileges : _*)
+  }
 }
