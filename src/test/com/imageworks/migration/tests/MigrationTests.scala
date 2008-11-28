@@ -108,7 +108,11 @@ class MigrationTests
     }
 
     // new connection with test user
-    val test_migrator = new Migrator(url, "test", "password", new DerbyDatabaseAdapter, Some("APP"))
+    val test_migrator = new Migrator(url,
+                                     "test",
+                                     "password",
+                                     new DerbyDatabaseAdapter,
+                                     Some("APP"))
 
     val select_sql = "SELECT name FROM APP.location"
 
@@ -136,7 +140,11 @@ class MigrationTests
     }
 
     // new connection with APP user
-    val migrator2 = new Migrator(url, "APP", "password", new DerbyDatabaseAdapter, Some("APP"))
+    val migrator2 = new Migrator(url,
+                                 "APP",
+                                 "password",
+                                 new DerbyDatabaseAdapter,
+                                 Some("APP"))
 
     // perform grants
     migrator2.migrate(MigrateToVersion(200811261513L),
@@ -158,8 +166,8 @@ class MigrationTests
 
     // preform revoke
     migrator2.migrate(RollbackMigration(1),
-                     "com.imageworks.migration.tests.grant_and_revoke",
-                     false)
+                      "com.imageworks.migration.tests.grant_and_revoke",
+                      false)
 
     // try to select table, should give a permissions error again
     try {
