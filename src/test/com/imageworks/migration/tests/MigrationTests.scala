@@ -129,7 +129,10 @@ class MigrationTests
       fail("SELECT permission failure expected")
     }
     catch {
-      case e : java.sql.SQLSyntaxErrorException => // expected
+      // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
+      // could be caught here, but for 1.5 compaitibility, only a
+      // java.sql.SQLException is caught.
+      case e : java.sql.SQLException => // expected
     }
 
     // new connection with APP user
@@ -145,7 +148,10 @@ class MigrationTests
       run_select
     }
     catch {
-      case e : java.sql.SQLSyntaxErrorException =>
+      // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
+      // could be caught here, but for 1.5 compaitibility, only a
+      // java.sql.SQLException is caught.
+      case e : java.sql.SQLException =>
         // failure if got here
         fail("SELECT permission failure unexpected")
     }
@@ -163,7 +169,10 @@ class MigrationTests
       fail("SELECT permission failure expected")
     }
     catch {
-      case e : java.sql.SQLSyntaxErrorException => // expected
+      // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
+      // could be caught here, but for 1.5 compaitibility, only a
+      // java.sql.SQLException is caught.
+      case e : java.sql.SQLException => // expected
     }
 
   }
