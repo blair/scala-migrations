@@ -1,4 +1,4 @@
-<project name="scala-migrations" default="jar">
+<project name="scala-migrations" default="tests">
 
     <property file="build.properties"/>
 
