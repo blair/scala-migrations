@@ -1,0 +1,31 @@
+# This sample build.properties file is suitable for a MacPorts
+# installation.
+
+# The location of the MacPorts installation.
+macports.dir = /opt/local
+
+# The location of all the jar files.
+jar.dir = ${macports.dir}/share/java
+
+# The location of the Scala library directory.
+scala.lib.dir = ${jar.dir}
+
+# The path to the slf4j-api jar file.  This is use for logging.
+slf4j-api.jar = ${jar.dir}/slf4j-api.jar
+
+# The path to the SLF4J logging implementation.
+slf4j-impl.jar = ${jar.dir}/slf4j-simple.jar
+
+# The path to the log4jdbc jar file.  This is used for logging.  The
+# JDBC3 driver is used to support Mac OS X 10.4 which only has JDK
+# 1.5.
+log4jdbc.jar = ${jar.dir}/log4jdbc3.jar
+
+# The path to the Derby database jar file.  Used for the test suite.
+derby.jar = ${jar.dir}/derby.jar
+
+# The path to the Hamcrest jar file.  Used for the test suite.
+hamcrest.jar = ${jar.dir}/hamcrest-core.jar
+
+# The path to the JUnit jar file.  Used for the test suite.
+junit.jar = ${jar.dir}/junit.jar

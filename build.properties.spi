@@ -1,3 +1,6 @@
+# This sample build.properties file is suitable for a compile on a
+# Centos system at Sony Pictures Imageworks.
+
 # The location of the Scala library directory.
 scala.lib.dir = /usr/local/lib
 
