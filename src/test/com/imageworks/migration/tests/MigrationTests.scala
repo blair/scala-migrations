@@ -97,19 +97,14 @@ class MigrationTests
                      "com.imageworks.migration.tests.grant_and_revoke",
                      false)
 
-    // "reboot" database for database property changes to take effect by
-    // shutting down the database
-    val shutdown_url = url + ";shutdown=true"
-    val shutdown_migrator = new Migrator(shutdown_url,
-                                         new DerbyDatabaseAdapter,
-                                         Some("APP"))
+    // "Reboot" database for database property changes to take effect by
+    // shutting down the database.  Connection shuts the database down,
+    // but also throws an exception.
     try {
-      shutdown_migrator.with_connection { _ => () }
+      java.sql.DriverManager.getConnection(url + ";shutdown=true")
     }
     catch {
-      // Connection shuts the database down, but also throws an exception
-      // java.sql.SQLNonTransientConnectionException: Database '...' shutdown.
-      case e : java.sql.SQLNonTransientConnectionException =>
+      case e : org.apache.derby.impl.jdbc.EmbedSQLException =>
     }
 
     // new connection with test user

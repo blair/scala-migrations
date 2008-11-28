@@ -16,6 +16,7 @@
         <path location="build/main"/>
         <path location="${hamcrest.jar}"/>
         <path location="${junit.jar}"/>
+        <path location="${derby.jar}"/>
     </path>
 
    <taskdef resource="scala/tools/ant/antlib.xml">
@@ -60,7 +61,6 @@
             <classpath>
                 <path refid="test_compile.classpath"/>
                 <path location="build/test"/>
-                <path location="${derby.jar}"/>
                 <path location="${log4jdbc.jar}"/>
                 <path location="${slf4j-impl.jar}"/>
             </classpath>
