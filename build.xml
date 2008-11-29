@@ -13,10 +13,10 @@
 
     <path id="test_compile.classpath">
         <filelist refid="src_compile.filelist"/>
-        <path location="build/main"/>
         <path location="${hamcrest.jar}"/>
         <path location="${junit.jar}"/>
         <path location="${derby.jar}"/>
+        <path location="scala-migrations.jar"/>
     </path>
 
    <taskdef resource="scala/tools/ant/antlib.xml">
@@ -38,7 +38,13 @@
         </scalac>
     </target>
 
-    <target name="test_compile" depends="src_compile">
+    <target name="jar" depends="src_compile">
+        <jar destfile="scala-migrations.jar"
+             basedir="build/main">
+        </jar>
+    </target>
+
+    <target name="test_compile" depends="jar">
         <mkdir dir="build/test"/>
         <scalac srcdir="src/test"
                 destdir="build/test"
@@ -48,12 +54,6 @@
                 deprecation="on">
             <include name="**/*.scala"/>
         </scalac>
-    </target>
-
-    <target name="jar" depends="src_compile">
-        <jar destfile="scala-migrations.jar"
-             basedir="build/main">
-        </jar>
     </target>
 
     <target name="tests" depends="test_compile">
