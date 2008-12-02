@@ -540,6 +540,11 @@ class Migrator private (jdbc_url : String,
   /**
    * Migrate the database.
    *
+   * Running this method, even if no concrete Migration subclasses are
+   * found in the given package name, will result in the creation of
+   * the schema_migrations table in the database, if it does not
+   * currently exist.
+   *
    * @param package_name the Java package name to search for Migration
    *        subclasses
    * @parm search_sub_packages true if sub-packages of package_name
