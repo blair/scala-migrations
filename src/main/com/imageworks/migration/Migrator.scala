@@ -655,4 +655,31 @@ class Migrator private (jdbc_url : String,
       null
     }
   }
+
+  /**
+   * Determine if the database has all available migrations installed
+   * in it and no migrations installed that do not have a
+   * corresponding concrete Migration subclass; that is, the database
+   * must have only those migrations installed that are found by
+   * searching the package name for concrete Migration subclasses.
+   *
+   * @param package_name the Java package name to search for Migration
+   *        subclasses
+   * @parm search_sub_packages true if sub-packages of package_name
+   *       should be searched
+   * @return true if all available migrations are installed
+   */
+  def is_migrated(package_name : String,
+                  search_sub_packages : Boolean) : Boolean =
+  {
+    initialize_schema_migrations_table()
+
+    val installed_migrations = get_installed_migrations
+    val available_migrations = find_migrations(package_name,
+                                               search_sub_packages,
+                                               logger)
+    val available_versions = available_migrations.map(_.version)
+
+    java.util.Arrays.equals(installed_migrations, available_versions)
+  }
 }

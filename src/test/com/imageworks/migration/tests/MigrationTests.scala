@@ -59,6 +59,10 @@ class MigrationTests
     assertFalse(migrator.table_names.find(_.toLowerCase == "locations").isDefined)
     assertFalse(migrator.table_names.find(_.toLowerCase == "people").isDefined)
 
+    // The database should not be completely migrated.
+    assertFalse(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
+                                     false))
+
     // Apply all the migrations.
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.up_and_down",
@@ -67,6 +71,10 @@ class MigrationTests
     assertEquals(3, migrator.table_names.size)
     assertTrue(migrator.table_names.find(_.toLowerCase == "location").isDefined)
     assertTrue(migrator.table_names.find(_.toLowerCase == "people").isDefined)
+
+    // The database should be completely migrated.
+    assertTrue(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
+                                    false))
 
     // Rollback a single migration.
     migrator.migrate(RollbackMigration(1),
@@ -79,6 +87,10 @@ class MigrationTests
     assertTrue(migrator.table_names.find(_.toLowerCase == "location").isDefined)
     assertFalse(migrator.table_names.find(_.toLowerCase == "people").isDefined)
 
+    // The database should not be completely migrated.
+    assertFalse(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
+                                     false))
+
     // Migrate down the whole way.
     migrator.migrate(RemoveAllMigrations,
                      "com.imageworks.migration.tests.up_and_down",
@@ -87,6 +99,10 @@ class MigrationTests
     // There should only be the schema migrations table now.
     assertEquals(1, migrator.table_names.size)
     assertFalse(migrator.table_names.find(_.toLowerCase == "people").isDefined)
+
+    // The database should not be completely migrated.
+    assertFalse(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
+                                     false))
   }
 
   @Test
