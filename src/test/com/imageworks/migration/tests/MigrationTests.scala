@@ -106,6 +106,28 @@ class MigrationTests
   }
 
   @Test
+  def test_is_migrated_does_not_create_schema_migrations : Unit =
+  {
+    // In a brand new database with no available migrations, the
+    // database should not be completely migrated.  The
+    // com.imageworks.migration.tests.no_migrations package contains
+    // no concrete Migration subclasses.
+    assertTrue(migrator.is_migrated("com.imageworks.migration.tests.no_migrations",
+                                    false))
+
+    // Running is_migrated() should not have created any tables.
+    assertEquals(0, migrator.table_names.size)
+
+    // In a brand new database with available migrations, the database
+    // should not be migrated.
+    assertFalse(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
+                                     false))
+
+    // Running is_migrated() should not have created any tables.
+    assertEquals(0, migrator.table_names.size)
+  }
+
+  @Test
   def test_grant_and_revoke : Unit =
   {
     // create a second user, make a table

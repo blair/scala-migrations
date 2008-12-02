@@ -473,19 +473,30 @@ class Migrator private (jdbc_url : String,
   }
 
   /**
+   * Determine if the "schema_migrations" table exists.
+   *
+   * @return true if the "schema_migration" table exists
+   */
+  private
+  def schema_migrations_table_exists : Boolean =
+  {
+    val smtn = Migrator.schema_migrations_table_name.toLowerCase
+    table_names.find(_.toLowerCase == smtn) match {
+      case Some(_) => true
+      case None => false
+    }
+  }
+
+  /**
    * Creates the schema migrations table if it does not exist.
    */
   private
   def initialize_schema_migrations_table() : Unit =
   {
-    val smtn = Migrator.schema_migrations_table_name.toLowerCase
-    table_names.find(_.toLowerCase == smtn) match {
-      case Some(_) =>
-      case None => {
-        run_migration(classOf[CreateSchemaMigrationsTableMigration],
-                      Up,
-                      None)
-      }
+    if (! schema_migrations_table_exists) {
+      run_migration(classOf[CreateSchemaMigrationsTableMigration],
+                    Up,
+                    None)
     }
   }
 
@@ -663,6 +674,9 @@ class Migrator private (jdbc_url : String,
    * must have only those migrations installed that are found by
    * searching the package name for concrete Migration subclasses.
    *
+   * Running this method does not modify the database in any way.  The
+   * schema migrations table is not created.
+   *
    * @param package_name the Java package name to search for Migration
    *        subclasses
    * @parm search_sub_packages true if sub-packages of package_name
@@ -672,14 +686,19 @@ class Migrator private (jdbc_url : String,
   def is_migrated(package_name : String,
                   search_sub_packages : Boolean) : Boolean =
   {
-    initialize_schema_migrations_table()
-
-    val installed_migrations = get_installed_migrations
     val available_migrations = find_migrations(package_name,
                                                search_sub_packages,
                                                logger)
-    val available_versions = available_migrations.map(_.version)
 
-    java.util.Arrays.equals(installed_migrations, available_versions)
+    if (schema_migrations_table_exists) {
+      val available_versions = available_migrations.map(_.version)
+      java.util.Arrays.equals(get_installed_migrations, available_versions)
+    }
+    else {
+      // All migrations are installed if no concrete Migration
+      // subclasses exist and there is no "schema_migrations" table in
+      // the database.
+      available_migrations.isEmpty
+    }
   }
 }
