@@ -313,12 +313,19 @@ object Migrator
 /**
  * This class migrates the database into the desired state.
  */
-class Migrator private (jdbc_url : String,
+class Migrator private (jdbc_datasource : Option[javax.sql.DataSource],
+                        jdbc_url : Option[String],
                         jdbc_login : Option[Tuple2[String,String]],
                         adapter : DatabaseAdapter,
                         schema_name_opt : Option[String])
 {
   import Migrator._
+
+  if (!(jdbc_datasource.isEmpty ^ jdbc_url.isEmpty)) {
+    val message = "Must supply either a DataSource" +
+                  " or a JDBC connection URL."
+    throw new RuntimeException(message)
+  }
 
   // Load the log4jdbc database wrapper driver.
   Class.forName("net.sf.log4jdbc.DriverSpy")
@@ -340,7 +347,7 @@ class Migrator private (jdbc_url : String,
   def this(jdbc_url : String,
            adapter : DatabaseAdapter,
            schema_name_opt : Option[String]) = {
-    this(jdbc_url, None, adapter, schema_name_opt)
+    this(None, Some(jdbc_url), None, adapter, schema_name_opt)
   }
 
   /**
@@ -361,7 +368,50 @@ class Migrator private (jdbc_url : String,
            jdbc_password : String,
            adapter : DatabaseAdapter,
            schema_name_opt : Option[String]) = {
-    this(jdbc_url,
+    this(None,
+         Some(jdbc_url),
+         Some((jdbc_username, jdbc_password)),
+         adapter,
+         schema_name_opt)
+  }
+
+  /**
+   * Construct a migrator to a database with an existing DataSource.
+   * @param jdbc_datasource the JDBC DataSource to connect to the database
+   * @param adapter a concrete DatabaseAdapter that the migrator uses
+   *        to handle database specific features
+   * @param schema_name_opt an optional schema name used to qualify
+   *        all table names in the generated SQL; if Some(), then all
+   *        table names are qualified with the name, otherwise, table
+   *        names are unqualified
+   */
+  def this(jdbc_datasource : javax.sql.DataSource,
+           adapter : DatabaseAdapter,
+           schema_name_opt : Option[String]) = {
+    this(Some(jdbc_datasource), None, None, adapter, schema_name_opt)
+  }
+
+  /**
+   * Construct a migrator to a database with an existing DataSource but
+   * override default username and password.
+   * @param jdbc_datasource the JDBC DataSource to connect to the database
+   * @param jdbc_username the username to log into the database
+   * @param jdbc_password the password associated with the database
+   *        username
+   * @param adapter a concrete DatabaseAdapter that the migrator uses
+   *        to handle database specific features
+   * @param schema_name_opt an optional schema name used to qualify
+   *        all table names in the generated SQL; if Some(), then all
+   *        table names are qualified with the name, otherwise, table
+   *        names are unqualified
+   */
+  def this(jdbc_datasource : javax.sql.DataSource,
+           jdbc_username : String,
+           jdbc_password : String,
+           adapter : DatabaseAdapter,
+           schema_name_opt : Option[String]) = {
+    this(Some(jdbc_datasource),
+         None,
          Some((jdbc_username, jdbc_password)),
          adapter,
          schema_name_opt)
@@ -370,23 +420,38 @@ class Migrator private (jdbc_url : String,
   // http://lampsvn.epfl.ch/trac/scala/ticket/1543
   private[migration] def with_connection[T](f : java.sql.Connection => T) : T =
   {
-    // Use the log4jdbc database wrapper to log all JDBC commands.
-    val url = if (jdbc_url.startsWith("jdbc:log4")) {
-                jdbc_url
-              }
-              else {
-                "jdbc:log4" + jdbc_url
-              }
+    val connection = {
+      if (jdbc_datasource.isDefined) {
+        jdbc_login match {
+          case Some((username, password)) => {
+            jdbc_datasource.get.getConnection(username, password)
+          }
 
-    val connection =
-      jdbc_login match {
-        case Some((username, password)) => {
-          java.sql.DriverManager.getConnection(url, username, password)
-        }
-        case None => {
-          java.sql.DriverManager.getConnection(url)
+          case None => {
+            jdbc_datasource.get.getConnection
+          }
         }
       }
+      else {
+        // Use the log4jdbc database wrapper to log all JDBC commands.
+        val url = if (jdbc_url.get.startsWith("jdbc:log4")) {
+                    jdbc_url.get
+                  }
+                  else {
+                    "jdbc:log4" + jdbc_url.get
+                  }
+
+        jdbc_login match {
+          case Some((username, password)) => {
+            java.sql.DriverManager.getConnection(url, username, password)
+          }
+
+          case None => {
+            java.sql.DriverManager.getConnection(url)
+          }
+        }
+      }
+    }
 
     try {
       f(connection)
