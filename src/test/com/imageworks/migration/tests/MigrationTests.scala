@@ -6,6 +6,10 @@ import org.junit.{Before,
 
 class MigrationTests
 {
+  // Set the Derby system home to a test-databases directory so the
+  // derby.log file and all databases will be placed in there.
+  System.getProperties.setProperty("derby.system.home", "test-databases")
+
   // Load the Derby database driver.
   Class.forName("org.apache.derby.jdbc.EmbeddedDriver")
 
@@ -19,7 +23,7 @@ class MigrationTests
   def set_up() : Unit =
   {
     val db_name = System.currentTimeMillis.toString
-    url = "jdbc:derby:test-databases/" + db_name
+    url = "jdbc:derby:" + db_name
 
     val url_ = url + ";create=true"
 

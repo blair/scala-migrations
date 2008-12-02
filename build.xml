@@ -77,7 +77,6 @@
         <delete file="scala-migrations.jar"/>
         <delete dir="build"/>
         <delete dir="test-databases"/>
-        <delete file="derby.log"/>
     </target>
 
 </project>
