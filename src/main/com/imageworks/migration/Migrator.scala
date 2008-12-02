@@ -344,8 +344,7 @@ class Migrator private (jdbc_url : String,
   }
 
   /**
-   * Construct a migrator to a database that does not need a username
-   * and password.
+   * Construct a migrator to a database that needs a username and password.
    * @param jdbc_url the JDBC URL to connect to the database
    * @param jdbc_username the username to log into the database
    * @param jdbc_password the password associated with the database
