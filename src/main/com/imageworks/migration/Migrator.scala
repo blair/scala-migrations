@@ -3,6 +3,8 @@ package com.imageworks.migration
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import javax.sql.DataSource
+
 private
 case class VersionAndClass(version : Long, clazz : Class[_ <: Migration])
 
@@ -313,19 +315,12 @@ object Migrator
 /**
  * This class migrates the database into the desired state.
  */
-class Migrator private (jdbc_datasource : Option[javax.sql.DataSource],
-                        jdbc_url : Option[String],
+class Migrator private (jdbc_conn : Either[DataSource, String],
                         jdbc_login : Option[Tuple2[String,String]],
                         adapter : DatabaseAdapter,
                         schema_name_opt : Option[String])
 {
   import Migrator._
-
-  if (!(jdbc_datasource.isEmpty ^ jdbc_url.isEmpty)) {
-    val message = "Must supply either a DataSource" +
-                  " or a JDBC connection URL."
-    throw new RuntimeException(message)
-  }
 
   // Load the log4jdbc database wrapper driver.
   Class.forName("net.sf.log4jdbc.DriverSpy")
@@ -347,7 +342,7 @@ class Migrator private (jdbc_datasource : Option[javax.sql.DataSource],
   def this(jdbc_url : String,
            adapter : DatabaseAdapter,
            schema_name_opt : Option[String]) = {
-    this(None, Some(jdbc_url), None, adapter, schema_name_opt)
+    this(Right(jdbc_url), None, adapter, schema_name_opt)
   }
 
   /**
@@ -368,8 +363,7 @@ class Migrator private (jdbc_datasource : Option[javax.sql.DataSource],
            jdbc_password : String,
            adapter : DatabaseAdapter,
            schema_name_opt : Option[String]) = {
-    this(None,
-         Some(jdbc_url),
+    this(Right(jdbc_url),
          Some((jdbc_username, jdbc_password)),
          adapter,
          schema_name_opt)
@@ -385,10 +379,10 @@ class Migrator private (jdbc_datasource : Option[javax.sql.DataSource],
    *        table names are qualified with the name, otherwise, table
    *        names are unqualified
    */
-  def this(jdbc_datasource : javax.sql.DataSource,
+  def this(jdbc_datasource : DataSource,
            adapter : DatabaseAdapter,
            schema_name_opt : Option[String]) = {
-    this(Some(jdbc_datasource), None, None, adapter, schema_name_opt)
+    this(Left(jdbc_datasource), None, adapter, schema_name_opt)
   }
 
   /**
@@ -405,13 +399,12 @@ class Migrator private (jdbc_datasource : Option[javax.sql.DataSource],
    *        table names are qualified with the name, otherwise, table
    *        names are unqualified
    */
-  def this(jdbc_datasource : javax.sql.DataSource,
+  def this(jdbc_datasource : DataSource,
            jdbc_username : String,
            jdbc_password : String,
            adapter : DatabaseAdapter,
            schema_name_opt : Option[String]) = {
-    this(Some(jdbc_datasource),
-         None,
+    this(Left(jdbc_datasource),
          Some((jdbc_username, jdbc_password)),
          adapter,
          schema_name_opt)
@@ -420,35 +413,34 @@ class Migrator private (jdbc_datasource : Option[javax.sql.DataSource],
   // http://lampsvn.epfl.ch/trac/scala/ticket/1543
   private[migration] def with_connection[T](f : java.sql.Connection => T) : T =
   {
-    val connection = {
-      if (jdbc_datasource.isDefined) {
-        jdbc_login match {
-          case Some((username, password)) => {
-            jdbc_datasource.get.getConnection(username, password)
-          }
-
-          case None => {
-            jdbc_datasource.get.getConnection
-          }
-        }
+    // Use the log4jdbc database wrapper to log all JDBC commands.
+    def jdbcLogUrl(url : String) : String = {
+      if (url.startsWith("jdbc:log4")) {
+        url
       }
       else {
-        // Use the log4jdbc database wrapper to log all JDBC commands.
-        val url = if (jdbc_url.get.startsWith("jdbc:log4")) {
-                    jdbc_url.get
-                  }
-                  else {
-                    "jdbc:log4" + jdbc_url.get
-                  }
+        "jdbc:log4" + url
+      }
+    }
 
-        jdbc_login match {
-          case Some((username, password)) => {
-            java.sql.DriverManager.getConnection(url, username, password)
-          }
+    val connection = {
+      (jdbc_conn, jdbc_login) match {
+        case (Left(jdbc_datasource), Some((username, password))) => {
+          jdbc_datasource.getConnection(username, password)
+        }
 
-          case None => {
-            java.sql.DriverManager.getConnection(url)
-          }
+        case (Left(jdbc_datasource), None) => {
+          jdbc_datasource.getConnection
+        }
+
+        case (Right(jdbc_url), Some((username, password))) => {
+          java.sql.DriverManager.getConnection(jdbcLogUrl(jdbc_url),
+                                               username,
+                                               password)
+        }
+
+        case (Right(jdbc_url), None) => {
+          java.sql.DriverManager.getConnection(jdbcLogUrl(jdbc_url))
         }
       }
     }
