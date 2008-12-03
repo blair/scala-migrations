@@ -190,6 +190,26 @@ class ColumnDefinition(name : String,
 
     sb.toString
   }
+
+  /**
+   * Format a column definition respecting limit.
+   * @param t column type name
+   * @param limit optional column limit
+   */
+  def column_sql(t : String, limit : Option[String]) : String = {
+    if (limit.isDefined) {
+      t + "(" + limit.get + ")"
+    }
+    else {
+      t
+    }
+  }
+
+  /**
+   * Format a column definition respecting limit.
+   * @param t column type name
+   */
+  def column_sql(t : String) : String = column_sql(t, limit)
 }
 
 class DefaultCharColumnDefinition(name : String,
@@ -199,12 +219,7 @@ class DefaultCharColumnDefinition(name : String,
   check_for_limit
   check_for_default
 
-  val sql = if (limit.isDefined) {
-              "CHAR(" + limit.get + ")"
-            }
-            else {
-              "CHAR"
-            }
+  val sql = column_sql("CHAR")
 }
 
 class DefaultVarcharColumnDefinition(name : String,
@@ -214,10 +229,5 @@ class DefaultVarcharColumnDefinition(name : String,
   check_for_limit
   check_for_default
 
-  val sql = if (limit.isDefined) {
-              "VARCHAR(" + limit.get + ")"
-            }
-            else {
-              "VARCHAR"
-            }
+  val sql = column_sql("VARCHAR")
 }

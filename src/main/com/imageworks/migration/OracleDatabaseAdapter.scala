@@ -7,12 +7,7 @@ class OracleIntegerColumnDefinition(name : String,
   check_for_limit
   check_for_default
 
-  val sql = if (limit.isDefined) {
-              "NUMBER(" + limit.get + ")"
-            }
-            else {
-              "NUMBER(38,0)"
-            }
+  val sql = column_sql("NUMBER", limit.orElse(Some("38,0")))
 }
 
 class OracleVarbinaryColumnDefinition(name : String,
@@ -27,7 +22,7 @@ class OracleVarbinaryColumnDefinition(name : String,
     throw new IllegalArgumentException(message)
   }
 
-  val sql = "RAW(" + limit.get + ")"
+  val sql = column_sql("RAW")
 }
 
 class OracleVarcharColumnDefinition(name : String,
@@ -37,12 +32,7 @@ class OracleVarcharColumnDefinition(name : String,
   check_for_limit
   check_for_default
 
-  val sql = if (limit.isDefined) {
-              "VARCHAR2(" + limit.get + ")"
-            }
-            else {
-              "VARCHAR2"
-            }
+  val sql = column_sql("VARCHAR2")
 }
 
 class OracleDatabaseAdapter

@@ -16,12 +16,7 @@ class DerbyVarbinaryColumnDefinition(name : String,
   check_for_limit
   check_for_default
 
-  val sql = if (limit.isDefined) {
-              "VARCHAR(" + limit.get + ") FOR BIT DATA"
-            }
-            else {
-              "VARCHAR FOR BIT DATA"
-            }
+  val sql = column_sql("VARCHAR") + " FOR BIT DATA"
 }
 
 class DerbyDatabaseAdapter
