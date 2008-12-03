@@ -33,6 +33,8 @@ class DerbyDatabaseAdapter
                       "choose a mapping your self."
         throw new UnsupportedColumnTypeException(message)
       }
+      case BigintType =>
+        new DefaultBigintColumnDefinition(column_name, options)
       case CharType =>
         new DefaultCharColumnDefinition(column_name, options)
       case IntegerType =>

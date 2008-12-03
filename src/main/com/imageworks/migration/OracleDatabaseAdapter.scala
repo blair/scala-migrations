@@ -48,6 +48,8 @@ class OracleDatabaseAdapter
                       "choose a mapping your self."
         throw new UnsupportedColumnTypeException(message)
       }
+      case BigintType =>
+        new OracleIntegerColumnDefinition(column_name, options)
       case CharType =>
         new DefaultCharColumnDefinition(column_name, options)
       case IntegerType =>

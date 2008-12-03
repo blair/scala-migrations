@@ -24,6 +24,13 @@ class TableDefinition(adapter : DatabaseAdapter)
   }
 
   final
+  def bigint(name : String,
+             options: ColumnOption*) : TableDefinition =
+  {
+    column(name, BigintType, options : _*)
+  }
+
+  final
   def boolean(name : String,
               options: ColumnOption*) : TableDefinition =
   {

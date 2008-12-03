@@ -212,6 +212,15 @@ class ColumnDefinition(name : String,
   def column_sql(t : String) : String = column_sql(t, limit)
 }
 
+class DefaultBigintColumnDefinition(name : String,
+                                    options : List[ColumnOption])
+  extends ColumnDefinition(name, options)
+{
+  check_for_default
+
+  val sql = "BIGINT"
+}
+
 class DefaultCharColumnDefinition(name : String,
                                   options : List[ColumnOption])
   extends ColumnDefinition(name, options)
