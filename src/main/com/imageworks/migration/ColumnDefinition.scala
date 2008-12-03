@@ -240,16 +240,6 @@ class DefaultIntegerColumnDefinition(name : String,
   val sql = "INTEGER"
 }
 
-class DefaultVarcharColumnDefinition(name : String,
-                                     options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
-{
-  check_for_limit
-  check_for_default
-
-  val sql = column_sql("VARCHAR")
-}
-
 class DefaultTimestampColumnDefinition(name : String,
                                        options : List[ColumnOption])
   extends ColumnDefinition(name, options)
@@ -258,4 +248,14 @@ class DefaultTimestampColumnDefinition(name : String,
   check_for_default
 
   val sql = column_sql("TIMESTAMP")
+}
+
+class DefaultVarcharColumnDefinition(name : String,
+                                     options : List[ColumnOption])
+  extends ColumnDefinition(name, options)
+{
+  check_for_limit
+  check_for_default
+
+  val sql = column_sql("VARCHAR")
 }
