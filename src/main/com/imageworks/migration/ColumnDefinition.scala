@@ -39,7 +39,7 @@ class ColumnDefinition(name : String,
    * If a limit is specified for the column.
    */
   private
-  var limit_ : Option[Int] = None
+  var limit_ : Option[String] = None
 
   /**
    * Get the limit for the column.
@@ -62,8 +62,8 @@ class ColumnDefinition(name : String,
         logger.warn("Redefining the limit for the '{}' column " +
                     "from '{}' to '{}'.",
                     Array[AnyRef](name,
-                                  scala.Predef.int2Integer(limit_.get),
-                                  scala.Predef.int2Integer(length)))
+                                  limit_.get,
+                                  length))
       }
       limit_ = Some(length)
     }

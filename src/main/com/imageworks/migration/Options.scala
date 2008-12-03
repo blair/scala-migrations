@@ -46,14 +46,30 @@ case class Default(value : String)
 /**
  * A limit on the size of a column type.
  */
-case class Limit(length : Int)
+case class Limit(expr : String)
   extends ColumnOption
 {
-  if (length < 0) {
-    val message = "The limit in " +
-                  this +
-                  " must be greater than or equal to one."
-    throw new IllegalArgumentException(message)
+  try {
+    val length = Integer.parseInt(expr)
+    if (length < 0) {
+      val message = "The limit in " +
+                    this +
+                    " must be greater than or equal to one."
+      throw new IllegalArgumentException(message)
+    }
+  }
+  catch {
+    case _ : NumberFormatException =>
+  }
+}
+
+/**
+ * Limit companion object allowing Limits to be constructed with
+ * integer values.
+ */
+object Limit {
+  def apply(i : Int) : Limit = {
+    Limit(i.toString)
   }
 }
 
