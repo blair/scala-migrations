@@ -56,6 +56,8 @@ class OracleDatabaseAdapter
         new OracleVarbinaryColumnDefinition(column_name, options)
       case VarcharType =>
         new OracleVarcharColumnDefinition(column_name, options)
+      case TimestampType =>
+        new DefaultTimestampColumnDefinition(column_name, options)
     }
   }
 

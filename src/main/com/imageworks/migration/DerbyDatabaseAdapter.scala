@@ -19,6 +19,16 @@ class DerbyVarbinaryColumnDefinition(name : String,
   val sql = column_sql("VARCHAR") + " FOR BIT DATA"
 }
 
+class DerbyTimestampColumnDefinition(name : String,
+                                     options : List[ColumnOption])
+  extends ColumnDefinition(name, options)
+{
+  // Derby does not take a size specifier for TIMESTAMP types.
+  check_for_default
+
+  val sql = column_sql("TIMESTAMP")
+}
+
 class DerbyDatabaseAdapter
   extends DatabaseAdapter
 {
@@ -40,6 +50,8 @@ class DerbyDatabaseAdapter
         new DerbyVarbinaryColumnDefinition(column_name, options)
       case VarcharType =>
         new DefaultVarcharColumnDefinition(column_name, options)
+      case TimestampType =>
+        new DerbyTimestampColumnDefinition(column_name, options)
     }
   }
 

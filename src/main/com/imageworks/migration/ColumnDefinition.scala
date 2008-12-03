@@ -231,3 +231,13 @@ class DefaultVarcharColumnDefinition(name : String,
 
   val sql = column_sql("VARCHAR")
 }
+
+class DefaultTimestampColumnDefinition(name : String,
+                                       options : List[ColumnOption])
+  extends ColumnDefinition(name, options)
+{
+  check_for_limit
+  check_for_default
+
+  val sql = column_sql("TIMESTAMP")
+}

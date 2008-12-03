@@ -15,7 +15,7 @@ class Migrate_20081118201742_CreatePeopleTable
       t.varchar("first_name", Limit(255), NotNull)
       t.char("middle_initial", Limit(1), Nullable)
       t.varchar("last_name", Limit(255), NotNull)
-      t.integer("age", Limit(3), NotNull)
+      t.timestamp("birthdate", Limit(0), NotNull)
       t.integer("vacation_days", NotNull, Default("0"))
     }
 

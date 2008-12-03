@@ -57,4 +57,11 @@ class TableDefinition(adapter : DatabaseAdapter)
   {
     column(name, VarcharType, options : _*)
   }
+
+  final
+  def timestamp(name : String,
+                options: ColumnOption*) : TableDefinition =
+  {
+    column(name, TimestampType, options : _*)
+  }
 }
