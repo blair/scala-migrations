@@ -45,6 +45,13 @@ class TableDefinition(adapter : DatabaseAdapter)
   }
 
   final
+  def timestamp(name : String,
+                options: ColumnOption*) : TableDefinition =
+  {
+    column(name, TimestampType, options : _*)
+  }
+
+  final
   def varbinary(name : String,
                 options: ColumnOption*) : TableDefinition =
   {
@@ -56,12 +63,5 @@ class TableDefinition(adapter : DatabaseAdapter)
               options: ColumnOption*) : TableDefinition =
   {
     column(name, VarcharType, options : _*)
-  }
-
-  final
-  def timestamp(name : String,
-                options: ColumnOption*) : TableDefinition =
-  {
-    column(name, TimestampType, options : _*)
   }
 }
