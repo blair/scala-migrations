@@ -169,7 +169,7 @@ class ColumnDefinition(name : String,
                .append(sql)
 
     if (default.isDefined) {
-      sb.append(' ')
+      sb.append(" DEFAULT ")
       sb.append(default.get)
     }
 
@@ -197,6 +197,7 @@ class DefaultCharColumnDefinition(name : String,
   extends ColumnDefinition(name, options)
 {
   check_for_limit
+  check_for_default
 
   val sql = if (limit.isDefined) {
               "CHAR(" + limit.get + ")"
@@ -211,6 +212,7 @@ class DefaultVarcharColumnDefinition(name : String,
   extends ColumnDefinition(name, options)
 {
   check_for_limit
+  check_for_default
 
   val sql = if (limit.isDefined) {
               "VARCHAR(" + limit.get + ")"

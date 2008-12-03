@@ -4,6 +4,8 @@ class DerbyIntegerColumnDefinition(name : String,
                                    options : List[ColumnOption])
   extends ColumnDefinition(name, options)
 {
+  check_for_default
+
   val sql = "INTEGER"
 }
 
@@ -12,6 +14,7 @@ class DerbyVarbinaryColumnDefinition(name : String,
   extends ColumnDefinition(name, options)
 {
   check_for_limit
+  check_for_default
 
   val sql = if (limit.isDefined) {
               "VARCHAR(" + limit.get + ") FOR BIT DATA"

@@ -5,6 +5,7 @@ class OracleIntegerColumnDefinition(name : String,
   extends ColumnDefinition(name, options)
 {
   check_for_limit
+  check_for_default
 
   val sql = if (limit.isDefined) {
               "NUMBER(" + limit.get + ")"
@@ -19,6 +20,7 @@ class OracleVarbinaryColumnDefinition(name : String,
   extends ColumnDefinition(name, options)
 {
   check_for_limit
+  check_for_default
 
   if (! limit.isDefined) {
     val message = "In Oracle, a RAW column must always specify its size."
@@ -33,6 +35,7 @@ class OracleVarcharColumnDefinition(name : String,
   extends ColumnDefinition(name, options)
 {
   check_for_limit
+  check_for_default
 
   val sql = if (limit.isDefined) {
               "VARCHAR2(" + limit.get + ")"
