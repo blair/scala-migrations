@@ -222,6 +222,15 @@ class DefaultCharColumnDefinition(name : String,
   val sql = column_sql("CHAR")
 }
 
+class DefaultIntegerColumnDefinition(name : String,
+                                     options : List[ColumnOption])
+  extends ColumnDefinition(name, options)
+{
+  check_for_default
+
+  val sql = "INTEGER"
+}
+
 class DefaultVarcharColumnDefinition(name : String,
                                      options : List[ColumnOption])
   extends ColumnDefinition(name, options)

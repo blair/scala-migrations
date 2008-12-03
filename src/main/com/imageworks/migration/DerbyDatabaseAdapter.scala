@@ -1,14 +1,5 @@
 package com.imageworks.migration
 
-class DerbyIntegerColumnDefinition(name : String,
-                                   options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
-{
-  check_for_default
-
-  val sql = "INTEGER"
-}
-
 class DerbyTimestampColumnDefinition(name : String,
                                      options : List[ColumnOption])
   extends ColumnDefinition(name, options)
@@ -45,7 +36,7 @@ class DerbyDatabaseAdapter
       case CharType =>
         new DefaultCharColumnDefinition(column_name, options)
       case IntegerType =>
-        new DerbyIntegerColumnDefinition(column_name, options)
+        new DefaultIntegerColumnDefinition(column_name, options)
       case TimestampType =>
         new DerbyTimestampColumnDefinition(column_name, options)
       case VarbinaryType =>
