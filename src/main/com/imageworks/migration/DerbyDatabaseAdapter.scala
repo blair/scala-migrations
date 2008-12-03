@@ -9,16 +9,6 @@ class DerbyIntegerColumnDefinition(name : String,
   val sql = "INTEGER"
 }
 
-class DerbyVarbinaryColumnDefinition(name : String,
-                                     options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
-{
-  check_for_limit
-  check_for_default
-
-  val sql = column_sql("VARCHAR") + " FOR BIT DATA"
-}
-
 class DerbyTimestampColumnDefinition(name : String,
                                      options : List[ColumnOption])
   extends ColumnDefinition(name, options)
@@ -27,6 +17,16 @@ class DerbyTimestampColumnDefinition(name : String,
   check_for_default
 
   val sql = column_sql("TIMESTAMP")
+}
+
+class DerbyVarbinaryColumnDefinition(name : String,
+                                     options : List[ColumnOption])
+  extends ColumnDefinition(name, options)
+{
+  check_for_limit
+  check_for_default
+
+  val sql = column_sql("VARCHAR") + " FOR BIT DATA"
 }
 
 class DerbyDatabaseAdapter
@@ -46,12 +46,12 @@ class DerbyDatabaseAdapter
         new DefaultCharColumnDefinition(column_name, options)
       case IntegerType =>
         new DerbyIntegerColumnDefinition(column_name, options)
+      case TimestampType =>
+        new DerbyTimestampColumnDefinition(column_name, options)
       case VarbinaryType =>
         new DerbyVarbinaryColumnDefinition(column_name, options)
       case VarcharType =>
         new DefaultVarcharColumnDefinition(column_name, options)
-      case TimestampType =>
-        new DerbyTimestampColumnDefinition(column_name, options)
     }
   }
 
