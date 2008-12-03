@@ -45,6 +45,13 @@ class TableDefinition(adapter : DatabaseAdapter)
   }
 
   final
+  def decimal(name: String,
+              options: ColumnOption*) : TableDefinition =
+  {
+    column(name, DecimalType, options : _*)
+  }
+
+  final
   def integer(name : String,
               options: ColumnOption*) : TableDefinition =
   {

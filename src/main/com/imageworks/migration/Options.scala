@@ -117,10 +117,34 @@ case class OnUpdate(action : ForeignKeyConstraintAction)
   extends ForeignKeyOption
 
 /**
+ * Specify the precision for a DECIMAL column.
+ */
+case class Precision(value : Int)
+  extends ColumnOption
+{
+  if (value < 1) {
+    val message = "The precision cannot be less than one."
+    throw new IllegalArgumentException(message)
+  }
+}
+
+/**
  * Specify that the column is a primary key.
  */
 case object PrimaryKey
   extends ColumnOption
+
+/**
+ * Specify the scale for a DECIMAL column.
+ */
+case class Scale(value : Int)
+  extends ColumnOption
+{
+  if (value < 0) {
+    val message = "The scale cannot be less than zero."
+    throw new IllegalArgumentException(message)
+  }
+}
 
 /**
  * Specify that the index on the requires that all the values indexed

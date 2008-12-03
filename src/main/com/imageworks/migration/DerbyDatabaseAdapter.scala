@@ -37,6 +37,8 @@ class DerbyDatabaseAdapter
         new DefaultBigintColumnDefinition(column_name, options)
       case CharType =>
         new DefaultCharColumnDefinition(column_name, options)
+      case DecimalType =>
+        new DefaultDecimalColumnDefinition(column_name, options)
       case IntegerType =>
         new DefaultIntegerColumnDefinition(column_name, options)
       case TimestampType =>

@@ -1,5 +1,12 @@
 package com.imageworks.migration
 
+class OracleDecimalColumnDefinition(name : String,
+                                    options : List[ColumnOption])
+  extends AbstractDecimalColumnDefinition(name, options)
+{
+  val decimal_sql_name = "NUMBER"
+}
+
 class OracleIntegerColumnDefinition(name : String,
                                     options : List[ColumnOption])
   extends ColumnDefinition(name, options)
@@ -52,6 +59,8 @@ class OracleDatabaseAdapter
         new OracleIntegerColumnDefinition(column_name, options)
       case CharType =>
         new DefaultCharColumnDefinition(column_name, options)
+      case DecimalType =>
+        new OracleDecimalColumnDefinition(column_name, options)
       case IntegerType =>
         new OracleIntegerColumnDefinition(column_name, options)
       case TimestampType =>

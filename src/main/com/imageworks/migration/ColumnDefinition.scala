@@ -117,6 +117,70 @@ class ColumnDefinition(name : String,
   }
 
   /**
+   * The precision for the column, used for DECIMAL and NUMERIC column
+   * types.
+   */
+  private
+  var precision_ : Option[Int] = None
+
+  /**
+   * Get the precision for the column.
+   */
+  def precision = precision_
+
+  /**
+   * Look for a Precision column option.
+   */
+  protected
+  def check_for_precision =
+  {
+    for (option @ Precision(value) <- options) {
+      options -= option
+
+      if (precision_.isDefined && precision_.get != value) {
+        logger.warn("Redefining the precision for the '{}' column " +
+                    "from '{}' to '{}'.",
+                    Array[AnyRef](name,
+                                  java.lang.Integer.valueOf(precision_.get),
+                                  java.lang.Integer.valueOf(value)))
+      }
+      precision_ = Some(value)
+    }
+  }
+
+  /**
+   * The scale for the column, used for DECIMAL and NUMERIC column
+   * types.
+   */
+  private
+  var scale_ : Option[Int] = None
+
+  /**
+   * Get the scale for the column.
+   */
+  def scale = scale_
+
+  /**
+   * Look for a Scale column option.
+   */
+  protected
+  def check_for_scale =
+  {
+    for (option @ Scale(value) <- options) {
+      options -= option
+
+      if (scale_.isDefined && scale_.get != value) {
+        logger.warn("Redefining the scale for the '{}' column " +
+                    "from '{}' to '{}'.",
+                    Array[AnyRef](name,
+                                  java.lang.Integer.valueOf(scale_.get),
+                                  java.lang.Integer.valueOf(value)))
+      }
+      scale_ = Some(value)
+    }
+  }
+
+  /**
    * If the column is unique.
    */
   private
@@ -212,6 +276,48 @@ class ColumnDefinition(name : String,
   def column_sql(t : String) : String = column_sql(t, limit)
 }
 
+/**
+ * This class is an abstract class to handle DECIMAL and NUMERIC
+ * column types.
+ */
+abstract class AbstractDecimalColumnDefinition(name : String,
+                                               options : List[ColumnOption])
+  extends ColumnDefinition(name, options)
+{
+  /**
+   * Concrete subclasses must define this to the name of the DECIMAL
+   * or NUMERIC data type specific for the database.
+   */
+  def decimal_sql_name : String
+
+  check_for_default
+  check_for_precision
+  check_for_scale
+
+  if (! precision.isDefined && scale.isDefined) {
+    val message = "Cannot specify a scale without also specifying a " +
+                  "precision."
+    throw new IllegalArgumentException(message)
+  }
+
+  val sql = (precision, scale) match {
+              case (None, None) => {
+                decimal_sql_name
+              }
+              case (Some(p), None) => {
+                decimal_sql_name + "(" + p + ")"
+              }
+              case (Some(p), Some(s)) => {
+                decimal_sql_name + "(" + p + ", " + s + ")"
+              }
+              case (None, Some(_)) => {
+                val message = "Having a scale with no precision should " +
+                              "never occur."
+                throw new java.lang.RuntimeException(message)
+              }
+            }
+}
+
 class DefaultBigintColumnDefinition(name : String,
                                     options : List[ColumnOption])
   extends ColumnDefinition(name, options)
@@ -229,6 +335,13 @@ class DefaultCharColumnDefinition(name : String,
   check_for_default
 
   val sql = column_sql("CHAR")
+}
+
+class DefaultDecimalColumnDefinition(name : String,
+                                     options : List[ColumnOption])
+  extends AbstractDecimalColumnDefinition(name, options)
+{
+  val decimal_sql_name = "DECIMAL"
 }
 
 class DefaultIntegerColumnDefinition(name : String,

@@ -18,6 +18,7 @@ class Migrate_20081118201742_CreatePeopleTable
       t.timestamp("birthdate", Limit(0), NotNull)
       t.integer("vacation_days", NotNull, Default("0"))
       t.bigint("hire_time_micros", NotNull)
+      t.decimal("salary", Precision(7), Scale(2))
     }
 
     add_index("people", "ssn", Unique)

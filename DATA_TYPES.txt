@@ -1,0 +1,55 @@
+This file describes the datatypes supported by the Scala Migrations
+package and why some things are implemented the way they are.
+
+NUMERIC and DECIMAL
+==================
+
+There is a minor difference in the definition of the NUMERIC and
+DECIMAL types according to the SQL 1992 standard downloaded from
+
+http://www.contrib.andrew.cmu.edu/~shadow/sql/sql1992.txt
+
+  """
+  17) NUMERIC specifies the data type exact numeric, with the decimal
+      precision and scale specified by the <precision> and <scale>.
+
+  18) DECIMAL specifies the data type exact numeric, with the decimal
+      scale specified by the <scale> and the implementation-defined
+      decimal precision equal to or greater than the value of the
+      specified <precision>.
+  """
+
+However, in practice, all databases I looked at implement them
+identically.
+
+  *) Derby
+
+     "NUMERIC is a synonym for DECIMAL and behaves the same way. See
+     DECIMAL data type."
+
+     http://db.apache.org/derby/docs/10.4/ref/rrefsqlj12362.html
+     http://db.apache.org/derby/docs/10.4/ref/rrefsqlj15260.html
+
+  *) Mysql
+
+     "NUMERIC implemented as DECIMAL."
+
+     http://dev.mysql.com/doc/refman/5.1/en/numeric-types.html
+
+  *) Oracle
+
+     Only has the NUMBER type.
+
+     http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14200/sql_elements001.htm
+
+     http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14200/sql_elements001.htm#sthref218
+
+  *) PostgreSQL
+
+     "The types decimal and numeric are equivalent. Both types are
+     part of the SQL standard."
+
+     The docs use NUMERIC more and list DECIMAL as an alias.
+
+     http://www.postgresql.org/docs/8.3/interactive/datatype-numeric.html
+     http://www.postgresql.org/docs/8.3/interactive/datatype.html#DATATYPE-TABLE
