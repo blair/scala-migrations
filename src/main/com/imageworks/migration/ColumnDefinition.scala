@@ -21,7 +21,7 @@ class ColumnDefinition(name : String,
    * will remove the default option from the option list.
    */
   protected
-  def check_for_default =
+  def check_for_default() =
   {
     for (option @ Default(value) <- options) {
       options -= option
@@ -53,7 +53,7 @@ class ColumnDefinition(name : String,
    * option from the option list.
    */
   protected
-  def check_for_limit =
+  def check_for_limit() =
   {
     for (option @ Limit(length) <- options) {
       options -= option
@@ -132,7 +132,7 @@ class ColumnDefinition(name : String,
    * Look for a Precision column option.
    */
   protected
-  def check_for_precision =
+  def check_for_precision() =
   {
     for (option @ Precision(value) <- options) {
       options -= option
@@ -164,7 +164,7 @@ class ColumnDefinition(name : String,
    * Look for a Scale column option.
    */
   protected
-  def check_for_scale =
+  def check_for_scale() =
   {
     for (option @ Scale(value) <- options) {
       options -= option
@@ -290,9 +290,9 @@ abstract class AbstractDecimalColumnDefinition(name : String,
    */
   def decimal_sql_name : String
 
-  check_for_default
-  check_for_precision
-  check_for_scale
+  check_for_default()
+  check_for_precision()
+  check_for_scale()
 
   if (! precision.isDefined && scale.isDefined) {
     val message = "Cannot specify a scale without also specifying a " +
@@ -322,7 +322,7 @@ class DefaultBigintColumnDefinition(name : String,
                                     options : List[ColumnOption])
   extends ColumnDefinition(name, options)
 {
-  check_for_default
+  check_for_default()
 
   val sql = "BIGINT"
 }
@@ -331,8 +331,8 @@ class DefaultCharColumnDefinition(name : String,
                                   options : List[ColumnOption])
   extends ColumnDefinition(name, options)
 {
-  check_for_limit
-  check_for_default
+  check_for_default()
+  check_for_limit()
 
   val sql = column_sql("CHAR")
 }
@@ -348,7 +348,7 @@ class DefaultIntegerColumnDefinition(name : String,
                                      options : List[ColumnOption])
   extends ColumnDefinition(name, options)
 {
-  check_for_default
+  check_for_default()
 
   val sql = "INTEGER"
 }
@@ -357,8 +357,8 @@ class DefaultTimestampColumnDefinition(name : String,
                                        options : List[ColumnOption])
   extends ColumnDefinition(name, options)
 {
-  check_for_limit
-  check_for_default
+  check_for_default()
+  check_for_limit()
 
   val sql = column_sql("TIMESTAMP")
 }
@@ -367,8 +367,8 @@ class DefaultVarcharColumnDefinition(name : String,
                                      options : List[ColumnOption])
   extends ColumnDefinition(name, options)
 {
-  check_for_limit
-  check_for_default
+  check_for_default()
+  check_for_limit()
 
   val sql = column_sql("VARCHAR")
 }

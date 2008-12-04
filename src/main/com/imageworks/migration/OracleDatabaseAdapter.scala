@@ -35,7 +35,7 @@ class OracleIntegerColumnDefinition(name : String,
                                     options : List[ColumnOption])
   extends ColumnDefinition(name, options)
 {
-  check_for_default
+  check_for_default()
 
   val sql = "NUMBER(10, 0)"
 }
@@ -44,8 +44,8 @@ class OracleVarbinaryColumnDefinition(name : String,
                                       options : List[ColumnOption])
   extends ColumnDefinition(name, options)
 {
-  check_for_limit
-  check_for_default
+  check_for_default()
+  check_for_limit()
 
   if (! limit.isDefined) {
     val message = "In Oracle, a RAW column must always specify its size."
@@ -59,8 +59,8 @@ class OracleVarcharColumnDefinition(name : String,
                                     options : List[ColumnOption])
   extends ColumnDefinition(name, options)
 {
-  check_for_limit
-  check_for_default
+  check_for_default()
+  check_for_limit()
 
   val sql = column_sql("VARCHAR2")
 }
