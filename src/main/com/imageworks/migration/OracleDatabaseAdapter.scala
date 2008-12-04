@@ -7,14 +7,37 @@ class OracleDecimalColumnDefinition(name : String,
   val decimal_sql_name = "NUMBER"
 }
 
+/**
+ * Map the INTEGER SQL type to a NUMBER(10, 0).
+ *
+ * A few other databases, such as Derby, MySQL and PostgreSQL, treat
+ * INTEGER as a 4-byte signed integer type.  On Oracle a NUMBER(10, 0)
+ * is large enough to store any integers from -2147483648 to
+ * 2147483647 but not any integers with more digits.  A NUMBER(10, 0)
+ * does allow a larger range of values than the other databases, from
+ * -9999999999 to 9999999999, but this seems like an acceptable
+ * solution without using a CHECK constraint.
+ *
+ * This behavior is different than Oracle's default.  If a column is
+ * defined using "INTEGER" and not a "NUMBER", Oracle uses a
+ * NUMBER(38) to store it:
+ *
+ * http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14200/sql_elements001.htm#sthref218
+ *
+ * Using a NUMBER(10, 0) helps ensure the compatibility of any code
+ * running against an Oracle database to such that is does not assume
+ * it can use 38-digit integer values in case the data needs to be
+ * exported to another database or if the code needs to work with
+ * other databases.  Columns wishing to use a NUMBER(38) should use a
+ * DecimalType column.
+ */
 class OracleIntegerColumnDefinition(name : String,
                                     options : List[ColumnOption])
   extends ColumnDefinition(name, options)
 {
-  check_for_limit
   check_for_default
 
-  val sql = column_sql("NUMBER", limit.orElse(Some("38,0")))
+  val sql = "NUMBER(10, 0)"
 }
 
 class OracleVarbinaryColumnDefinition(name : String,

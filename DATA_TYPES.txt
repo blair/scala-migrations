@@ -1,8 +1,28 @@
 This file describes the datatypes supported by the Scala Migrations
 package and why some things are implemented the way they are.
 
+INTEGER
+-------
+
+Oracle does not have an INTEGER SQL type comparable to other
+databases, such such as Derby, MySQL and PostgreSQL, which use a
+4-byte integer to store the value and limiting the integers that can
+be inserted from -2147483648 to 2147483647.
+
+If a column is defined in Oracle using "INTEGER" it uses a NUMBER(38)
+to store it:
+
+http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14200/sql_elements001.htm#sthref218
+
+A Migration defining an integer column on Oracle uses a NUMBER(10, 0).
+This is large enough to store any 4-byte integers from -2147483648 to
+2147483647 but not any integers with more digits.  A NUMBER(10, 0)
+does allow a larger range of values than the other databases, from
+-9999999999 to 9999999999, but this seems like an acceptable solution
+without using a CHECK constraint on the column.
+
 NUMERIC and DECIMAL
-==================
+------------------
 
 There is a minor difference in the definition of the NUMERIC and
 DECIMAL types according to the SQL 1992 standard downloaded from
