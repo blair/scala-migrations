@@ -14,6 +14,16 @@ class ColumnDefinition
   val logger = LoggerFactory.getLogger(this.getClass)
 
   /**
+   * Adapter associated with this column definition.
+   */
+  protected[migration] var adapter : DatabaseAdapter = _
+
+  /**
+   * Table name associated with this column definition.
+   */
+  protected[migration] var table_name : String = _
+
+  /**
    * Column name.
    */
   protected[migration] var column_name : String = _

@@ -143,7 +143,7 @@ abstract class Migration
                    options : TableOption*)
                   (body : TableDefinition => Unit) : Unit =
   {
-    val table_definition = new TableDefinition(adapter)
+    val table_definition = new TableDefinition(adapter, table_name)
 
     body(table_definition)
 

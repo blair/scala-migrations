@@ -3,18 +3,22 @@ package com.imageworks.migration
 abstract
 class DatabaseAdapter
 {
-  def new_column_definition(column_name : String,
+  def new_column_definition(table_name : String,
+                            column_name : String,
                             column_type : SqlType,
                             options : List[ColumnOption]) : ColumnDefinition
 
   protected
-  def column_definition_factory(column_name : String,
+  def column_definition_factory(table_name : String,
+                                column_name : String,
                                 column_type : SqlType,
                                 options : List[ColumnOption])
                                (f : Function1[SqlType, ColumnDefinition])
     : ColumnDefinition = {
     val d = f(column_type)
 
+    d.adapter = this
+    d.table_name = table_name
     d.column_name = column_name
     d.options = options
 

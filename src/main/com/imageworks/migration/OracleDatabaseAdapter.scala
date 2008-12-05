@@ -63,11 +63,12 @@ class OracleVarcharColumnDefinition
 class OracleDatabaseAdapter
   extends DatabaseAdapter
 {
-  def new_column_definition(column_name : String,
+  def new_column_definition(table_name : String,
+                            column_name : String,
                             column_type : SqlType,
                             options : List[ColumnOption]) : ColumnDefinition =
   {
-    column_definition_factory(column_name, column_type, options) {
+    column_definition_factory(table_name, column_name, column_type, options) {
       case BooleanType => {
         val message = "Oracle does not support a boolean type, you must " +
                       "choose a mapping your self."

@@ -1,6 +1,7 @@
 package com.imageworks.migration
 
-class TableDefinition(adapter : DatabaseAdapter)
+class TableDefinition(adapter : DatabaseAdapter,
+                      table_name : String)
 {
   private
   val columns = new scala.collection.mutable.ListBuffer[ColumnDefinition]
@@ -16,7 +17,8 @@ class TableDefinition(adapter : DatabaseAdapter)
              column_type : SqlType,
              options : ColumnOption*) : TableDefinition =
   {
-    val column = adapter.new_column_definition(name,
+    val column = adapter.new_column_definition(table_name,
+                                               name,
                                                column_type,
                                                options.toList)
     columns += column
