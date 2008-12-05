@@ -5,7 +5,7 @@ class DatabaseAdapter
 {
   def new_column_definition(column_name : String,
                             column_type : SqlType,
-                            options: List[ColumnOption]) : ColumnDefinition
+                            options : List[ColumnOption]) : ColumnDefinition
 
   def quote_column_name(column_name : String) : String =
   {
