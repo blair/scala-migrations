@@ -15,7 +15,7 @@ class DatabaseAdapter
     : ColumnDefinition = {
     val d = f(column_type)
 
-    d.name = column_name
+    d.column_name = column_name
     d.options = options
 
     d.initialize()

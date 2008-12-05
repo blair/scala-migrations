@@ -16,7 +16,7 @@ class ColumnDefinition
   /**
    * Column name.
    */
-  protected[migration] var name : String = _
+  protected[migration] var column_name : String = _
 
   /**
    * Column options.
@@ -64,7 +64,7 @@ class ColumnDefinition
       if (default.isDefined && default.get != value) {
         logger.warn("Redefining the default value for the '{}' column " +
                     "from '{}' to '{}'.",
-                    Array[AnyRef](name, default.get, value))
+                    Array[AnyRef](column_name, default.get, value))
       }
       default = Some(value)
     }
@@ -96,7 +96,7 @@ class ColumnDefinition
       if (limit_.isDefined && limit_.get != length) {
         logger.warn("Redefining the limit for the '{}' column " +
                     "from '{}' to '{}'.",
-                    Array[AnyRef](name,
+                    Array[AnyRef](column_name,
                                   limit_.get,
                                   length))
       }
@@ -125,7 +125,7 @@ class ColumnDefinition
         if (n1.isDefined && n1 != n2) {
           logger.warn("Redefining the '{}' column's nullability " +
                       "from {} to {}.",
-                      Array[AnyRef](name,
+                      Array[AnyRef](column_name,
                                     if (n1.get) "NOT NULL" else "NULL",
                                     if (n2.get) "NOT NULL" else "NULL"))
         }
@@ -177,7 +177,7 @@ class ColumnDefinition
       if (precision_.isDefined && precision_.get != value) {
         logger.warn("Redefining the precision for the '{}' column " +
                     "from '{}' to '{}'.",
-                    Array[AnyRef](name,
+                    Array[AnyRef](column_name,
                                   java.lang.Integer.valueOf(precision_.get),
                                   java.lang.Integer.valueOf(value)))
       }
@@ -209,7 +209,7 @@ class ColumnDefinition
       if (scale_.isDefined && scale_.get != value) {
         logger.warn("Redefining the scale for the '{}' column " +
                     "from '{}' to '{}'.",
-                    Array[AnyRef](name,
+                    Array[AnyRef](column_name,
                                   java.lang.Integer.valueOf(scale_.get),
                                   java.lang.Integer.valueOf(value)))
       }
@@ -244,7 +244,7 @@ class ColumnDefinition
     if (! options.isEmpty) {
       logger.warn("The following options for the '{}' column are " +
                   "unused: {}.",
-                  name,
+                  column_name,
                   options)
     }
 
@@ -266,7 +266,7 @@ class ColumnDefinition
     }
 
     val sb = new java.lang.StringBuilder(512)
-               .append(name)
+               .append(column_name)
                .append(' ')
                .append(sql)
 
