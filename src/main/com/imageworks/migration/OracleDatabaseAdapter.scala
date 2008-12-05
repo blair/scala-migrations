@@ -1,8 +1,7 @@
 package com.imageworks.migration
 
-class OracleDecimalColumnDefinition(name : String,
-                                    options : List[ColumnOption])
-  extends AbstractDecimalColumnDefinition(name, options)
+class OracleDecimalColumnDefinition
+  extends AbstractDecimalColumnDefinition
 {
   val decimal_sql_name = "NUMBER"
 }
@@ -31,38 +30,34 @@ class OracleDecimalColumnDefinition(name : String,
  * other databases.  Columns wishing to use a NUMBER(38) should use a
  * DecimalType column.
  */
-class OracleIntegerColumnDefinition(name : String,
-                                    options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
+class OracleIntegerColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsDefault
 {
-  check_for_default()
-
   val sql = "NUMBER(10, 0)"
 }
 
-class OracleVarbinaryColumnDefinition(name : String,
-                                      options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
+class OracleVarbinaryColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsLimit
+  with ColumnSupportsDefault
 {
-  check_for_default()
-  check_for_limit()
+  def sql = {
+    if (! limit.isDefined) {
+      val message = "In Oracle, a RAW column must always specify its size."
+      throw new IllegalArgumentException(message)
+    }
 
-  if (! limit.isDefined) {
-    val message = "In Oracle, a RAW column must always specify its size."
-    throw new IllegalArgumentException(message)
+    column_sql("RAW")
   }
-
-  val sql = column_sql("RAW")
 }
 
-class OracleVarcharColumnDefinition(name : String,
-                                    options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
+class OracleVarcharColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsLimit
+  with ColumnSupportsDefault
 {
-  check_for_default()
-  check_for_limit()
-
-  val sql = column_sql("VARCHAR2")
+  def sql = column_sql("VARCHAR2")
 }
 
 class OracleDatabaseAdapter
@@ -72,26 +67,26 @@ class OracleDatabaseAdapter
                             column_type : SqlType,
                             options : List[ColumnOption]) : ColumnDefinition =
   {
-    column_type match {
+    column_definition_factory(column_name, column_type, options) {
       case BooleanType => {
         val message = "Oracle does not support a boolean type, you must " +
                       "choose a mapping your self."
         throw new UnsupportedColumnTypeException(message)
       }
       case BigintType =>
-        new OracleIntegerColumnDefinition(column_name, options)
+        new OracleIntegerColumnDefinition
       case CharType =>
-        new DefaultCharColumnDefinition(column_name, options)
+        new DefaultCharColumnDefinition
       case DecimalType =>
-        new OracleDecimalColumnDefinition(column_name, options)
+        new OracleDecimalColumnDefinition
       case IntegerType =>
-        new OracleIntegerColumnDefinition(column_name, options)
+        new OracleIntegerColumnDefinition
       case TimestampType =>
-        new DefaultTimestampColumnDefinition(column_name, options)
+        new DefaultTimestampColumnDefinition
       case VarbinaryType =>
-        new OracleVarbinaryColumnDefinition(column_name, options)
+        new OracleVarbinaryColumnDefinition
       case VarcharType =>
-        new OracleVarcharColumnDefinition(column_name, options)
+        new OracleVarcharColumnDefinition
     }
   }
 

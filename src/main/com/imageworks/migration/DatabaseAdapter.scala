@@ -7,6 +7,22 @@ class DatabaseAdapter
                             column_type : SqlType,
                             options : List[ColumnOption]) : ColumnDefinition
 
+  protected
+  def column_definition_factory(column_name : String,
+                                column_type : SqlType,
+                                options : List[ColumnOption])
+                               (f : Function1[SqlType, ColumnDefinition])
+    : ColumnDefinition = {
+    val d = f(column_type)
+
+    d.name = column_name
+    d.options = options
+
+    d.initialize()
+
+    d
+  }
+
   def quote_column_name(column_name : String) : String =
   {
     column_name

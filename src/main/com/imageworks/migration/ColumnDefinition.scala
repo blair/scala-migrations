@@ -2,12 +2,26 @@ package com.imageworks.migration
 
 import org.slf4j.LoggerFactory
 
+trait ColumnSupportsDefault
+trait ColumnSupportsLimit
+trait ColumnSupportsPrecision
+trait ColumnSupportsScale
+
 abstract
-class ColumnDefinition(name : String,
-                       protected var options : List[ColumnOption])
+class ColumnDefinition
 {
   private final
   val logger = LoggerFactory.getLogger(this.getClass)
+
+  /**
+   * Column name.
+   */
+  protected[migration] var name : String = _
+
+  /**
+   * Column options.
+   */
+  protected[migration] var options : List[ColumnOption] = _
 
   /**
    * If a default is specified for the column.
@@ -16,11 +30,32 @@ class ColumnDefinition(name : String,
   var default : Option[String] = None
 
   /**
+   * Called after the above properties have been wired.
+   */
+  def initialize() : Unit = {
+    if (this.isInstanceOf[ColumnSupportsLimit]) {
+      check_for_limit()
+    }
+
+    if (this.isInstanceOf[ColumnSupportsDefault]) {
+      check_for_default()
+    }
+
+    if (this.isInstanceOf[ColumnSupportsPrecision]) {
+      check_for_precision()
+    }
+
+    if (this.isInstanceOf[ColumnSupportsScale]) {
+      check_for_scale()
+    }
+  }
+
+  /**
    * If a column can have a default value, then the derived class
    * should call this method to check for a specified default.  This
    * will remove the default option from the option list.
    */
-  protected
+  private
   def check_for_default() =
   {
     for (option @ Default(value) <- options) {
@@ -52,7 +87,7 @@ class ColumnDefinition(name : String,
    * this method to check for the limit.  This will remove the limit
    * option from the option list.
    */
-  protected
+  private
   def check_for_limit() =
   {
     for (option @ Limit(length) <- options) {
@@ -73,6 +108,7 @@ class ColumnDefinition(name : String,
    * If the column can or cannot be null.
    */
   private
+  lazy
   val not_null_opt : Option[Boolean] =
   {
     var n1 : Option[Boolean] = None
@@ -104,6 +140,7 @@ class ColumnDefinition(name : String,
    * If the column is a primary key.
    */
   private
+  lazy
   val is_primary_key : Boolean =
   {
     var is_primary = false
@@ -131,7 +168,7 @@ class ColumnDefinition(name : String,
   /**
    * Look for a Precision column option.
    */
-  protected
+  private
   def check_for_precision() =
   {
     for (option @ Precision(value) <- options) {
@@ -163,7 +200,7 @@ class ColumnDefinition(name : String,
   /**
    * Look for a Scale column option.
    */
-  protected
+  private
   def check_for_scale() =
   {
     for (option @ Scale(value) <- options) {
@@ -184,6 +221,7 @@ class ColumnDefinition(name : String,
    * If the column is unique.
    */
   private
+  lazy
   val is_unique : Boolean =
   {
     var unique = false
@@ -280,9 +318,11 @@ class ColumnDefinition(name : String,
  * This class is an abstract class to handle DECIMAL and NUMERIC
  * column types.
  */
-abstract class AbstractDecimalColumnDefinition(name : String,
-                                               options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
+abstract class AbstractDecimalColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsDefault
+  with ColumnSupportsPrecision
+  with ColumnSupportsScale
 {
   /**
    * Concrete subclasses must define this to the name of the DECIMAL
@@ -290,85 +330,72 @@ abstract class AbstractDecimalColumnDefinition(name : String,
    */
   def decimal_sql_name : String
 
-  check_for_default()
-  check_for_precision()
-  check_for_scale()
+  def sql = {
+    if (! precision.isDefined && scale.isDefined) {
+      val message = "Cannot specify a scale without also specifying a " +
+                    "precision."
+      throw new IllegalArgumentException(message)
+    }
 
-  if (! precision.isDefined && scale.isDefined) {
-    val message = "Cannot specify a scale without also specifying a " +
-                  "precision."
-    throw new IllegalArgumentException(message)
+    (precision, scale) match {
+      case (None, None) => {
+        decimal_sql_name
+      }
+      case (Some(p), None) => {
+        decimal_sql_name + "(" + p + ")"
+      }
+      case (Some(p), Some(s)) => {
+        decimal_sql_name + "(" + p + ", " + s + ")"
+      }
+      case (None, Some(_)) => {
+        val message = "Having a scale with no precision should " +
+                      "never occur."
+        throw new java.lang.RuntimeException(message)
+      }
+    }
   }
-
-  val sql = (precision, scale) match {
-              case (None, None) => {
-                decimal_sql_name
-              }
-              case (Some(p), None) => {
-                decimal_sql_name + "(" + p + ")"
-              }
-              case (Some(p), Some(s)) => {
-                decimal_sql_name + "(" + p + ", " + s + ")"
-              }
-              case (None, Some(_)) => {
-                val message = "Having a scale with no precision should " +
-                              "never occur."
-                throw new java.lang.RuntimeException(message)
-              }
-            }
 }
 
-class DefaultBigintColumnDefinition(name : String,
-                                    options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
+class DefaultBigintColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsDefault
 {
-  check_for_default()
-
   val sql = "BIGINT"
 }
 
-class DefaultCharColumnDefinition(name : String,
-                                  options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
+class DefaultCharColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsLimit
+  with ColumnSupportsDefault
 {
-  check_for_default()
-  check_for_limit()
-
-  val sql = column_sql("CHAR")
+  def sql = column_sql("CHAR")
 }
 
-class DefaultDecimalColumnDefinition(name : String,
-                                     options : List[ColumnOption])
-  extends AbstractDecimalColumnDefinition(name, options)
+class DefaultDecimalColumnDefinition
+  extends AbstractDecimalColumnDefinition
 {
   val decimal_sql_name = "DECIMAL"
 }
 
-class DefaultIntegerColumnDefinition(name : String,
-                                     options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
+class DefaultIntegerColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsDefault
 {
-  check_for_default()
-
   val sql = "INTEGER"
 }
 
-class DefaultTimestampColumnDefinition(name : String,
-                                       options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
+class DefaultTimestampColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsLimit
+  with ColumnSupportsDefault
 {
-  check_for_default()
-  check_for_limit()
-
-  val sql = column_sql("TIMESTAMP")
+  def sql = column_sql("TIMESTAMP")
 }
 
-class DefaultVarcharColumnDefinition(name : String,
-                                     options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
+class DefaultVarcharColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsLimit
+  with ColumnSupportsDefault
 {
-  check_for_default()
-  check_for_limit()
-
-  val sql = column_sql("VARCHAR")
+  def sql = column_sql("VARCHAR")
 }

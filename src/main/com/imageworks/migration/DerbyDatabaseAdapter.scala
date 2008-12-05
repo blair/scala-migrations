@@ -1,23 +1,19 @@
 package com.imageworks.migration
 
-class DerbyTimestampColumnDefinition(name : String,
-                                     options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
+class DerbyTimestampColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsDefault
 {
   // Derby does not take a size specifier for TIMESTAMP types.
-  check_for_default()
-
-  val sql = column_sql("TIMESTAMP")
+  def sql = column_sql("TIMESTAMP")
 }
 
-class DerbyVarbinaryColumnDefinition(name : String,
-                                     options : List[ColumnOption])
-  extends ColumnDefinition(name, options)
+class DerbyVarbinaryColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsLimit
+  with ColumnSupportsDefault
 {
-  check_for_default()
-  check_for_limit()
-
-  val sql = column_sql("VARCHAR") + " FOR BIT DATA"
+  def sql = column_sql("VARCHAR") + " FOR BIT DATA"
 }
 
 class DerbyDatabaseAdapter
@@ -27,26 +23,26 @@ class DerbyDatabaseAdapter
                             column_type : SqlType,
                             options : List[ColumnOption]) : ColumnDefinition =
   {
-    column_type match {
+    column_definition_factory(column_name, column_type, options) {
       case BooleanType => {
         val message = "Derby does not support a boolean type, you must " +
                       "choose a mapping your self."
         throw new UnsupportedColumnTypeException(message)
       }
       case BigintType =>
-        new DefaultBigintColumnDefinition(column_name, options)
+        new DefaultBigintColumnDefinition
       case CharType =>
-        new DefaultCharColumnDefinition(column_name, options)
+        new DefaultCharColumnDefinition
       case DecimalType =>
-        new DefaultDecimalColumnDefinition(column_name, options)
+        new DefaultDecimalColumnDefinition
       case IntegerType =>
-        new DefaultIntegerColumnDefinition(column_name, options)
+        new DefaultIntegerColumnDefinition
       case TimestampType =>
-        new DerbyTimestampColumnDefinition(column_name, options)
+        new DerbyTimestampColumnDefinition
       case VarbinaryType =>
-        new DerbyVarbinaryColumnDefinition(column_name, options)
+        new DerbyVarbinaryColumnDefinition
       case VarcharType =>
-        new DefaultVarcharColumnDefinition(column_name, options)
+        new DefaultVarcharColumnDefinition
     }
   }
 
