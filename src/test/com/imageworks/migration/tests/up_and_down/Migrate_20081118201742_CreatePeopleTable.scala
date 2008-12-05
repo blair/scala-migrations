@@ -18,7 +18,7 @@ class Migrate_20081118201742_CreatePeopleTable
       t.timestamp("birthdate", Limit(0), NotNull)
       t.integer("vacation_days", NotNull, Default("0"))
       t.bigint("hire_time_micros", NotNull)
-      t.decimal("salary", Precision(7), Scale(2))
+      t.decimal("salary", Precision(7), Scale(2), Check("salary > 0"))
     }
 
     add_index("people", "ssn", Unique)
@@ -27,10 +27,14 @@ class Migrate_20081118201742_CreatePeopleTable
                     references("location" -> "pk_location"),
                     OnDelete(Cascade),
                     OnUpdate(Restrict))
+
+    add_check(on("people" -> "vacation_days"),
+              "vacation_days >= 0")
   }
 
   def down : Unit =
   {
+    remove_check(on("people" -> "vacation_days"))
     remove_foreign_key(on("people" -> "pk_location"),
                        references("location" -> "pk_location"))
     remove_index("people", "ssn")

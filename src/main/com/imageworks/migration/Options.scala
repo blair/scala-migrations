@@ -28,6 +28,11 @@ sealed trait ForeignKeyOption
 sealed trait IndexOption
 
 /**
+ * The base trait for all check options.
+ */
+sealed trait CheckOption
+
+/**
  * The base trait for all table options.
  */
 sealed trait TableOption
@@ -80,6 +85,7 @@ object Limit {
 case class Name(name : String)
   extends ForeignKeyOption
   with IndexOption
+  with CheckOption
 {
   if (name eq null) {
     throw new IllegalArgumentException("The name cannot be null.")
@@ -89,6 +95,21 @@ case class Name(name : String)
     throw new IllegalArgumentException("The name cannot be empty.")
   }
 }
+
+/**
+ * Specify a check constraint on a column.
+ */
+case class Check(expr : String)
+  extends ColumnOption
+
+/**
+ * Specify a named check constraint on a column.
+ */
+case class NamedCheck(name : String, expr : String)
+  extends ColumnOption
+// NamedCheck cannot inherit from Check, it causes a compiler error.
+//   http://lampsvn.epfl.ch/trac/scala/ticket/425
+// & http://lampsvn.epfl.ch/trac/scala/ticket/816
 
 /**
  * Specify that the column's values must not be NULL.

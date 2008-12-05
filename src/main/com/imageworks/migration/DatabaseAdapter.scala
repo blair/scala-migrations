@@ -1,8 +1,13 @@
 package com.imageworks.migration
 
+import org.slf4j.LoggerFactory
+
 abstract
 class DatabaseAdapter
 {
+  private final
+  val logger = LoggerFactory.getLogger(this.getClass)
+
   def new_column_definition(table_name : String,
                             column_name : String,
                             column_type : SqlType,
@@ -168,4 +173,39 @@ class DatabaseAdapter
                         privileges : _*)
   }
 
+  /**
+   * Given a check constraint, create a name for it, using a Name() if it is
+   * provided in the options.
+   *
+   * @param on the table and columns the check contraint is on
+   * @options a varargs list of CheckOptions
+   * @return a Tuple2 with the caclulated name or the overriden name
+   *         from a Name and the remaining options
+   */
+  def generate_check_constraint_name(on : On,
+                                     options : CheckOption*)
+    : Tuple2[String,List[CheckOption]] = {
+    var opts = options.toList
+
+    var chk_name_opt : Option[String] = None
+
+    for (opt @ Name(name) <- opts) {
+      opts -= opt
+      if (chk_name_opt.isDefined && chk_name_opt.get != name) {
+        logger.warn("Redefining the check constraint name from '{}'' to '{}'.",
+                    chk_name_opt.get,
+                    name)
+      }
+      chk_name_opt = Some(name)
+    }
+
+    val name = chk_name_opt.getOrElse {
+                 "chk_" +
+                 on.table_name +
+                 "_" +
+                 on.column_names.mkString("_")
+               }
+
+    (name, opts)
+  }
 }

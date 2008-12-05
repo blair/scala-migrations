@@ -300,6 +300,30 @@ class ColumnDefinition
       case _ =>
     }
 
+    for (opt <- options) opt match {
+      case NamedCheck(name, expr) => {
+        sb.append(" CONSTRAINT ")
+          .append(name)
+          .append(" CHECK (")
+          .append(expr)
+          .append(")")
+      }
+
+      case Check(expr) => {
+        val tbd = new TableColumnDefinition(table_name, Array(column_name))
+        val on = new On(tbd)
+        val (name, _) = adapter.generate_check_constraint_name(on)
+
+        sb.append(" CONSTRAINT ")
+          .append(name)
+          .append(" CHECK (")
+          .append(expr)
+          .append(")")
+      }
+
+      case _ =>
+    }
+
     sb.toString
   }
 

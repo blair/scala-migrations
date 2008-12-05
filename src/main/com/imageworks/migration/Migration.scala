@@ -493,4 +493,51 @@ abstract class Migration
   {
     revoke(table_name, Array(grantee), privileges : _*)
   }
+
+  def add_check(on : On,
+                expr : String,
+                options : CheckOption*) : Unit =
+  {
+    if (on.column_names.isEmpty) {
+      throw new IllegalArgumentException("Adding a check constraint " +
+                                         "requires at least one column name " +
+                                         "in the table adding the constraint.")
+    }
+
+    var (name, opts) = adapter.generate_check_constraint_name(on, options : _*)
+
+    val quoted_on_column_names = on.column_names.map {
+                                   adapter.quote_column_name(_)
+                                 }.mkString(", ")
+
+    val sql = new java.lang.StringBuilder(512)
+               .append("ALTER TABLE ")
+               .append(adapter.quote_table_name(schema_name_opt,
+                                                on.table_name))
+               .append(" ADD CONSTRAINT ")
+               .append(name)
+               .append(" CHECK (")
+               .append(expr)
+               .append(")")
+
+    execute(sql.toString)
+  }
+
+  def remove_check(on : On,
+                   options : Name*) : Unit =
+  {
+    if (on.column_names.isEmpty) {
+      throw new IllegalArgumentException("Removing a check constraint " +
+                                         "requires at least one column name " +
+                                         "in the table adding the constraint.")
+    }
+
+    var (name, opts) = adapter.generate_check_constraint_name(on, options : _*)
+
+    execute("ALTER TABLE " +
+            adapter.quote_table_name(schema_name_opt, on.table_name) +
+            " DROP CONSTRAINT " +
+            name)
+  }
+
 }
