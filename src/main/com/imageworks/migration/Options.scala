@@ -35,7 +35,7 @@ sealed trait TableOption
 /**
  * The base trait for all grant privilege types.
  */
-sealed abstract trait GrantPrivilegeType
+sealed trait GrantPrivilegeType
 
 /**
  * A default value for a column.
