@@ -331,12 +331,6 @@ abstract class AbstractDecimalColumnDefinition
   def decimal_sql_name : String
 
   def sql = {
-    if (! precision.isDefined && scale.isDefined) {
-      val message = "Cannot specify a scale without also specifying a " +
-                    "precision."
-      throw new IllegalArgumentException(message)
-    }
-
     (precision, scale) match {
       case (None, None) => {
         decimal_sql_name
@@ -348,9 +342,9 @@ abstract class AbstractDecimalColumnDefinition
         decimal_sql_name + "(" + p + ", " + s + ")"
       }
       case (None, Some(_)) => {
-        val message = "Having a scale with no precision should " +
-                      "never occur."
-        throw new java.lang.RuntimeException(message)
+        val message = "Cannot specify a scale without also specifying a " +
+                      "precision."
+        throw new IllegalArgumentException(message)
       }
     }
   }
