@@ -47,6 +47,14 @@ class MigrationTests
                      false)
   }
 
+  @Test { val expected = classOf[IllegalArgumentException] }
+  def test_scale_without_precision : Unit =
+  {
+    migrator.migrate(InstallAllMigrations,
+                     "com.imageworks.migration.tests.scale_without_precision",
+                     false)
+  }
+
   @Test
   def test_migrate_up_and_down : Unit =
   {
