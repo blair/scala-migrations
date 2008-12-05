@@ -410,7 +410,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
          schema_name_opt)
   }
 
-  // http://lampsvn.epfl.ch/trac/scala/ticket/1543
+  // http://lampsvn.epfl.ch/trac/scala/ticket/442
   private[migration] def with_connection[T](f : java.sql.Connection => T) : T =
   {
     // Use the log4jdbc database wrapper to log all JDBC commands.
