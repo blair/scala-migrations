@@ -250,31 +250,6 @@ class ColumnDefinition
   final
   def to_sql : String =
   {
-    // Warn for any unused options.
-    if (! options.isEmpty) {
-      logger.warn("The following options for the '{}' column are " +
-                  "unused: {}.",
-                  column_name,
-                  options)
-    }
-
-    // Warn about illegal combinations in some databases.
-    if (is_primary_key &&
-        not_null_opt.isDefined &&
-        not_null_opt.get == false) {
-      logger.warn("Specifying PrimaryKey and Nullable in a column is not " +
-                  "supported in all databases.")
-    }
-
-    // Warn when different options are used that specify the same
-    // behavior so one can be removed.
-    if (is_primary_key && not_null_opt.isDefined && not_null_opt.get == true) {
-      logger.warn("Specifying PrimaryKey and NotNull is redundant.")
-    }
-    if (is_primary_key && is_unique) {
-      logger.warn("Specifying PrimaryKey and Unique is redundant.")
-    }
-
     val sb = new java.lang.StringBuilder(512)
                .append(column_name)
                .append(' ')
@@ -300,19 +275,10 @@ class ColumnDefinition
       case _ =>
     }
 
-    for (opt <- options) opt match {
-      case NamedCheck(name, expr) => {
-        sb.append(" CONSTRAINT ")
-          .append(name)
-          .append(" CHECK (")
-          .append(expr)
-          .append(")")
-      }
-
-      case Check(expr) => {
-        val tbd = new TableColumnDefinition(table_name, Array(column_name))
-        val on = new On(tbd)
-        val (name, _) = adapter.generate_check_constraint_name(on)
+    for (option <- options) {
+      def append_check_sql(name : String,
+                           expr : String) : Unit = {
+        options -= option
 
         sb.append(" CONSTRAINT ")
           .append(name)
@@ -321,7 +287,46 @@ class ColumnDefinition
           .append(")")
       }
 
-      case _ =>
+      option match {
+        case NamedCheck(name, expr) => {
+          append_check_sql(name, expr)
+        }
+
+        case Check(expr) => {
+          val tbd = new TableColumnDefinition(table_name, Array(column_name))
+          val on = new On(tbd)
+          val (name, _) = adapter.generate_check_constraint_name(on)
+
+          append_check_sql(name, expr)
+        }
+
+        case _ =>
+      }
+    }
+
+    // Warn for any unused options.
+    if (! options.isEmpty) {
+      logger.warn("The following options for the '{}' column are " +
+                  "unused: {}.",
+                  column_name,
+                  options)
+    }
+
+    // Warn about illegal combinations in some databases.
+    if (is_primary_key &&
+        not_null_opt.isDefined &&
+        not_null_opt.get == false) {
+      logger.warn("Specifying PrimaryKey and Nullable in a column is not " +
+                  "supported in all databases.")
+    }
+
+    // Warn when different options are used that specify the same
+    // behavior so one can be removed.
+    if (is_primary_key && not_null_opt.isDefined && not_null_opt.get == true) {
+      logger.warn("Specifying PrimaryKey and NotNull is redundant.")
+    }
+    if (is_primary_key && is_unique) {
+      logger.warn("Specifying PrimaryKey and Unique is redundant.")
     }
 
     sb.toString
