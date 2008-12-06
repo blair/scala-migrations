@@ -138,4 +138,26 @@ class JavaMigrator private (migrator : Migrator)
                      package_name,
                      search_sub_packages)
   }
+
+  /**
+   * Determine if the database has all available migrations installed
+   * in it and no migrations installed that do not have a
+   * corresponding concrete Migration subclass; that is, the database
+   * must have only those migrations installed that are found by
+   * searching the package name for concrete Migration subclasses.
+   *
+   * Running this method does not modify the database in any way.  The
+   * schema migrations table is not created.
+   *
+   * @param package_name the Java package name to search for Migration
+   *        subclasses
+   * @parm search_sub_packages true if sub-packages of package_name
+   *       should be searched
+   * @return true if all available migrations are installed
+   */
+  def is_migrated(package_name : String,
+                  search_sub_packages : Boolean) : Boolean =
+  {
+    migrator.is_migrated(package_name, search_sub_packages)
+  }
 }
