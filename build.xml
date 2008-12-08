@@ -57,10 +57,12 @@
     </target>
 
     <target name="tests" depends="test_compile">
+        <copy file="log4j.properties" todir="build/test"/>
         <junit printsummary="yes" haltonerror="yes" haltonfailure="yes">
             <classpath>
                 <path refid="test_compile.classpath"/>
                 <path location="build/test"/>
+                <path location="${log4j.jar}"/>
                 <path location="${log4jdbc.jar}"/>
                 <path location="${slf4j-impl.jar}"/>
             </classpath>
