@@ -60,8 +60,8 @@ class OracleVarcharColumnDefinition
   def sql = column_sql("VARCHAR2")
 }
 
-class OracleDatabaseAdapter
-  extends DatabaseAdapter
+class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
+  extends DatabaseAdapter(schema_name_opt)
 {
   def new_column_definition(table_name : String,
                             column_name : String,

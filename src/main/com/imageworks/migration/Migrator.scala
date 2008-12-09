@@ -317,8 +317,7 @@ object Migrator
  */
 class Migrator private (jdbc_conn : Either[DataSource, String],
                         jdbc_login : Option[Tuple2[String,String]],
-                        adapter : DatabaseAdapter,
-                        schema_name_opt : Option[String])
+                        adapter : DatabaseAdapter)
 {
   import Migrator._
 
@@ -334,15 +333,10 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @param jdbc_url the JDBC URL to connect to the database
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
-   * @param schema_name_opt an optional schema name used to qualify
-   *        all table names in the generated SQL; if Some(), then all
-   *        table names are qualified with the name, otherwise, table
-   *        names are unqualified
    */
   def this(jdbc_url : String,
-           adapter : DatabaseAdapter,
-           schema_name_opt : Option[String]) = {
-    this(Right(jdbc_url), None, adapter, schema_name_opt)
+           adapter : DatabaseAdapter) = {
+    this(Right(jdbc_url), None, adapter)
   }
 
   /**
@@ -353,20 +347,14 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *        username
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
-   * @param schema_name_opt an optional schema name used to qualify
-   *        all table names in the generated SQL; if Some(), then all
-   *        table names are qualified with the name, otherwise, table
-   *        names are unqualified
    */
   def this(jdbc_url : String,
            jdbc_username : String,
            jdbc_password : String,
-           adapter : DatabaseAdapter,
-           schema_name_opt : Option[String]) = {
+           adapter : DatabaseAdapter) = {
     this(Right(jdbc_url),
          Some((jdbc_username, jdbc_password)),
-         adapter,
-         schema_name_opt)
+         adapter)
   }
 
   /**
@@ -374,15 +362,10 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @param jdbc_datasource the JDBC DataSource to connect to the database
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
-   * @param schema_name_opt an optional schema name used to qualify
-   *        all table names in the generated SQL; if Some(), then all
-   *        table names are qualified with the name, otherwise, table
-   *        names are unqualified
    */
   def this(jdbc_datasource : DataSource,
-           adapter : DatabaseAdapter,
-           schema_name_opt : Option[String]) = {
-    this(Left(jdbc_datasource), None, adapter, schema_name_opt)
+           adapter : DatabaseAdapter) = {
+    this(Left(jdbc_datasource), None, adapter)
   }
 
   /**
@@ -394,20 +377,14 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *        username
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
-   * @param schema_name_opt an optional schema name used to qualify
-   *        all table names in the generated SQL; if Some(), then all
-   *        table names are qualified with the name, otherwise, table
-   *        names are unqualified
    */
   def this(jdbc_datasource : DataSource,
            jdbc_username : String,
            jdbc_password : String,
-           adapter : DatabaseAdapter,
-           schema_name_opt : Option[String]) = {
+           adapter : DatabaseAdapter) = {
     this(Left(jdbc_datasource),
          Some((jdbc_username, jdbc_password)),
-         adapter,
-         schema_name_opt)
+         adapter)
   }
 
   // http://lampsvn.epfl.ch/trac/scala/ticket/442
@@ -464,7 +441,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     with_connection { connection =>
       val metadata = connection.getMetaData
       val rs = metadata.getTables(null,
-                                  schema_name_opt.getOrElse(null),
+                                  adapter.schema_name_opt.getOrElse(null),
                                   null,
                                   Array("TABLE"))
 
@@ -498,7 +475,6 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     with_connection { connection =>
       migration.connection = connection
       migration.adapter = adapter
-      migration.schema_name_opt = schema_name_opt
 
       direction match {
         case Up => migration.up
@@ -508,8 +484,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
 
     version_update_opt match {
       case Some((schema_connection, version)) => {
-        val table_name = adapter.quote_table_name(schema_name_opt,
-                                                  schema_migrations_table_name)
+        val table_name = adapter.quote_table_name(schema_migrations_table_name)
         val sql =
           direction match {
             case Up => "INSERT INTO " +
@@ -565,8 +540,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   {
     with_connection { connection =>
       val sql = "SELECT version FROM " +
-                adapter.quote_table_name(schema_name_opt,
-                                         schema_migrations_table_name)
+                adapter.quote_table_name(schema_migrations_table_name)
       val statement = connection.prepareStatement(sql)
       val rs = statement.executeQuery()
       val versions_list = new scala.collection.mutable.ListBuffer[Long]
@@ -620,8 +594,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
         logger.debug("Getting an exclusive lock on the '{}' table.",
                      schema_migrations_table_name)
         val sql = "LOCK TABLE " +
-                  adapter.quote_table_name(schema_name_opt,
-                                           schema_migrations_table_name) +
+                  adapter.quote_table_name(schema_migrations_table_name) +
                   " IN EXCLUSIVE MODE"
         val statement = schema_connection.prepareStatement(sql)
         statement.execute()

@@ -14,16 +14,10 @@ class JavaMigrator private (migrator : Migrator)
    * @param jdbc_url the JDBC URL to connect to the database
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
-   * @param schema_name the schema name to use to qualify all table
-   *        names; may be null if the migrator should not use a schema
-   *        name and the table names should be unqualified
    */
   def this(jdbc_url : String,
-           adapter : DatabaseAdapter,
-           schema_name : String) = {
-    this(new Migrator(jdbc_url,
-                      adapter,
-                      if (schema_name eq null) None else Some(schema_name)))
+           adapter : DatabaseAdapter) = {
+    this(new Migrator(jdbc_url, adapter))
   }
 
   /**
@@ -35,20 +29,15 @@ class JavaMigrator private (migrator : Migrator)
    *        username
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
-   * @param schema_name the schema name to use to qualify all table
-   *        names; may be null if the migrator should not use a schema
-   *        name and the table names should be unqualified
    */
   def this(jdbc_url : String,
            jdbc_username : String,
            jdbc_password : String,
-           adapter : DatabaseAdapter,
-           schema_name : String) = {
+           adapter : DatabaseAdapter) = {
     this(new Migrator(jdbc_url,
                       jdbc_username,
                       jdbc_password,
-                      adapter,
-                      if (schema_name eq null) None else Some(schema_name)))
+                      adapter))
   }
 
   /**

@@ -95,15 +95,6 @@ abstract class Migration
   var adapter : DatabaseAdapter = _
 
   /**
-   * The schema name that will be used for the migration.
-   *
-   * This is set using property style dependency injection instead of
-   * constructor style injection, which makes for cleaner code for the
-   * users of this migration framework.
-   */
-  var schema_name_opt : Option[String] = None
-
-  /**
    * Override the -> implicit definition to create a
    * MigrationArrowAssoc instead of a scala.Predef.ArrowAssoc.  See
    * the above comment on the MigrationArrowAssoc class why this is
@@ -149,7 +140,7 @@ abstract class Migration
 
     val sql = new java.lang.StringBuilder(512)
                 .append("CREATE TABLE ")
-                .append(adapter.quote_table_name(schema_name_opt, table_name))
+                .append(adapter.quote_table_name(table_name))
                 .append(" (")
                 .append(table_definition.to_sql)
                 .append(')')
@@ -162,7 +153,7 @@ abstract class Migration
   {
     val sql = new java.lang.StringBuilder(512)
                 .append("DROP TABLE ")
-                .append(adapter.quote_table_name(schema_name_opt, table_name))
+                .append(adapter.quote_table_name(table_name))
                 .toString
     execute(sql)
   }
@@ -193,7 +184,7 @@ abstract class Migration
                  column_names.mkString("_and_")
                }
 
-    (adapter.quote_table_name(schema_name_opt, name), opts)
+    (adapter.quote_table_name(name), opts)
   }
 
   final
@@ -224,7 +215,7 @@ abstract class Migration
                .append("INDEX ")
                .append(adapter.quote_column_name(name))
                .append(" ON ")
-               .append(adapter.quote_table_name(schema_name_opt, table_name))
+               .append(adapter.quote_table_name(table_name))
                .append(" (")
                .append(quoted_column_names)
                .append(")")
@@ -253,7 +244,7 @@ abstract class Migration
 
     val (name, opts) = index_name(table_name, column_names, options : _*)
 
-    val sql = adapter.remove_index_sql(schema_name_opt, table_name, name)
+    val sql = adapter.remove_index_sql(table_name, name)
 
     execute(sql)
   }
@@ -307,7 +298,7 @@ abstract class Migration
                  references.column_names.mkString("_")
                }
 
-    (adapter.quote_table_name(schema_name_opt, name), opts)
+    (adapter.quote_table_name(name), opts)
   }
 
   def add_foreign_key(on : On,
@@ -362,15 +353,13 @@ abstract class Migration
 
     val sql = new java.lang.StringBuilder(512)
                .append("ALTER TABLE ")
-               .append(adapter.quote_table_name(schema_name_opt,
-                                                on.table_name))
+               .append(adapter.quote_table_name(on.table_name))
                .append(" ADD CONSTRAINT ")
                .append(name)
                .append(" FOREIGN KEY (")
                .append(quoted_on_column_names)
                .append(") REFERENCES ")
-               .append(adapter.quote_table_name(schema_name_opt,
-                                                references.table_name))
+               .append(adapter.quote_table_name(references.table_name))
                .append(" (")
                .append(quoted_references_column_names)
                .append(")")
@@ -420,7 +409,7 @@ abstract class Migration
     var (name, opts) = foreign_key_name(on, references, options : _*)
 
     execute("ALTER TABLE " +
-            adapter.quote_table_name(schema_name_opt, on.table_name) +
+            adapter.quote_table_name(on.table_name) +
             " DROP CONSTRAINT " +
             name)
   }
@@ -447,8 +436,7 @@ abstract class Migration
                                          "at least one privilege.")
     }
 
-    val sql = adapter.grant_sql(schema_name_opt,
-                                table_name,
+    val sql = adapter.grant_sql(table_name,
                                 grantees,
                                 privileges : _*)
 
@@ -478,8 +466,7 @@ abstract class Migration
                                          "at least one privilege.")
     }
 
-    val sql = adapter.revoke_sql(schema_name_opt,
-                                 table_name,
+    val sql = adapter.revoke_sql(table_name,
                                  grantees,
                                  privileges : _*)
 
@@ -512,8 +499,7 @@ abstract class Migration
 
     val sql = new java.lang.StringBuilder(512)
                .append("ALTER TABLE ")
-               .append(adapter.quote_table_name(schema_name_opt,
-                                                on.table_name))
+               .append(adapter.quote_table_name(on.table_name))
                .append(" ADD CONSTRAINT ")
                .append(name)
                .append(" CHECK (")
@@ -535,7 +521,7 @@ abstract class Migration
     var (name, opts) = adapter.generate_check_constraint_name(on, options : _*)
 
     execute("ALTER TABLE " +
-            adapter.quote_table_name(schema_name_opt, on.table_name) +
+            adapter.quote_table_name(on.table_name) +
             " DROP CONSTRAINT " +
             name)
   }

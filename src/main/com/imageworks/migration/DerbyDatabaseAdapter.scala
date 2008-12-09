@@ -16,8 +16,8 @@ class DerbyVarbinaryColumnDefinition
   def sql = column_sql("VARCHAR") + " FOR BIT DATA"
 }
 
-class DerbyDatabaseAdapter
-  extends DatabaseAdapter
+class DerbyDatabaseAdapter(override val schema_name_opt : Option[String])
+  extends DatabaseAdapter(schema_name_opt)
 {
   def new_column_definition(table_name : String,
                             column_name : String,

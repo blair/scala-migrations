@@ -23,7 +23,9 @@ class JavaMigratorTests
     val url = "jdbc:derby:" + db_name + ";create=true"
 
     // The default schema for a Derby database is "APP".
-    java_migrator = new JavaMigrator(url, new DerbyDatabaseAdapter, "APP")
+    java_migrator = new JavaMigrator(
+      url,
+      JavaDatabaseAdapter.getDerbyDatabaseAdapter("APP"))
   }
 
   @Test { val expected = classOf[DuplicateMigrationDescriptionException] }

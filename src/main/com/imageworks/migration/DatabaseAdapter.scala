@@ -2,8 +2,17 @@ package com.imageworks.migration
 
 import org.slf4j.LoggerFactory
 
+/**
+ * Base class for classes to customize SQL generation for specific
+ * database drivers.
+ *
+ * @param schema_name_opt an optional schema name used to qualify
+ *        all table names in the generated SQL; if Some(), then all
+ *        table names are qualified with the name, otherwise, table
+ *        names are unqualified
+ */
 abstract
-class DatabaseAdapter
+class DatabaseAdapter(val schema_name_opt : Option[String])
 {
   private final
   val logger = LoggerFactory.getLogger(this.getClass)
@@ -52,6 +61,12 @@ class DatabaseAdapter
     }
   }
 
+  def quote_table_name(table_name : String) : String =
+  {
+    // use the default schema_name_opt defined in the adapter
+    quote_table_name(schema_name_opt, table_name)
+  }
+
   /**
    * Different databases require different SQL to drop an index.
    *
@@ -64,6 +79,19 @@ class DatabaseAdapter
   def remove_index_sql(schema_name_opt : Option[String],
                        table_name : String,
                        index_name : String) : String
+
+  /**
+   * Different databases require different SQL to drop an index.
+   * Uses the schema_name_opt defined in the adapter.
+   *
+   * @param table_name the name of the table with the index
+   * @param index_name the name of the index
+   * @return the SQL to drop the index
+   */
+  def remove_index_sql(table_name : String,
+                       index_name : String) : String = {
+    remove_index_sql(schema_name_opt, table_name, index_name)
+  }
 
   private
   def grant_revoke_common(action : String,
@@ -114,7 +142,7 @@ class DatabaseAdapter
       }).mkString(", "))
 
     sql.append(" ON ")
-       .append(quote_table_name(schema_name_opt, table_name))
+       .append(quote_table_name(table_name))
        .append(" ")
        .append(preposition)
        .append(" ")
@@ -150,6 +178,23 @@ class DatabaseAdapter
   }
 
   /**
+   * Different databases have different limitations on the GRANT statement.
+   * Uses the schema_name_opt defined in the adapter.
+   *
+   * @param table_name the name of the table with the index
+   * @param grantees one or more objects to grant the new permissions to.
+   * @param privileges one or more GrantPrivilegeType objects describing the
+   *        types of permissions to grant.
+   * @return the SQL to grant permissions
+   */
+  def grant_sql(table_name : String,
+                grantees : Array[String],
+                privileges : GrantPrivilegeType*) : String =
+  {
+    grant_sql(schema_name_opt, table_name, grantees, privileges : _*)
+  }
+
+  /**
    * Different databases have different limitations on the REVOKE statement.
    *
    * @param schema_name_opt the optional schema name to qualify the
@@ -171,6 +216,23 @@ class DatabaseAdapter
                         table_name,
                         grantees,
                         privileges : _*)
+  }
+
+  /**
+   * Different databases have different limitations on the REVOKE statement.
+   * Uses the schema_name_opt defined in the adapter.
+   *
+   * @param table_name the name of the table with the index
+   * @param grantees one or more objects to grant the new permissions to.
+   * @param privileges one or more GrantPrivilegeType objects describing the
+   *        types of permissions to grant.
+   * @return the SQL to grant permissions
+   */
+  def revoke_sql(table_name : String,
+                 grantees : Array[String],
+                 privileges : GrantPrivilegeType*) : String =
+  {
+    revoke_sql(schema_name_opt, table_name, grantees, privileges : _*)
   }
 
   /**

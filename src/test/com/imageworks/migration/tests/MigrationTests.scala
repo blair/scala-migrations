@@ -28,7 +28,7 @@ class MigrationTests
     val url_ = url + ";create=true"
 
     // The default schema for a Derby database is "APP".
-    migrator = new Migrator(url_, new DerbyDatabaseAdapter, Some("APP"))
+    migrator = new Migrator(url_, new DerbyDatabaseAdapter(Some("APP")))
   }
 
   @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
@@ -168,8 +168,7 @@ class MigrationTests
     val test_migrator = new Migrator(url,
                                      "test",
                                      "password",
-                                     new DerbyDatabaseAdapter,
-                                     Some("APP"))
+                                     new DerbyDatabaseAdapter(Some("APP")))
 
     val select_sql = "SELECT name FROM APP.location"
 
@@ -200,8 +199,7 @@ class MigrationTests
     val migrator2 = new Migrator(url,
                                  "APP",
                                  "password",
-                                 new DerbyDatabaseAdapter,
-                                 Some("APP"))
+                                 new DerbyDatabaseAdapter(Some("APP")))
 
     // perform grants
     migrator2.migrate(MigrateToVersion(200811261513L),
