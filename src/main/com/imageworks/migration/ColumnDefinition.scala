@@ -396,6 +396,12 @@ class DefaultBigintColumnDefinition
   val sql = "BIGINT"
 }
 
+class DefaultBlobColumnDefinition
+  extends ColumnDefinition
+{
+  val sql = "BLOB"
+}
+
 class DefaultCharColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsLimit

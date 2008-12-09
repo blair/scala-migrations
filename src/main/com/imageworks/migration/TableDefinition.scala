@@ -33,6 +33,13 @@ class TableDefinition(adapter : DatabaseAdapter,
   }
 
   final
+  def blob(name : String,
+           options : ColumnOption*) : TableDefinition =
+  {
+   column(name, BlobType, options : _*)
+  }
+
+  final
   def boolean(name : String,
               options : ColumnOption*) : TableDefinition =
   {

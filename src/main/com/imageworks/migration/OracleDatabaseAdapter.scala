@@ -76,6 +76,8 @@ class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
       }
       case BigintType =>
         new OracleIntegerColumnDefinition
+      case BlobType =>
+        new DefaultBlobColumnDefinition
       case CharType =>
         new DefaultCharColumnDefinition
       case DecimalType =>

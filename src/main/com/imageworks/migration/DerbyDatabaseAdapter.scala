@@ -30,6 +30,8 @@ class DerbyDatabaseAdapter(override val schema_name_opt : Option[String])
                       "choose a mapping your self."
         throw new UnsupportedColumnTypeException(message)
       }
+      case BlobType =>
+        new DefaultBlobColumnDefinition
       case BigintType =>
         new DefaultBigintColumnDefinition
       case CharType =>
