@@ -268,6 +268,6 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
                  on.column_names.mkString("_")
                }
 
-    (name, opts)
+    (quote_table_name(name), opts)
   }
 }
