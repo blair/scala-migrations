@@ -49,6 +49,20 @@ case class Default(value : String)
   extends ColumnOption
 
 /**
+ * Default companion object allowing Defaults to be constructed with
+ * integer values.
+ */
+object Default {
+  def apply(i : Int) : Default = {
+    Default(i.toString)
+  }
+
+  def apply(i : Long) : Default = {
+    Default(i.toString)
+  }
+}
+
+/**
  * A limit on the size of a column type.
  */
 case class Limit(expr : String)
