@@ -220,6 +220,11 @@ object Migrator
     val re_str = "Migrate_(\\d+)_([_a-zA-Z0-9]*)"
     val re = java.util.regex.Pattern.compile(re_str)
 
+    // Classes to be skipped.  class_names cannot have items removed from it
+    // inside the for loop below or not all elements in class_names may be
+    // visited (iterator corruption).
+    val skip_names = new scala.collection.mutable.HashSet[String]
+
     for (class_name <- class_names) {
       val index = class_name.lastIndexOf('.')
       val base_name = if (index == -1)
@@ -263,12 +268,15 @@ object Migrator
         }
       }
       else {
-        class_names -= class_name
+        skip_names += class_name
         logger.debug("Skipping '{}' because it does not match '{}'.",
                      class_name,
                      re_str)
       }
     }
+
+    // Remove all the skipped class names from class_names.
+    class_names --= skip_names
 
     val results = new scala.collection.mutable.ArrayBuffer[VersionAndClass] {
                     override
