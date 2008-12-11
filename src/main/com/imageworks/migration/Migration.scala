@@ -184,7 +184,7 @@ abstract class Migration
                  column_names.mkString("_and_")
                }
 
-    (adapter.quote_table_name(name), opts)
+    (name, opts)
   }
 
   final
@@ -298,7 +298,7 @@ abstract class Migration
                  references.column_names.mkString("_")
                }
 
-    (adapter.quote_table_name(name), opts)
+    (name, opts)
   }
 
   def add_foreign_key(on : On,
