@@ -178,10 +178,10 @@ abstract class Migration
     }
 
     val name = index_name_opt.getOrElse {
-                 "index_" +
+                 "idx_" +
                  table_name +
-                 "_on_" +
-                 column_names.mkString("_and_")
+                 "_" +
+                 column_names.mkString("_")
                }
 
     (name, opts)
