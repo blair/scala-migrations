@@ -63,6 +63,11 @@ would look odd), so the Scala Migrations looks for classes named
 
     Migrate_(\\d+)_([_a-zA-Z0-9]*)
 
+The timestamp can be generated using the following command on Unix
+systems:
+
+    $ date -u +%Y%m%d%H%M%S
+
 This is different than Ruby on Rails migrations which are in filenames
 of the form
 
