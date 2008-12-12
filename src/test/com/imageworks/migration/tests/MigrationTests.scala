@@ -237,6 +237,47 @@ class MigrationTests
       // java.sql.SQLException is caught.
       case e : java.sql.SQLException => // expected
     }
+  }
 
+  @Test
+  def test_columns_can_hold_types : Unit =
+  {
+    migrator.migrate(InstallAllMigrations,
+                     "com.imageworks.migration.tests.types",
+                     false)
+
+    val varbinary_array = (1 to 4).map(_.toByte).toArray
+    val now = System.currentTimeMillis
+
+    migrator.with_connection { connection =>
+      for ((n, v) <- Array(("bigint_column", java.lang.Long.MIN_VALUE),
+                           ("bigint_column", java.lang.Long.MAX_VALUE),
+                           ("char_column", "ABCD"),
+                           ("decimal_column", 3.14),
+                           ("integer_column", java.lang.Integer.MIN_VALUE),
+                           ("integer_column", java.lang.Integer.MAX_VALUE),
+                           ("timestamp_column", new java.sql.Date(now)),
+                           ("varbinary_column", varbinary_array),
+                           ("varchar_column", "ABCD"))) {
+        val insert_sql = "INSERT INTO types_test (" + n + ") VALUES (?)"
+        val insert_statement = connection.prepareStatement(insert_sql)
+        insert_statement.setObject(1, v)
+        insert_statement.executeUpdate
+        insert_statement.close
+
+        // Make sure that the value exists.
+        val select_sql = "SELECT COUNT(1) from types_test where " + n + " = ?"
+        val select_statement = connection.prepareStatement(select_sql)
+        select_statement.setObject(1, v)
+        val results = select_statement.executeQuery()
+        var counts : List[Int] = Nil
+        while (results.next) {
+          counts = results.getInt(1) :: counts
+        }
+
+        assertEquals(1, counts.size)
+        assertEquals(1, counts.head)
+      }
+    }
   }
 }
