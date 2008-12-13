@@ -1,5 +1,37 @@
 package com.imageworks.migration
 
+/**
+ * Map the BIGINT SQL type to a NUMBER(19, 0).
+ *
+ * A few other databases, such as Derby, MySQL and PostgreSQL, treat
+ * BIGINT as a 8-byte signed integer type.  On Oracle a NUMBER(19, 0)
+ * is large enough to store any integers from -9223372036854775808 to
+ * 9223372036854775807 but not any integers with more digits.  A
+ * NUMBER(19, 0) does allow a larger range of values than the other
+ * databases, from -9999999999999999999 to 9999999999999999999, but
+ * this seems like an acceptable solution without using a CHECK
+ * constraint.
+ *
+ * This behavior is different than Oracle's default.  If a column is
+ * defined using "INTEGER" and not a "NUMBER", Oracle uses a
+ * NUMBER(38) to store it:
+ *
+ * http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14200/sql_elements001.htm#sthref218
+ *
+ * Using a NUMBER(19, 0) helps ensure the compatibility of any code
+ * running against an Oracle database to such that is does not assume
+ * it can use 38-digit integer values in case the data needs to be
+ * exported to another database or if the code needs to work with
+ * other databases.  Columns wishing to use a NUMBER(38) should use a
+ * DecimalType column.
+ */
+class OracleBigintColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsDefault
+{
+  val sql = "NUMBER(19, 0)"
+}
+
 class OracleDecimalColumnDefinition
   extends AbstractDecimalColumnDefinition
 {
@@ -75,7 +107,7 @@ class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
         throw new UnsupportedColumnTypeException(message)
       }
       case BigintType =>
-        new OracleIntegerColumnDefinition
+        new OracleBigintColumnDefinition
       case BlobType =>
         new DefaultBlobColumnDefinition
       case CharType =>
