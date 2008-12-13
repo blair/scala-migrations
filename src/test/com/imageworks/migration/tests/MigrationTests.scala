@@ -11,7 +11,6 @@ class MigrationTests
   System.getProperties.setProperty("derby.system.home", "test-databases")
 
   // Load the Derby database driver.
-  Class.forName("oracle.jdbc.driver.OracleDriver")
   Class.forName("org.apache.derby.jdbc.EmbeddedDriver")
 
   private
@@ -26,14 +25,13 @@ class MigrationTests
     val db_name = System.currentTimeMillis.toString
     url = "jdbc:derby:" + db_name
 
-    url = "jdbc:oracle:oci:@DEVSPI"
+    val url_ = url + ";create=true"
 
     // The default schema for a Derby database is "APP".
-    migrator = new Migrator(url, "VNP3", "zDI88SaJgs", 
-new OracleDatabaseAdapter(Some("VNP3")))
+    migrator = new Migrator(url_, new DerbyDatabaseAdapter(Some("APP")))
   }
 
-//  @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
+  @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
   def test_duplicate_descriptions_throw_exception : Unit =
   {
     migrator.migrate(InstallAllMigrations,
@@ -41,7 +39,7 @@ new OracleDatabaseAdapter(Some("VNP3")))
                      false)
   }
 
-//  @Test { val expected = classOf[DuplicateMigrationVersionException] }
+  @Test { val expected = classOf[DuplicateMigrationVersionException] }
   def test_duplicate_versions_throw_exception : Unit =
   {
     migrator.migrate(InstallAllMigrations,
@@ -49,7 +47,7 @@ new OracleDatabaseAdapter(Some("VNP3")))
                      false)
   }
 
-//  @Test { val expected = classOf[IllegalArgumentException] }
+  @Test { val expected = classOf[IllegalArgumentException] }
   def test_scale_without_precision : Unit =
   {
     migrator.migrate(InstallAllMigrations,
@@ -57,7 +55,7 @@ new OracleDatabaseAdapter(Some("VNP3")))
                      false)
   }
 
-//  @Test
+  @Test
   def test_migrate_up_and_down : Unit =
   {
     // There should be no tables in the schema initially.
@@ -119,7 +117,7 @@ new OracleDatabaseAdapter(Some("VNP3")))
                                      false))
   }
 
-//  @Test
+  @Test
   def test_is_migrated_does_not_create_schema_migrations : Unit =
   {
     // In a brand new database with no available migrations, the
@@ -141,7 +139,7 @@ new OracleDatabaseAdapter(Some("VNP3")))
     assertEquals(0, migrator.table_names.size)
   }
 
-//  @Test
+  @Test
   def test_grant_and_revoke : Unit =
   {
     // create a second user, make a table
@@ -262,7 +260,6 @@ new OracleDatabaseAdapter(Some("VNP3")))
                            ("varbinary_column", varbinary_array),
                            ("varchar_column", "ABCD"))) {
         val insert_sql = "INSERT INTO types_test (" + n + ") VALUES (?)"
-        System.err.println("ABOUT TO RUN " + insert_sql)
         val insert_statement = connection.prepareStatement(insert_sql)
         insert_statement.setObject(1, v)
         insert_statement.executeUpdate
