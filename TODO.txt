@@ -7,3 +7,12 @@
   * Renaming a column.
   * Changing a column to a different type.
   * Removing a column.
+
+* Allow the test suite to run against different databases.
+  Properties, such as the following could be set to override the
+  default use of Derby:
+    migrations.test.schema_name
+    migrations.test.driver
+    migrations.test.jdbc_url
+    migrations.test.username
+    migrations.test.password
