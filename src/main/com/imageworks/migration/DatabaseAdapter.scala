@@ -2,6 +2,77 @@ package com.imageworks.migration
 
 import org.slf4j.LoggerFactory
 
+object DatabaseAdapter
+{
+  /**
+   * Look for the appropriate database adapter for the given database
+   * driver class name.
+   *
+   * @param driver_class_name the class name of the JDBC database
+   *        driver
+   * @param schema_name_opt an optional schema name used to qualify
+   *        all table names in the generated SQL; if Some(), then all
+   *        table names are qualified with the name, otherwise, table
+   *        names are unqualified
+   * @return a DriverAdapter suitable to use for the database
+   * @throws java.lang.IllegalArgumentException if the argument is
+   *         null, scala.MatchError if an appropriate DatabaseAdapter
+   *         cannot be found
+   */
+  def for_driver(driver_class_name : String,
+                 schema_name_opt : Option[String]) : DatabaseAdapter =
+  {
+    driver_class_name match {
+      case "oracle.jdbc.driver.OracleDriver" => {
+        new OracleDatabaseAdapter(schema_name_opt)
+      }
+      case "org.apache.derby.jdbc.EmbeddedDriver" => {
+        new DerbyDatabaseAdapter(schema_name_opt)
+      }
+      case "org.apache.derby.jdbc.ClientDriver" => {
+        new DerbyDatabaseAdapter(schema_name_opt)
+      }
+      case null => {
+        throw new IllegalArgumentException("Must pass a non-null JDBC " +
+                                           "driver class name to this " +
+                                           "function.")
+      }
+      case _ => {
+        throw new scala.MatchError("No DatabaseAdapter can be found for " +
+                                   "the JDBC driver class '" +
+                                   driver_class_name +
+                                   "'.'")
+      }
+    }
+  }
+
+  /**
+   * Look for the appropriate database adapter for the given database
+   * driver class.
+   *
+   * @param driver_class the class of the JDBC database driver
+   * @param schema_name_opt an optional schema name used to qualify
+   *        all table names in the generated SQL; if Some(), then all
+   *        table names are qualified with the name, otherwise, table
+   *        names are unqualified
+   * @return a DriverAdapter suitable to use for the database
+   * @throws java.lang.IllegalArgumentException if the argument is
+   *         null, scala.MatchError if an appropriate DatabaseAdapter
+   *         cannot be found
+   */
+  def for_driver(driver_class : Class[_],
+                 schema_name_opt : Option[String]) : DatabaseAdapter =
+  {
+    if (driver_class eq null) {
+      throw new IllegalArgumentException("Must pass a non-null JDBC " +
+                                         "driver class to this function.")
+    }
+    else {
+      for_driver(driver_class.getName, schema_name_opt)
+    }
+  }
+}
+
 /**
  * Base class for classes to customize SQL generation for specific
  * database drivers.
