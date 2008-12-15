@@ -79,6 +79,136 @@ them at runtime and from the filename load the correct class name.
 The ordering to apply the migrations is contained in the filename, not
 the class name.
 
+DATA TYPES
+----------
+
+The following data types are supported listed with their mappings.  If
+a database name is not specified, then the default mapping is used.
+More information on the mappings is below.
+
+    Bigint
+        Default: BIGINT
+        Oracle: NUMBER(19, 0)
+    Blob
+        Default: BLOB
+    Boolean
+        Default: BOOLEAN
+        Derby: Unsupported
+        Oracle: Unsupported
+    Char
+        Default: CHAR
+    Decimal
+        Default: DECIMAL
+        Oracle: NUMBER
+    Integer
+        Default: INTEGER
+        Oracle: NUMBER(10, 0)
+    Timestamp
+        Default: TIMESTAMP
+    Varbinary
+        Default: None
+        Derby: VARCHAR FOR BIT DATA
+        Oracle: RAW
+    Varchar
+        Default: VARCHAR
+        Oracle: VARCHAR2
+
+Boolean Mapping
+---------------
+
+Scala Migrations does not define a mapping for the Boolean datatype in
+databases that do not have a native Boolean datatype.  The reason is
+that there are many ways of representing a Boolean value database and
+Scala Migrations is not an ORM layer, so this decision is left to the
+application developer.
+
+Different representations that have been used in schemas include:
+
+1) A CHAR(1) column containing a 'Y' or 'N' value.  The column may
+   have a CHECK constraint to ensure that the values are only 'Y' or
+   'N'.
+
+2) An INTEGER column with 0 representing to false and all other values
+   representing true.
+
+Oracle and INTEGER and BIGINT
+-----------------------------
+
+Oracle does not have an INTEGER or BIGINT SQL type comparable to other
+databases, such such as Derby, MySQL and PostgreSQL, which for INTEGER
+use a 4-byte integer to store the value and limiting the integers that
+can be inserted from -2147483648 to 2147483647 and for BIGINT's use an
+8-byte integer to store the value and limit the integers that can
+stored from -9223372036854775808 to 9223372036854775807.
+
+If a column is defined in Oracle using "INTEGER" it uses a NUMBER(38)
+to store it:
+
+http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14200/sql_elements001.htm#sthref218
+
+A Migration defining an INTEGER column on Oracle uses a NUMBER(10, 0).
+This is large enough to store any 4-byte integers from -2147483648 to
+2147483647 but not any integers with more digits.  A NUMBER(10, 0)
+does allow a larger range of values than the other databases, from
+-9999999999 to 9999999999, but this seems like an acceptable solution
+without using a CHECK constraint on the column.  Likewise, a Migration
+defining an BIGINT column on Oracle uses a NUMBER(19, 0) which is
+large enough to store any 8-byte integers from -9223372036854775808 to
+9223372036854775807.
+
+NUMERIC and DECIMAL
+------------------
+
+There is a minor difference in the definition of the NUMERIC and
+DECIMAL types according to the SQL 1992 standard downloaded from
+
+http://www.contrib.andrew.cmu.edu/~shadow/sql/sql1992.txt
+
+  """
+  17) NUMERIC specifies the data type exact numeric, with the decimal
+      precision and scale specified by the <precision> and <scale>.
+
+  18) DECIMAL specifies the data type exact numeric, with the decimal
+      scale specified by the <scale> and the implementation-defined
+      decimal precision equal to or greater than the value of the
+      specified <precision>.
+  """
+
+However, in practice, all databases I looked at implement them
+identically.
+
+  *) Derby
+
+     "NUMERIC is a synonym for DECIMAL and behaves the same way. See
+     DECIMAL data type."
+
+     http://db.apache.org/derby/docs/10.4/ref/rrefsqlj12362.html
+     http://db.apache.org/derby/docs/10.4/ref/rrefsqlj15260.html
+
+  *) Mysql
+
+     "NUMERIC implemented as DECIMAL."
+
+     http://dev.mysql.com/doc/refman/5.1/en/numeric-types.html
+
+  *) Oracle
+
+     Only has the NUMBER type.
+
+     http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14200/sql_elements001.htm
+
+     http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14200/sql_elements001.htm#sthref218
+
+  *) PostgreSQL
+
+     "The types decimal and numeric are equivalent. Both types are
+     part of the SQL standard."
+
+     The docs use NUMERIC more and list DECIMAL as an alias.
+
+     http://www.postgresql.org/docs/8.3/interactive/datatype-numeric.html
+     http://www.postgresql.org/docs/8.3/interactive/datatype.html#DATATYPE-TABLE
+
 CAVATS
 ------
 
