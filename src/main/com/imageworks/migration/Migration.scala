@@ -83,7 +83,15 @@ abstract class Migration
    * constructor style injection, which makes for cleaner code for the
    * users of this migration framework.
    */
-  var connection : java.sql.Connection = _
+  private [migration] var connection_ : java.sql.Connection = _
+
+  /**
+   * Get the connection to the database the migration can use for any
+   * custom work.  The Migration subclass must be careful with this
+   * connection and leave it in a good state, as all of the other
+   * migration methods defined in Migration use the same connection.
+   */
+  def connection = connection_
 
   /**
    * The database adapter that will be used for the migration.
@@ -126,7 +134,7 @@ abstract class Migration
   final
   def execute(sql : String) : Unit =
   {
-    val statement = connection.createStatement
+    val statement = connection_.createStatement
     try {
       statement.execute(sql)
     }
