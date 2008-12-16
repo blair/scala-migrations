@@ -126,7 +126,13 @@ abstract class Migration
   final
   def execute(sql : String) : Unit =
   {
-    connection.createStatement.execute(sql)
+    val statement = connection.createStatement
+    try {
+      statement.execute(sql)
+    }
+    finally {
+      statement.close
+    }
   }
 
   final
