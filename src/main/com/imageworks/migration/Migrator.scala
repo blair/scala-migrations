@@ -482,7 +482,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     val migration = migration_class.getConstructor().newInstance()
     with_connection { connection =>
       migration.connection_ = connection
-      migration.adapter = adapter
+      migration.adapter_ = adapter
 
       direction match {
         case Up => migration.up

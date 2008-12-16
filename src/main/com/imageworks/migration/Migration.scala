@@ -100,7 +100,7 @@ abstract class Migration
    * constructor style injection, which makes for cleaner code for the
    * users of this migration framework.
    */
-  var adapter : DatabaseAdapter = _
+  private [migration] var adapter_ : DatabaseAdapter = _
 
   /**
    * Override the -> implicit definition to create a
@@ -148,13 +148,13 @@ abstract class Migration
                    options : TableOption*)
                   (body : TableDefinition => Unit) : Unit =
   {
-    val table_definition = new TableDefinition(adapter, table_name)
+    val table_definition = new TableDefinition(adapter_, table_name)
 
     body(table_definition)
 
     val sql = new java.lang.StringBuilder(512)
                 .append("CREATE TABLE ")
-                .append(adapter.quote_table_name(table_name))
+                .append(adapter_.quote_table_name(table_name))
                 .append(" (")
                 .append(table_definition.to_sql)
                 .append(')')
@@ -167,7 +167,7 @@ abstract class Migration
   {
     val sql = new java.lang.StringBuilder(512)
                 .append("DROP TABLE ")
-                .append(adapter.quote_table_name(table_name))
+                .append(adapter_.quote_table_name(table_name))
                 .toString
     execute(sql)
   }
@@ -220,16 +220,16 @@ abstract class Migration
     }
 
     val quoted_column_names = column_names.map {
-                                adapter.quote_column_name(_)
+                                adapter_.quote_column_name(_)
                               }.mkString(", ")
 
     val sql = new java.lang.StringBuilder(512)
                .append("CREATE ")
                .append(if (unique) "UNIQUE " else "")
                .append("INDEX ")
-               .append(adapter.quote_column_name(name))
+               .append(adapter_.quote_column_name(name))
                .append(" ON ")
-               .append(adapter.quote_table_name(table_name))
+               .append(adapter_.quote_table_name(table_name))
                .append(" (")
                .append(quoted_column_names)
                .append(")")
@@ -258,7 +258,7 @@ abstract class Migration
 
     val (name, opts) = index_name(table_name, column_names, options : _*)
 
-    val sql = adapter.remove_index_sql(table_name, name)
+    val sql = adapter_.remove_index_sql(table_name, name)
 
     execute(sql)
   }
@@ -334,11 +334,11 @@ abstract class Migration
     var (name, opts) = foreign_key_name(on, references, options : _*)
 
     val quoted_on_column_names = on.column_names.map {
-                                   adapter.quote_column_name(_)
+                                   adapter_.quote_column_name(_)
                                  }.mkString(", ")
 
     val quoted_references_column_names = references.column_names.map {
-                                           adapter.quote_column_name(_)
+                                           adapter_.quote_column_name(_)
                                          }.mkString(", ")
 
     var on_delete_opt : Option[OnDelete] = None
@@ -367,13 +367,13 @@ abstract class Migration
 
     val sql = new java.lang.StringBuilder(512)
                .append("ALTER TABLE ")
-               .append(adapter.quote_table_name(on.table_name))
+               .append(adapter_.quote_table_name(on.table_name))
                .append(" ADD CONSTRAINT ")
                .append(name)
                .append(" FOREIGN KEY (")
                .append(quoted_on_column_names)
                .append(") REFERENCES ")
-               .append(adapter.quote_table_name(references.table_name))
+               .append(adapter_.quote_table_name(references.table_name))
                .append(" (")
                .append(quoted_references_column_names)
                .append(")")
@@ -423,7 +423,7 @@ abstract class Migration
     var (name, opts) = foreign_key_name(on, references, options : _*)
 
     execute("ALTER TABLE " +
-            adapter.quote_table_name(on.table_name) +
+            adapter_.quote_table_name(on.table_name) +
             " DROP CONSTRAINT " +
             name)
   }
@@ -450,9 +450,7 @@ abstract class Migration
                                          "at least one privilege.")
     }
 
-    val sql = adapter.grant_sql(table_name,
-                                grantees,
-                                privileges : _*)
+    val sql = adapter_.grant_sql(table_name, grantees, privileges : _*)
 
     execute(sql)
   }
@@ -480,9 +478,7 @@ abstract class Migration
                                          "at least one privilege.")
     }
 
-    val sql = adapter.revoke_sql(table_name,
-                                 grantees,
-                                 privileges : _*)
+    val sql = adapter_.revoke_sql(table_name, grantees, privileges : _*)
 
     execute(sql)
   }
@@ -505,15 +501,16 @@ abstract class Migration
                                          "in the table adding the constraint.")
     }
 
-    var (name, opts) = adapter.generate_check_constraint_name(on, options : _*)
+    var (name, opts) = adapter_.generate_check_constraint_name(on,
+                                                               options : _*)
 
     val quoted_on_column_names = on.column_names.map {
-                                   adapter.quote_column_name(_)
+                                   adapter_.quote_column_name(_)
                                  }.mkString(", ")
 
     val sql = new java.lang.StringBuilder(512)
                .append("ALTER TABLE ")
-               .append(adapter.quote_table_name(on.table_name))
+               .append(adapter_.quote_table_name(on.table_name))
                .append(" ADD CONSTRAINT ")
                .append(name)
                .append(" CHECK (")
@@ -532,10 +529,11 @@ abstract class Migration
                                          "in the table adding the constraint.")
     }
 
-    var (name, opts) = adapter.generate_check_constraint_name(on, options : _*)
+    var (name, opts) = adapter_.generate_check_constraint_name(on,
+                                                               options : _*)
 
     execute("ALTER TABLE " +
-            adapter.quote_table_name(on.table_name) +
+            adapter_.quote_table_name(on.table_name) +
             " DROP CONSTRAINT " +
             name)
   }
