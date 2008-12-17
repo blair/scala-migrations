@@ -88,6 +88,20 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
   private final
   val logger = LoggerFactory.getLogger(this.getClass)
 
+  /**
+   * Concrete subclasses must define this method that returns a
+   * concrete ColumnDefinition instance for the given column type.
+   * The table name and column name are injected into the newly
+   * constructed ColumnDefinition for it to use, but the class of
+   * ColumnDefinition should only depend upon the column_type
+   * argument.
+   *
+   * @param table_name the name of the table the column is in
+   * @param column_name the column's name
+   * @param column_type the data type of the column
+   * @param options a list of column options customizing the column
+   * @return a new ColumnDefinition
+   */
   def new_column_definition(table_name : String,
                             column_name : String,
                             column_type : SqlType,
