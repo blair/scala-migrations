@@ -328,6 +328,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
                         adapter : DatabaseAdapter)
 {
   import Migrator._
+  import RichConnection._
 
   // Load the log4jdbc database wrapper driver.
   Class.forName("net.sf.log4jdbc.DriverSpy")
@@ -503,9 +504,10 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
                          " WHERE version = ?"
           }
 
-        val statement = schema_connection.prepareStatement(sql)
-        statement.setLong(1, version)
-        statement.execute()
+        schema_connection.with_prepared_statement(sql) { statement =>
+          statement.setLong(1, version)
+          statement.execute()
+        }
       }
       case None =>
     }
@@ -549,29 +551,30 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     with_connection { connection =>
       val sql = "SELECT version FROM " +
                 adapter.quote_table_name(schema_migrations_table_name)
-      val statement = connection.prepareStatement(sql)
-      val rs = statement.executeQuery()
-      val versions_list = new scala.collection.mutable.ListBuffer[Long]
-      while (rs.next) {
-        val version_str = rs.getString(1)
-        try {
-          val version = java.lang.Long.parseLong(version_str)
-          versions_list += version
-        }
-        catch {
-          case e : java.lang.NumberFormatException => {
-            logger.warn("Ignoring installed migration with unparsable " +
-                        "version number '" +
-                        version_str +
-                        "'.",
-                        e)
+      connection.with_prepared_statement(sql) { statement =>
+        val rs = statement.executeQuery()
+        val versions_list = new scala.collection.mutable.ListBuffer[Long]
+        while (rs.next) {
+          val version_str = rs.getString(1)
+          try {
+            val version = java.lang.Long.parseLong(version_str)
+            versions_list += version
+          }
+          catch {
+            case e : java.lang.NumberFormatException => {
+              logger.warn("Ignoring installed migration with unparsable " +
+                          "version number '" +
+                          version_str +
+                          "'.",
+                          e)
+            }
           }
         }
-      }
 
-      val versions = versions_list.toArray
-      java.util.Arrays.sort(versions)
-      versions
+        val versions = versions_list.toArray
+        java.util.Arrays.sort(versions)
+        versions
+      }
     }
   }
 
@@ -604,8 +607,9 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
         val sql = "LOCK TABLE " +
                   adapter.quote_table_name(schema_migrations_table_name) +
                   " IN EXCLUSIVE MODE"
-        val statement = schema_connection.prepareStatement(sql)
-        statement.execute()
+        schema_connection.with_prepared_statement(sql) { statement =>
+          statement.execute()
+        }
       }
 
       // Get a list of all available and installed migrations.  Check
