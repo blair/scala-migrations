@@ -79,6 +79,22 @@ them at runtime and from the filename load the correct class name.
 The ordering to apply the migrations is contained in the filename, not
 the class name.
 
+UNSUPPORTED DATABASE FEATURES
+-----------------------------
+
+It is not a goal of Scala Migrations to check and report on the
+compatibility of a Scala Migrations specific feature with a database.
+For example, Oracle does not support the "ON UPDATE SET NULL" clause
+on a foreign key constraint.  If a OnUpset(SetNull) is specified for a
+foreign key constraint, then Scala Migrations will generate that
+clause and ask the database to execute it.
+
+If Scala Migrations did attempt to check on the compatibility of each
+feature, then it would need to grow much larger to know which features
+worked on which database, and even worse, potentially know which
+features appear in which database versions.  This is not something
+that the authors of Scala Migrations want to maintain.
+
 DATA TYPES
 ----------
 
