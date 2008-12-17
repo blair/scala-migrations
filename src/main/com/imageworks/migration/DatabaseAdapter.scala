@@ -328,7 +328,7 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    * provided in the options.
    *
    * @param on the table and columns the check contraint is on
-   * @options a varargs list of CheckOptions
+   * @param options a varargs list of CheckOptions
    * @return a Tuple2 with the caclulated name or the overriden name
    *         from a Name and the remaining options
    */
