@@ -113,7 +113,8 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
                                 column_type : SqlType,
                                 options : List[ColumnOption])
                                (f : Function1[SqlType, ColumnDefinition])
-    : ColumnDefinition = {
+    : ColumnDefinition =
+  {
     val d = f(column_type)
 
     d.adapter = this
