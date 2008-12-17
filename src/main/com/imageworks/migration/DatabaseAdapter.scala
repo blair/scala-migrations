@@ -89,12 +89,10 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
   val logger = LoggerFactory.getLogger(this.getClass)
 
   /**
-   * Concrete subclasses must define this method that returns a
-   * concrete ColumnDefinition instance for the given column type.
-   * The table name and column name are injected into the newly
-   * constructed ColumnDefinition for it to use, but the class of
-   * ColumnDefinition should only depend upon the column_type
-   * argument.
+   * Given a table name, column name and column data type, return a
+   * newly constructed and fully initialized ColumnDefinition.  The
+   * class of the returned ColumnDefinition only depends upon the
+   * input column data type.
    *
    * @param table_name the name of the table the column is in
    * @param column_name the column's name
@@ -105,17 +103,9 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
   def new_column_definition(table_name : String,
                             column_name : String,
                             column_type : SqlType,
-                            options : List[ColumnOption]) : ColumnDefinition
-
-  protected
-  def column_definition_factory(table_name : String,
-                                column_name : String,
-                                column_type : SqlType,
-                                options : List[ColumnOption])
-                               (f : Function1[SqlType, ColumnDefinition])
-    : ColumnDefinition =
+                            options : List[ColumnOption]) : ColumnDefinition =
   {
-    val d = f(column_type)
+    val d = column_definition_factory(column_type)
 
     d.adapter = this
     d.table_name = table_name
@@ -126,6 +116,18 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
 
     d
   }
+
+  /**
+   * Concrete subclasses must define this method that returns a newly
+   * constructed, but uninitialized, concrete ColumnDefinition
+   * subclass for the given SQL data type.
+   *
+   * @param column_type the column's data type
+   * @return a newly constructed but uninitialized ColumnDefinition
+   *         for the column_type
+   */
+  protected
+  def column_definition_factory(column_type : SqlType) : ColumnDefinition
 
   def quote_column_name(column_name : String) : String =
   {
