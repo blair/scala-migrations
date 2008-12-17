@@ -358,4 +358,36 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
 
     (name, opts)
   }
+
+  /**
+   * Return the SQL text in a foreign key relationship for an optional
+   * ON DELETE clause.
+   *
+   * @param on_delete_opt an Option[OnDelete]
+   * @param the SQL text to append to the SQL to create a foreign key
+   *        relationship
+   */
+  def on_delete_sql(on_delete_opt : Option[OnDelete]) : String =
+  {
+    on_delete_opt match {
+      case Some(on_delete) => "ON DELETE " + on_delete.action.sql
+      case None => ""
+    }
+  }
+
+  /**
+   * Return the SQL text in a foreign key relationship for an optional
+   * ON UPDATE clause.
+   *
+   * @param on_update_opt an Option[OnUpdate]
+   * @param the SQL text to append to the SQL to create a foreign key
+   *        relationship
+   */
+  def on_update_sql(on_update_opt : Option[OnUpdate]) : String =
+  {
+    on_update_opt match {
+      case Some(on_update) => "ON UPDATE " + on_update.action.sql
+      case None => ""
+    }
+  }
 }

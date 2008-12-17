@@ -169,4 +169,27 @@ class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
 
     super.revoke_sql(schema_name_opt, table_name, grantees, privileges : _*)
   }
+
+  /**
+   * Return the SQL text for the ON DELETE clause for a foreign key
+   * relationship.
+   *
+   * Oracle rejects adding a foreign key relationship containing the
+   * "ON DELETE RESTRICT" text, so do not generate any SQL text for
+   * it.  The behavior is the same though.  Let any other unsupported
+   * options pass through, such as "ON DELETE NO ACTION", in case
+   * Oracle ever does support that clause, which it does not in 10g.
+   *
+   * @param on_delete_opt an Option[OnDelete]
+   * @param the SQL text to append to the SQL to create a foreign key
+   *        relationship
+   */
+  override
+  def on_delete_sql(on_delete_opt : Option[OnDelete]) : String =
+  {
+    on_delete_opt match {
+      case Some(OnDelete(Restrict)) => ""
+      case opt => super.on_delete_sql(opt)
+    }
+  }
 }
