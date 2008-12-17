@@ -275,11 +275,11 @@ abstract class Migration
    * Given a foreign key relationship, create a name for it, using a
    * Name() if it is provided in the options.
    *
-   * @param on the table and columns the foreign key contraint is on
-   * @param references the table and columns the foreign key contraint
-   *        references
+   * @param on the table and columns the foreign key constraint is on
+   * @param references the table and columns the foreign key
+   *        constraint references
    * @options a varargs list of ForeignKeyOption's
-   * @return a Tuple2 with the caclulated name or the overriden name
+   * @return a Tuple2 with the calculated name or the overridden name
    *         from a Name and the remaining options
    */
   private

@@ -327,9 +327,9 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    * Given a check constraint, create a name for it, using a Name() if it is
    * provided in the options.
    *
-   * @param on the table and columns the check contraint is on
+   * @param on the table and columns the check constraint is on
    * @param options a varargs list of CheckOptions
-   * @return a Tuple2 with the caclulated name or the overriden name
+   * @return a Tuple2 with the calculated name or the overridden name
    *         from a Name and the remaining options
    */
   def generate_check_constraint_name(on : On,
