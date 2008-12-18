@@ -85,8 +85,8 @@ UNSUPPORTED DATABASE FEATURES
 It is not a goal of Scala Migrations to check and report on the
 compatibility of a Scala Migrations specific feature with a database.
 For example, Oracle does not support the "ON UPDATE SET NULL" clause
-on a foreign key constraint.  If a OnUpset(SetNull) is specified for a
-foreign key constraint, then Scala Migrations will generate that
+on a foreign key constraint.  If a OnUpdate(SetNull) is specified for
+a foreign key constraint, then Scala Migrations will generate that
 clause and ask the database to execute it.
 
 If Scala Migrations did attempt to check on the compatibility of each
