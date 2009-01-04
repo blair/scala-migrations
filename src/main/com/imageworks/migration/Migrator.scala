@@ -422,9 +422,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
         }
 
         case (Right(jdbc_url), Some((username, password))) => {
-          java.sql.DriverManager.getConnection(jdbc_url,
-                                               username,
-                                               password)
+          java.sql.DriverManager.getConnection(jdbc_url, username, password)
         }
 
         case (Right(jdbc_url), None) => {
