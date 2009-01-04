@@ -4,6 +4,7 @@
 
     <filelist id="src_compile.filelist" dir=".">
         <file name="${scala.lib.dir}/scala-library.jar"/>
+        <file name="${log4jdbc.jar}"/>
         <file name="${slf4j-api.jar}"/>
     </filelist>
 
@@ -63,7 +64,6 @@
                 <path refid="test_compile.classpath"/>
                 <path location="build/test"/>
                 <path location="${log4j.jar}"/>
-                <path location="${log4jdbc.jar}"/>
                 <path location="${slf4j-impl.jar}"/>
             </classpath>
 

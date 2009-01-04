@@ -320,6 +320,9 @@ object Migrator
   }
 }
 
+class RawAndLoggingConnections(val raw : java.sql.Connection,
+                               val logging : net.sf.log4jdbc.ConnectionSpy)
+
 /**
  * This class migrates the database into the desired state.
  */
@@ -396,20 +399,19 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
          adapter)
   }
 
+  /**
+   * Get a raw database connection and pass it to a closure for the
+   * closure to use.  After the closure returns, normally or by
+   * throwing an exception, close the connection.
+   *
+   * @param f a Function1[java.sql.Connection,T] that is passed a new
+   *        connection
+   * @return what f returns
+   */
   // http://lampsvn.epfl.ch/trac/scala/ticket/442
-  private[migration] def with_connection[T](f : java.sql.Connection => T) : T =
+  private[migration] def with_raw_connection[T](f : java.sql.Connection => T) : T =
   {
-    // Use the log4jdbc database wrapper to log all JDBC commands.
-    def jdbcLogUrl(url : String) : String = {
-      if (url.startsWith("jdbc:log4")) {
-        url
-      }
-      else {
-        "jdbc:log4" + url
-      }
-    }
-
-    val connection = {
+    val raw_connection = {
       (jdbc_conn, jdbc_login) match {
         case (Left(jdbc_datasource), Some((username, password))) => {
           jdbc_datasource.getConnection(username, password)
@@ -420,22 +422,57 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
         }
 
         case (Right(jdbc_url), Some((username, password))) => {
-          java.sql.DriverManager.getConnection(jdbcLogUrl(jdbc_url),
+          java.sql.DriverManager.getConnection(jdbc_url,
                                                username,
                                                password)
         }
 
         case (Right(jdbc_url), None) => {
-          java.sql.DriverManager.getConnection(jdbcLogUrl(jdbc_url))
+          java.sql.DriverManager.getConnection(jdbc_url)
         }
       }
     }
 
     try {
-      f(connection)
+      f(raw_connection)
     }
     finally {
-      connection.close
+      raw_connection.close
+    }
+  }
+
+  /**
+   * Get a database connection that logs all calls to it and pass it
+   * to a closure for the closure to use.  After the closure returns,
+   * normally or by throwing an exception, close the connection.
+   *
+   * @param f a Function1[java.sql.Connection,T] that is passed a new
+   *        connection
+   * @return what f returns
+   */
+  private[migration] def with_logging_connection[T](f : java.sql.Connection => T) : T =
+  {
+    with_raw_connection { raw_connection =>
+      f(new net.sf.log4jdbc.ConnectionSpy(raw_connection))
+    }
+  }
+
+  /**
+   * Get a tuple of database connections, a raw one and one that logs
+   * all calls to it and pass both to a closure for the closure to
+   * use.  After the closure returns, normally or by throwing an
+   * exception, close the raw connection.
+   *
+   * @param f a Function1[RawAndLoggingConnections,T] that is passed a
+   *        pair of related connections
+   * @return what f returns
+   */
+  private[migration] def with_connections[T](f : RawAndLoggingConnections => T) : T =
+  {
+    with_raw_connection { raw_connection =>
+      val logging_connection =
+        new net.sf.log4jdbc.ConnectionSpy(raw_connection)
+      f(new RawAndLoggingConnections(raw_connection, logging_connection))
     }
   }
 
@@ -447,7 +484,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    */
   def table_names : scala.collection.Set[String] =
   {
-    with_connection { connection =>
+    with_logging_connection { connection =>
       val metadata = connection.getMetaData
       val rs = metadata.getTables(null,
                                   adapter.schema_name_opt.getOrElse(null),
@@ -481,8 +518,9 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
                 migration_class.getName)
 
     val migration = migration_class.getConstructor().newInstance()
-    with_connection { connection =>
-      migration.connection_ = connection
+    with_connections { connections =>
+      migration.connection_ = connections.logging
+      migration.raw_connection_ = connections.raw
       migration.adapter_ = adapter
 
       direction match {
@@ -548,7 +586,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    */
   def get_installed_migrations : Array[Long] =
   {
-    with_connection { connection =>
+    with_logging_connection { connection =>
       val sql = "SELECT version FROM " +
                 adapter.quote_table_name(schema_migrations_table_name)
       connection.with_prepared_statement(sql) { statement =>
@@ -600,7 +638,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
 
     // Get a new connection that locks the schema_migrations table.
     // This will prevent concurrent migrations from running.
-    with_connection { schema_connection =>
+    with_logging_connection { schema_connection =>
       {
         logger.debug("Getting an exclusive lock on the '{}' table.",
                      schema_migrations_table_name)

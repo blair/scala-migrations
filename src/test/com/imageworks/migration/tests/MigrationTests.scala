@@ -173,7 +173,7 @@ class MigrationTests
     val select_sql = "SELECT name FROM APP.location"
 
     def run_select : Unit = {
-      test_migrator.with_connection { connection =>
+      test_migrator.with_logging_connection { connection =>
         val statement = connection.prepareStatement(select_sql)
         val rs = statement.executeQuery
         rs.close()
@@ -249,7 +249,7 @@ class MigrationTests
     val varbinary_array = (1 to 4).map(_.toByte).toArray
     val now = System.currentTimeMillis
 
-    migrator.with_connection { connection =>
+    migrator.with_logging_connection { connection =>
       for ((n, v) <- Array(("bigint_column", java.lang.Long.MIN_VALUE),
                            ("bigint_column", java.lang.Long.MAX_VALUE),
                            ("char_column", "ABCD"),

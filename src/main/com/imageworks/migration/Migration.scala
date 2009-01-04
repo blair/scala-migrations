@@ -1,5 +1,6 @@
 package com.imageworks.migration
 
+import net.sf.log4jdbc.ConnectionSpy
 import org.slf4j.LoggerFactory
 
 /**
@@ -76,20 +77,46 @@ abstract class Migration
   def down : Unit
 
   /**
-   * The connection to the database that will be used for the
-   * migration.
+   * The raw connection to the database that underlies the
+   * ConnectionSpy connection.  This is provided in case the real
+   * database connection is needed because the ConnectionSpy
+   * connection does not provide a required feature.  This connection
+   * should not be used in normal use.
    *
    * This is set using property style dependency injection instead of
    * constructor style injection, which makes for cleaner code for the
    * users of this migration framework.
    */
-  private [migration] var connection_ : java.sql.Connection = _
+  private [migration] var raw_connection_ : java.sql.Connection = _
+
+  /**
+   * Get the raw connection to the database the migration can use for
+   * any custom work.  This connection is the raw connection that
+   * underlies the logging connection and does not log any operations
+   * performed on it.  It should only be used when the ConnectionSpy
+   * connection does not provide a required feature.  The Migration
+   * subclass must be careful with this connection and leave it in a
+   * good state, as all of the other migration methods defined in
+   * Migration use the same connection.
+   */
+  def raw_connection = raw_connection_
+
+  /**
+   * The connection to the database that is used for the migration.
+   * This connection also logs all operations performed on it.
+   *
+   * This is set using property style dependency injection instead of
+   * constructor style injection, which makes for cleaner code for the
+   * users of this migration framework.
+   */
+  private [migration] var connection_ : net.sf.log4jdbc.ConnectionSpy = _
 
   /**
    * Get the connection to the database the migration can use for any
-   * custom work.  The Migration subclass must be careful with this
-   * connection and leave it in a good state, as all of the other
-   * migration methods defined in Migration use the same connection.
+   * custom work.  This connection logs all operations performed on
+   * it.  The Migration subclass must be careful with this connection
+   * and leave it in a good state, as all of the other migration
+   * methods defined in Migration use the same connection.
    */
   def connection = connection_
 
