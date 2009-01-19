@@ -10,8 +10,8 @@ class DerbyTimestampColumnDefinition
 
 class DerbyVarbinaryColumnDefinition
   extends ColumnDefinition
-  with ColumnSupportsLimit
   with ColumnSupportsDefault
+  with ColumnSupportsLimit
 {
   def sql = column_sql("VARCHAR") + " FOR BIT DATA"
 }

@@ -71,8 +71,8 @@ class OracleIntegerColumnDefinition
 
 class OracleVarbinaryColumnDefinition
   extends ColumnDefinition
-  with ColumnSupportsLimit
   with ColumnSupportsDefault
+  with ColumnSupportsLimit
 {
   def sql =
   {
@@ -87,8 +87,8 @@ class OracleVarbinaryColumnDefinition
 
 class OracleVarcharColumnDefinition
   extends ColumnDefinition
-  with ColumnSupportsLimit
   with ColumnSupportsDefault
+  with ColumnSupportsLimit
 {
   def sql = column_sql("VARCHAR2")
 }
