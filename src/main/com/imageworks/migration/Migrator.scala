@@ -347,7 +347,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *        to handle database specific features
    */
   def this(jdbc_url : String,
-           adapter : DatabaseAdapter) = {
+           adapter : DatabaseAdapter) =
+  {
     this(Right(jdbc_url), None, adapter)
   }
 
@@ -363,7 +364,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   def this(jdbc_url : String,
            jdbc_username : String,
            jdbc_password : String,
-           adapter : DatabaseAdapter) = {
+           adapter : DatabaseAdapter) =
+  {
     this(Right(jdbc_url),
          Some((jdbc_username, jdbc_password)),
          adapter)
@@ -376,7 +378,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *        to handle database specific features
    */
   def this(jdbc_datasource : DataSource,
-           adapter : DatabaseAdapter) = {
+           adapter : DatabaseAdapter) =
+  {
     this(Left(jdbc_datasource), None, adapter)
   }
 
@@ -393,7 +396,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   def this(jdbc_datasource : DataSource,
            jdbc_username : String,
            jdbc_password : String,
-           adapter : DatabaseAdapter) = {
+           adapter : DatabaseAdapter) =
+  {
     this(Left(jdbc_datasource),
          Some((jdbc_username, jdbc_password)),
          adapter)

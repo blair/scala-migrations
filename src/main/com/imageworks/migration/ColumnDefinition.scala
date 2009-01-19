@@ -42,7 +42,8 @@ class ColumnDefinition
   /**
    * Called after the above properties have been wired.
    */
-  def initialize() : Unit = {
+  def initialize() : Unit =
+  {
     if (this.isInstanceOf[ColumnSupportsLimit]) {
       check_for_limit()
     }
@@ -277,7 +278,8 @@ class ColumnDefinition
 
     for (option <- options) {
       def append_check_sql(name : String,
-                           expr : String) : Unit = {
+                           expr : String) : Unit =
+      {
         options -= option
 
         sb.append(" CONSTRAINT ")
@@ -337,7 +339,8 @@ class ColumnDefinition
    * @param t column type name
    * @param limit optional column limit
    */
-  def column_sql(t : String, limit : Option[String]) : String = {
+  def column_sql(t : String, limit : Option[String]) : String =
+  {
     if (limit.isDefined) {
       t + "(" + limit.get + ")"
     }
@@ -369,7 +372,8 @@ abstract class AbstractDecimalColumnDefinition
    */
   def decimal_sql_name : String
 
-  def sql = {
+  def sql =
+  {
     (precision, scale) match {
       case (None, None) => {
         decimal_sql_name

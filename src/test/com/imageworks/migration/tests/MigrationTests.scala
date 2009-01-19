@@ -172,7 +172,8 @@ class MigrationTests
 
     val select_sql = "SELECT name FROM APP.location"
 
-    def run_select : Unit = {
+    def run_select : Unit =
+    {
       test_migrator.with_logging_connection { connection =>
         val statement = connection.prepareStatement(select_sql)
         val rs = statement.executeQuery

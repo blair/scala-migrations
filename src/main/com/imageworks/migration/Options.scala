@@ -53,11 +53,13 @@ case class Default(value : String)
  * integer values.
  */
 object Default {
-  def apply(i : Int) : Default = {
+  def apply(i : Int) : Default =
+  {
     Default(i.toString)
   }
 
-  def apply(i : Long) : Default = {
+  def apply(i : Long) : Default =
+  {
     Default(i.toString)
   }
 }
@@ -87,7 +89,8 @@ case class Limit(expr : String)
  * integer values.
  */
 object Limit {
-  def apply(i : Int) : Limit = {
+  def apply(i : Int) : Limit =
+  {
     Limit(i.toString)
   }
 }

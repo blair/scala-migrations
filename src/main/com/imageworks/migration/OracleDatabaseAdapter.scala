@@ -74,7 +74,8 @@ class OracleVarbinaryColumnDefinition
   with ColumnSupportsLimit
   with ColumnSupportsDefault
 {
-  def sql = {
+  def sql =
+  {
     if (! limit.isDefined) {
       val message = "In Oracle, a RAW column must always specify its size."
       throw new IllegalArgumentException(message)

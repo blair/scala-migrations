@@ -177,7 +177,8 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    * @return the SQL to drop the index
    */
   def remove_index_sql(table_name : String,
-                       index_name : String) : String = {
+                       index_name : String) : String =
+  {
     remove_index_sql(schema_name_opt, table_name, index_name)
   }
 
@@ -194,7 +195,8 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
                .append(action)
                .append(" ")
 
-    def formatColumns(columns : Seq[String]) : String = {
+    def formatColumns(columns : Seq[String]) : String =
+    {
       if (columns.isEmpty) {
         ""
       }
@@ -334,7 +336,8 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    */
   def generate_check_constraint_name(on : On,
                                      options : CheckOption*)
-    : Tuple2[String,List[CheckOption]] = {
+    : Tuple2[String,List[CheckOption]] =
+  {
     var opts = options.toList
 
     var chk_name_opt : Option[String] = None
