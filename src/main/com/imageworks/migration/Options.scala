@@ -43,6 +43,12 @@ sealed trait CheckOption
 sealed trait TableOption
 
 /**
+ * The base trait for all character set definitions.
+ */
+case class CharacterSet(name : CharacterSetName)
+  extends ColumnOption
+
+/**
  * A default value for a column.
  */
 case class Default(value : String)

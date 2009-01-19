@@ -19,8 +19,19 @@ class DerbyVarbinaryColumnDefinition
 class DerbyDatabaseAdapter(override val schema_name_opt : Option[String])
   extends DatabaseAdapter(schema_name_opt)
 {
-  def column_definition_factory(column_type : SqlType) : ColumnDefinition =
+  def column_definition_factory(column_type : SqlType,
+                                character_set_opt : Option[CharacterSet]) : ColumnDefinition =
   {
+    character_set_opt match {
+      case None =>
+      case Some(CharacterSet(Unicode)) =>
+      case Some(set @ CharacterSet(_)) => {
+        logger.warn("Ignoring '{}' as Derby uses Unicode sequences to " +
+                    "represent character data types.",
+                    set)
+      }
+    }
+
     column_type match {
       case BooleanType => {
         val message = "Derby does not support a boolean type, you must " +

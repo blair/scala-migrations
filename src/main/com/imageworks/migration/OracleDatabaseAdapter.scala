@@ -32,6 +32,17 @@ class OracleBigintColumnDefinition
   val sql = "NUMBER(19, 0)"
 }
 
+class OracleCharColumnDefinition(use_nchar_type : Boolean)
+  extends ColumnDefinition
+  with ColumnSupportsDefault
+  with ColumnSupportsLimit
+{
+  def sql = if (use_nchar_type)
+              column_sql("NCHAR")
+            else
+              column_sql("CHAR")
+}
+
 class OracleDecimalColumnDefinition
   extends AbstractDecimalColumnDefinition
 {
@@ -85,19 +96,41 @@ class OracleVarbinaryColumnDefinition
   }
 }
 
-class OracleVarcharColumnDefinition
+class OracleVarcharColumnDefinition(use_nchar_type : Boolean)
   extends ColumnDefinition
   with ColumnSupportsDefault
   with ColumnSupportsLimit
 {
-  def sql = column_sql("VARCHAR2")
+  def sql = if (use_nchar_type)
+              column_sql("NVARCHAR2")
+            else
+              column_sql("VARCHAR2")
 }
 
 class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
   extends DatabaseAdapter(schema_name_opt)
 {
-  def column_definition_factory(column_type : SqlType) : ColumnDefinition =
+  def column_definition_factory(column_type : SqlType,
+                                character_set_opt : Option[CharacterSet]) : ColumnDefinition =
   {
+    val use_nchar_type =
+      character_set_opt match {
+        case None => {
+          false
+        }
+        case Some(CharacterSet(Unicode)) => {
+          true
+        }
+        case Some(set @ CharacterSet(name)) => {
+          logger.warn("Ignoring '{}' as Oracle only supports specifying no " +
+                      "explicit character set encoding, which defaults the " +
+                      "column to use the database's character set, or " +
+                      "Unicode.",
+                      set)
+          false
+        }
+      }
+
     column_type match {
       case BooleanType => {
         val message = "Oracle does not support a boolean type, you must " +
@@ -109,7 +142,7 @@ class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
       case BlobType =>
         new DefaultBlobColumnDefinition
       case CharType =>
-        new DefaultCharColumnDefinition
+        new OracleCharColumnDefinition(use_nchar_type)
       case DecimalType =>
         new OracleDecimalColumnDefinition
       case IntegerType =>
@@ -119,7 +152,7 @@ class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
       case VarbinaryType =>
         new OracleVarbinaryColumnDefinition
       case VarcharType =>
-        new OracleVarcharColumnDefinition
+        new OracleVarcharColumnDefinition(use_nchar_type)
     }
   }
 

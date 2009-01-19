@@ -85,7 +85,7 @@ object DatabaseAdapter
 abstract
 class DatabaseAdapter(val schema_name_opt : Option[String])
 {
-  private final
+  protected final
   val logger = LoggerFactory.getLogger(this.getClass)
 
   /**
@@ -103,14 +103,42 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
   def new_column_definition(table_name : String,
                             column_name : String,
                             column_type : SqlType,
-                            options : List[ColumnOption]) : ColumnDefinition =
+                            options : ColumnOption*) : ColumnDefinition =
   {
-    val d = column_definition_factory(column_type)
+    var opts = options.toList
+
+    // Search for a CharacterSet option.
+    var character_set_opt : Option[CharacterSet] = None
+
+    for (opt @ CharacterSet(name) <- opts) {
+      opts -= opt
+      if (character_set_opt.isDefined && character_set_opt.get != name) {
+        logger.warn("Redefining the character set from '{}'' to '{}'.",
+                    character_set_opt.get,
+                    name)
+      }
+      character_set_opt = Some(opt)
+    }
+
+    // Warn if a CharacterSet is being used for a non-character type
+    // column.
+    if (character_set_opt.isDefined)
+      column_type match {
+        case CharType =>
+        case VarcharType =>
+        case column_type => {
+          logger.warn("The '{}' option cannot be used for a '{}' column type.",
+                      character_set_opt.get,
+                      column_type)
+      }
+    }
+
+    val d = column_definition_factory(column_type, character_set_opt)
 
     d.adapter = this
     d.table_name = table_name
     d.column_name = column_name
-    d.options = options
+    d.options = opts
 
     d.initialize()
 
@@ -120,14 +148,16 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
   /**
    * Concrete subclasses must define this method that returns a newly
    * constructed, but uninitialized, concrete ColumnDefinition
-   * subclass for the given SQL data type.
+   * subclass for the given SQL data type and optional CharacterSet.
    *
    * @param column_type the column's data type
+   * @param character_set_opt an optional CharacterSet
    * @return a newly constructed but uninitialized ColumnDefinition
    *         for the column_type
    */
   protected
-  def column_definition_factory(column_type : SqlType) : ColumnDefinition
+  def column_definition_factory(column_type : SqlType,
+                                character_set_opt : Option[CharacterSet]) : ColumnDefinition
 
   def quote_column_name(column_name : String) : String =
   {

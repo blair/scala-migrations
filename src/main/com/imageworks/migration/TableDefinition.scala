@@ -20,7 +20,7 @@ class TableDefinition(adapter : DatabaseAdapter,
     val column = adapter.new_column_definition(table_name,
                                                name,
                                                column_type,
-                                               options.toList)
+                                               options : _*)
     columns += column
     this
   }
