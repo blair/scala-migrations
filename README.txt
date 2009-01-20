@@ -15,9 +15,9 @@ class Migrate_20081118201742_CreatePeopleTable
       t.varbinary("pk_location", Limit(16), NotNull)
       t.integer("employee_id", Unique)
       t.integer("ssn", NotNull)
-      t.varchar("first_name", Limit(255), NotNull)
-      t.char("middle_initial", Limit(1), Nullable)
-      t.varchar("last_name", Limit(255), NotNull)
+      t.varchar("first_name", Limit(255), NotNull, CharacterSet(Unicode))
+      t.char("middle_initial", Limit(1), Nullable, CharacterSet(Unicode))
+      t.varchar("last_name", Limit(255), NotNull, CharacterSet(Unicode))
       t.timestamp("birthdate", Limit(0), NotNull)
       t.integer("vacation_days", NotNull, Default("0"))
       t.bigint("hire_time_micros", NotNull)
@@ -224,6 +224,61 @@ identically.
 
      http://www.postgresql.org/docs/8.3/interactive/datatype-numeric.html
      http://www.postgresql.org/docs/8.3/interactive/datatype.html#DATATYPE-TABLE
+
+CHARACTER SET ENCODING
+----------------------
+
+Scala Migrations supports specifying the character set for Char and
+Varchar columns with the CharacterSet() column option, which takes the
+name of the character set as an argument.  Currently, the only
+supported character set name is Unicode.
+
+Here is how different databases handle character set encoding.
+
+ * Derby
+
+   "Character data types are represented as Unicode 2.0 sequences in
+   Derby."
+
+   So specifying CharacterSet(Unicode) does not change its behavior.
+   Using any character set name besides Unicode as the argument to
+   CharacterSet() raises a warning and is ignored.
+
+   http://db.apache.org/derby/docs/10.4/devguide/cdevcollation.html
+
+* PostgreSQL
+
+  The character set encoding is chosen when a database is created with
+  the "createdb" command line utility or the
+
+    CREATE DATABASE ENCODING [=] encoding
+
+  SQL statement.
+
+  So specifying any CharacterSet has no effect.
+
+* MySQL
+
+  MySQL supports specifying the character set on a per-column basis.
+
+* Oracle
+
+  Oracle only supports two character sets.  The first uses the
+  database character set which was chosen when the database was
+  created.  This encoding is used for CHAR, VARCHAR2 and CLOB columns.
+  The second character set is called the national character set and is
+  Unicode, which is used for NCHAR, NVARCHAR2, and NCLOB columns.
+  There are two encodings available for the national character set,
+  AL16UTF16 and UTF8.  By default, Oracle uses AL16UTF16.
+
+  http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14225/ch6unicode.htm
+
+  Specifying no CharacterSet column option defaults the Char type to
+  CHAR and the Varchar type to VARCHAR2.  If CharacterSet(Unicode) is
+  given, then Char uses NCHAR and Varchar uses NVARCHAR2.  Using any
+  character set name besides Unicode as the argument to CharacterSet()
+  raises a warning and is ignored, resulting in CHAR and VARCHAR2
+  column types.
 
 CAVATS
 ------
