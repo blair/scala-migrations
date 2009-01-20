@@ -19,6 +19,8 @@ class Migrate_20081118201742_CreatePeopleTable
       t.char("middle_initial", Limit(1), Nullable, CharacterSet(Unicode))
       t.varchar("last_name", Limit(255), NotNull, CharacterSet(Unicode))
       t.timestamp("birthdate", Limit(0), NotNull)
+      t.smallint("height", NotNull, Check("height > 0"))
+      t.smallint("weight", NotNull, Check("weight > 0"))
       t.integer("vacation_days", NotNull, Default("0"))
       t.bigint("hire_time_micros", NotNull)
       t.decimal("salary", Precision(7), Scale(2), Check("salary > 0"))
@@ -119,6 +121,9 @@ More information on the mappings is below.
     Integer
         Default: INTEGER
         Oracle: NUMBER(10, 0)
+    Smallint
+        Default: SMALLINT
+        Oracle: NUMBER(5, 0)
     Timestamp
         Default: TIMESTAMP
     Varbinary
@@ -147,30 +152,39 @@ Different representations that have been used in schemas include:
 2) An INTEGER column with 0 representing to false and all other values
    representing true.
 
-Oracle and INTEGER and BIGINT
------------------------------
+Oracle and SMALLINT, INTEGER and BIGINT
+---------------------------------------
 
-Oracle does not have an INTEGER or BIGINT SQL type comparable to other
-databases, such such as Derby, MySQL and PostgreSQL, which for INTEGER
-use a 4-byte integer to store the value and limiting the integers that
-can be inserted from -2147483648 to 2147483647 and for BIGINT's use an
-8-byte integer to store the value and limit the integers that can
-stored from -9223372036854775808 to 9223372036854775807.
+Oracle does not have SMALLINT, INTEGER or BIGINT SQL types comparable
+to other databases, such such as Derby, MySQL and PostgreSQL.  These
+other databases used a fixed sized signed integer with a limited range
+of values that can be stored in the column.
 
-If a column is defined in Oracle using "INTEGER" it uses a NUMBER(38)
+  Type        Storage                           Min value            Max value
+  ----------------------------------------------------------------------------
+  SMALLINT    2-byte signed integer                -32768                32767
+  INTEGER     4-byte signed integer           -2147483648           2147483647
+  BIGINT      8-byte signed integer  -9223372036854775808  9223372036854775807
+
+Oracle does support an "INTEGER" column type but it uses a NUMBER(38)
 to store it:
 
 http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14200/sql_elements001.htm#sthref218
 
-A Migration defining an INTEGER column on Oracle uses a NUMBER(10, 0).
-This is large enough to store any 4-byte integers from -2147483648 to
-2147483647 but not any integers with more digits.  A NUMBER(10, 0)
-does allow a larger range of values than the other databases, from
--9999999999 to 9999999999, but this seems like an acceptable solution
-without using a CHECK constraint on the column.  Likewise, a Migration
-defining an BIGINT column on Oracle uses a NUMBER(19, 0) which is
-large enough to store any 8-byte integers from -9223372036854775808 to
-9223372036854775807.
+On Oracle, a Scala Migration using any of the SMALLINT, INTEGER and
+BIGINT types is mapped to a NUMBER with a precision smaller than 38.
+
+  Migration Type    Oracle Type
+  -------------------------------
+  SMALLINT          NUMBER(5, 0)
+  INTEGER           NUMBER(10, 0)
+  BIGINT            NUMBER(19, 0)
+
+This helps ensure the compatibility of any code running against an
+Oracle database so that it does not assume it can use 38-digit integer
+values in case the data needs to be exported to another database or if
+the code needs to work with other databases.  Columns wishing to use a
+NUMBER(38) should use a DecimalType column.
 
 NUMERIC and DECIMAL
 ------------------

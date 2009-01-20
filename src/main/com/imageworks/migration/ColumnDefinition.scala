@@ -427,6 +427,13 @@ class DefaultIntegerColumnDefinition
   val sql = "INTEGER"
 }
 
+class DefaultSmallintColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsDefault
+{
+  val sql = "SMALLINT"
+}
+
 class DefaultTimestampColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsLimit

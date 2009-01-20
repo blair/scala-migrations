@@ -68,6 +68,13 @@ class TableDefinition(adapter : DatabaseAdapter,
   }
 
   final
+  def smallint(name : String,
+               options : ColumnOption*) : TableDefinition =
+  {
+    column(name, SmallintType, options : _*)
+  }
+
+  final
   def timestamp(name : String,
                 options : ColumnOption*) : TableDefinition =
   {
