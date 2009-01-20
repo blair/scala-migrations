@@ -170,6 +170,48 @@ abstract class Migration
     }
   }
 
+  /**
+   * Given a SQL string and a Function1[java.sql.PreparedStatement,Unit],
+   * create a new prepared statement, begin a new transaction and pass
+   * the prepared statement to the closure.  The closure does not need
+   * to perform the commit, this method will perform the commit.  If
+   * anything fails, the transaction is rolled back and the exception
+   * that caused the rollback is re-thrown.  Finally, the auto-commit
+   * state is reset to the value the connection had before this method
+   * was called.
+   *
+   * @param sql the SQL text that will be prepared
+   * @param f the Function1[java.sql.PreparedStatement,Unit] that will
+   *        be given a new prepared statement
+   */
+  final
+  def with_prepared_statement(sql : String)
+                             (f : java.sql.PreparedStatement => Unit) : Unit =
+  {
+    val c = connection
+    val auto_commit = c.getAutoCommit
+    try {
+      c.setAutoCommit(false)
+      val statement = c.prepareStatement(sql)
+      try {
+        f(statement)
+        c.commit()
+      }
+      catch {
+        case e => {
+          c.rollback()
+          throw e
+        }
+      }
+      finally {
+        statement.close()
+      }
+    }
+    finally {
+      c.setAutoCommit(auto_commit)
+    }
+  }
+
   final
   def create_table(table_name : String,
                    options : TableOption*)
