@@ -19,8 +19,8 @@ package com.imageworks.migration
  * http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14200/sql_elements001.htm#sthref218
  *
  * Using a NUMBER(19, 0) helps ensure the compatibility of any code
- * running against an Oracle database to such that is does not assume
- * it can use 38-digit integer values in case the data needs to be
+ * running against an Oracle database so that is does not assume it
+ * can use 38-digit integer values in case the data needs to be
  * exported to another database or if the code needs to work with
  * other databases.  Columns wishing to use a NUMBER(38) should use a
  * DecimalType column.
@@ -67,8 +67,8 @@ class OracleDecimalColumnDefinition
  * http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14200/sql_elements001.htm#sthref218
  *
  * Using a NUMBER(10, 0) helps ensure the compatibility of any code
- * running against an Oracle database to such that is does not assume
- * it can use 38-digit integer values in case the data needs to be
+ * running against an Oracle database so that is does not assume it
+ * can use 38-digit integer values in case the data needs to be
  * exported to another database or if the code needs to work with
  * other databases.  Columns wishing to use a NUMBER(38) should use a
  * DecimalType column.
@@ -98,8 +98,8 @@ class OracleIntegerColumnDefinition
  * http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14200/sql_elements001.htm#sthref218
  *
  * Using a NUMBER(5, 0) helps ensure the compatibility of any code
- * running against an Oracle database to such that is does not assume
- * it can use 38-digit integer values in case the data needs to be
+ * running against an Oracle database so that is does not assume it
+ * can use 38-digit integer values in case the data needs to be
  * exported to another database or if the code needs to work with
  * other databases.  Columns wishing to use a NUMBER(38) should use a
  * DecimalType column.
