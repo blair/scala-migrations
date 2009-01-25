@@ -163,15 +163,15 @@ class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
       }
 
     column_type match {
+      case BigintType =>
+        new OracleBigintColumnDefinition
+      case BlobType =>
+        new DefaultBlobColumnDefinition
       case BooleanType => {
         val message = "Oracle does not support a boolean type, you must " +
                       "choose a mapping your self."
         throw new UnsupportedColumnTypeException(message)
       }
-      case BigintType =>
-        new OracleBigintColumnDefinition
-      case BlobType =>
-        new DefaultBlobColumnDefinition
       case CharType =>
         new OracleCharColumnDefinition(use_nchar_type)
       case DecimalType =>
