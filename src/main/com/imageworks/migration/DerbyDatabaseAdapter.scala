@@ -19,6 +19,7 @@ class DerbyVarbinaryColumnDefinition
 class DerbyDatabaseAdapter(override val schema_name_opt : Option[String])
   extends DatabaseAdapter(schema_name_opt)
 {
+  override
   def column_definition_factory(column_type : SqlType,
                                 character_set_opt : Option[CharacterSet]) : ColumnDefinition =
   {
@@ -59,6 +60,7 @@ class DerbyDatabaseAdapter(override val schema_name_opt : Option[String])
     }
   }
 
+  override
   def remove_index_sql(schema_name_opt : Option[String],
                        table_name : String,
                        index_name : String) : String =
