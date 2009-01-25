@@ -406,6 +406,13 @@ class DefaultBlobColumnDefinition
   val sql = "BLOB"
 }
 
+class DefaultBooleanColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsDefault
+{
+  val sql = "BOOLEAN"
+}
+
 class DefaultCharColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsLimit

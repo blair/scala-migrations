@@ -32,6 +32,9 @@ object DatabaseAdapter
       case "org.apache.derby.jdbc.ClientDriver" => {
         new DerbyDatabaseAdapter(schema_name_opt)
       }
+      case "org.postgresql.Driver" => {
+        new PostgresqlDatabaseAdapter(schema_name_opt)
+      }
       case null => {
         throw new IllegalArgumentException("Must pass a non-null JDBC " +
                                            "driver class name to this " +

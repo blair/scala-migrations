@@ -109,6 +109,7 @@ More information on the mappings is below.
         Oracle: NUMBER(19, 0)
     Blob
         Default: BLOB
+        PostgreSQL: BYTEA
     Boolean
         Default: BOOLEAN
         Derby: Unsupported
@@ -130,6 +131,7 @@ More information on the mappings is below.
         Default: None
         Derby: VARCHAR FOR BIT DATA
         Oracle: RAW
+        PostgreSQL: BYTEA
     Varchar
         Default: VARCHAR
         Oracle: VARCHAR2
