@@ -37,10 +37,10 @@ class DerbyDatabaseAdapter(override val schema_name_opt : Option[String])
     }
 
     column_type match {
-      case BlobType =>
-        new DefaultBlobColumnDefinition
       case BigintType =>
         new DefaultBigintColumnDefinition
+      case BlobType =>
+        new DefaultBlobColumnDefinition
       case BooleanType => {
         val message = "Derby does not support a boolean type, you must " +
                       "choose a mapping your self."
