@@ -141,6 +141,9 @@ class OracleVarcharColumnDefinition(use_nchar_type : Boolean)
 class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
   extends DatabaseAdapter(schema_name_opt)
 {
+  override protected
+  val unquoted_name_converter = UppercaseUnquotedNameConverter
+
   override
   def column_definition_factory(column_type : SqlType,
                                 character_set_opt : Option[CharacterSet]) : ColumnDefinition =

@@ -89,6 +89,13 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
   val logger = LoggerFactory.getLogger(this.getClass)
 
   /**
+   * To properly quote table names the database adapter needs to know
+   * how the database treats with unquoted names.
+   */
+  protected
+  def unquoted_name_converter : UnquotedNameConverter
+
+  /**
    * Given a table name, column name and column data type, return a
    * newly constructed and fully initialized ColumnDefinition.  The
    * class of the returned ColumnDefinition only depends upon the
@@ -169,13 +176,13 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
   {
     if (schema_name_opt.isDefined) {
       '"' +
-      schema_name_opt.get +
+      unquoted_name_converter(schema_name_opt.get) +
       "\".\"" +
-      table_name.toUpperCase +
+      unquoted_name_converter(table_name) +
       '"'
     }
     else {
-      '"' + table_name.toUpperCase + '"'
+      '"' + unquoted_name_converter(table_name) + '"'
     }
   }
 
