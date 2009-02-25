@@ -87,7 +87,7 @@ abstract class Migration
    * constructor style injection, which makes for cleaner code for the
    * users of this migration framework.
    */
-  private [migration] var raw_connection_ : java.sql.Connection = _
+  private[migration] var raw_connection_ : java.sql.Connection = _
 
   /**
    * Get the raw connection to the database the migration can use for
@@ -109,7 +109,7 @@ abstract class Migration
    * constructor style injection, which makes for cleaner code for the
    * users of this migration framework.
    */
-  private [migration] var connection_ : net.sf.log4jdbc.ConnectionSpy = _
+  private[migration] var connection_ : net.sf.log4jdbc.ConnectionSpy = _
 
   /**
    * Get the connection to the database the migration can use for any
@@ -127,7 +127,7 @@ abstract class Migration
    * constructor style injection, which makes for cleaner code for the
    * users of this migration framework.
    */
-  private [migration] var adapter_ : DatabaseAdapter = _
+  private[migration] var adapter_ : DatabaseAdapter = _
 
   /**
    * Override the -> implicit definition to create a
