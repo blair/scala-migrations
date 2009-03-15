@@ -26,6 +26,9 @@ object DatabaseAdapter
       case "oracle.jdbc.driver.OracleDriver" => {
         new OracleDatabaseAdapter(schema_name_opt)
       }
+      case "oracle.jdbc.OracleDriver" => {
+        new OracleDatabaseAdapter(schema_name_opt)
+      }
       case "org.apache.derby.jdbc.EmbeddedDriver" => {
         new DerbyDatabaseAdapter(schema_name_opt)
       }

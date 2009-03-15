@@ -10,7 +10,7 @@ class DatabaseAdapterTests
   def test_for_driver : Unit =
   {
     assertEquals(classOf[OracleDatabaseAdapter],
-                 DatabaseAdapter.for_driver("oracle.jdbc.driver.OracleDriver",
+                 DatabaseAdapter.for_driver("oracle.jdbc.OracleDriver",
                                             None).getClass)
 
     assertEquals(classOf[DerbyDatabaseAdapter],
