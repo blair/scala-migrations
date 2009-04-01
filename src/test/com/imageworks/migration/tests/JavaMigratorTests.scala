@@ -29,21 +29,21 @@ class JavaMigratorTests
   }
 
   @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
-  def test_duplicate_descriptions_throw_exception : Unit =
+  def duplicate_descriptions_throw_exception : Unit =
   {
     java_migrator.install_all_migrations("com.imageworks.migration.tests.duplicate_descriptions",
                                          false)
   }
 
   @Test { val expected = classOf[DuplicateMigrationVersionException] }
-  def test_duplicate_versions_throw_exception : Unit =
+  def duplicate_versions_throw_exception : Unit =
   {
     java_migrator.install_all_migrations("com.imageworks.migration.tests.duplicate_versions",
                                          false)
   }
 
   @Test
-  def test_migrate_up_and_down : Unit =
+  def migrate_up_and_down : Unit =
   {
     // There should be no tables in the schema initially.
     assertEquals(0, java_migrator.table_names.size)

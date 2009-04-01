@@ -32,7 +32,7 @@ class MigrationTests
   }
 
   @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
-  def test_duplicate_descriptions_throw_exception : Unit =
+  def duplicate_descriptions_throw_exception : Unit =
   {
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.duplicate_descriptions",
@@ -40,7 +40,7 @@ class MigrationTests
   }
 
   @Test { val expected = classOf[DuplicateMigrationVersionException] }
-  def test_duplicate_versions_throw_exception : Unit =
+  def duplicate_versions_throw_exception : Unit =
   {
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.duplicate_versions",
@@ -48,7 +48,7 @@ class MigrationTests
   }
 
   @Test { val expected = classOf[IllegalArgumentException] }
-  def test_scale_without_precision : Unit =
+  def scale_without_precision : Unit =
   {
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.scale_without_precision",
@@ -56,7 +56,7 @@ class MigrationTests
   }
 
   @Test
-  def test_migrate_up_and_down : Unit =
+  def migrate_up_and_down : Unit =
   {
     // There should be no tables in the schema initially.
     assertEquals(0, migrator.table_names.size)
@@ -118,7 +118,7 @@ class MigrationTests
   }
 
   @Test
-  def test_is_migrated_does_not_create_schema_migrations : Unit =
+  def is_migrated_does_not_create_schema_migrations : Unit =
   {
     // In a brand new database with no available migrations, the
     // database should not be completely migrated.  The
@@ -140,7 +140,7 @@ class MigrationTests
   }
 
   @Test
-  def test_grant_and_revoke : Unit =
+  def grant_and_revoke : Unit =
   {
     // create a second user, make a table
     migrator.migrate(MigrateToVersion(200811241940L),
@@ -241,7 +241,7 @@ class MigrationTests
   }
 
   @Test
-  def test_columns_can_hold_types : Unit =
+  def columns_can_hold_types : Unit =
   {
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.types",
