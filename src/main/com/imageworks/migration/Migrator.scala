@@ -217,7 +217,7 @@ object Migrator
     val seen_descriptions = new scala.collection.mutable.HashMap[String,String]
 
     // Search for classes that have the proper format.
-    val re_str = "Migrate_(\\d+)_([_a-zA-Z0-9]*)"
+    val re_str = """Migrate_(\d+)_([_a-zA-Z0-9]*)"""
     val re = java.util.regex.Pattern.compile(re_str)
 
     // Classes to be skipped.  class_names cannot have items removed from it
