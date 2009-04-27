@@ -23,7 +23,7 @@ log4jdbc.jar = ${jar.dir}/log4jdbc3.jar
 derby.jar = ${jar.dir}/derby.jar
 
 # The path to the Hamcrest jar file.
-hamcrest.jar = ${jar.dir}/hamcrest-core.jar
+hamcrest.jar = ${jar.dir}/hamcrest-all.jar
 
 # The path to the log4j jar file.
 log4j.jar = ${jar.dir}/jakarta-log4j.jar
