@@ -4,8 +4,14 @@ import org.junit.Assert._
 import org.junit.{Before,
                   Test}
 
+import org.jmock.{Expectations,
+                  Mockery}
+
 class MigrationTests
 {
+  private
+  val context = new Mockery
+
   // Set the Derby system home to a test-databases directory so the
   // derby.log file and all databases will be placed in there.
   System.getProperties.setProperty("derby.system.home", "test-databases")
@@ -280,5 +286,80 @@ class MigrationTests
         assertEquals(1, counts.head)
       }
     }
+  }
+
+  @Test
+  def with_result_set_closes_on_normal_return : Unit =
+  {
+    val result_set = context.mock(classOf[java.sql.ResultSet])
+
+    context.checking(new Expectations {
+                       oneOf (result_set).close()
+                     })
+
+    var rs1 : java.sql.ResultSet = null
+
+    val m = new Migration {
+              override
+              def up() : Unit =
+              {
+                with_result_set(result_set) { rs2 =>
+                  rs1 = rs2
+                }
+              }
+
+              override
+              def down() : Unit =
+              {
+              }
+            }
+
+    m.up()
+
+    context.assertIsSatisfied()
+
+    assertSame(result_set, rs1)
+  }
+
+  @Test
+  def with_result_set_closes_on_throw : Unit =
+  {
+    val result_set = context.mock(classOf[java.sql.ResultSet])
+
+    context.checking(new Expectations {
+                       oneOf (result_set).close()
+                     })
+
+    var rs1 : java.sql.ResultSet = null
+
+    class ThisSpecialException
+      extends java.lang.Throwable
+
+    val m = new Migration {
+              override
+              def up() : Unit =
+              {
+                with_result_set(result_set) { rs2 =>
+                  rs1 = rs2
+                  throw new ThisSpecialException
+                }
+              }
+
+              override
+              def down() : Unit =
+              {
+              }
+            }
+
+    try {
+      m.up()
+    }
+    catch {
+      case _ : ThisSpecialException =>
+    }
+
+    context.assertIsSatisfied()
+
+    assertSame(result_set, rs1)
   }
 }

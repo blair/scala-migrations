@@ -212,6 +212,29 @@ abstract class Migration
     }
   }
 
+  /**
+   * Given a SQL result set and a Function1[java.sql.ResultSet,R],
+   * pass the result set to the closure.  After the closure has
+   * completed, either normally via a return or by throwing an
+   * exception, close the result set.
+   *
+   * @param result_set the SQL result set
+   * @param f the Function1[java.sql.ResultSet,R] that will be given
+   *        the result set
+   * @return the result of f if f returns normally
+   */
+  final
+  def with_result_set[R](result_set : java.sql.ResultSet)
+                        (f : java.sql.ResultSet => R) : R =
+  {
+    try {
+      f(result_set)
+    }
+    finally {
+      result_set.close()
+    }
+  }
+
   final
   def create_table(table_name : String,
                    options : TableOption*)
