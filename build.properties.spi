@@ -21,6 +21,9 @@ hamcrest.jar = /shots/spi/home/java/hamcrest-all-1.1.jar
 # The path to the log4j jar file.
 log4j.jar = /shots/spi/home/java/apache-log4j-1.2.15/log4j-1.2.15.jar
 
+# The path to the jMock jar file.
+jmock.jar = /shots/spi/home/java/jmock-2.5.1/jmock-2.5.1.jar
+
 # The path to the JUnit jar file.
 junit.jar = /shots/spi/home/java/junit4.5/junit-4.5.jar
 

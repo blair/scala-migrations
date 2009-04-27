@@ -15,6 +15,7 @@
     <path id="test_compile.classpath">
         <filelist refid="src_compile.filelist"/>
         <path location="${hamcrest.jar}"/>
+        <path location="${jmock.jar}"/>
         <path location="${junit.jar}"/>
         <path location="${derby.jar}"/>
         <path location="scala-migrations.jar"/>
