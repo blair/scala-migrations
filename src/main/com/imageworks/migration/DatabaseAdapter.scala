@@ -13,7 +13,7 @@ object DatabaseAdapter
    *        all table names in the generated SQL; if Some(), then all
    *        table names are qualified with the name, otherwise, table
    *        names are unqualified
-   * @return a DriverAdapter suitable to use for the database
+   * @return a DatabaseAdapterx suitable to use for the database
    */
   def for_vendor(vendor : Vendor,
                  schema_name_opt : Option[String]) : DatabaseAdapter =
