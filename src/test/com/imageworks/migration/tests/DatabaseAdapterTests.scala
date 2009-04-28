@@ -7,47 +7,21 @@ import org.junit.{Before,
 class DatabaseAdapterTests
 {
   @Test
-  def for_driver : Unit =
+  def for_vendor : Unit =
   {
+    assertEquals(classOf[DerbyDatabaseAdapter],
+                 DatabaseAdapter.for_vendor(Derby, None).getClass)
+
     assertEquals(classOf[OracleDatabaseAdapter],
-                 DatabaseAdapter.for_driver("oracle.jdbc.OracleDriver",
-                                            None).getClass)
+                 DatabaseAdapter.for_vendor(Oracle, None).getClass)
 
-    assertEquals(classOf[DerbyDatabaseAdapter],
-                 DatabaseAdapter.for_driver("org.apache.derby.jdbc.EmbeddedDriver",
-                                            None).getClass)
-
-    assertEquals(classOf[DerbyDatabaseAdapter],
-                 DatabaseAdapter.for_driver(classOf[org.apache.derby.jdbc.EmbeddedDriver],
-                                            None).getClass)
-
-    assertEquals(classOf[DerbyDatabaseAdapter],
-                 DatabaseAdapter.for_driver("org.apache.derby.jdbc.ClientDriver",
-                                            None).getClass)
-  }
-
-  @Test { val expected = classOf[scala.MatchError] }
-  def for_non_existent_driver : Unit =
-  {
-    DatabaseAdapter.for_driver("no.such.driver", None)
-  }
-
-  @Test { val expected = classOf[scala.MatchError] }
-  def for_non_driver_class : Unit =
-  {
-    DatabaseAdapter.for_driver(classOf[java.lang.String], None)
+    assertEquals(classOf[PostgresqlDatabaseAdapter],
+                 DatabaseAdapter.for_vendor(Postgresql, None).getClass)
   }
 
   @Test { val expected = classOf[java.lang.IllegalArgumentException] }
   def for_null_existent_driver_class : Unit =
   {
-    DatabaseAdapter.for_driver(null : Class[_], None)
+    DatabaseAdapter.for_vendor(null, None)
   }
-
-  @Test { val expected = classOf[java.lang.IllegalArgumentException] }
-  def for_null_existent_driver_class_name: Unit =
-  {
-    DatabaseAdapter.for_driver(null : String, None)
-  }
-
 }
