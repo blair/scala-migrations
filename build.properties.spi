@@ -15,8 +15,11 @@ log4jdbc.jar = /shots/spi/home/java/log4jdbc4-1.1.jar
 # The path to the Derby database jar file.
 derby.jar = /shots/spi/home/java/db-derby-10.4.2.0-bin/lib/derby.jar
 
-# The path to the Hamcrest jar file.
-hamcrest.jar = /shots/spi/home/java/hamcrest-all-1.1.jar
+# The path to the Hamcrest core jar file.
+hamcrest-core.jar = /shots/spi/home/java/hamcrest-1.1/hamcrest-core-1.1.jar
+
+# The path to the Hamcrest library jar file.
+hamcrest-library.jar = /shots/spi/home/java/hamcrest-1.1/hamcrest-library-1.1.jar
 
 # The path to the log4j jar file.
 log4j.jar = /shots/spi/home/java/apache-log4j-1.2.15/log4j-1.2.15.jar

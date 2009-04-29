@@ -14,7 +14,8 @@
 
     <path id="test_compile.classpath">
         <filelist refid="src_compile.filelist"/>
-        <path location="${hamcrest.jar}"/>
+        <path location="${hamcrest-core.jar}"/>
+        <path location="${hamcrest-library.jar}"/>
         <path location="${jmock.jar}"/>
         <path location="${junit.jar}"/>
         <path location="${derby.jar}"/>
