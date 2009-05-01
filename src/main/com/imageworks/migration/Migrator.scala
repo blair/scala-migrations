@@ -494,7 +494,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
                                   Array("TABLE"))
 
       val names = new scala.collection.mutable.HashSet[String]
-      while (rs.next) {
+      while (rs.next()) {
         names += rs.getString(3)
       }
       names.readOnly
@@ -594,7 +594,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
       connection.with_prepared_statement(sql) { statement =>
         val rs = statement.executeQuery()
         val versions_list = new scala.collection.mutable.ListBuffer[Long]
-        while (rs.next) {
+        while (rs.next()) {
           val version_str = rs.getString(1)
           try {
             val version = java.lang.Long.parseLong(version_str)

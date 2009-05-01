@@ -278,7 +278,7 @@ class MigrationTests
         select_statement.setObject(1, v)
         val results = select_statement.executeQuery()
         var counts : List[Int] = Nil
-        while (results.next) {
+        while (results.next()) {
           counts = results.getInt(1) :: counts
         }
 
