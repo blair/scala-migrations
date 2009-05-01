@@ -276,10 +276,10 @@ class MigrationTests
         val select_sql = "SELECT COUNT(1) from types_test where " + n + " = ?"
         val select_statement = connection.prepareStatement(select_sql)
         select_statement.setObject(1, v)
-        val results = select_statement.executeQuery()
+        val rs = select_statement.executeQuery()
         var counts : List[Int] = Nil
-        while (results.next()) {
-          counts = results.getInt(1) :: counts
+        while (rs.next()) {
+          counts = rs.getInt(1) :: counts
         }
 
         assertEquals(1, counts.size)
@@ -291,10 +291,10 @@ class MigrationTests
   @Test
   def with_result_set_closes_on_normal_return : Unit =
   {
-    val result_set = context.mock(classOf[java.sql.ResultSet])
+    val mock_rs = context.mock(classOf[java.sql.ResultSet])
 
     context.checking(new Expectations {
-                       oneOf (result_set).close()
+                       oneOf (mock_rs).close()
                      })
 
     var rs1 : java.sql.ResultSet = null
@@ -303,7 +303,7 @@ class MigrationTests
               override
               def up() : Unit =
               {
-                with_result_set(result_set) { rs2 =>
+                with_result_set(mock_rs) { rs2 =>
                   rs1 = rs2
                 }
               }
@@ -318,16 +318,16 @@ class MigrationTests
 
     context.assertIsSatisfied()
 
-    assertSame(result_set, rs1)
+    assertSame(mock_rs, rs1)
   }
 
   @Test
   def with_result_set_closes_on_throw : Unit =
   {
-    val result_set = context.mock(classOf[java.sql.ResultSet])
+    val mock_rs = context.mock(classOf[java.sql.ResultSet])
 
     context.checking(new Expectations {
-                       oneOf (result_set).close()
+                       oneOf (mock_rs).close()
                      })
 
     var rs1 : java.sql.ResultSet = null
@@ -339,7 +339,7 @@ class MigrationTests
               override
               def up() : Unit =
               {
-                with_result_set(result_set) { rs2 =>
+                with_result_set(mock_rs) { rs2 =>
                   rs1 = rs2
                   throw new ThisSpecialException
                 }
@@ -360,6 +360,6 @@ class MigrationTests
 
     context.assertIsSatisfied()
 
-    assertSame(result_set, rs1)
+    assertSame(mock_rs, rs1)
   }
 }
