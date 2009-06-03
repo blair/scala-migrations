@@ -16,3 +16,15 @@
     migrations.test.jdbc_url
     migrations.test.username
     migrations.test.password
+
+* Have each unit test method leave the database in a pristine state so
+  that the next unit test runs in an empty database.  The current unit
+  tests set up a brand new Derby database for each test so there is no
+  need to clean up after a test, but if an Oracle or PostgreSQL schema
+  is used for testing, then the same schema must be reused, so each
+  test should clean up after itself.
+
+  One way of doing this is to have each test put a list of table names
+  into a private class var that is used by the @After method that can
+  drop them all.  JUnit needs to be checked if it does run an @After
+  method after a test failure.
