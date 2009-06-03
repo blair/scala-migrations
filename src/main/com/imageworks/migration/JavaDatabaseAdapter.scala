@@ -21,7 +21,7 @@ object JavaDatabaseAdapter
   /**
    * Create a Derby Database Adapter.
    *
-   * @param schema_name Set a default schema name in the adapter
+   * @param schema_name the default schema name in the adapter
    * @return newly constructed DerbyDatabaseAdapter
    */
   def getDerbyDatabaseAdapter(schema_name : String) : DerbyDatabaseAdapter =
@@ -42,7 +42,7 @@ object JavaDatabaseAdapter
   /**
    * Create an Oracle Database Adapter.
    *
-   * @param schema_name Set a default schema name in the adapter
+   * @param schema_name the default schema name in the adapter
    * @return newly constructed OracleDatabaseAdapter
    */
   def getOracleDatabaseAdapter(schema_name : String) : OracleDatabaseAdapter =
