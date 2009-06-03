@@ -20,6 +20,9 @@ class VendorTests
 
     assertSame(Derby,
                Vendor.for_driver("org.apache.derby.jdbc.ClientDriver"))
+
+    assertSame(Postgresql,
+               Vendor.for_driver("org.postgresql.Driver"))
   }
 
   @Test { val expected = classOf[scala.MatchError] }
