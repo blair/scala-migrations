@@ -545,7 +545,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
           }
 
         schema_connection.with_prepared_statement(sql) { statement =>
-          statement.setLong(1, version)
+          statement.setString(1, version.toString)
           statement.execute()
         }
       }
