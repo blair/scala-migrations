@@ -699,7 +699,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
             if (index == -1) {
               val message = "The target version " +
                             version +
-                          " does not exist as a migration."
+                            " does not exist as a migration."
               throw new RuntimeException(message)
             }
             new InstallRemove(available_migrations.take(index + 1).map(_.version).toArray,
