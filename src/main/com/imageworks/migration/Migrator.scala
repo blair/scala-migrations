@@ -50,9 +50,10 @@ object Migrator
    * @return a set of the class names the JAR file contains
    */
   private
-  def class_names_in_jar(path : String,
-                         package_name : String,
-                         search_sub_packages : Boolean) : scala.collection.mutable.HashSet[String] =
+  def class_names_in_jar
+    (path : String,
+     package_name : String,
+     search_sub_packages : Boolean) : scala.collection.mutable.HashSet[String] =
   {
     // Search for the package in the JAR file by mapping the package
     // name to the expected name in the JAR file, then append a '/' to
@@ -413,7 +414,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @return what f returns
    */
   // http://lampsvn.epfl.ch/trac/scala/ticket/442
-  private[migration] def with_raw_connection[T](f : java.sql.Connection => T) : T =
+  private[migration] def with_raw_connection[T]
+    (f : java.sql.Connection => T) : T =
   {
     val raw_connection = {
       (jdbc_conn, jdbc_login) match {
@@ -469,7 +471,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *        pair of related connections
    * @return what f returns
    */
-  private[migration] def with_connections[T](f : RawAndLoggingConnections => T) : T =
+  private[migration] def with_connections[T]
+    (f : RawAndLoggingConnections => T) : T =
   {
     with_raw_connection { raw_connection =>
       val logging_connection =
@@ -511,9 +514,10 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *        version number; this allows this method to
    */
   private
-  def run_migration(migration_class : Class[_ <: Migration],
-                    direction : MigrationDirection,
-                    version_update_opt : Option[Tuple2[java.sql.Connection,Long]]) : Unit =
+  def run_migration
+    (migration_class : Class[_ <: Migration],
+     direction : MigrationDirection,
+     version_update_opt : Option[Tuple2[java.sql.Connection,Long]]) : Unit =
   {
     logger.info("Migrating {} with '{}'.",
                 direction.str,

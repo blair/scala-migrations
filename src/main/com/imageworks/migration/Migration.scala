@@ -375,9 +375,10 @@ abstract class Migration
    *         from a Name and the remaining options
    */
   private
-  def foreign_key_name(on : On,
-                       references : References,
-                       options : ForeignKeyOption*) : Tuple2[String,List[ForeignKeyOption]] =
+  def foreign_key_name
+    (on : On,
+     references : References,
+     options : ForeignKeyOption*) : Tuple2[String,List[ForeignKeyOption]] =
   {
     var opts = options.toList
 
@@ -625,5 +626,4 @@ abstract class Migration
             " DROP CONSTRAINT " +
             name)
   }
-
 }

@@ -126,8 +126,9 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    *         for the column_type
    */
   protected
-  def column_definition_factory(column_type : SqlType,
-                                character_set_opt : Option[CharacterSet]) : ColumnDefinition
+  def column_definition_factory
+    (column_type : SqlType,
+     character_set_opt : Option[CharacterSet]) : ColumnDefinition
 
   def quote_column_name(column_name : String) : String =
   {
