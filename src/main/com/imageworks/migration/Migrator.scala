@@ -5,9 +5,6 @@ import org.slf4j.LoggerFactory
 
 import javax.sql.DataSource
 
-private
-case class VersionAndClass(version : Long, clazz : Class[_ <: Migration])
-
 /**
  * A migration to create the schema_migrations table that records
  * which migrations have been applied to a database.
@@ -159,7 +156,7 @@ object Migrator
   private
   def find_migrations(package_name : String,
                       search_sub_packages : Boolean,
-                      logger : Logger) : Array[VersionAndClass] =
+                      logger : Logger) : Array[MigrationVersionAndClass] =
   {
     // Ask the current class loader for the resource corresponding to
     // the package, which can refer to a directory, a jar file
@@ -279,10 +276,11 @@ object Migrator
     // Remove all the skipped class names from class_names.
     class_names --= skip_names
 
-    val results = new scala.collection.mutable.ArrayBuffer[VersionAndClass] {
-                    override
-                    def initialSize = seen_versions.size
-                  }
+    val results =
+      new scala.collection.mutable.ArrayBuffer[MigrationVersionAndClass] {
+        override
+        def initialSize = seen_versions.size
+      }
 
     for ((version, class_name) <- seen_versions) {
       var c : Class[_] = null
@@ -294,8 +292,8 @@ object Migrator
           try {
             // Ensure that there is a no-argument constructor.
             c.getConstructor()
-            results += new VersionAndClass(version,
-                                           c.asSubclass(classOf[Migration]))
+            val casted_class = c.asSubclass(classOf[Migration])
+            results += new MigrationVersionAndClass(version, casted_class)
           }
           catch {
             case e : java.lang.NoSuchMethodException => {
