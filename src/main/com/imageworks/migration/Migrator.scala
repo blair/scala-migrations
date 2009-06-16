@@ -319,6 +319,7 @@ object Migrator
   }
 }
 
+private
 class RawAndLoggingConnections(val raw : java.sql.Connection,
                                val logging : net.sf.log4jdbc.ConnectionSpy)
 
