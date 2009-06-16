@@ -10,9 +10,10 @@ package com.imageworks.migration
 case class MigrationVersionAndClass(version : Long,
                                     clazz : Class[_ <: Migration])
   extends java.lang.Comparable[MigrationVersionAndClass]
+  with scala.Ordered[MigrationVersionAndClass]
 {
   override
-  def compareTo(that : MigrationVersionAndClass) : Int =
+  def compare(that : MigrationVersionAndClass) : Int =
   {
     val this_version = this.version
     val that_version = that.version
