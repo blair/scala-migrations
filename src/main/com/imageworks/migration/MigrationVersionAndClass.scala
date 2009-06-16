@@ -9,3 +9,22 @@ package com.imageworks.migration
  */
 case class MigrationVersionAndClass(version : Long,
                                     clazz : Class[_ <: Migration])
+  extends java.lang.Comparable[MigrationVersionAndClass]
+{
+  override
+  def compareTo(that : MigrationVersionAndClass) : Int =
+  {
+    val this_version = this.version
+    val that_version = that.version
+
+    if (this_version < that_version) {
+      -1
+    }
+    else if (this_version > that_version) {
+      1
+    }
+    else {
+      this.clazz.getName.compareTo(that.clazz.getName)
+    }
+  }
+}
