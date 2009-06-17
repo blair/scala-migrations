@@ -270,7 +270,7 @@ class MigrationTests
         val insert_statement = connection.prepareStatement(insert_sql)
         insert_statement.setObject(1, v)
         insert_statement.executeUpdate
-        insert_statement.close
+        insert_statement.close()
 
         // Make sure that the value exists.
         val select_sql = "SELECT COUNT(1) from types_test where " + n + " = ?"

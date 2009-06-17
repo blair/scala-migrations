@@ -80,7 +80,7 @@ object Migrator
     }
     finally {
       if (jar ne null) {
-        jar.close
+        jar.close()
       }
     }
   }
@@ -440,7 +440,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
       f(raw_connection)
     }
     finally {
-      raw_connection.close
+      raw_connection.close()
     }
   }
 

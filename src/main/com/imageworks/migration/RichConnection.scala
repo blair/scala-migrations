@@ -22,7 +22,7 @@ class RichConnection(self : java.sql.Connection)
       f(statement)
     }
     finally {
-      statement.close
+      statement.close()
     }
   }
 }

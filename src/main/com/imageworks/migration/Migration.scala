@@ -166,7 +166,7 @@ abstract class Migration
       statement.execute(sql)
     }
     finally {
-      statement.close
+      statement.close()
     }
   }
 
