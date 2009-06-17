@@ -218,16 +218,16 @@ abstract class Migration
    * completed, either normally via a return or by throwing an
    * exception, close the result set.
    *
-   * @param result_set the SQL result set
+   * @param rs the SQL result set
    * @param f the Function1[java.sql.ResultSet,R] that will be given
    *        the result set
    * @return the result of f if f returns normally
    */
   final
-  def with_result_set[R](result_set : java.sql.ResultSet)
+  def with_result_set[R](rs : java.sql.ResultSet)
                         (f : java.sql.ResultSet => R) : R =
   {
-    With.result_set(result_set)(f)
+    With.result_set(rs)(f)
   }
 
   final
