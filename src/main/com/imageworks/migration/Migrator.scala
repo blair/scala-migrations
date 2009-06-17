@@ -752,7 +752,6 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
                         Some((schema_connection, install_version)))
         }
       }
-      null
     }
   }
 
