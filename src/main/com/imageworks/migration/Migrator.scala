@@ -490,16 +490,16 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   {
     with_logging_connection { connection =>
       val metadata = connection.getMetaData
-      val rs = metadata.getTables(null,
-                                  adapter.schema_name_opt.getOrElse(null),
-                                  null,
-                                  Array("TABLE"))
-
-      val names = new scala.collection.mutable.HashSet[String]
-      while (rs.next()) {
-        names += rs.getString(3)
+      With.result_set(metadata.getTables(null,
+                                         adapter.schema_name_opt.getOrElse(null),
+                                         null,
+                                         Array("TABLE"))) { rs =>
+        val names = new scala.collection.mutable.HashSet[String]
+        while (rs.next()) {
+          names += rs.getString(3)
+        }
+        names.readOnly
       }
-      names.readOnly
     }
   }
 
@@ -595,28 +595,29 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
       val sql = "SELECT version FROM " +
                 adapter.quote_table_name(schema_migrations_table_name)
       connection.with_prepared_statement(sql) { statement =>
-        val rs = statement.executeQuery()
-        val versions_list = new scala.collection.mutable.ListBuffer[Long]
-        while (rs.next()) {
-          val version_str = rs.getString(1)
-          try {
-            val version = java.lang.Long.parseLong(version_str)
-            versions_list += version
-          }
-          catch {
-            case e : java.lang.NumberFormatException => {
-              logger.warn("Ignoring installed migration with unparsable " +
-                          "version number '" +
-                          version_str +
-                          "'.",
-                          e)
+        With.result_set(statement.executeQuery()) { rs =>
+          val versions_list = new scala.collection.mutable.ListBuffer[Long]
+          while (rs.next()) {
+            val version_str = rs.getString(1)
+            try {
+              val version = java.lang.Long.parseLong(version_str)
+              versions_list += version
+            }
+            catch {
+              case e : java.lang.NumberFormatException => {
+                logger.warn("Ignoring installed migration with unparsable " +
+                            "version number '" +
+                            version_str +
+                            "'.",
+                            e)
+              }
             }
           }
-        }
 
-        val versions = versions_list.toArray
-        java.util.Arrays.sort(versions)
-        versions
+          val versions = versions_list.toArray
+          java.util.Arrays.sort(versions)
+          versions
+        }
       }
     }
   }

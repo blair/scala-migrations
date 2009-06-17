@@ -276,14 +276,15 @@ class MigrationTests
         val select_sql = "SELECT COUNT(1) from types_test where " + n + " = ?"
         val select_statement = connection.prepareStatement(select_sql)
         select_statement.setObject(1, v)
-        val rs = select_statement.executeQuery()
-        var counts : List[Int] = Nil
-        while (rs.next()) {
-          counts = rs.getInt(1) :: counts
-        }
+        With.result_set(select_statement.executeQuery()) { rs =>
+          var counts : List[Int] = Nil
+          while (rs.next()) {
+            counts = rs.getInt(1) :: counts
+          }
 
-        assertEquals(1, counts.size)
-        assertEquals(1, counts.head)
+          assertEquals(1, counts.size)
+          assertEquals(1, counts.head)
+        }
       }
     }
   }
