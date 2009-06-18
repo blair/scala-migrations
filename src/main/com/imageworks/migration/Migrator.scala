@@ -156,7 +156,7 @@ object Migrator
   private
   def find_migrations(package_name : String,
                       search_sub_packages : Boolean,
-                      logger : Logger) : scala.collection.SortedMap[Long,Class[_ <: Migration]] =
+                      logger : Logger) : scala.collection.immutable.SortedMap[Long,Class[_ <: Migration]] =
   {
     // Ask the current class loader for the resource corresponding to
     // the package, which can refer to a directory, a jar file
