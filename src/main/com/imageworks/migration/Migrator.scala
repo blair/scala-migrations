@@ -522,7 +522,6 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
                         e1 +
                         " threw:",
                         e2)
-            throw e1
           }
         }
 
