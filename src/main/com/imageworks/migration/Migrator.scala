@@ -777,18 +777,18 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
       // was not checked into a source control system.  Having a
       // missing migration for an installed migration is not fatal
       // unless the migration needs to be rolled back.
-      val installed_migrations = get_installed_versions_(schema_connection)
+      val installed_versions = get_installed_versions_(schema_connection)
       val available_migrations = find_migrations(package_name,
                                                  search_sub_packages,
                                                  logger)
       val available_versions = available_migrations.keySet.toArray
 
-      for (installed_migration <- installed_migrations) {
-        if (! available_versions.contains(installed_migration)) {
+      for (installed_version <- installed_versions) {
+        if (! available_versions.contains(installed_version)) {
           logger.warn("The migration version '{}' is installed but " +
                       "there is no migration class available to back " +
                       "it out.",
-                      installed_migration)
+                      installed_version)
         }
       }
 
@@ -808,7 +808,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
           }
           case RemoveAllMigrations => {
             new InstallRemove(new Array[Long](0),
-                              installed_migrations.reverse)
+                              installed_versions.reverse)
           }
           case MigrateToVersion(version) => {
             val index = available_versions.findIndexOf(_ == version)
@@ -819,19 +819,19 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
               throw new RuntimeException(message)
             }
             new InstallRemove(available_versions.take(index + 1).toArray,
-                              installed_migrations.filter(_ > version).reverse)
+                              installed_versions.filter(_ > version).reverse)
           }
           case RollbackMigration(count) => {
-            if (count > installed_migrations.length) {
+            if (count > installed_versions.length) {
               val message = "Attempting to rollback " +
                             count +
                             " migrations but the database only has " +
-                            installed_migrations.length
+                            installed_versions.length
                             " installed in it."
               throw new RuntimeException(message)
             }
             new InstallRemove(new Array[Long](0),
-                              installed_migrations.reverse.take(count))
+                              installed_versions.reverse.take(count))
           }
         }
 
@@ -858,7 +858,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
       }
 
       for (install_version <- install_remove.install_versions) {
-        if (! installed_migrations.contains(install_version)) {
+        if (! installed_versions.contains(install_version)) {
           available_migrations.get(install_version) match {
             case Some(clazz) => {
               run_migration(clazz,
