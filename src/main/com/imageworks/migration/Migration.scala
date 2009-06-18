@@ -172,13 +172,14 @@ abstract class Migration
 
   /**
    * Given a SQL string and a Function1[java.sql.PreparedStatement,Unit],
-   * create a new prepared statement, begin a new transaction and pass
-   * the prepared statement to the closure.  The closure does not need
-   * to perform the commit, this method will perform the commit.  If
-   * anything fails, the transaction is rolled back and the exception
-   * that caused the rollback is re-thrown.  Finally, the auto-commit
-   * state is reset to the value the connection had before this method
-   * was called.
+   * start a new transaction by turning off auto-commit mode on the
+   * connection then create a new prepared statement with the SQL
+   * string and pass the prepared statement to the closure argument.
+   * The closure should not perform the commit as this method will
+   * commit the transaction.  If the closure throws an exception then
+   * the transaction is rolled back and the exception that caused the
+   * rollback is re-thrown.  Finally, the auto-commit state is reset
+   * to the value the connection had before this method was called.
    *
    * @param sql the SQL text that will be prepared
    * @param f the Function1[java.sql.PreparedStatement,Unit] that will
