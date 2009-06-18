@@ -199,9 +199,18 @@ abstract class Migration
         c.commit()
       }
       catch {
-        case e => {
-          c.rollback()
-          throw e
+        case e1 => {
+          try {
+            c.rollback()
+          }
+          catch {
+            case e2 =>
+              logger.warn("Trying to rollback a transaction due to " +
+                          e1 +
+                          " failed and threw:",
+                          e2)
+          }
+          throw e1
         }
       }
       finally {
