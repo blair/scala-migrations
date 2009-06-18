@@ -808,8 +808,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
       val install_remove =
         operation match {
           case InstallAllMigrations => {
-            new InstallRemove(available_migrations.map(_.version),
-                              new Array[Long](0))
+            new InstallRemove(available_versions, new Array[Long](0))
           }
           case RemoveAllMigrations => {
             new InstallRemove(new Array[Long](0),
@@ -823,7 +822,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
                             " does not exist as a migration."
               throw new RuntimeException(message)
             }
-            new InstallRemove(available_migrations.take(index + 1).map(_.version).toArray,
+            new InstallRemove(available_versions.take(index + 1).toArray,
                               installed_migrations.filter(_ > version).reverse)
           }
           case RollbackMigration(count) => {
