@@ -689,8 +689,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @return an array of version numbers of installed migrations
    */
   private
-  def get_installed_migrations_
-    (connection : java.sql.Connection) : Array[Long] =
+  def get_installed_versions_(connection : java.sql.Connection) : Array[Long] =
   {
     val sql = "SELECT version FROM " +
               adapter.quote_table_name(schema_migrations_table_name)
@@ -726,10 +725,10 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *
    * @return an array of version numbers of installed migrations
    */
-  def get_installed_migrations : Array[Long] =
+  def get_installed_versions : Array[Long] =
   {
     with_logging_connection(AutoCommit) { connection =>
-      get_installed_migrations_(connection)
+      get_installed_versions_(connection)
     }
   }
 
@@ -778,7 +777,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
       // was not checked into a source control system.  Having a
       // missing migration for an installed migration is not fatal
       // unless the migration needs to be rolled back.
-      val installed_migrations = get_installed_migrations_(schema_connection)
+      val installed_migrations = get_installed_versions_(schema_connection)
       val available_migrations = find_migrations(package_name,
                                                  search_sub_packages,
                                                  logger)
@@ -904,7 +903,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
 
     if (schema_migrations_table_exists) {
       val available_versions = available_migrations.keySet.toArray
-      java.util.Arrays.equals(get_installed_migrations, available_versions)
+      java.util.Arrays.equals(get_installed_versions, available_versions)
     }
     else {
       // All migrations are installed if no concrete Migration
