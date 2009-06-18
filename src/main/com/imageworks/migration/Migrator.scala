@@ -585,6 +585,46 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   }
 
   /**
+   * Get a sorted list of all the installed migrations using a query
+   * on the given connection.
+   *
+   * @param connection the connection to perform the query on
+   * @return an array of version numbers of installed migrations
+   */
+  private
+  def get_installed_migrations_
+    (connection : java.sql.Connection) : Array[Long] =
+  {
+    val sql = "SELECT version FROM " +
+              adapter.quote_table_name(schema_migrations_table_name)
+    connection.with_prepared_statement(sql) { statement =>
+      With.result_set(statement.executeQuery()) { rs =>
+        val versions_list = new scala.collection.mutable.ListBuffer[Long]
+        while (rs.next()) {
+          val version_str = rs.getString(1)
+          try {
+            val version = java.lang.Long.parseLong(version_str)
+            versions_list += version
+          }
+          catch {
+            case e : java.lang.NumberFormatException => {
+              logger.warn("Ignoring installed migration with unparsable " +
+                          "version number '" +
+                          version_str +
+                          "'.",
+                          e)
+            }
+          }
+        }
+
+        val versions = versions_list.toArray
+        java.util.Arrays.sort(versions)
+        versions
+      }
+    }
+  }
+
+  /**
    * Get a sorted list of all the installed migrations.
    *
    * @return an array of version numbers of installed migrations
@@ -592,33 +632,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   def get_installed_migrations : Array[Long] =
   {
     with_logging_connection { connection =>
-      val sql = "SELECT version FROM " +
-                adapter.quote_table_name(schema_migrations_table_name)
-      connection.with_prepared_statement(sql) { statement =>
-        With.result_set(statement.executeQuery()) { rs =>
-          val versions_list = new scala.collection.mutable.ListBuffer[Long]
-          while (rs.next()) {
-            val version_str = rs.getString(1)
-            try {
-              val version = java.lang.Long.parseLong(version_str)
-              versions_list += version
-            }
-            catch {
-              case e : java.lang.NumberFormatException => {
-                logger.warn("Ignoring installed migration with unparsable " +
-                            "version number '" +
-                            version_str +
-                            "'.",
-                            e)
-              }
-            }
-          }
-
-          val versions = versions_list.toArray
-          java.util.Arrays.sort(versions)
-          versions
-        }
-      }
+      get_installed_migrations_(connection)
     }
   }
 
