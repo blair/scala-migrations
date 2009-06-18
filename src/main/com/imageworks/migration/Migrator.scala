@@ -156,7 +156,7 @@ object Migrator
   private
   def find_migrations(package_name : String,
                       search_sub_packages : Boolean,
-                      logger : Logger) : Array[MigrationVersionAndClass] =
+                      logger : Logger) : scala.collection.SortedMap[Long,Class[_ <: Migration]] =
   {
     // Ask the current class loader for the resource corresponding to
     // the package, which can refer to a directory, a jar file
@@ -276,11 +276,8 @@ object Migrator
     // Remove all the skipped class names from class_names.
     class_names --= skip_names
 
-    val results =
-      new scala.collection.mutable.ArrayBuffer[MigrationVersionAndClass] {
-        override
-        def initialSize = seen_versions.size
-      }
+    var results =
+      new scala.collection.immutable.TreeMap[Long,Class[_ <: Migration]]
 
     for ((version, class_name) <- seen_versions) {
       var c : Class[_] = null
@@ -293,7 +290,7 @@ object Migrator
             // Ensure that there is a no-argument constructor.
             c.getConstructor()
             val casted_class = c.asSubclass(classOf[Migration])
-            results += new MigrationVersionAndClass(version, casted_class)
+            results = results.insert(version, casted_class)
           }
           catch {
             case e : java.lang.NoSuchMethodException => {
@@ -315,7 +312,7 @@ object Migrator
       }
     }
 
-    results.toArray
+    results
   }
 }
 
@@ -785,7 +782,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
       val available_migrations = find_migrations(package_name,
                                                  search_sub_packages,
                                                  logger)
-      val available_versions = available_migrations.map(_.version)
+      val available_versions = available_migrations.keySet.toArray
 
       for (installed_migration <- installed_migrations) {
         if (! available_versions.contains(installed_migration)) {
@@ -844,11 +841,11 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
         // At the beginning of the method it wasn't a fatal error to
         // have a missing migration class for an installed migration,
         // but when it cannot be removed, it is.
-        available_migrations.find(_.version == remove_version) match {
-          case Some(version_and_class) => {
-            run_migration(version_and_class.clazz,
+        available_migrations.get(remove_version) match {
+          case Some(clazz) => {
+            run_migration(clazz,
                           Down,
-                          Some((schema_connection, version_and_class.version)))
+                          Some((schema_connection, remove_version)))
           }
           case None => {
             val message = "The database has migration version '" +
@@ -863,10 +860,20 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
 
       for (install_version <- install_remove.install_versions) {
         if (! installed_migrations.contains(install_version)) {
-          val vc_opt = available_migrations.find(_.version == install_version)
-          run_migration(vc_opt.get.clazz,
-                        Up,
-                        Some((schema_connection, install_version)))
+          available_migrations.get(install_version) match {
+            case Some(clazz) => {
+              run_migration(clazz,
+                            Up,
+                            Some((schema_connection, install_version)))
+            }
+            case None => {
+              val message = "Illegal state: trying to install a migration " +
+                            "with version '" +
+                            install_version +
+                            "' that should exist."
+              throw new MissingMigrationClass(message)
+            }
+          }
         }
       }
     }
@@ -896,7 +903,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
                                                logger)
 
     if (schema_migrations_table_exists) {
-      val available_versions = available_migrations.map(_.version)
+      val available_versions = available_migrations.keySet.toArray
       java.util.Arrays.equals(get_installed_migrations, available_versions)
     }
     else {
