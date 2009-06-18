@@ -815,7 +815,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
                               installed_migrations.reverse)
           }
           case MigrateToVersion(version) => {
-            val index = available_migrations.findIndexOf(_.version == version)
+            val index = available_versions.findIndexOf(_ == version)
             if (index == -1) {
               val message = "The target version " +
                             version +
