@@ -678,7 +678,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
       // was not checked into a source control system.  Having a
       // missing migration for an installed migration is not fatal
       // unless the migration needs to be rolled back.
-      val installed_migrations = get_installed_migrations
+      val installed_migrations = get_installed_migrations_(schema_connection)
       val available_migrations = find_migrations(package_name,
                                                  search_sub_packages,
                                                  logger)
