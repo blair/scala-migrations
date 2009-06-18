@@ -324,6 +324,44 @@ class RawAndLoggingConnections(val raw : java.sql.Connection,
                                val logging : net.sf.log4jdbc.ConnectionSpy)
 
 /**
+ * This sealed trait's specifies the commit behavior on a database
+ * connection and its subobjects are used as arguments to the
+ * Migrator#with_*connection() methods.  The subobjects specify if a
+ * new connection's auto-commit mode should be left on or disabled.
+ * For connections with auto-commit mode disabled it specifies if the
+ * current transaction should be rolled back or committed if the
+ * closure passed to Migrator#with_*connection() throws an exception.
+ */
+private sealed trait CommitBehavior
+
+/**
+ * The new database connection's auto-commit mode is left on.  Because
+ * the connection is in auto-commit mode the
+ * Migrator#with_*connection() methods do not commit nor roll back the
+ * transaction any before returning the result of the
+ * Migrator#with_*connection()'s closure or rethrowing its exception.
+ */
+private case object AutoCommit
+  extends CommitBehavior
+
+/**
+ * The new database connection's auto-commit mode is turned off.
+ * Regardless if the closure passed to Migrator#with_*connection()
+ * returns or throws an exception the transaction is committed.
+ */
+private case object CommitUponReturnAndException
+  extends CommitBehavior
+
+/**
+ * The new database connection's auto-commit mode is turned off.  If
+ * the closure passed to the Migrator#with_*connection() returns
+ * normally then transaction is committed; if it throws an exception
+ * then the transaction is rolled back.
+ */
+private case object CommitUponReturnRollbackUponException
+  extends CommitBehavior
+
+/**
  * This class migrates the database into the desired state.
  */
 class Migrator private (jdbc_conn : Either[DataSource, String],
@@ -408,12 +446,17 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * closure to use.  After the closure returns, normally or by
    * throwing an exception, close the connection.
    *
+   * @param commit_behavior specify the auto-commit mode on the
+   *        connection and whether to commit() or rollback() the
+   *        transaction if the auto-commit mode is disabled on the
+   *        connection
    * @param f a Function1[java.sql.Connection,T] that is passed a new
    *        connection
    * @return what f returns
    */
   // http://lampsvn.epfl.ch/trac/scala/ticket/442
   private[migration] def with_raw_connection[T]
+    (commit_behavior : CommitBehavior)
     (f : java.sql.Connection => T) : T =
   {
     val raw_connection = {
@@ -437,7 +480,54 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     }
 
     try {
-      f(raw_connection)
+      val auto_commit = commit_behavior match {
+                          case AutoCommit => true
+                          case CommitUponReturnAndException => false
+                          case CommitUponReturnRollbackUponException => false
+                        }
+      raw_connection.setAutoCommit(auto_commit)
+
+      val result = f(raw_connection)
+
+      commit_behavior match {
+        case AutoCommit =>
+        case CommitUponReturnAndException => raw_connection.commit()
+        case CommitUponReturnRollbackUponException => raw_connection.commit()
+      }
+
+      result
+    }
+    catch {
+      case e1 => {
+        val (operation,
+             thunk) = commit_behavior match {
+                        case AutoCommit =>
+                          ("", () => ())
+
+                        case CommitUponReturnAndException =>
+                          ("commit", () => { raw_connection.commit() })
+
+                        case CommitUponReturnRollbackUponException =>
+                          ("rollback", () => { raw_connection.rollback() })
+                      }
+
+        try {
+          thunk()
+        }
+        catch {
+          case e2 => {
+            logger.warn("Trying to " +
+                        operation +
+                        " the connection after catching " +
+                        e1 +
+                        " threw:",
+                        e2)
+            throw e1
+          }
+        }
+
+        throw e1
+      }
     }
     finally {
       raw_connection.close()
@@ -449,13 +539,19 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * to a closure for the closure to use.  After the closure returns,
    * normally or by throwing an exception, close the connection.
    *
+   * @param commit_behavior specify the auto-commit mode on the
+   *        connection and whether to commit() or rollback() the
+   *        transaction if the auto-commit mode is disabled on the
+   *        connection
    * @param f a Function1[java.sql.Connection,T] that is passed a new
    *        connection
    * @return what f returns
    */
-  private[migration] def with_logging_connection[T](f : java.sql.Connection => T) : T =
+  private[migration] def with_logging_connection[T]
+    (commit_behavior : CommitBehavior)
+    (f : java.sql.Connection => T) : T =
   {
-    with_raw_connection { raw_connection =>
+    with_raw_connection(commit_behavior) { raw_connection =>
       f(new net.sf.log4jdbc.ConnectionSpy(raw_connection))
     }
   }
@@ -466,14 +562,19 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * use.  After the closure returns, normally or by throwing an
    * exception, close the raw connection.
    *
+   * @param commit_behavior specify the auto-commit mode on the
+   *        connection and whether to commit() or rollback() the
+   *        transaction if the auto-commit mode is disabled on the
+   *        connection
    * @param f a Function1[RawAndLoggingConnections,T] that is passed a
    *        pair of related connections
    * @return what f returns
    */
   private[migration] def with_connections[T]
+    (commit_behavior : CommitBehavior)
     (f : RawAndLoggingConnections => T) : T =
   {
-    with_raw_connection { raw_connection =>
+    with_raw_connection(commit_behavior) { raw_connection =>
       val logging_connection =
         new net.sf.log4jdbc.ConnectionSpy(raw_connection)
       f(new RawAndLoggingConnections(raw_connection, logging_connection))
@@ -488,7 +589,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    */
   def table_names : scala.collection.Set[String] =
   {
-    with_logging_connection { connection =>
+    with_logging_connection(AutoCommit) { connection =>
       val metadata = connection.getMetaData
       With.result_set(metadata.getTables(null,
                                          adapter.schema_name_opt.getOrElse(null),
@@ -523,7 +624,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
                 migration_class.getName)
 
     val migration = migration_class.getConstructor().newInstance()
-    with_connections { connections =>
+    with_connections(AutoCommit) { connections =>
       migration.connection_ = connections.logging
       migration.raw_connection_ = connections.raw
       migration.adapter_ = adapter
@@ -631,7 +732,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    */
   def get_installed_migrations : Array[Long] =
   {
-    with_logging_connection { connection =>
+    with_logging_connection(AutoCommit) { connection =>
       get_installed_migrations_(connection)
     }
   }
@@ -657,8 +758,11 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     initialize_schema_migrations_table()
 
     // Get a new connection that locks the schema_migrations table.
-    // This will prevent concurrent migrations from running.
-    with_logging_connection { schema_connection =>
+    // This will prevent concurrent migrations from running.  Commit
+    // any modifications to schema_migrations regardless if an
+    // exception is thrown or not, this ensures that any migrations
+    // that were successfully run are recorded.
+    with_logging_connection(CommitUponReturnAndException) { schema_connection =>
       {
         logger.debug("Getting an exclusive lock on the '{}' table.",
                      schema_migrations_table_name)
