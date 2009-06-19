@@ -881,6 +881,57 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   }
 
   /**
+   * Get the status of all the installed and available migrations.  A
+   * tuple-like class is returned that contains three groups of
+   * migrations: installed migrations with an associated Migration
+   * subclass, installed migration without an associated Migration
+   * subclass and Migration subclasses that are not installed.
+   *
+   * @param package_name the Java package name to search for Migration
+   *        subclasses
+   * @parm search_sub_packages true if sub-packages of package_name
+   *       should be searched
+   */
+  def get_migration_statuses
+    (package_name : String,
+     search_sub_packages : Boolean) : MigrationStatuses =
+  {
+    val available_migrations = find_migrations(package_name,
+                                               search_sub_packages,
+                                               logger)
+    val installed_versions = if (schema_migrations_table_exists) {
+                               get_installed_versions
+                             }
+                             else {
+                               new scala.collection.immutable.TreeSet[Long]
+                             }
+
+    var not_installed = available_migrations
+    var installed_with_available_implementation =
+      new scala.collection.immutable.TreeMap[Long,Class[_ <: Migration]]
+    var installed_without_available_implementation =
+      new scala.collection.immutable.TreeSet[Long]
+
+    for (installed_version <- installed_versions) {
+      not_installed -= installed_version
+      available_migrations.get(installed_version) match {
+        case Some(clazz) => {
+          installed_with_available_implementation =
+            installed_with_available_implementation.insert(installed_version,
+                                                           clazz)
+        }
+        case None => {
+          installed_without_available_implementation += installed_version
+        }
+      }
+    }
+
+    new MigrationStatuses(not_installed,
+                          installed_with_available_implementation,
+                          installed_without_available_implementation)
+  }
+
+  /**
    * Determine if the database has all available migrations installed
    * in it and no migrations installed that do not have a
    * corresponding concrete Migration subclass; that is, the database

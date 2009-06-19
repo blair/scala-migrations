@@ -81,6 +81,16 @@ class MigrationTests
     assertFalse(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
                                      false))
 
+    val statuses1 =
+      migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
+                                      false)
+
+    assertEquals(2, statuses1.not_installed.size)
+    assertTrue(statuses1.not_installed.contains(20081118201000L))
+    assertTrue(statuses1.not_installed.contains(20081118201742L))
+    assertEquals(0, statuses1.installed_with_available_implementation.size)
+    assertEquals(0, statuses1.installed_without_available_implementation.size)
+
     // Apply all the migrations.
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.up_and_down",
@@ -93,6 +103,16 @@ class MigrationTests
     // The database should be completely migrated.
     assertTrue(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
                                     false))
+
+    val statuses2 =
+      migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
+                                      false)
+
+    assertEquals(0, statuses2.not_installed.size)
+    assertEquals(2, statuses2.installed_with_available_implementation.size)
+    assertTrue(statuses2.installed_with_available_implementation.contains(20081118201000L))
+    assertTrue(statuses2.installed_with_available_implementation.contains(20081118201742L))
+    assertEquals(0, statuses2.installed_without_available_implementation.size)
 
     // Rollback a single migration.
     migrator.migrate(RollbackMigration(1),
@@ -109,6 +129,16 @@ class MigrationTests
     assertFalse(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
                                      false))
 
+    val statuses3 =
+      migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
+                                      false)
+
+    assertEquals(1, statuses3.not_installed.size)
+    assertTrue(statuses3.not_installed.contains(20081118201742L))
+    assertEquals(1, statuses3.installed_with_available_implementation.size)
+    assertTrue(statuses3.installed_with_available_implementation.contains(20081118201000L))
+    assertEquals(0, statuses3.installed_without_available_implementation.size)
+
     // Migrate down the whole way.
     migrator.migrate(RemoveAllMigrations,
                      "com.imageworks.migration.tests.up_and_down",
@@ -121,6 +151,51 @@ class MigrationTests
     // The database should not be completely migrated.
     assertFalse(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
                                      false))
+
+    val statuses4 =
+      migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
+                                      false)
+
+    assertEquals(2, statuses4.not_installed.size)
+    assertTrue(statuses4.not_installed.contains(20081118201000L))
+    assertTrue(statuses4.not_installed.contains(20081118201742L))
+    assertEquals(0, statuses4.installed_with_available_implementation.size)
+    assertEquals(0, statuses4.installed_without_available_implementation.size)
+  }
+
+  @Test
+  def get_migration_statuses_does_not_create_schema_migrations : Unit =
+  {
+    // In a brand new database there should be no tables.
+    assertEquals(0, migrator.table_names.size)
+
+    val statuses1 =
+      migrator.get_migration_statuses("com.imageworks.migration.tests.no_migrations",
+                                      false)
+
+    // Calling get_migration_statuses() should not have created any
+    // tables.
+    assertEquals(0, migrator.table_names.size)
+
+    assertEquals(0, statuses1.not_installed.size)
+    assertEquals(0, statuses1.installed_with_available_implementation.size)
+    assertEquals(0, statuses1.installed_without_available_implementation.size)
+
+    // In a brand new database with available migrations, the database
+    // should not be migrated.
+    val statuses2 =
+      migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
+                                      false)
+
+    assertEquals(2, statuses2.not_installed.size)
+    assertTrue(statuses2.not_installed.contains(20081118201000L))
+    assertTrue(statuses2.not_installed.contains(20081118201742L))
+    assertEquals(0, statuses2.installed_with_available_implementation.size)
+    assertEquals(0, statuses2.installed_without_available_implementation.size)
+
+    // Calling get_migration_statuses() should not have created any
+    // tables.
+    assertEquals(0, migrator.table_names.size)
   }
 
   @Test
