@@ -894,7 +894,9 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *        subclasses
    * @parm search_sub_packages true if sub-packages of package_name
    *       should be searched
-   * @return true if all available migrations are installed
+   * @return true if all available migrations are installed and all
+   *         installed migrations have a corresponding Migration
+   *         subclass
    */
   def is_migrated(package_name : String,
                   search_sub_packages : Boolean) : Boolean =
