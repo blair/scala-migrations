@@ -126,6 +126,9 @@ class MigrationTests
   @Test
   def is_migrated_does_not_create_schema_migrations : Unit =
   {
+    // In a brand new database there should be no tables.
+    assertEquals(0, migrator.table_names.size)
+
     // In a brand new database with no available migrations, the
     // database should not be completely migrated.  The
     // com.imageworks.migration.tests.no_migrations package contains
