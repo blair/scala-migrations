@@ -144,11 +144,18 @@ class JavaMigrator private (migrator : Migrator)
    *        subclasses
    * @parm search_sub_packages true if sub-packages of package_name
    *       should be searched
-   * @return true if all available migrations are installed
+   * @return null if all available migrations are installed and all
+   *         installed migrations have a corresponding Migration
+   *         subclass; a non-null message suitable for for logging
+   *         with the not-installed migrations and the installed
+   *         migrations that do not have a matching Migration subclass
    */
-  def is_migrated(package_name : String,
-                  search_sub_packages : Boolean) : Boolean =
+  def why_not_migrated(package_name : String,
+                       search_sub_packages : Boolean) : String =
   {
-    migrator.is_migrated(package_name, search_sub_packages)
+    migrator.why_not_migrated(package_name, search_sub_packages) match {
+      case Some(message) => message
+      case None => null
+    }
   }
 }

@@ -945,25 +945,48 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *        subclasses
    * @parm search_sub_packages true if sub-packages of package_name
    *       should be searched
-   * @return true if all available migrations are installed and all
+   * @return None if all available migrations are installed and all
    *         installed migrations have a corresponding Migration
-   *         subclass
+   *         subclass; Some(message) with a message suitable for
+   *         logging with the not-installed migrations and the
+   *         installed migrations that do not have a matching
+   *         Migration subclass
    */
-  def is_migrated(package_name : String,
-                  search_sub_packages : Boolean) : Boolean =
+  def why_not_migrated(package_name : String,
+                       search_sub_packages : Boolean) : Option[String] =
   {
-    val available_migrations = find_migrations(package_name,
-                                               search_sub_packages,
-                                               logger)
+    val migration_statuses = get_migration_statuses(package_name,
+                                                    search_sub_packages)
 
-    if (schema_migrations_table_exists) {
-      get_installed_versions == available_migrations.keySet
+    val not_installed = migration_statuses.not_installed
+    val installed_without_available_implementation =
+      migration_statuses.installed_without_available_implementation
+
+    if (not_installed.isEmpty &&
+        installed_without_available_implementation.isEmpty) {
+      None
     }
     else {
-      // All migrations are installed if no concrete Migration
-      // subclasses exist and there is no "schema_migrations" table in
-      // the database.
-      available_migrations.isEmpty
+      val sb = new java.lang.StringBuilder(256)
+      sb.append("The database is not fully migrated because ")
+
+      if (! not_installed.isEmpty) {
+        sb.append("the following migrations are not installed: ")
+        sb.append(not_installed.values.map(_.getName).mkString(", "))
+        if (! installed_without_available_implementation.isEmpty) {
+          sb.append(" and ")
+        }
+      }
+
+      if (! installed_without_available_implementation.isEmpty) {
+        sb.append("the following migrations are installed without a " +
+                  "matching Migration subclass: ")
+        sb.append(installed_without_available_implementation.mkString(", "))
+      }
+
+      sb.append('.')
+      val message = sb.toString
+      Some(message)
     }
   }
 }

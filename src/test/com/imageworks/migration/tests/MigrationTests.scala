@@ -78,8 +78,8 @@ class MigrationTests
     assertFalse(migrator.table_names.find(_.toLowerCase == "people").isDefined)
 
     // The database should not be completely migrated.
-    assertFalse(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
-                                     false))
+    assertTrue(migrator.why_not_migrated("com.imageworks.migration.tests.up_and_down",
+                                         false).isDefined)
 
     val statuses1 =
       migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
@@ -101,8 +101,13 @@ class MigrationTests
     assertTrue(migrator.table_names.find(_.toLowerCase == "people").isDefined)
 
     // The database should be completely migrated.
-    assertTrue(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
-                                    false))
+    assertFalse(migrator.why_not_migrated("com.imageworks.migration.tests.up_and_down",
+                                          false).isDefined)
+
+    // With a empty set of migrations the database should not be
+    // completely migrated.
+    assertTrue(migrator.why_not_migrated("com.imageworks.migration.tests.no_migrations",
+                                         true).isDefined)
 
     val statuses2 =
       migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
@@ -126,8 +131,13 @@ class MigrationTests
     assertFalse(migrator.table_names.find(_.toLowerCase == "people").isDefined)
 
     // The database should not be completely migrated.
-    assertFalse(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
-                                     false))
+    assertTrue(migrator.why_not_migrated("com.imageworks.migration.tests.up_and_down",
+                                         false).isDefined)
+
+    // With a empty set of migrations the database should not be
+    // completely migrated.
+    assertTrue(migrator.why_not_migrated("com.imageworks.migration.tests.no_migrations",
+                                         true).isDefined)
 
     val statuses3 =
       migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
@@ -149,8 +159,8 @@ class MigrationTests
     assertFalse(migrator.table_names.find(_.toLowerCase == "people").isDefined)
 
     // The database should not be completely migrated.
-    assertFalse(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
-                                     false))
+    assertTrue(migrator.why_not_migrated("com.imageworks.migration.tests.up_and_down",
+                                         false).isDefined)
 
     val statuses4 =
       migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
@@ -199,7 +209,7 @@ class MigrationTests
   }
 
   @Test
-  def is_migrated_does_not_create_schema_migrations : Unit =
+  def why_not_migrated_does_not_create_schema_migrations : Unit =
   {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.table_names.size)
@@ -208,18 +218,18 @@ class MigrationTests
     // database should not be completely migrated.  The
     // com.imageworks.migration.tests.no_migrations package contains
     // no concrete Migration subclasses.
-    assertTrue(migrator.is_migrated("com.imageworks.migration.tests.no_migrations",
-                                    false))
+    assertFalse(migrator.why_not_migrated("com.imageworks.migration.tests.no_migrations",
+                                          false).isDefined)
 
-    // Running is_migrated() should not have created any tables.
+    // Running why_not_migrated() should not have created any tables.
     assertEquals(0, migrator.table_names.size)
 
     // In a brand new database with available migrations, the database
     // should not be migrated.
-    assertFalse(migrator.is_migrated("com.imageworks.migration.tests.up_and_down",
-                                     false))
+    assertTrue(migrator.why_not_migrated("com.imageworks.migration.tests.up_and_down",
+                                         false).isDefined)
 
-    // Running is_migrated() should not have created any tables.
+    // Running why_not_migrated() should not have created any tables.
     assertEquals(0, migrator.table_names.size)
   }
 
