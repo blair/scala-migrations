@@ -50,6 +50,17 @@ same schema_migrations table appearing in Ruby on Rails 2.1 and
 migration naming convention to manage the list of migrations that have
 been applied to the database.
 
+SUPPORTED DATABASES
+-------------------
+
+Scala Migrations currently supports
+
+  * Derby
+  * Oracle
+  * PostgreSQL
+
+Patches for other databases are welcome.
+
 MIGRATION NAMING
 ----------------
 
@@ -304,5 +315,3 @@ CAVATS
    migrations to Scala Migrations should specify the index name using
    the Name() case class as an option to add_index() or
    remove_index().
-
-2) Only Oracle and Derby databases are currently supported.
