@@ -307,8 +307,8 @@ Here is how different databases handle character set encoding.
   raises a warning and is ignored, resulting in CHAR and VARCHAR2
   column types.
 
-CAVATS
-------
+CAVEATS
+-------
 
 1) Index and foreign key names do not use the same naming convention
    as the Ruby on Rails migrations, so a port of Ruby on Rails
