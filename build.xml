@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- CONFIG: change example and description to fit your project -->
-<project name="migration" default="package" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="migration"
+         default="package"
+         xmlns:ivy="antlib:org.apache.ivy.ant">
   <description>Database migrations written in and for Scala projects</description>
 
   <!-- override creation of a jar with a version number in the name -->
@@ -8,12 +9,4 @@
 
   <property name="ivy.settings.file" value="${basedir}/ivy/ivysettings.xml" />
   <import file="${basedir}/ant/bootstrap.xml" />
-
-  <property name="install.dir" location="/opt/local/example" />
-  <target name="install" depends="package">
-    <mkdir dir="${install.dir}" />
-    <copy todir="${install.dir}">
-      <fileset dir="${dist.dir}" includes="**" />
-    </copy>
-  </target>
 </project>
