@@ -30,9 +30,9 @@
     </taskdef>
 
     <target name="src_compile">
-        <mkdir dir="build/main"/>
-        <scalac srcdir="src/main"
-                destdir="build/main"
+        <mkdir dir="build/main/scala"/>
+        <scalac srcdir="src/main/scala"
+                destdir="build/main/scala"
                 classpathref="src_compile.classpath"
                 target="jvm-1.5"
                 unchecked="on"
@@ -43,14 +43,14 @@
 
     <target name="jar" depends="src_compile">
         <jar destfile="scala-migrations.jar"
-             basedir="build/main">
+             basedir="build/main/scala">
         </jar>
     </target>
 
     <target name="test_compile" depends="jar">
-        <mkdir dir="build/test"/>
-        <scalac srcdir="src/test"
-                destdir="build/test"
+        <mkdir dir="build/test/scala"/>
+        <scalac srcdir="src/test/scala"
+                destdir="build/test/scala"
                 classpathref="test_compile.classpath"
                 target="jvm-1.5"
                 unchecked="on"
@@ -60,11 +60,11 @@
     </target>
 
     <target name="tests" depends="test_compile">
-        <copy file="log4j.properties" todir="build/test"/>
+        <copy file="log4j.properties" todir="build/test/scala"/>
         <junit printsummary="yes" haltonerror="yes" haltonfailure="yes">
             <classpath>
                 <path refid="test_compile.classpath"/>
-                <path location="build/test"/>
+                <path location="build/test/scala"/>
                 <path location="${log4j.jar}"/>
                 <path location="${slf4j-impl.jar}"/>
             </classpath>
@@ -72,7 +72,7 @@
             <formatter type="plain" usefile="false"/>
 
             <batchtest>
-                <fileset dir="build/test" includes="**/*Tests.class"/>
+                <fileset dir="build/test/scala" includes="**/*Tests.class"/>
             </batchtest>
         </junit>
     </target>
