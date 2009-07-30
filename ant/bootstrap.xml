@@ -12,15 +12,18 @@
   <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy-${ivy.install.version}.jar" />
   <property name="jsch.install.version" value="0.1.29" />
   <property name="jsch.jar.file" value="${ivy.jar.dir}/jsch-${jsch.install.version}.jar" />
+  <property name="log4jdbc.install.version" value="1.1" />
+  <property name="log4jdbc.jar.file" value="${basedir}/libs/log4jdbc4-${log4jdbc.install.version}.jar" />
 
   <!--
-    download ivy from the web site so that it can be used without being
-    installed. if the file has already been downloaded, we use a rename
-    trick to avoid hitting the website again. (that would be annoying
-    when building offline.)
+    download ivy, jsch and log4jdbc from the web site so that it can be
+    used without being installed. if the file has already been downloaded,
+    we use a rename trick to avoid hitting the website again. (that would
+    be annoying when building offline.)
   -->
   <target name="download-ivy" unless="skip.download">
     <mkdir dir="${ivy.jar.dir}"/>
+    <mkdir dir="${basedir}/libs"/>
     <condition property="ivy.url" value="file:${ivy.jar.file}">
       <available file="${ivy.jar.file}" />
     </condition>
@@ -34,6 +37,13 @@
     <property name="jsch.url" value="http://repo1.maven.org/maven2/jsch/jsch/${jsch.install.version}/jsch-${jsch.install.version}.jar" />
     <get src="${jsch.url}" dest="${jsch.jar.file}.download" usetimestamp="true" />
     <move file="${jsch.jar.file}.download" tofile="${jsch.jar.file}" />
+
+    <condition property="log4jdbc.url" value="file:${log4jdbc.jar.file}">
+      <available file="${log4jdbc.jar.file}" />
+    </condition>
+    <property name="log4jdbc.url" value="http://log4jdbc.googlecode.com/files/log4jdbc4-${log4jdbc.install.version}.jar" />
+    <get src="${log4jdbc.url}" dest="${log4jdbc.jar.file}.download" usetimestamp="true" />
+    <move file="${log4jdbc.jar.file}.download" tofile="${log4jdbc.jar.file}" />
   </target>
 
   <!-- import ivy's ant tasks -->
