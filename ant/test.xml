@@ -31,7 +31,20 @@
   </macrodef>
 
   <target name="run-unit-tests" unless="skip.test" if="ivy.extra.testclass">
-    <run-test-class classname="${ivy.extra.testclass}" />
+    <copy file="log4j.properties" todir="${target.dir}/test-classes" />
+    <junit printsummary="yes" haltonerror="yes" haltonfailure="yes">
+      <classpath>
+        <path refid="test.path"/>
+        <pathelement location="${target.dir}/classes" />
+        <pathelement location="${target.dir}/test-classes" />
+      </classpath>
+
+      <formatter type="plain" usefile="false"/>
+
+      <batchtest>
+        <fileset dir="${target.dir}/test-classes" includes="**/*Tests.class"/>
+      </batchtest>
+    </junit>
   </target>
 
   <target name="run-stress-tests" unless="skip.test" if="ivy.extra.stresstestclass">
