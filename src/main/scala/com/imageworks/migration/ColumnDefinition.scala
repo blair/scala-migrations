@@ -77,7 +77,7 @@ class ColumnDefinition
   def initialize() : Unit =
   {
     if (this.isInstanceOf[ColumnSupportsLimit]) {
-      check_for_limit()
+      checkForLimit()
     }
 
     if (this.isInstanceOf[ColumnSupportsDefault]) {
@@ -131,7 +131,7 @@ class ColumnDefinition
    * option from the option list.
    */
   private
-  def check_for_limit() =
+  def checkForLimit() =
   {
     for (option @ Limit(length) <- options) {
       options -= option
