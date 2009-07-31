@@ -705,7 +705,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * Creates the schema migrations table if it does not exist.
    */
   private
-  def initialize_schema_migrations_table() : Unit =
+  def initializeSchemaMigrationsTable() : Unit =
   {
     if (! doesSchemaMigrationsTableExist) {
       runMigration(classOf[CreateSchemaMigrationsTableMigration], Up, None)
@@ -782,7 +782,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
               package_name : String,
               search_sub_packages : Boolean) : Unit =
   {
-    initialize_schema_migrations_table()
+    initializeSchemaMigrationsTable()
 
     // Get a new connection that locks the schema_migrations table.
     // This will prevent concurrent migrations from running.  Commit
