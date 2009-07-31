@@ -48,8 +48,8 @@ class TableColumnDefinition(val tableName : String,
  */
 class On(definition : TableColumnDefinition)
 {
-  val table_name = definition.tableName
-  val column_names = definition.columnNames
+  val tableName = definition.tableName
+  val columnNames = definition.columnNames
 }
 
 /**
@@ -475,9 +475,9 @@ abstract class Migration
 
     val name = fk_name_opt.getOrElse {
                  "fk_" +
-                 on.table_name +
+                 on.tableName +
                  "_" +
-                 on.column_names.mkString("_") +
+                 on.columnNames.mkString("_") +
                  "_" +
                  references.table_name +
                  "_" +
@@ -502,7 +502,7 @@ abstract class Migration
                     references : References,
                     options : ForeignKeyOption*) : Unit =
   {
-    if (on.column_names.length == 0) {
+    if (on.columnNames.length == 0) {
       throw new IllegalArgumentException("Adding a foreign key constraint " +
                                          "requires at least one column name " +
                                          "in the table adding the constraint.")
@@ -516,7 +516,7 @@ abstract class Migration
 
     var (name, opts) = foreignKeyNameFor(on, references, options : _*)
 
-    val quoted_on_column_names = on.column_names.map {
+    val quoted_on_column_names = on.columnNames.map {
                                    adapter_.quoteColumnName(_)
                                  }.mkString(", ")
 
@@ -550,7 +550,7 @@ abstract class Migration
 
     val sql = new java.lang.StringBuilder(512)
                .append("ALTER TABLE ")
-               .append(adapter_.quoteTableName(on.table_name))
+               .append(adapter_.quoteTableName(on.tableName))
                .append(" ADD CONSTRAINT ")
                .append(name)
                .append(" FOREIGN KEY (")
@@ -609,7 +609,7 @@ abstract class Migration
                        references : References,
                        options : Name*) : Unit =
   {
-    if (on.column_names.length == 0) {
+    if (on.columnNames.length == 0) {
       throw new IllegalArgumentException("Removing a foreign key constraint " +
                                          "requires at least one column name " +
                                          "in the table adding the constraint.")
@@ -624,7 +624,7 @@ abstract class Migration
     var (name, opts) = foreignKeyNameFor(on, references, options : _*)
 
     execute("ALTER TABLE " +
-            adapter_.quoteTableName(on.table_name) +
+            adapter_.quoteTableName(on.tableName) +
             " DROP CONSTRAINT " +
             name)
   }
@@ -749,7 +749,7 @@ abstract class Migration
                expr : String,
                options : CheckOption*) : Unit =
   {
-    if (on.column_names.isEmpty) {
+    if (on.columnNames.isEmpty) {
       throw new IllegalArgumentException("Adding a check constraint " +
                                          "requires at least one column name " +
                                          "in the table adding the constraint.")
@@ -757,13 +757,13 @@ abstract class Migration
 
     var (name, opts) = adapter_.generateCheckConstraintName(on, options : _*)
 
-    val quoted_on_column_names = on.column_names.map {
+    val quoted_on_column_names = on.columnNames.map {
                                    adapter_.quoteColumnName(_)
                                  }.mkString(", ")
 
     val sql = new java.lang.StringBuilder(512)
                .append("ALTER TABLE ")
-               .append(adapter_.quoteTableName(on.table_name))
+               .append(adapter_.quoteTableName(on.tableName))
                .append(" ADD CONSTRAINT ")
                .append(name)
                .append(" CHECK (")
@@ -786,7 +786,7 @@ abstract class Migration
   def removeCheck(on : On,
                   options : Name*) : Unit =
   {
-    if (on.column_names.isEmpty) {
+    if (on.columnNames.isEmpty) {
       throw new IllegalArgumentException("Removing a check constraint " +
                                          "requires at least one column name " +
                                          "in the table adding the constraint.")
@@ -795,7 +795,7 @@ abstract class Migration
     var (name, opts) = adapter_.generateCheckConstraintName(on, options : _*)
 
     execute("ALTER TABLE " +
-            adapter_.quoteTableName(on.table_name) +
+            adapter_.quoteTableName(on.tableName) +
             " DROP CONSTRAINT " +
             name)
   }

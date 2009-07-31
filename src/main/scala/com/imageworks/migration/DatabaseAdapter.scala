@@ -387,9 +387,9 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
 
     val name = chk_name_opt.getOrElse {
                  "chk_" +
-                 on.table_name +
+                 on.tableName +
                  "_" +
-                 on.column_names.mkString("_")
+                 on.columnNames.mkString("_")
                }
 
     (name, opts)
