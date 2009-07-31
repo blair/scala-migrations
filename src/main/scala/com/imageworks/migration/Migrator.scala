@@ -130,9 +130,9 @@ object Migrator
    * @return a set of the class names the directory contains
    */
   private
-  def class_names_in_dir(file : java.io.File,
-                         package_name : String,
-                         search_sub_packages : Boolean) : scala.collection.mutable.HashSet[String] =
+  def classNamesInDir(file : java.io.File,
+                      package_name : String,
+                      search_sub_packages : Boolean) : scala.collection.mutable.HashSet[String] =
   {
     val class_names = new scala.collection.mutable.HashSet[String]
 
@@ -227,7 +227,7 @@ object Migrator
                         "' should be a directory but is not."
           throw new RuntimeException(message)
         }
-        class_names_in_dir(file, package_name, search_sub_packages)
+        classNamesInDir(file, package_name, search_sub_packages)
       }
       else {
         val message = "Do not know how to get a list of classes in the " +
