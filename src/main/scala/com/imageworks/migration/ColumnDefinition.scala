@@ -184,7 +184,7 @@ class ColumnDefinition
    */
   private
   lazy
-  val is_primary_key : Boolean =
+  val isPrimaryKey : Boolean =
   {
     var is_primary = false
 
@@ -293,7 +293,7 @@ class ColumnDefinition
       sb.append(default.get)
     }
 
-    if (is_primary_key) {
+    if (isPrimaryKey) {
       sb.append(" PRIMARY KEY")
     }
 
@@ -347,7 +347,7 @@ class ColumnDefinition
     }
 
     // Warn about illegal combinations in some databases.
-    if (is_primary_key &&
+    if (isPrimaryKey &&
         not_null_opt.isDefined &&
         not_null_opt.get == false) {
       logger.warn("Specifying PrimaryKey and Nullable in a column is not " +
@@ -356,10 +356,10 @@ class ColumnDefinition
 
     // Warn when different options are used that specify the same
     // behavior so one can be removed.
-    if (is_primary_key && not_null_opt.isDefined && not_null_opt.get == true) {
+    if (isPrimaryKey && not_null_opt.isDefined && not_null_opt.get == true) {
       logger.warn("Specifying PrimaryKey and NotNull is redundant.")
     }
-    if (is_primary_key && is_unique) {
+    if (isPrimaryKey && is_unique) {
       logger.warn("Specifying PrimaryKey and Unique is redundant.")
     }
 
