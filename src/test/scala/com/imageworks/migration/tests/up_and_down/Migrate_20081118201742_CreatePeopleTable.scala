@@ -63,8 +63,7 @@ class Migrate_20081118201742_CreatePeopleTable
                   OnDelete(Cascade),
                   OnUpdate(Restrict))
 
-    add_check(on("people" -> "vacation_days"),
-              "vacation_days >= 0")
+    addCheck(on("people" -> "vacation_days"), "vacation_days >= 0")
   }
 
   def down : Unit =

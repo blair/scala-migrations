@@ -735,9 +735,19 @@ abstract class Migration
     revoke(table_name, Array(grantee), privileges : _*)
   }
 
-  def add_check(on : On,
-                expr : String,
-                options : CheckOption*) : Unit =
+  /**
+   * Add a CHECK constraint on a table and one or more columns.  The
+   * constraint name is automatically generated unless Name() is given
+   * as an option.
+   *
+   * @param on the table and columns to add the CHECK constraint on
+   * @param expr the expression to check
+   * @param options a possibly empty list of check options to
+   *        customize the creation of the CHECK constraint
+   */
+  def addCheck(on : On,
+               expr : String,
+               options : CheckOption*) : Unit =
   {
     if (on.column_names.isEmpty) {
       throw new IllegalArgumentException("Adding a check constraint " +
