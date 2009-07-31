@@ -329,7 +329,7 @@ class ColumnDefinition
         case Check(expr) => {
           val tbd = new TableColumnDefinition(table_name, Array(column_name))
           val on = new On(tbd)
-          val (name, _) = adapter.generate_check_constraint_name(on)
+          val (name, _) = adapter.generateCheckConstraintName(on)
 
           append_check_sql(name, expr)
         }

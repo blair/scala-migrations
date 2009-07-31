@@ -367,8 +367,8 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    * @return a Tuple2 with the calculated name or the overridden name
    *         from a Name and the remaining options
    */
-  def generate_check_constraint_name(on : On,
-                                     options : CheckOption*)
+  def generateCheckConstraintName(on : On,
+                                  options : CheckOption*)
     : Tuple2[String,List[CheckOption]] =
   {
     var opts = options.toList

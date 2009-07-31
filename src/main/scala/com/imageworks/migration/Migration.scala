@@ -627,8 +627,7 @@ abstract class Migration
                                          "in the table adding the constraint.")
     }
 
-    var (name, opts) = adapter_.generate_check_constraint_name(on,
-                                                               options : _*)
+    var (name, opts) = adapter_.generateCheckConstraintName(on, options : _*)
 
     val quoted_on_column_names = on.column_names.map {
                                    adapter_.quoteColumnName(_)
@@ -655,8 +654,7 @@ abstract class Migration
                                          "in the table adding the constraint.")
     }
 
-    var (name, opts) = adapter_.generate_check_constraint_name(on,
-                                                               options : _*)
+    var (name, opts) = adapter_.generateCheckConstraintName(on, options : _*)
 
     execute("ALTER TABLE " +
             adapter_.quoteTableName(on.table_name) +
