@@ -647,6 +647,14 @@ abstract class Migration
     removeForeignKey(on, references, options : _*)
   }
 
+  /**
+   * Add a grant on a table to one or more grantees.
+   *
+   * @param table_name the table name to add the grantees to
+   * @param grantees a non-empty array of grantees
+   * @param privileges a non-empty array of privileges to grant to the
+   *        grantees
+   */
   final
   def grant(table_name : String,
             grantees : Array[String],
@@ -667,6 +675,14 @@ abstract class Migration
     execute(sql)
   }
 
+  /**
+   * Add a grant on a table to a grantee.
+   *
+   * @param table_name the table name to add the grantees to
+   * @param grantee the grantee to grant the privileges to
+   * @param privileges a non-empty array of privileges to grant to the
+   *        grantees
+   */
   final
   def grant(table_name : String,
             grantee : String,
@@ -675,6 +691,14 @@ abstract class Migration
     grant(table_name, Array(grantee), privileges : _*)
   }
 
+  /**
+   * Remove privileges on a table from one or more grantees.
+   *
+   * @param table_name the table name to remove the grants from
+   * @param grantees a non-empty array of grantees
+   * @param privileges a non-empty array of privileges to remove from
+   *        the grantees
+   */
   final
   def revoke(table_name : String,
              grantees : Array[String],
@@ -695,6 +719,14 @@ abstract class Migration
     execute(sql)
   }
 
+  /**
+   * Remove privileges on a table from one or more grantees.
+   *
+   * @param table_name the table name to remove the grants from
+   * @param grantees a non-empty array of grantees
+   * @param privileges a non-empty array of privileges to remove from
+   *        the grantees
+   */
   final
   def revoke(table_name : String,
              grantee : String,
