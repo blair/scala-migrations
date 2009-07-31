@@ -302,9 +302,9 @@ abstract class Migration
   }
 
   private
-  def index_name(table_name : String,
-                 column_names : Array[String],
-                 options : IndexOption*) : Tuple2[String,List[IndexOption]] =
+  def indexNameFor(table_name : String,
+                   column_names : Array[String],
+                   options : IndexOption*) : Tuple2[String,List[IndexOption]] =
   {
     var opts = options.toList
 
@@ -340,7 +340,7 @@ abstract class Migration
                                          "least one column name.")
     }
 
-    var (name, opts) = index_name(table_name, column_names, options : _*)
+    var (name, opts) = indexNameFor(table_name, column_names, options : _*)
 
     var unique = false
     for (option @ Unique <- opts) {
@@ -385,7 +385,7 @@ abstract class Migration
                                          "least one column name.")
     }
 
-    val (name, opts) = index_name(table_name, column_names, options : _*)
+    val (name, opts) = indexNameFor(table_name, column_names, options : _*)
 
     val sql = adapter_.removeIndexSql(table_name, name)
 
