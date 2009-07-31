@@ -610,12 +610,13 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   }
 
   /**
-   * Get a list of table names in the schema.
+   * Get a list of table names.  If the database adapter was given a
+   * schema name then only the tables in that schema are returned.
    *
    * @return a set of table names; no modifications of the case of
    *         table names is done
    */
-  def table_names : scala.collection.Set[String] =
+  def getTableNames : scala.collection.Set[String] =
   {
     withLoggingConnection(AutoCommit) { connection =>
       val metadata = connection.getMetaData
@@ -694,7 +695,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   def schema_migrations_table_exists : Boolean =
   {
     val smtn = Migrator.schema_migrations_table_name.toLowerCase
-    table_names.find(_.toLowerCase == smtn) match {
+    getTableNames.find(_.toLowerCase == smtn) match {
       case Some(_) => true
       case None => false
     }

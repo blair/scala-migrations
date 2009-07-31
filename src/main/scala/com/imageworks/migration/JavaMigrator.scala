@@ -82,7 +82,7 @@ class JavaMigrator private (migrator : Migrator)
    */
   def table_names : java.util.Set[String] =
   {
-    val table_names = migrator.table_names
+    val table_names = migrator.getTableNames
 
     val set = new java.util.HashSet[String](table_names.size)
 
