@@ -70,8 +70,8 @@ class Migrate_20081118201742_CreatePeopleTable
   def down : Unit =
   {
     remove_check(on("people" -> "vacation_days"))
-    remove_foreign_key(on("people" -> "pk_location"),
-                       references("location" -> "pk_location"))
+    removeForeignKey(on("people" -> "pk_location"),
+                     references("location" -> "pk_location"))
     removeIndex("people", "ssn")
     dropTable("people")
   }

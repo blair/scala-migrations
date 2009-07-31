@@ -594,9 +594,20 @@ abstract class Migration
     addForeignKey(on, references, options : _*)
   }
 
-  def remove_foreign_key(on : On,
-                         references : References,
-                         options : Name*) : Unit =
+  /**
+   * Remove a foreign key from a table.  The name of the foreign key
+   * is automatically generated unless Name() is given as an option.
+   *
+   * @param on the table and column name(s) to remove the foreign key
+   *        from
+   * @param references the table and column name(s) that the foreign
+   *        key references
+   * @param options a possibly empty list of foreign key options to
+   *        customize the removal of the foreign key
+   */
+  def removeForeignKey(on : On,
+                       references : References,
+                       options : Name*) : Unit =
   {
     if (on.column_names.length == 0) {
       throw new IllegalArgumentException("Removing a foreign key constraint " +
@@ -618,11 +629,22 @@ abstract class Migration
             name)
   }
 
-  def remove_foreign_key(references : References,
-                         on : On,
-                         options : Name*) : Unit =
+  /**
+   * Remove a foreign key from a table.  The name of the foreign key
+   * is automatically generated unless Name() is given as an option.
+   *
+   * @param references the table and column name(s) that the foreign
+   *        key references
+   * @param on the table and column name(s) to remove the foreign key
+   *        from
+   * @param options a possibly empty list of foreign key options to
+   *        customize the removal of the foreign key
+   */
+  def removeForeignKey(references : References,
+                       on : On,
+                       options : Name*) : Unit =
   {
-    remove_foreign_key(on, references, options : _*)
+    removeForeignKey(on, references, options : _*)
   }
 
   final
