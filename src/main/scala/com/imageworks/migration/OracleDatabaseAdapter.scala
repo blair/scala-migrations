@@ -61,6 +61,7 @@ class OracleBigintColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
 {
+  override
   val sql = "NUMBER(19, 0)"
 }
 
@@ -69,6 +70,7 @@ class OracleCharColumnDefinition(use_nchar_type : Boolean)
   with ColumnSupportsDefault
   with ColumnSupportsLimit
 {
+  override
   def sql = if (use_nchar_type)
               column_sql("NCHAR")
             else
@@ -110,6 +112,7 @@ class OracleIntegerColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
 {
+  override
   val sql = "NUMBER(10, 0)"
 }
 
@@ -141,6 +144,7 @@ class OracleSmallintColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
 {
+  override
   val sql = "NUMBER(5, 0)"
 }
 
@@ -149,6 +153,7 @@ class OracleVarbinaryColumnDefinition
   with ColumnSupportsDefault
   with ColumnSupportsLimit
 {
+  override
   def sql =
   {
     if (! limit.isDefined) {
@@ -165,6 +170,7 @@ class OracleVarcharColumnDefinition(use_nchar_type : Boolean)
   with ColumnSupportsDefault
   with ColumnSupportsLimit
 {
+  override
   def sql = if (use_nchar_type)
               column_sql("NVARCHAR2")
             else

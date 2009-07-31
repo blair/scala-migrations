@@ -37,6 +37,7 @@ class DerbyTimestampColumnDefinition
   with ColumnSupportsDefault
 {
   // Derby does not take a size specifier for TIMESTAMP types.
+  override
   def sql = column_sql("TIMESTAMP")
 }
 
@@ -45,6 +46,7 @@ class DerbyVarbinaryColumnDefinition
   with ColumnSupportsDefault
   with ColumnSupportsLimit
 {
+  override
   def sql = column_sql("VARCHAR") + " FOR BIT DATA"
 }
 

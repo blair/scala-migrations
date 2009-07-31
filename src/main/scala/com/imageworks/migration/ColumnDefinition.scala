@@ -404,6 +404,7 @@ abstract class AbstractDecimalColumnDefinition
    */
   val decimalSqlName : String
 
+  override
   def sql =
   {
     (precision, scale) match {
@@ -429,12 +430,14 @@ class DefaultBigintColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
 {
+  override
   val sql = "BIGINT"
 }
 
 class DefaultBlobColumnDefinition
   extends ColumnDefinition
 {
+  override
   val sql = "BLOB"
 }
 
@@ -442,6 +445,7 @@ class DefaultBooleanColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
 {
+  override
   val sql = "BOOLEAN"
 }
 
@@ -450,6 +454,7 @@ class DefaultCharColumnDefinition
   with ColumnSupportsLimit
   with ColumnSupportsDefault
 {
+  override
   def sql = column_sql("CHAR")
 }
 
@@ -464,6 +469,7 @@ class DefaultIntegerColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
 {
+  override
   val sql = "INTEGER"
 }
 
@@ -471,6 +477,7 @@ class DefaultSmallintColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
 {
+  override
   val sql = "SMALLINT"
 }
 
@@ -479,6 +486,7 @@ class DefaultTimestampColumnDefinition
   with ColumnSupportsLimit
   with ColumnSupportsDefault
 {
+  override
   def sql = column_sql("TIMESTAMP")
 }
 
@@ -487,5 +495,6 @@ class DefaultVarcharColumnDefinition
   with ColumnSupportsLimit
   with ColumnSupportsDefault
 {
+  override
   def sql = column_sql("VARCHAR")
 }
