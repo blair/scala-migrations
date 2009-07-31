@@ -49,10 +49,10 @@ class TableDefinition(adapter : DatabaseAdapter,
              column_type : SqlType,
              options : ColumnOption*) : TableDefinition =
   {
-    val column = adapter.new_column_definition(table_name,
-                                               name,
-                                               column_type,
-                                               options : _*)
+    val column = adapter.newColumnDefinition(table_name,
+                                             name,
+                                             column_type,
+                                             options : _*)
     columns += column
     this
   }

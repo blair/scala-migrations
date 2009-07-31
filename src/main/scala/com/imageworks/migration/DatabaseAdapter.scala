@@ -102,10 +102,10 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    * @param options a list of column options customizing the column
    * @return a new ColumnDefinition
    */
-  def new_column_definition(table_name : String,
-                            column_name : String,
-                            column_type : SqlType,
-                            options : ColumnOption*) : ColumnDefinition =
+  def newColumnDefinition(table_name : String,
+                          column_name : String,
+                          column_type : SqlType,
+                          options : ColumnOption*) : ColumnDefinition =
   {
     var opts = options.toList
 
