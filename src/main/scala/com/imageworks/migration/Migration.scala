@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory
  * A Tuple2 like class for containing a table name and a list of colum
  * names.
  */
-class TableColumnDefinition(val table_name : String,
-                            val column_names : Array[String])
+class TableColumnDefinition(val tableName : String,
+                            val columnNames : Array[String])
 
 /**
  * A container class for storing the table and column names a foreign
@@ -48,8 +48,8 @@ class TableColumnDefinition(val table_name : String,
  */
 class On(definition : TableColumnDefinition)
 {
-  val table_name = definition.table_name
-  val column_names = definition.column_names
+  val table_name = definition.tableName
+  val column_names = definition.columnNames
 }
 
 /**
@@ -58,8 +58,8 @@ class On(definition : TableColumnDefinition)
  */
 class References(definition : TableColumnDefinition)
 {
-  val table_name = definition.table_name
-  val column_names = definition.column_names
+  val table_name = definition.tableName
+  val column_names = definition.columnNames
 }
 
 /**
