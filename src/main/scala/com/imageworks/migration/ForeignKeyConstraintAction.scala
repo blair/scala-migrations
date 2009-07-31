@@ -37,7 +37,7 @@ package com.imageworks.migration
  */
 sealed trait ForeignKeyConstraintAction
 {
-  def sql : String
+  val sql : String
 }
 
 /**
