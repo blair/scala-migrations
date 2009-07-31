@@ -575,7 +575,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *        connection
    * @return what f returns
    */
-  private[migration] def with_logging_connection[T]
+  private[migration] def withLoggingConnection[T]
     (commit_behavior : CommitBehavior)
     (f : java.sql.Connection => T) : T =
   {
@@ -617,7 +617,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    */
   def table_names : scala.collection.Set[String] =
   {
-    with_logging_connection(AutoCommit) { connection =>
+    withLoggingConnection(AutoCommit) { connection =>
       val metadata = connection.getMetaData
       With.resultSet(metadata.getTables(null,
                                         adapter.schema_name_opt.getOrElse(null),
@@ -760,7 +760,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    */
   def get_installed_versions : scala.collection.SortedSet[Long] =
   {
-    with_logging_connection(AutoCommit) { connection =>
+    withLoggingConnection(AutoCommit) { connection =>
       get_installed_versions_(connection)
     }
   }
@@ -790,7 +790,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     // any modifications to schema_migrations regardless if an
     // exception is thrown or not, this ensures that any migrations
     // that were successfully run are recorded.
-    with_logging_connection(CommitUponReturnAndException) { schema_connection =>
+    withLoggingConnection(CommitUponReturnAndException) { schema_connection =>
       {
         logger.debug("Getting an exclusive lock on the '{}' table.",
                      schema_migrations_table_name)
