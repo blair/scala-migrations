@@ -58,8 +58,8 @@ class On(definition : TableColumnDefinition)
  */
 class References(definition : TableColumnDefinition)
 {
-  val table_name = definition.tableName
-  val column_names = definition.columnNames
+  val tableName = definition.tableName
+  val columnNames = definition.columnNames
 }
 
 /**
@@ -479,9 +479,9 @@ abstract class Migration
                  "_" +
                  on.columnNames.mkString("_") +
                  "_" +
-                 references.table_name +
+                 references.tableName +
                  "_" +
-                 references.column_names.mkString("_")
+                 references.columnNames.mkString("_")
                }
 
     (name, opts)
@@ -508,7 +508,7 @@ abstract class Migration
                                          "in the table adding the constraint.")
     }
 
-    if (references.column_names.length == 0) {
+    if (references.columnNames.length == 0) {
       throw new IllegalArgumentException("Adding a foreign key constraint " +
                                          "requires at least one column name " +
                                          "from the table being referenced.")
@@ -520,7 +520,7 @@ abstract class Migration
                                    adapter_.quoteColumnName(_)
                                  }.mkString(", ")
 
-    val quoted_references_column_names = references.column_names.map {
+    val quoted_references_column_names = references.columnNames.map {
                                            adapter_.quoteColumnName(_)
                                          }.mkString(", ")
 
@@ -556,7 +556,7 @@ abstract class Migration
                .append(" FOREIGN KEY (")
                .append(quoted_on_column_names)
                .append(") REFERENCES ")
-               .append(adapter_.quoteTableName(references.table_name))
+               .append(adapter_.quoteTableName(references.tableName))
                .append(" (")
                .append(quoted_references_column_names)
                .append(")")
@@ -615,7 +615,7 @@ abstract class Migration
                                          "in the table adding the constraint.")
     }
 
-    if (references.column_names.length == 0) {
+    if (references.columnNames.length == 0) {
       throw new IllegalArgumentException("Removing a foreign key constraint " +
                                          "requires at least one column name " +
                                          "from the table being referenced.")
