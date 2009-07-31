@@ -39,7 +39,7 @@ class TableDefinition(adapter : DatabaseAdapter,
   val columns = new scala.collection.mutable.ListBuffer[ColumnDefinition]
 
   final
-  def to_sql : String =
+  def toSql : String =
   {
     columns.map(_.to_sql).mkString("", ", ", "")
   }

@@ -285,7 +285,7 @@ abstract class Migration
                 .append("CREATE TABLE ")
                 .append(adapter_.quote_table_name(table_name))
                 .append(" (")
-                .append(table_definition.to_sql)
+                .append(table_definition.toSql)
                 .append(')')
                 .toString
     execute(sql)
