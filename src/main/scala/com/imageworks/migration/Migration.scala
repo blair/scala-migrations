@@ -773,8 +773,18 @@ abstract class Migration
     execute(sql.toString)
   }
 
-  def remove_check(on : On,
-                   options : Name*) : Unit =
+  /**
+   * Remove a CHECK constraint on a table and one or more columns.
+   * The constraint name is automatically generated unless Name() is
+   * given as an option.
+   *
+   * @param on the table and columns to remove the CHECK constraint
+   *        from
+   * @param options a possibly empty list of check options to
+   *        customize the removal of the CHECK constraint
+   */
+  def removeCheck(on : On,
+                  options : Name*) : Unit =
   {
     if (on.column_names.isEmpty) {
       throw new IllegalArgumentException("Removing a check constraint " +
