@@ -403,7 +403,7 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    * @param the SQL text to append to the SQL to create a foreign key
    *        relationship
    */
-  def on_delete_sql(on_delete_opt : Option[OnDelete]) : String =
+  def onDeleteSql(on_delete_opt : Option[OnDelete]) : String =
   {
     on_delete_opt match {
       case Some(on_delete) => "ON DELETE " + on_delete.action.sql

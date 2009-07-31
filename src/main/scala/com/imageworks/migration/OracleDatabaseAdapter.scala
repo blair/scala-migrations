@@ -290,11 +290,11 @@ class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
    *        relationship
    */
   override
-  def on_delete_sql(on_delete_opt : Option[OnDelete]) : String =
+  def onDeleteSql(on_delete_opt : Option[OnDelete]) : String =
   {
     on_delete_opt match {
       case Some(OnDelete(Restrict)) => ""
-      case opt => super.on_delete_sql(opt)
+      case opt => super.onDeleteSql(opt)
     }
   }
 }

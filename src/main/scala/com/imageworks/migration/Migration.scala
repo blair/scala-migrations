@@ -508,7 +508,7 @@ abstract class Migration
                .append(quoted_references_column_names)
                .append(")")
 
-    val on_delete_sql = adapter_.on_delete_sql(on_delete_opt)
+    val on_delete_sql = adapter_.onDeleteSql(on_delete_opt)
     if (! on_delete_sql.isEmpty) {
       sql.append(' ')
          .append(on_delete_sql)
