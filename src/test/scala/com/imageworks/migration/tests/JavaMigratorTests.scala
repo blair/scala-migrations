@@ -63,15 +63,15 @@ class JavaMigratorTests
   @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
   def duplicate_descriptions_throw_exception : Unit =
   {
-    java_migrator.install_all_migrations("com.imageworks.migration.tests.duplicate_descriptions",
-                                         false)
+    java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_descriptions",
+                                       false)
   }
 
   @Test { val expected = classOf[DuplicateMigrationVersionException] }
   def duplicate_versions_throw_exception : Unit =
   {
-    java_migrator.install_all_migrations("com.imageworks.migration.tests.duplicate_versions",
-                                         false)
+    java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_versions",
+                                       false)
   }
 
   @Test
@@ -97,8 +97,8 @@ class JavaMigratorTests
     assertFalse(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "people").isDefined)
 
     // Apply all the migrations.
-    java_migrator.install_all_migrations("com.imageworks.migration.tests.up_and_down",
-                                         false)
+    java_migrator.installAllMigrations("com.imageworks.migration.tests.up_and_down",
+                                       false)
 
     assertEquals(3, java_migrator.getTableNames.size)
     assertTrue(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "people").isDefined)
