@@ -328,10 +328,10 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    *        types of permissions to grant.
    * @return the SQL to grant permissions
    */
-  def revoke_sql(schema_name_opt : Option[String],
-                 table_name : String,
-                 grantees : Array[String],
-                 privileges : GrantPrivilegeType*) : String =
+  def revokeSql(schema_name_opt : Option[String],
+                table_name : String,
+                grantees : Array[String],
+                privileges : GrantPrivilegeType*) : String =
   {
     grantRevokeCommon("REVOKE",
                       "FROM",
@@ -351,11 +351,11 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    *        types of permissions to grant.
    * @return the SQL to grant permissions
    */
-  def revoke_sql(table_name : String,
-                 grantees : Array[String],
-                 privileges : GrantPrivilegeType*) : String =
+  def revokeSql(table_name : String,
+                grantees : Array[String],
+                privileges : GrantPrivilegeType*) : String =
   {
-    revoke_sql(schema_name_opt, table_name, grantees, privileges : _*)
+    revokeSql(schema_name_opt, table_name, grantees, privileges : _*)
   }
 
   /**

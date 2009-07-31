@@ -604,7 +604,7 @@ abstract class Migration
                                          "at least one privilege.")
     }
 
-    val sql = adapter_.revoke_sql(table_name, grantees, privileges : _*)
+    val sql = adapter_.revokeSql(table_name, grantees, privileges : _*)
 
     execute(sql)
   }
