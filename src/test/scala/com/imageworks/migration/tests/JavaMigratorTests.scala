@@ -81,8 +81,8 @@ class JavaMigratorTests
     assertEquals(0, java_migrator.getTableNames.size)
 
     // Migrate down the whole way.
-    java_migrator.remove_all_migrations("com.imageworks.migration.tests.up_and_down",
-                                        false)
+    java_migrator.removeAllMigrations("com.imageworks.migration.tests.up_and_down",
+                                      false)
 
     // The database should not be completely migrated.
     assertNotNull(java_migrator.why_not_migrated("com.imageworks.migration.tests.up_and_down",
@@ -108,8 +108,8 @@ class JavaMigratorTests
                                               false))
 
     // Migrate down the whole way.
-    java_migrator.remove_all_migrations("com.imageworks.migration.tests.up_and_down",
-                                        false)
+    java_migrator.removeAllMigrations("com.imageworks.migration.tests.up_and_down",
+                                      false)
 
     // There should only be the schema migrations table now.
     assertEquals(1, java_migrator.getTableNames.size)

@@ -115,8 +115,8 @@ class JavaMigrator private (migrator : Migrator)
    * @parm search_sub_packages true if sub-packages of package_name
    *       should be searched
    */
-  def remove_all_migrations(package_name : String,
-                            search_sub_packages : Boolean) : Unit =
+  def removeAllMigrations(package_name : String,
+                          search_sub_packages : Boolean) : Unit =
   {
     migrator.migrate(RemoveAllMigrations, package_name, search_sub_packages)
   }
