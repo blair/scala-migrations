@@ -135,7 +135,7 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
       }
     }
 
-    val d = column_definition_factory(column_type, character_set_opt)
+    val d = columnDefinitionFactory(column_type, character_set_opt)
 
     d.adapter = this
     d.table_name = table_name
@@ -158,7 +158,7 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    *         for the column_type
    */
   protected
-  def column_definition_factory
+  def columnDefinitionFactory
     (column_type : SqlType,
      character_set_opt : Option[CharacterSet]) : ColumnDefinition
 

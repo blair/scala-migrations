@@ -45,7 +45,7 @@ class PostgresqlDatabaseAdapter(override val schema_name_opt : Option[String])
   val unquotedNameConverter = LowercaseUnquotedNameConverter
 
   override
-  def column_definition_factory
+  def columnDefinitionFactory
     (column_type : SqlType,
      character_set_opt : Option[CharacterSet]) : ColumnDefinition =
   {
