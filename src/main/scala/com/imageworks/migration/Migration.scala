@@ -387,7 +387,7 @@ abstract class Migration
 
     val (name, opts) = index_name(table_name, column_names, options : _*)
 
-    val sql = adapter_.remove_index_sql(table_name, name)
+    val sql = adapter_.removeIndexSql(table_name, name)
 
     execute(sql)
   }

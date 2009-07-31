@@ -197,9 +197,9 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    * @param index_name the name of the index
    * @return the SQL to drop the index
    */
-  def remove_index_sql(schema_name_opt : Option[String],
-                       table_name : String,
-                       index_name : String) : String
+  def removeIndexSql(schema_name_opt : Option[String],
+                     table_name : String,
+                     index_name : String) : String
 
   /**
    * Different databases require different SQL to drop an index.
@@ -209,10 +209,10 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    * @param index_name the name of the index
    * @return the SQL to drop the index
    */
-  def remove_index_sql(table_name : String,
-                       index_name : String) : String =
+  def removeIndexSql(table_name : String,
+                     index_name : String) : String =
   {
-    remove_index_sql(schema_name_opt, table_name, index_name)
+    removeIndexSql(schema_name_opt, table_name, index_name)
   }
 
   private

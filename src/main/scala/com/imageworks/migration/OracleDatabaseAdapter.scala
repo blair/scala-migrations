@@ -227,9 +227,9 @@ class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
   }
 
   override
-  def remove_index_sql(schema_name_opt : Option[String],
-                       table_name : String,
-                       index_name : String) : String =
+  def removeIndexSql(schema_name_opt : Option[String],
+                     table_name : String,
+                     index_name : String) : String =
   {
     "DROP INDEX " +
     quoteColumnName(index_name) +
