@@ -484,7 +484,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @return what f returns
    */
   // http://lampsvn.epfl.ch/trac/scala/ticket/442
-  private[migration] def with_raw_connection[T]
+  private[migration] def withRawConnection[T]
     (commit_behavior : CommitBehavior)
     (f : java.sql.Connection => T) : T =
   {
@@ -579,7 +579,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     (commit_behavior : CommitBehavior)
     (f : java.sql.Connection => T) : T =
   {
-    with_raw_connection(commit_behavior) { raw_connection =>
+    withRawConnection(commit_behavior) { raw_connection =>
       f(new net.sf.log4jdbc.ConnectionSpy(raw_connection))
     }
   }
@@ -602,7 +602,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     (commit_behavior : CommitBehavior)
     (f : RawAndLoggingConnections => T) : T =
   {
-    with_raw_connection(commit_behavior) { raw_connection =>
+    withRawConnection(commit_behavior) { raw_connection =>
       val logging_connection =
         new net.sf.log4jdbc.ConnectionSpy(raw_connection)
       f(new RawAndLoggingConnections(raw_connection, logging_connection))
