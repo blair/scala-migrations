@@ -643,7 +643,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *        version number; this allows this method to
    */
   private
-  def run_migration
+  def runMigration
     (migration_class : Class[_ <: Migration],
      direction : MigrationDirection,
      version_update_opt : Option[Tuple2[java.sql.Connection,Long]]) : Unit =
@@ -708,9 +708,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   def initialize_schema_migrations_table() : Unit =
   {
     if (! schema_migrations_table_exists) {
-      run_migration(classOf[CreateSchemaMigrationsTableMigration],
-                    Up,
-                    None)
+      runMigration(classOf[CreateSchemaMigrationsTableMigration], Up, None)
     }
   }
 
@@ -877,9 +875,9 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
         // but when it cannot be removed, it is.
         available_migrations.get(remove_version) match {
           case Some(clazz) => {
-            run_migration(clazz,
-                          Down,
-                          Some((schema_connection, remove_version)))
+            runMigration(clazz,
+                         Down,
+                         Some((schema_connection, remove_version)))
           }
           case None => {
             val message = "The database has migration version '" +
@@ -896,9 +894,9 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
         if (! installed_versions.contains(install_version)) {
           available_migrations.get(install_version) match {
             case Some(clazz) => {
-              run_migration(clazz,
-                            Up,
-                            Some((schema_connection, install_version)))
+              runMigration(clazz,
+                           Up,
+                           Some((schema_connection, install_version)))
             }
             case None => {
               val message = "Illegal state: trying to install a migration " +
