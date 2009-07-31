@@ -454,7 +454,7 @@ abstract class Migration
    *         from a Name and the remaining options
    */
   private
-  def foreign_key_name
+  def foreignKeyNameFor
     (on : On,
      references : References,
      options : ForeignKeyOption*) : Tuple2[String,List[ForeignKeyOption]] =
@@ -503,7 +503,7 @@ abstract class Migration
                                          "from the table being referenced.")
     }
 
-    var (name, opts) = foreign_key_name(on, references, options : _*)
+    var (name, opts) = foreignKeyNameFor(on, references, options : _*)
 
     val quoted_on_column_names = on.column_names.map {
                                    adapter_.quoteColumnName(_)
@@ -588,7 +588,7 @@ abstract class Migration
                                          "from the table being referenced.")
     }
 
-    var (name, opts) = foreign_key_name(on, references, options : _*)
+    var (name, opts) = foreignKeyNameFor(on, references, options : _*)
 
     execute("ALTER TABLE " +
             adapter_.quoteTableName(on.table_name) +
