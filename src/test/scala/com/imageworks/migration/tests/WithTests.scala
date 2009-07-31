@@ -55,7 +55,7 @@ class WithTests
 
     var rs1 : java.sql.ResultSet = null
 
-    val result = With.result_set(mock_rs) { rs2 =>
+    val result = With.resultSet(mock_rs) { rs2 =>
                    rs1 = rs2
                    "foobar"
                  }
@@ -80,7 +80,7 @@ class WithTests
     var rs1 : java.sql.ResultSet = null
 
     try {
-      With.result_set(mock_rs) { rs2 =>
+      With.resultSet(mock_rs) { rs2 =>
         rs1 = rs2
         throw new ThisSpecialException
       }

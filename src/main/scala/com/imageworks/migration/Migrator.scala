@@ -619,10 +619,10 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   {
     with_logging_connection(AutoCommit) { connection =>
       val metadata = connection.getMetaData
-      With.result_set(metadata.getTables(null,
-                                         adapter.schema_name_opt.getOrElse(null),
-                                         null,
-                                         Array("TABLE"))) { rs =>
+      With.resultSet(metadata.getTables(null,
+                                        adapter.schema_name_opt.getOrElse(null),
+                                        null,
+                                        Array("TABLE"))) { rs =>
         val names = new scala.collection.mutable.HashSet[String]
         while (rs.next()) {
           names += rs.getString(3)
@@ -728,7 +728,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     val sql = "SELECT version FROM " +
               adapter.quote_table_name(schema_migrations_table_name)
     connection.with_prepared_statement(sql) { statement =>
-      With.result_set(statement.executeQuery()) { rs =>
+      With.resultSet(statement.executeQuery()) { rs =>
         var versions = new scala.collection.immutable.TreeSet[Long]
         while (rs.next()) {
           val version_str = rs.getString(1)

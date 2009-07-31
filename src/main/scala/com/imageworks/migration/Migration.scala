@@ -269,7 +269,7 @@ abstract class Migration
   def with_result_set[R](rs : java.sql.ResultSet)
                         (f : java.sql.ResultSet => R) : R =
   {
-    With.result_set(rs)(f)
+    With.resultSet(rs)(f)
   }
 
   final

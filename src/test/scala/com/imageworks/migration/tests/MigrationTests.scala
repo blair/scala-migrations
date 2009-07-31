@@ -396,7 +396,7 @@ class MigrationTests
         val select_sql = "SELECT COUNT(1) from types_test where " + n + " = ?"
         val select_statement = connection.prepareStatement(select_sql)
         select_statement.setObject(1, v)
-        With.result_set(select_statement.executeQuery()) { rs =>
+        With.resultSet(select_statement.executeQuery()) { rs =>
           var counts : List[Int] = Nil
           while (rs.next()) {
             counts = rs.getInt(1) :: counts

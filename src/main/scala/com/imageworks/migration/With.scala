@@ -53,8 +53,8 @@ object With
    *        result set
    * @return the result of f
    */
-  def result_set[R](rs : java.sql.ResultSet)
-                   (f : java.sql.ResultSet => R) : R =
+  def resultSet[R](rs : java.sql.ResultSet)
+                  (f : java.sql.ResultSet => R) : R =
   {
     try {
       f(rs)
