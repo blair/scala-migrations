@@ -188,7 +188,7 @@ object Migrator
    *        subclasses
    * @parm search_sub_packages true if sub-packages of package_name
    *       should be searched
-   * @return a sorted map with verison number keys and the concrete
+   * @return a sorted map with version number keys and the concrete
    *         Migration subclasses as the value
    */
   private
