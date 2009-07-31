@@ -39,21 +39,21 @@ import org.junit.{Before,
 class DatabaseAdapterTests
 {
   @Test
-  def for_vendor : Unit =
+  def forVendor : Unit =
   {
     assertEquals(classOf[DerbyDatabaseAdapter],
-                 DatabaseAdapter.for_vendor(Derby, None).getClass)
+                 DatabaseAdapter.forVendor(Derby, None).getClass)
 
     assertEquals(classOf[OracleDatabaseAdapter],
-                 DatabaseAdapter.for_vendor(Oracle, None).getClass)
+                 DatabaseAdapter.forVendor(Oracle, None).getClass)
 
     assertEquals(classOf[PostgresqlDatabaseAdapter],
-                 DatabaseAdapter.for_vendor(Postgresql, None).getClass)
+                 DatabaseAdapter.forVendor(Postgresql, None).getClass)
   }
 
   @Test { val expected = classOf[java.lang.IllegalArgumentException] }
   def for_null_existent_driver_class : Unit =
   {
-    DatabaseAdapter.for_vendor(null, None)
+    DatabaseAdapter.forVendor(null, None)
   }
 }

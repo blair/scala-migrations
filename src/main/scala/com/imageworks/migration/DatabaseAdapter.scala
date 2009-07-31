@@ -47,8 +47,8 @@ object DatabaseAdapter
    *        names are unqualified
    * @return a DatabaseAdapter suitable to use for the database
    */
-  def for_vendor(vendor : Vendor,
-                 schema_name_opt : Option[String]) : DatabaseAdapter =
+  def forVendor(vendor : Vendor,
+                schema_name_opt : Option[String]) : DatabaseAdapter =
   {
     vendor match {
       case Derby =>
