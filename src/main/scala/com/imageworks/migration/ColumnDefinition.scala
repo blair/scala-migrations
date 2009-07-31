@@ -265,7 +265,7 @@ class ColumnDefinition
    */
   private
   lazy
-  val is_unique : Boolean =
+  val isUnique : Boolean =
   {
     var unique = false
 
@@ -297,7 +297,7 @@ class ColumnDefinition
       sb.append(" PRIMARY KEY")
     }
 
-    if (is_unique) {
+    if (isUnique) {
       sb.append(" UNIQUE")
     }
 
@@ -359,7 +359,7 @@ class ColumnDefinition
     if (isPrimaryKey && not_null_opt.isDefined && not_null_opt.get == true) {
       logger.warn("Specifying PrimaryKey and NotNull is redundant.")
     }
-    if (isPrimaryKey && is_unique) {
+    if (isPrimaryKey && isUnique) {
       logger.warn("Specifying PrimaryKey and Unique is redundant.")
     }
 
