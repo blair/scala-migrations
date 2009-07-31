@@ -58,10 +58,10 @@ class Migrate_20081118201742_CreatePeopleTable
 
     addIndex("people", "ssn", Unique)
 
-    add_foreign_key(on("people" -> "pk_location"),
-                    references("location" -> "pk_location"),
-                    OnDelete(Cascade),
-                    OnUpdate(Restrict))
+    addForeignKey(on("people" -> "pk_location"),
+                  references("location" -> "pk_location"),
+                  OnDelete(Cascade),
+                  OnUpdate(Restrict))
 
     add_check(on("people" -> "vacation_days"),
               "vacation_days >= 0")

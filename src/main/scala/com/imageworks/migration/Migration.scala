@@ -487,9 +487,20 @@ abstract class Migration
     (name, opts)
   }
 
-  def add_foreign_key(on : On,
-                      references : References,
-                      options : ForeignKeyOption*) : Unit =
+  /**
+   * Add a foreign key to a table.  The name of the foreign key is
+   * automatically generated unless Name() is given as an option.
+   *
+   * @param on the table and column name(s) to place the foreign key
+   *        on
+   * @param references the table and column name(s) that the foreign
+   *        key references
+   * @param options a possibly empty list of foreign key options to
+   *        customize the creation of the foreign key
+   */
+  def addForeignKey(on : On,
+                    references : References,
+                    options : ForeignKeyOption*) : Unit =
   {
     if (on.column_names.length == 0) {
       throw new IllegalArgumentException("Adding a foreign key constraint " +
@@ -565,11 +576,22 @@ abstract class Migration
     execute(sql.toString)
   }
 
-  def add_foreign_key(references : References,
-                      on : On,
-                      options : ForeignKeyOption*) : Unit =
+  /**
+   * Add a foreign key to a table.  The name of the foreign key is
+   * automatically generated unless Name() is given as an option.
+   *
+   * @param references the table and column name(s) that the foreign
+   *        key references
+   * @param on the table and column name(s) to place the foreign key
+   *        on
+   * @param options a possibly empty list of foreign key options to
+   *        customize the creation of the foreign key
+   */
+  def addForeignKey(references : References,
+                    on : On,
+                    options : ForeignKeyOption*) : Unit =
   {
-    add_foreign_key(on, references, options : _*)
+    addForeignKey(on, references, options : _*)
   }
 
   def remove_foreign_key(on : On,
