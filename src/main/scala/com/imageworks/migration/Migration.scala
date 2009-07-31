@@ -131,7 +131,7 @@ abstract class Migration
    * good state, as all of the other migration methods defined in
    * Migration use the same connection.
    */
-  def raw_connection = raw_connection_
+  def rawConnection = raw_connection_
 
   /**
    * The connection to the database that is used for the migration.
