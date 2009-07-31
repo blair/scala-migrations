@@ -3,6 +3,7 @@
     module="migration"
     revision="0.9.0"
     e:buildpackage="com.imageworks.migration"
+    e:testclass=""
   />
 
   <configurations>
