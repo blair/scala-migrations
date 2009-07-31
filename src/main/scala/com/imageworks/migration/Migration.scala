@@ -333,7 +333,7 @@ abstract class Migration
   /**
    * Add an index to a table on a non-empty list of column names.  The
    * name of the index is automatically generated unless Name() is
-   * given as a an option.
+   * given as an option.
    *
    * @param table_name the table to add the index to
    * @param column_names a list of one or more column names that the
@@ -380,7 +380,7 @@ abstract class Migration
 
   /**
    * Add an index to a table on a column.  The name of the index is
-   * automatically generated unless Name() is given as a an option.
+   * automatically generated unless Name() is given as an option.
    *
    * @param table_name the table to add the index to
    * @param column_name the name of the column that the index will be
