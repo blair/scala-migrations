@@ -185,7 +185,7 @@ class JavaMigrator private (migrator : Migrator)
   def why_not_migrated(package_name : String,
                        search_sub_packages : Boolean) : String =
   {
-    migrator.why_not_migrated(package_name, search_sub_packages) match {
+    migrator.whyNotMigrated(package_name, search_sub_packages) match {
       case Some(message) => message
       case None => null
     }

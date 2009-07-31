@@ -981,8 +981,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *         installed migrations that do not have a matching
    *         Migration subclass
    */
-  def why_not_migrated(package_name : String,
-                       search_sub_packages : Boolean) : Option[String] =
+  def whyNotMigrated(package_name : String,
+                     search_sub_packages : Boolean) : Option[String] =
   {
     val migration_statuses = getMigrationStatuses(package_name,
                                                   search_sub_packages)
