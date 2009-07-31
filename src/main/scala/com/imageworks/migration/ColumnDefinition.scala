@@ -81,7 +81,7 @@ class ColumnDefinition
     }
 
     if (this.isInstanceOf[ColumnSupportsDefault]) {
-      check_for_default()
+      checkForDefault()
     }
 
     if (this.isInstanceOf[ColumnSupportsPrecision]) {
@@ -99,7 +99,7 @@ class ColumnDefinition
    * will remove the default option from the option list.
    */
   private
-  def check_for_default() =
+  def checkForDefault() =
   {
     for (option @ Default(value) <- options) {
       options -= option
