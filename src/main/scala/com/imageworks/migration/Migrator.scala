@@ -48,11 +48,11 @@ class CreateSchemaMigrationsTableMigration
   override
   def up() : Unit =
   {
-    createTable(Migrator.schema_migrations_table_name) { t =>
+    createTable(Migrator.schemaMigrationsTableName) { t =>
       t.varchar("version", Limit(32), NotNull)
     }
 
-    addIndex(Migrator.schema_migrations_table_name,
+    addIndex(Migrator.schemaMigrationsTableName,
              Array("version"),
              Unique,
              Name("unique_schema_migrations"))
@@ -67,7 +67,11 @@ class CreateSchemaMigrationsTableMigration
 
 object Migrator
 {
-  val schema_migrations_table_name = "schema_migrations"
+  /**
+   * The name of the table that stores all the installed migration
+   * version numbers.
+   */
+  val schemaMigrationsTableName = "schema_migrations"
 
   /**
    * Given a path to a JAR file, return a set of all the names of all
@@ -668,7 +672,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
 
     version_update_opt match {
       case Some((schema_connection, version)) => {
-        val table_name = adapter.quoteTableName(schema_migrations_table_name)
+        val table_name = adapter.quoteTableName(schemaMigrationsTableName)
         val sql =
           direction match {
             case Up => "INSERT INTO " +
@@ -696,7 +700,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   private
   def doesSchemaMigrationsTableExist : Boolean =
   {
-    val smtn = Migrator.schema_migrations_table_name.toLowerCase
+    val smtn = Migrator.schemaMigrationsTableName.toLowerCase
     getTableNames.find(_.toLowerCase == smtn) match {
       case Some(_) => true
       case None => false
@@ -727,7 +731,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     (connection : java.sql.Connection) : scala.collection.SortedSet[Long] =
   {
     val sql = "SELECT version FROM " +
-              adapter.quoteTableName(schema_migrations_table_name)
+              adapter.quoteTableName(schemaMigrationsTableName)
     connection.withPreparedStatement(sql) { statement =>
       With.resultSet(statement.executeQuery()) { rs =>
         var versions = new scala.collection.immutable.TreeSet[Long]
@@ -794,9 +798,9 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     withLoggingConnection(CommitUponReturnAndException) { schema_connection =>
       {
         logger.debug("Getting an exclusive lock on the '{}' table.",
-                     schema_migrations_table_name)
+                     schemaMigrationsTableName)
         val sql = "LOCK TABLE " +
-                  adapter.quoteTableName(schema_migrations_table_name) +
+                  adapter.quoteTableName(schemaMigrationsTableName) +
                   " IN EXCLUSIVE MODE"
         schema_connection.withPreparedStatement(sql) { statement =>
           statement.execute()
