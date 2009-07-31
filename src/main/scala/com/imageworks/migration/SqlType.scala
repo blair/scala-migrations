@@ -32,7 +32,12 @@
  */
 package com.imageworks.migration
 
+/**
+ * Sealed abstract base class for the case objects that represent the
+ * supported SQL types.
+ */
 sealed abstract class SqlType
+
 case object BigintType extends SqlType
 case object BlobType extends SqlType
 case object BooleanType extends SqlType
