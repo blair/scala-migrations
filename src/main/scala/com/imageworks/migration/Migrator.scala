@@ -923,9 +923,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @parm search_sub_packages true if sub-packages of package_name
    *       should be searched
    */
-  def get_migration_statuses
-    (package_name : String,
-     search_sub_packages : Boolean) : MigrationStatuses =
+  def getMigrationStatuses(package_name : String,
+                           search_sub_packages : Boolean) : MigrationStatuses =
   {
     val available_migrations = findMigrations(package_name,
                                               search_sub_packages,
@@ -986,8 +985,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   def why_not_migrated(package_name : String,
                        search_sub_packages : Boolean) : Option[String] =
   {
-    val migration_statuses = get_migration_statuses(package_name,
-                                                    search_sub_packages)
+    val migration_statuses = getMigrationStatuses(package_name,
+                                                  search_sub_packages)
 
     val not_installed = migration_statuses.not_installed
     val installed_without_available_implementation =

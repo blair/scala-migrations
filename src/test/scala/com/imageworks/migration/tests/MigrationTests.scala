@@ -114,8 +114,8 @@ class MigrationTests
                                          false).isDefined)
 
     val statuses1 =
-      migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
-                                      false)
+      migrator.getMigrationStatuses("com.imageworks.migration.tests.up_and_down",
+                                    false)
 
     assertEquals(2, statuses1.not_installed.size)
     assertTrue(statuses1.not_installed.contains(20081118201000L))
@@ -142,8 +142,8 @@ class MigrationTests
                                          true).isDefined)
 
     val statuses2 =
-      migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
-                                      false)
+      migrator.getMigrationStatuses("com.imageworks.migration.tests.up_and_down",
+                                    false)
 
     assertEquals(0, statuses2.not_installed.size)
     assertEquals(2, statuses2.installed_with_available_implementation.size)
@@ -172,8 +172,8 @@ class MigrationTests
                                          true).isDefined)
 
     val statuses3 =
-      migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
-                                      false)
+      migrator.getMigrationStatuses("com.imageworks.migration.tests.up_and_down",
+                                    false)
 
     assertEquals(1, statuses3.not_installed.size)
     assertTrue(statuses3.not_installed.contains(20081118201742L))
@@ -195,8 +195,8 @@ class MigrationTests
                                          false).isDefined)
 
     val statuses4 =
-      migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
-                                      false)
+      migrator.getMigrationStatuses("com.imageworks.migration.tests.up_and_down",
+                                    false)
 
     assertEquals(2, statuses4.not_installed.size)
     assertTrue(statuses4.not_installed.contains(20081118201000L))
@@ -212,10 +212,10 @@ class MigrationTests
     assertEquals(0, migrator.getTableNames.size)
 
     val statuses1 =
-      migrator.get_migration_statuses("com.imageworks.migration.tests.no_migrations",
-                                      false)
+      migrator.getMigrationStatuses("com.imageworks.migration.tests.no_migrations",
+                                    false)
 
-    // Calling get_migration_statuses() should not have created any
+    // Calling getMigrationStatuses() should not have created any
     // tables.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -226,8 +226,8 @@ class MigrationTests
     // In a brand new database with available migrations, the database
     // should not be migrated.
     val statuses2 =
-      migrator.get_migration_statuses("com.imageworks.migration.tests.up_and_down",
-                                      false)
+      migrator.getMigrationStatuses("com.imageworks.migration.tests.up_and_down",
+                                    false)
 
     assertEquals(2, statuses2.not_installed.size)
     assertTrue(statuses2.not_installed.contains(20081118201000L))
@@ -235,7 +235,7 @@ class MigrationTests
     assertEquals(0, statuses2.installed_with_available_implementation.size)
     assertEquals(0, statuses2.installed_without_available_implementation.size)
 
-    // Calling get_migration_statuses() should not have created any
+    // Calling getMigrationStatuses() should not have created any
     // tables.
     assertEquals(0, migrator.getTableNames.size)
   }
