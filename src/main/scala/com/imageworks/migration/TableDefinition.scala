@@ -41,7 +41,7 @@ class TableDefinition(adapter : DatabaseAdapter,
   final
   def toSql : String =
   {
-    columns.map(_.to_sql).mkString("", ", ", "")
+    columns.map(_.toSql).mkString("", ", ", "")
   }
 
   final

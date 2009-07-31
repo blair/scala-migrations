@@ -281,7 +281,7 @@ class ColumnDefinition
   def sql : String
 
   final
-  def to_sql : String =
+  def toSql : String =
   {
     val sb = new java.lang.StringBuilder(512)
                .append(column_name)
