@@ -721,7 +721,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *         migrations
    */
   private
-  def get_installed_versions_
+  def getInstalledVersions
     (connection : java.sql.Connection) : scala.collection.SortedSet[Long] =
   {
     val sql = "SELECT version FROM " +
@@ -757,10 +757,10 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @return a sorted set of version numbers of the installed
    *         migrations
    */
-  def get_installed_versions : scala.collection.SortedSet[Long] =
+  def getInstalledVersions : scala.collection.SortedSet[Long] =
   {
     withLoggingConnection(AutoCommit) { connection =>
-      get_installed_versions_(connection)
+      getInstalledVersions(connection)
     }
   }
 
@@ -809,8 +809,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
       // was not checked into a source control system.  Having a
       // missing migration for an installed migration is not fatal
       // unless the migration needs to be rolled back.
-      val installed_versions =
-        get_installed_versions_(schema_connection).toArray
+      val installed_versions = getInstalledVersions(schema_connection).toArray
       val available_migrations = findMigrations(package_name,
                                                 search_sub_packages,
                                                 logger)
@@ -930,7 +929,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
                                               search_sub_packages,
                                               logger)
     val installed_versions = if (doesSchemaMigrationsTableExist) {
-                               get_installed_versions
+                               getInstalledVersions
                              }
                              else {
                                new scala.collection.immutable.TreeSet[Long]
