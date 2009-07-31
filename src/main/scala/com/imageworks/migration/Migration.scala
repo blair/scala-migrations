@@ -396,10 +396,21 @@ abstract class Migration
     addIndex(table_name, Array(column_name), options : _*)
   }
 
+  /**
+   * Remove an index on a table that is composed of a non-empty list
+   * of column names.  The name of the index to remove is
+   * automatically generated unless Name() is given as an option.
+   *
+   * @param table_name the table to remove the index from
+   * @param column_names a list of one or more column names that the
+   *        index is on
+   * @param options a possibly empty list of index options to
+   *        customize the removal of the index
+   */
   final
-  def remove_index(table_name : String,
-                   column_names : Array[String],
-                   options : Name*) : Unit =
+  def removeIndex(table_name : String,
+                  column_names : Array[String],
+                  options : Name*) : Unit =
   {
     if (column_names.isEmpty) {
       throw new IllegalArgumentException("Removing an index requires at " +
@@ -413,12 +424,22 @@ abstract class Migration
     execute(sql)
   }
 
+  /**
+   * Remove an index on a column in a table.  The name of the index to
+   * remove is automatically generated unless Name() is given as an
+   * option.
+   *
+   * @param table_name the table to remove the index from
+   * @param column_name the name of the column the index is on
+   * @param options a possibly empty list of index options to
+   *        customize the removal of the index
+   */
   final
-  def remove_index(table_name : String,
-                   column_name : String,
-                   options : Name*) : Unit =
+  def removeIndex(table_name : String,
+                  column_name : String,
+                  options : Name*) : Unit =
   {
-    remove_index(table_name, Array(column_name), options : _*)
+    removeIndex(table_name, Array(column_name), options : _*)
   }
 
   /**
