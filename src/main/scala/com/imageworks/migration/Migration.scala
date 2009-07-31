@@ -72,14 +72,14 @@ abstract class Migration
    * Concrete migration classes must define this method to migrate the
    * database up to a new migration.
    */
-  def up : Unit
+  def up() : Unit
 
   /**
    * Concrete migration classes must define this method to back out of
    * this migration.  If the migration cannot be reversed, then a
    * IrreversibleMigrationException should be thrown.
    */
-  def down : Unit
+  def down() : Unit
 
   /**
    * The raw connection to the database that underlies the

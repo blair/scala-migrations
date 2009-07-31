@@ -37,7 +37,7 @@ import com.imageworks.migration.Migration
 class Migrate_20081118201000_CreateLocationTable
   extends Migration
 {
-  def up : Unit =
+  def up() : Unit =
   {
     createTable("location") { t =>
       t.varbinary("pk_location", PrimaryKey, Limit(16))
@@ -45,7 +45,7 @@ class Migrate_20081118201000_CreateLocationTable
     }
   }
 
-  def down : Unit =
+  def down() : Unit =
   {
     dropTable("location")
   }

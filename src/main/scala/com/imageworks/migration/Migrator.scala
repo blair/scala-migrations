@@ -45,7 +45,8 @@ private
 class CreateSchemaMigrationsTableMigration
   extends Migration
 {
-  def up : Unit =
+  override
+  def up() : Unit =
   {
     createTable(Migrator.schema_migrations_table_name) { t =>
       t.varchar("version", Limit(32), NotNull)
@@ -57,7 +58,8 @@ class CreateSchemaMigrationsTableMigration
              Name("unique_schema_migrations"))
   }
 
-  def down : Unit =
+  override
+  def down() : Unit =
   {
     throw new IrreversibleMigrationException
   }
@@ -659,8 +661,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
       migration.adapter_ = adapter
 
       direction match {
-        case Up => migration.up
-        case Down => migration.down
+        case Up => migration.up()
+        case Down => migration.down()
       }
     }
 
