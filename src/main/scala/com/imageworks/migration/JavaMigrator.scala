@@ -104,9 +104,7 @@ class JavaMigrator private (migrator : Migrator)
   def installAllMigrations(package_name : String,
                            search_sub_packages : Boolean) : Unit =
   {
-    migrator.migrate(InstallAllMigrations,
-                     package_name,
-                     search_sub_packages)
+    migrator.migrate(InstallAllMigrations, package_name, search_sub_packages)
   }
 
   /**
@@ -120,9 +118,7 @@ class JavaMigrator private (migrator : Migrator)
   def remove_all_migrations(package_name : String,
                             search_sub_packages : Boolean) : Unit =
   {
-    migrator.migrate(RemoveAllMigrations,
-                     package_name,
-                     search_sub_packages)
+    migrator.migrate(RemoveAllMigrations, package_name, search_sub_packages)
   }
 
   /**
