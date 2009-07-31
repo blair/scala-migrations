@@ -79,7 +79,7 @@ object Migrator
    * @return a set of the class names the JAR file contains
    */
   private
-  def class_names_in_jar
+  def classNamesInJar
     (path : String,
      package_name : String,
      search_sub_packages : Boolean) : scala.collection.mutable.HashSet[String] =
@@ -216,7 +216,7 @@ object Migrator
                      url.substring("jar:file:".length)
                    else
                      url.substring("jar:file:".length, index)
-        class_names_in_jar(path, package_name, search_sub_packages)
+        classNamesInJar(path, package_name, search_sub_packages)
       }
       else if (url.startsWith("file:")) {
         val dir = url.substring("file:".length)
