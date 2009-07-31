@@ -39,45 +39,45 @@ import org.junit.{Before,
 class VendorTests
 {
   @Test
-  def for_driver : Unit =
+  def forDriver : Unit =
   {
     assertSame(Oracle,
-               Vendor.for_driver("oracle.jdbc.OracleDriver"))
+               Vendor.forDriver("oracle.jdbc.OracleDriver"))
 
     assertSame(Derby,
-               Vendor.for_driver("org.apache.derby.jdbc.EmbeddedDriver"))
+               Vendor.forDriver("org.apache.derby.jdbc.EmbeddedDriver"))
 
     assertSame(Derby,
-               Vendor.for_driver(classOf[org.apache.derby.jdbc.EmbeddedDriver]))
+               Vendor.forDriver(classOf[org.apache.derby.jdbc.EmbeddedDriver]))
 
     assertSame(Derby,
-               Vendor.for_driver("org.apache.derby.jdbc.ClientDriver"))
+               Vendor.forDriver("org.apache.derby.jdbc.ClientDriver"))
 
     assertSame(Postgresql,
-               Vendor.for_driver("org.postgresql.Driver"))
+               Vendor.forDriver("org.postgresql.Driver"))
   }
 
   @Test { val expected = classOf[scala.MatchError] }
   def for_non_existent_driver : Unit =
   {
-    Vendor.for_driver("no.such.driver")
+    Vendor.forDriver("no.such.driver")
   }
 
   @Test { val expected = classOf[scala.MatchError] }
   def for_non_driver_class : Unit =
   {
-    Vendor.for_driver(classOf[java.lang.String])
+    Vendor.forDriver(classOf[java.lang.String])
   }
 
   @Test { val expected = classOf[java.lang.IllegalArgumentException] }
   def for_null_existent_driver_class : Unit =
   {
-    Vendor.for_driver(null : Class[_])
+    Vendor.forDriver(null : Class[_])
   }
 
   @Test { val expected = classOf[java.lang.IllegalArgumentException] }
   def for_null_existent_driver_class_name: Unit =
   {
-    Vendor.for_driver(null : String)
+    Vendor.forDriver(null : String)
   }
 }
