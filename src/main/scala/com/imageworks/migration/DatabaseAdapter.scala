@@ -216,12 +216,12 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
   }
 
   private
-  def grant_revoke_common(action : String,
-                          preposition : String,
-                          schema_name_opt : Option[String],
-                          table_name : String,
-                          grantees : Array[String],
-                          privileges : GrantPrivilegeType*) : String =
+  def grantRevokeCommon(action : String,
+                        preposition : String,
+                        schema_name_opt : Option[String],
+                        table_name : String,
+                        grantees : Array[String],
+                        privileges : GrantPrivilegeType*) : String =
   {
     // The GRANT and REVOKE syntax is basically the same
     val sql = new java.lang.StringBuilder(256)
@@ -292,12 +292,12 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
     val sql = new java.lang.StringBuilder(256)
                .append("GRANT")
 
-    grant_revoke_common("GRANT",
-                        "TO",
-                        schema_name_opt,
-                        table_name,
-                        grantees,
-                        privileges : _*)
+    grantRevokeCommon("GRANT",
+                      "TO",
+                      schema_name_opt,
+                      table_name,
+                      grantees,
+                      privileges : _*)
   }
 
   /**
@@ -333,12 +333,12 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
                  grantees : Array[String],
                  privileges : GrantPrivilegeType*) : String =
   {
-    grant_revoke_common("REVOKE",
-                        "FROM",
-                        schema_name_opt,
-                        table_name,
-                        grantees,
-                        privileges : _*)
+    grantRevokeCommon("REVOKE",
+                      "FROM",
+                      schema_name_opt,
+                      table_name,
+                      grantees,
+                      privileges : _*)
   }
 
   /**
