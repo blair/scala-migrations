@@ -131,9 +131,9 @@ class JavaMigrator private (migrator : Migrator)
    * @parm search_sub_packages true if sub-packages of package_name
    *       should be searched
    */
-  def migrate_to(version : Long,
-                 package_name : String,
-                 search_sub_packages : Boolean) : Unit =
+  def migrateTo(version : Long,
+                package_name : String,
+                search_sub_packages : Boolean) : Unit =
   {
     migrator.migrate(MigrateToVersion(version),
                      package_name,
