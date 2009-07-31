@@ -72,9 +72,9 @@ class OracleCharColumnDefinition(use_nchar_type : Boolean)
 {
   override
   def sql = if (use_nchar_type)
-              column_sql("NCHAR")
+              sqlForColumnType("NCHAR")
             else
-              column_sql("CHAR")
+              sqlForColumnType("CHAR")
 }
 
 class OracleDecimalColumnDefinition
@@ -161,7 +161,7 @@ class OracleVarbinaryColumnDefinition
       throw new IllegalArgumentException(message)
     }
 
-    column_sql("RAW")
+    sqlForColumnType("RAW")
   }
 }
 
@@ -172,9 +172,9 @@ class OracleVarcharColumnDefinition(use_nchar_type : Boolean)
 {
   override
   def sql = if (use_nchar_type)
-              column_sql("NVARCHAR2")
+              sqlForColumnType("NVARCHAR2")
             else
-              column_sql("VARCHAR2")
+              sqlForColumnType("VARCHAR2")
 }
 
 class OracleDatabaseAdapter(override val schema_name_opt : Option[String])

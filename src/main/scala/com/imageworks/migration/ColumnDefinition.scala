@@ -367,25 +367,34 @@ class ColumnDefinition
   }
 
   /**
-   * Format a column definition respecting limit.
-   * @param t column type name
-   * @param limit optional column limit
+   * Format a column definition respecting the given limit.
+   *
+   * @param column_type_name the column type name
+   * @param limit_opt optional column limit
+   * @return the column type name with the limit syntax if a limit was
+   *         given
    */
-  def column_sql(t : String, limit : Option[String]) : String =
+  def sqlForColumnType(column_type_name : String,
+                       limit_opt : Option[String]) : String =
   {
-    if (limit.isDefined) {
-      t + "(" + limit.get + ")"
-    }
-    else {
-      t
+    limit_opt match {
+      case Some(l) => column_type_name + "(" + l + ")"
+      case None => column_type_name
     }
   }
 
   /**
-   * Format a column definition respecting limit.
-   * @param t column type name
+   * Format a column definition respecting the limit on the column
+   * definition.
+   *
+   * @param column_type_name the column type name
+   * @return the column type name with the limit syntax if the column
+   *         definition specifies a limit
    */
-  def column_sql(t : String) : String = column_sql(t, limit)
+  def sqlForColumnType(column_type_name : String) : String =
+  {
+    sqlForColumnType(column_type_name, limit)
+  }
 }
 
 /**
@@ -455,7 +464,7 @@ class DefaultCharColumnDefinition
   with ColumnSupportsDefault
 {
   override
-  def sql = column_sql("CHAR")
+  def sql = sqlForColumnType("CHAR")
 }
 
 class DefaultDecimalColumnDefinition
@@ -487,7 +496,7 @@ class DefaultTimestampColumnDefinition
   with ColumnSupportsDefault
 {
   override
-  def sql = column_sql("TIMESTAMP")
+  def sql = sqlForColumnType("TIMESTAMP")
 }
 
 class DefaultVarcharColumnDefinition
@@ -496,5 +505,5 @@ class DefaultVarcharColumnDefinition
   with ColumnSupportsDefault
 {
   override
-  def sql = column_sql("VARCHAR")
+  def sql = sqlForColumnType("VARCHAR")
 }
