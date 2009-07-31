@@ -576,7 +576,7 @@ abstract class Migration
                                          "at least one privilege.")
     }
 
-    val sql = adapter_.grant_sql(table_name, grantees, privileges : _*)
+    val sql = adapter_.grantSql(table_name, grantees, privileges : _*)
 
     execute(sql)
   }

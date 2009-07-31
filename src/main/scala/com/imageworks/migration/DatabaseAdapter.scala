@@ -284,10 +284,10 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    *        types of permissions to grant.
    * @return the SQL to grant permissions
    */
-  def grant_sql(schema_name_opt : Option[String],
-                table_name : String,
-                grantees : Array[String],
-                privileges : GrantPrivilegeType*) : String =
+  def grantSql(schema_name_opt : Option[String],
+               table_name : String,
+               grantees : Array[String],
+               privileges : GrantPrivilegeType*) : String =
   {
     val sql = new java.lang.StringBuilder(256)
                .append("GRANT")
@@ -310,11 +310,11 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    *        types of permissions to grant.
    * @return the SQL to grant permissions
    */
-  def grant_sql(table_name : String,
-                grantees : Array[String],
-                privileges : GrantPrivilegeType*) : String =
+  def grantSql(table_name : String,
+               grantees : Array[String],
+               privileges : GrantPrivilegeType*) : String =
   {
-    grant_sql(schema_name_opt, table_name, grantees, privileges : _*)
+    grantSql(schema_name_opt, table_name, grantees, privileges : _*)
   }
 
   /**

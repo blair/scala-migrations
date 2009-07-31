@@ -238,10 +238,10 @@ class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
   }
 
   override
-  def grant_sql(schema_name_opt : Option[String],
-                table_name : String,
-                grantees : Array[String],
-                privileges : GrantPrivilegeType*) : String =
+  def grantSql(schema_name_opt : Option[String],
+               table_name : String,
+               grantees : Array[String],
+               privileges : GrantPrivilegeType*) : String =
   {
     // Check that no columns are defined for any SELECT privs
     for {
@@ -253,7 +253,7 @@ class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
       throw new IllegalArgumentException(message)
     }
 
-    super.grant_sql(schema_name_opt, table_name, grantees, privileges : _*)
+    super.grantSql(schema_name_opt, table_name, grantees, privileges : _*)
   }
 
   override
