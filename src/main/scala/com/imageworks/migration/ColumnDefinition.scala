@@ -89,7 +89,7 @@ class ColumnDefinition
     }
 
     if (this.isInstanceOf[ColumnSupportsScale]) {
-      check_for_scale()
+      checkForScale()
     }
   }
 
@@ -244,7 +244,7 @@ class ColumnDefinition
    * Look for a Scale column option.
    */
   private
-  def check_for_scale() =
+  def checkForScale() =
   {
     for (option @ Scale(value) <- options) {
       options -= option
