@@ -88,7 +88,7 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    * how the database treats with unquoted names.
    */
   protected
-  def unquoted_name_converter : UnquotedNameConverter
+  def unquotedNameConverter : UnquotedNameConverter
 
   /**
    * Given a table name, column name and column data type, return a
@@ -172,13 +172,13 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
   {
     if (schema_name_opt.isDefined) {
       '"' +
-      unquoted_name_converter(schema_name_opt.get) +
+      unquotedNameConverter(schema_name_opt.get) +
       "\".\"" +
-      unquoted_name_converter(table_name) +
+      unquotedNameConverter(table_name) +
       '"'
     }
     else {
-      '"' + unquoted_name_converter(table_name) + '"'
+      '"' + unquotedNameConverter(table_name) + '"'
     }
   }
 

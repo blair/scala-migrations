@@ -174,7 +174,7 @@ class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
   extends DatabaseAdapter(schema_name_opt)
 {
   override protected
-  val unquoted_name_converter = UppercaseUnquotedNameConverter
+  val unquotedNameConverter = UppercaseUnquotedNameConverter
 
   override
   def column_definition_factory
