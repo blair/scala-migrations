@@ -419,7 +419,7 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    * @param the SQL text to append to the SQL to create a foreign key
    *        relationship
    */
-  def on_update_sql(on_update_opt : Option[OnUpdate]) : String =
+  def onUpdateSql(on_update_opt : Option[OnUpdate]) : String =
   {
     on_update_opt match {
       case Some(on_update) => "ON UPDATE " + on_update.action.sql

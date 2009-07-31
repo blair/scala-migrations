@@ -514,7 +514,7 @@ abstract class Migration
          .append(on_delete_sql)
     }
 
-    val on_update_sql = adapter_.on_update_sql(on_update_opt)
+    val on_update_sql = adapter_.onUpdateSql(on_update_opt)
     if (! on_update_sql.isEmpty) {
       sql.append(' ')
          .append(on_update_sql)
