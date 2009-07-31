@@ -283,7 +283,7 @@ abstract class Migration
 
     val sql = new java.lang.StringBuilder(512)
                 .append("CREATE TABLE ")
-                .append(adapter_.quote_table_name(table_name))
+                .append(adapter_.quoteTableName(table_name))
                 .append(" (")
                 .append(table_definition.toSql)
                 .append(')')
@@ -296,7 +296,7 @@ abstract class Migration
   {
     val sql = new java.lang.StringBuilder(512)
                 .append("DROP TABLE ")
-                .append(adapter_.quote_table_name(table_name))
+                .append(adapter_.quoteTableName(table_name))
                 .toString
     execute(sql)
   }
@@ -358,7 +358,7 @@ abstract class Migration
                .append("INDEX ")
                .append(adapter_.quoteColumnName(name))
                .append(" ON ")
-               .append(adapter_.quote_table_name(table_name))
+               .append(adapter_.quoteTableName(table_name))
                .append(" (")
                .append(quoted_column_names)
                .append(")")
@@ -497,13 +497,13 @@ abstract class Migration
 
     val sql = new java.lang.StringBuilder(512)
                .append("ALTER TABLE ")
-               .append(adapter_.quote_table_name(on.table_name))
+               .append(adapter_.quoteTableName(on.table_name))
                .append(" ADD CONSTRAINT ")
                .append(name)
                .append(" FOREIGN KEY (")
                .append(quoted_on_column_names)
                .append(") REFERENCES ")
-               .append(adapter_.quote_table_name(references.table_name))
+               .append(adapter_.quoteTableName(references.table_name))
                .append(" (")
                .append(quoted_references_column_names)
                .append(")")
@@ -549,7 +549,7 @@ abstract class Migration
     var (name, opts) = foreign_key_name(on, references, options : _*)
 
     execute("ALTER TABLE " +
-            adapter_.quote_table_name(on.table_name) +
+            adapter_.quoteTableName(on.table_name) +
             " DROP CONSTRAINT " +
             name)
   }
@@ -636,7 +636,7 @@ abstract class Migration
 
     val sql = new java.lang.StringBuilder(512)
                .append("ALTER TABLE ")
-               .append(adapter_.quote_table_name(on.table_name))
+               .append(adapter_.quoteTableName(on.table_name))
                .append(" ADD CONSTRAINT ")
                .append(name)
                .append(" CHECK (")
@@ -659,7 +659,7 @@ abstract class Migration
                                                                options : _*)
 
     execute("ALTER TABLE " +
-            adapter_.quote_table_name(on.table_name) +
+            adapter_.quoteTableName(on.table_name) +
             " DROP CONSTRAINT " +
             name)
   }

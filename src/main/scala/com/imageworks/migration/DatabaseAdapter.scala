@@ -167,8 +167,8 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
     column_name
   }
 
-  def quote_table_name(schema_name_opt : Option[String],
-                       table_name : String) : String =
+  def quoteTableName(schema_name_opt : Option[String],
+                     table_name : String) : String =
   {
     if (schema_name_opt.isDefined) {
       '"' +
@@ -182,10 +182,10 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
     }
   }
 
-  def quote_table_name(table_name : String) : String =
+  def quoteTableName(table_name : String) : String =
   {
     // use the default schema_name_opt defined in the adapter
-    quote_table_name(schema_name_opt, table_name)
+    quoteTableName(schema_name_opt, table_name)
   }
 
   /**
@@ -265,7 +265,7 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
       }).mkString(", "))
 
     sql.append(" ON ")
-       .append(quote_table_name(table_name))
+       .append(quoteTableName(table_name))
        .append(" ")
        .append(preposition)
        .append(" ")

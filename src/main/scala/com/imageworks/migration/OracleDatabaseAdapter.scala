@@ -234,7 +234,7 @@ class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
     "DROP INDEX " +
     quoteColumnName(index_name) +
     " ON " +
-    quote_table_name(schema_name_opt, table_name)
+    quoteTableName(schema_name_opt, table_name)
   }
 
   override

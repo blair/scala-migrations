@@ -665,7 +665,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
 
     version_update_opt match {
       case Some((schema_connection, version)) => {
-        val table_name = adapter.quote_table_name(schema_migrations_table_name)
+        val table_name = adapter.quoteTableName(schema_migrations_table_name)
         val sql =
           direction match {
             case Up => "INSERT INTO " +
@@ -726,7 +726,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     (connection : java.sql.Connection) : scala.collection.SortedSet[Long] =
   {
     val sql = "SELECT version FROM " +
-              adapter.quote_table_name(schema_migrations_table_name)
+              adapter.quoteTableName(schema_migrations_table_name)
     connection.withPreparedStatement(sql) { statement =>
       With.resultSet(statement.executeQuery()) { rs =>
         var versions = new scala.collection.immutable.TreeSet[Long]
@@ -795,7 +795,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
         logger.debug("Getting an exclusive lock on the '{}' table.",
                      schema_migrations_table_name)
         val sql = "LOCK TABLE " +
-                  adapter.quote_table_name(schema_migrations_table_name) +
+                  adapter.quoteTableName(schema_migrations_table_name) +
                   " IN EXCLUSIVE MODE"
         schema_connection.withPreparedStatement(sql) { statement =>
           statement.execute()
