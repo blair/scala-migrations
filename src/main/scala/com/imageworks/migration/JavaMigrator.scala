@@ -75,12 +75,13 @@ class JavaMigrator private (migrator : Migrator)
   }
 
   /**
-   * Get a list of table names in the schema.
+   * Get a list of table names.  If the database adapter was given a
+   * schema name then only the tables in that schema are returned.
    *
    * @return a set of table names; no modifications of the case of
    *         table names is done
    */
-  def table_names : java.util.Set[String] =
+  def getTableNames : java.util.Set[String] =
   {
     val table_names = migrator.getTableNames
 

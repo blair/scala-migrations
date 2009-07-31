@@ -78,7 +78,7 @@ class JavaMigratorTests
   def migrate_up_and_down : Unit =
   {
     // There should be no tables in the schema initially.
-    assertEquals(0, java_migrator.table_names.size)
+    assertEquals(0, java_migrator.getTableNames.size)
 
     // Migrate down the whole way.
     java_migrator.remove_all_migrations("com.imageworks.migration.tests.up_and_down",
@@ -88,20 +88,20 @@ class JavaMigratorTests
     assertNotNull(java_migrator.why_not_migrated("com.imageworks.migration.tests.up_and_down",
                                                  false))
 
-    // An empty array of Strings so that table_names.toArray returns
+    // An empty array of Strings so that getTableNames.toArray returns
     // an Array[String] and not Array[AnyRef].
     val ea = new Array[String](0)
 
     // There should only be the schema migrations table now.
-    assertEquals(1, java_migrator.table_names.size)
-    assertFalse(java_migrator.table_names.toArray(ea).find(_.toLowerCase == "people").isDefined)
+    assertEquals(1, java_migrator.getTableNames.size)
+    assertFalse(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "people").isDefined)
 
     // Apply all the migrations.
     java_migrator.install_all_migrations("com.imageworks.migration.tests.up_and_down",
                                          false)
 
-    assertEquals(3, java_migrator.table_names.size)
-    assertTrue(java_migrator.table_names.toArray(ea).find(_.toLowerCase == "people").isDefined)
+    assertEquals(3, java_migrator.getTableNames.size)
+    assertTrue(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "people").isDefined)
 
     // The database should be completely migrated.
     assertNull(java_migrator.why_not_migrated("com.imageworks.migration.tests.up_and_down",
@@ -112,7 +112,7 @@ class JavaMigratorTests
                                         false)
 
     // There should only be the schema migrations table now.
-    assertEquals(1, java_migrator.table_names.size)
-    assertFalse(java_migrator.table_names.toArray(ea).find(_.toLowerCase == "people").isDefined)
+    assertEquals(1, java_migrator.getTableNames.size)
+    assertFalse(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "people").isDefined)
   }
 }
