@@ -85,8 +85,8 @@ class JavaMigratorTests
                                       false)
 
     // The database should not be completely migrated.
-    assertNotNull(java_migrator.why_not_migrated("com.imageworks.migration.tests.up_and_down",
-                                                 false))
+    assertNotNull(java_migrator.whyNotMigrated("com.imageworks.migration.tests.up_and_down",
+                                               false))
 
     // An empty array of Strings so that getTableNames.toArray returns
     // an Array[String] and not Array[AnyRef].
@@ -104,8 +104,8 @@ class JavaMigratorTests
     assertTrue(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "people").isDefined)
 
     // The database should be completely migrated.
-    assertNull(java_migrator.why_not_migrated("com.imageworks.migration.tests.up_and_down",
-                                              false))
+    assertNull(java_migrator.whyNotMigrated("com.imageworks.migration.tests.up_and_down",
+                                            false))
 
     // Migrate down the whole way.
     java_migrator.removeAllMigrations("com.imageworks.migration.tests.up_and_down",

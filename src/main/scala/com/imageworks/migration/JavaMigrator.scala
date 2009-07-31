@@ -179,8 +179,8 @@ class JavaMigrator private (migrator : Migrator)
    *         with the not-installed migrations and the installed
    *         migrations that do not have a matching Migration subclass
    */
-  def why_not_migrated(package_name : String,
-                       search_sub_packages : Boolean) : String =
+  def whyNotMigrated(package_name : String,
+                     search_sub_packages : Boolean) : String =
   {
     migrator.whyNotMigrated(package_name, search_sub_packages) match {
       case Some(message) => message
