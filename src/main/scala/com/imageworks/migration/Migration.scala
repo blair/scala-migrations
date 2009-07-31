@@ -349,14 +349,14 @@ abstract class Migration
     }
 
     val quoted_column_names = column_names.map {
-                                adapter_.quote_column_name(_)
+                                adapter_.quoteColumnName(_)
                               }.mkString(", ")
 
     val sql = new java.lang.StringBuilder(512)
                .append("CREATE ")
                .append(if (unique) "UNIQUE " else "")
                .append("INDEX ")
-               .append(adapter_.quote_column_name(name))
+               .append(adapter_.quoteColumnName(name))
                .append(" ON ")
                .append(adapter_.quote_table_name(table_name))
                .append(" (")
@@ -464,11 +464,11 @@ abstract class Migration
     var (name, opts) = foreign_key_name(on, references, options : _*)
 
     val quoted_on_column_names = on.column_names.map {
-                                   adapter_.quote_column_name(_)
+                                   adapter_.quoteColumnName(_)
                                  }.mkString(", ")
 
     val quoted_references_column_names = references.column_names.map {
-                                           adapter_.quote_column_name(_)
+                                           adapter_.quoteColumnName(_)
                                          }.mkString(", ")
 
     var on_delete_opt : Option[OnDelete] = None
@@ -631,7 +631,7 @@ abstract class Migration
                                                                options : _*)
 
     val quoted_on_column_names = on.column_names.map {
-                                   adapter_.quote_column_name(_)
+                                   adapter_.quoteColumnName(_)
                                  }.mkString(", ")
 
     val sql = new java.lang.StringBuilder(512)

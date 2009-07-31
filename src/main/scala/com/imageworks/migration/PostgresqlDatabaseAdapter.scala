@@ -88,6 +88,6 @@ class PostgresqlDatabaseAdapter(override val schema_name_opt : Option[String])
                        index_name : String) : String =
   {
     "DROP INDEX " +
-    quote_column_name(index_name)
+    quoteColumnName(index_name)
   }
 }
