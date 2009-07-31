@@ -32,18 +32,38 @@
  */
 package com.imageworks.migration
 
+/**
+ * A builder to define a table.  Its methods add the specified type of
+ * column to the table's definition.
+ */
 class TableDefinition(adapter : DatabaseAdapter,
                       table_name : String)
 {
   private
   val columns = new scala.collection.mutable.ListBuffer[ColumnDefinition]
 
+  /**
+   * Generate a SQL string representation of the columns in the table.
+   *
+   * @return the SQL text that defines the columns in the table
+   */
   final
   def toSql : String =
   {
     columns.map(_.toSql).mkString("", ", ", "")
   }
 
+  /**
+   * Add any known column type to the table.  The actual SQL text used
+   * to create the column is choosen by the database adapter and may
+   * be different than the name of the column_type argument.
+   *
+   * @param name the column's name
+   * @param column_type the type of column being added
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the same instance
+   */
   final
   def column(name : String,
              column_type : SqlType,
@@ -57,6 +77,16 @@ class TableDefinition(adapter : DatabaseAdapter,
     this
   }
 
+  /**
+   * Add a BIGINT column type to the table.  The actual SQL text used
+   * to create the column is choosen by the database adapter and may
+   * be different than the name of the column_type argument.
+   *
+   * @param name the column's name
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the same instance
+   */
   final
   def bigint(name : String,
              options : ColumnOption*) : TableDefinition =
@@ -64,6 +94,16 @@ class TableDefinition(adapter : DatabaseAdapter,
     column(name, BigintType, options : _*)
   }
 
+  /**
+   * Add a BLOB column type to the table.  The actual SQL text used to
+   * create the column is choosen by the database adapter and may be
+   * different than the name of the column_type argument.
+   *
+   * @param name the column's name
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the same instance
+   */
   final
   def blob(name : String,
            options : ColumnOption*) : TableDefinition =
@@ -71,6 +111,16 @@ class TableDefinition(adapter : DatabaseAdapter,
    column(name, BlobType, options : _*)
   }
 
+  /**
+   * Add a BOOLEAN column type to the table.  The actual SQL text used
+   * to create the column is choosen by the database adapter and may
+   * be different than the name of the column_type argument.
+   *
+   * @param name the column's name
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the same instance
+   */
   final
   def boolean(name : String,
               options : ColumnOption*) : TableDefinition =
@@ -78,6 +128,16 @@ class TableDefinition(adapter : DatabaseAdapter,
    column(name, BooleanType, options : _*)
   }
 
+  /**
+   * Add a CHAR column type to the table.  The actual SQL text used to
+   * create the column is choosen by the database adapter and may be
+   * different than the name of the column_type argument.
+   *
+   * @param name the column's name
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the same instance
+   */
   final
   def char(name : String,
            options : ColumnOption*) : TableDefinition =
@@ -85,6 +145,16 @@ class TableDefinition(adapter : DatabaseAdapter,
     column(name, CharType, options : _*)
   }
 
+  /**
+   * Add a DECIMAL column type to the table.  The actual SQL text used
+   * to create the column is choosen by the database adapter and may
+   * be different than the name of the column_type argument.
+   *
+   * @param name the column's name
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the same instance
+   */
   final
   def decimal(name : String,
               options : ColumnOption*) : TableDefinition =
@@ -92,6 +162,16 @@ class TableDefinition(adapter : DatabaseAdapter,
     column(name, DecimalType, options : _*)
   }
 
+  /**
+   * Add a INTEGER column type to the table.  The actual SQL text used
+   * to create the column is choosen by the database adapter and may
+   * be different than the name of the column_type argument.
+   *
+   * @param name the column's name
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the same instance
+   */
   final
   def integer(name : String,
               options : ColumnOption*) : TableDefinition =
@@ -99,6 +179,16 @@ class TableDefinition(adapter : DatabaseAdapter,
     column(name, IntegerType, options : _*)
   }
 
+  /**
+   * Add a SMALLINT column type to the table.  The actual SQL text
+   * used to create the column is choosen by the database adapter and
+   * may be different than the name of the column_type argument.
+   *
+   * @param name the column's name
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the same instance
+   */
   final
   def smallint(name : String,
                options : ColumnOption*) : TableDefinition =
@@ -106,6 +196,16 @@ class TableDefinition(adapter : DatabaseAdapter,
     column(name, SmallintType, options : _*)
   }
 
+  /**
+   * Add a TIMESTAMP column type to the table.  The actual SQL text
+   * used to create the column is choosen by the database adapter and
+   * may be different than the name of the column_type argument.
+   *
+   * @param name the column's name
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the same instance
+   */
   final
   def timestamp(name : String,
                 options : ColumnOption*) : TableDefinition =
@@ -113,6 +213,16 @@ class TableDefinition(adapter : DatabaseAdapter,
     column(name, TimestampType, options : _*)
   }
 
+  /**
+   * Add a VARBINARY column type to the table.  The actual SQL text
+   * used to create the column is choosen by the database adapter and
+   * may be different than the name of the column_type argument.
+   *
+   * @param name the column's name
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the same instance
+   */
   final
   def varbinary(name : String,
                 options : ColumnOption*) : TableDefinition =
@@ -120,6 +230,16 @@ class TableDefinition(adapter : DatabaseAdapter,
     column(name, VarbinaryType, options : _*)
   }
 
+  /**
+   * Add a VARCHAR column type to the table.  The actual SQL text used
+   * to create the column is choosen by the database adapter and may
+   * be different than the name of the column_type argument.
+   *
+   * @param name the column's name
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the same instance
+   */
   final
   def varchar(name : String,
               options : ColumnOption*) : TableDefinition =
