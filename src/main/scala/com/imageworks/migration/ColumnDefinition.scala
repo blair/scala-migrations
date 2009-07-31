@@ -85,7 +85,7 @@ class ColumnDefinition
     }
 
     if (this.isInstanceOf[ColumnSupportsPrecision]) {
-      check_for_precision()
+      checkForPrecision()
     }
 
     if (this.isInstanceOf[ColumnSupportsScale]) {
@@ -212,7 +212,7 @@ class ColumnDefinition
    * Look for a Precision column option.
    */
   private
-  def check_for_precision() =
+  def checkForPrecision() =
   {
     for (option @ Precision(value) <- options) {
       options -= option
