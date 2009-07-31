@@ -69,7 +69,7 @@ class Migrate_200811241940_CreateUser
 
   def down : Unit =
   {
-    drop_table("location")
+    dropTable("location")
 
     execute("""CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
       'derby.user.test', null)""")

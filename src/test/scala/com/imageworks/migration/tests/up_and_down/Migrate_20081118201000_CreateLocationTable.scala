@@ -47,6 +47,6 @@ class Migrate_20081118201000_CreateLocationTable
 
   def down : Unit =
   {
-    drop_table("location")
+    dropTable("location")
   }
 }

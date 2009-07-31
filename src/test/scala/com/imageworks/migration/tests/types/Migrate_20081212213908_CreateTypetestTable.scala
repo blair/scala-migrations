@@ -56,6 +56,6 @@ class Migrate_20081212213908_CreateTypetestTable
 
   def down : Unit =
   {
-    drop_table("types_test")
+    dropTable("types_test")
   }
 }

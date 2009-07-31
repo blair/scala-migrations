@@ -292,7 +292,7 @@ abstract class Migration
   }
 
   final
-  def drop_table(table_name : String) : Unit =
+  def dropTable(table_name : String) : Unit =
   {
     val sql = new java.lang.StringBuilder(512)
                 .append("DROP TABLE ")

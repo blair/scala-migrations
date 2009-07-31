@@ -73,6 +73,6 @@ class Migrate_20081118201742_CreatePeopleTable
     remove_foreign_key(on("people" -> "pk_location"),
                        references("location" -> "pk_location"))
     remove_index("people", "ssn")
-    drop_table("people")
+    dropTable("people")
   }
 }
