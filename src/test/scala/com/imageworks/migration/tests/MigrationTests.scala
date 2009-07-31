@@ -424,7 +424,7 @@ class MigrationTests
               override
               def up() : Unit =
               {
-                with_result_set(mock_rs) { rs2 =>
+                withResultSet(mock_rs) { rs2 =>
                   rs1 = rs2
                 }
               }
@@ -460,7 +460,7 @@ class MigrationTests
               override
               def up() : Unit =
               {
-                with_result_set(mock_rs) { rs2 =>
+                withResultSet(mock_rs) { rs2 =>
                   rs1 = rs2
                   throw new ThisSpecialException
                 }

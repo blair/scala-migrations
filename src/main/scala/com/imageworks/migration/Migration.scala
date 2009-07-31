@@ -266,8 +266,8 @@ abstract class Migration
    * @return the result of f if f returns normally
    */
   final
-  def with_result_set[R](rs : java.sql.ResultSet)
-                        (f : java.sql.ResultSet => R) : R =
+  def withResultSet[R](rs : java.sql.ResultSet)
+                      (f : java.sql.ResultSet => R) : R =
   {
     With.resultSet(rs)(f)
   }
