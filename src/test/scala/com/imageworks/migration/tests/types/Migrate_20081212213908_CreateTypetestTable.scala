@@ -39,7 +39,7 @@ class Migrate_20081212213908_CreateTypetestTable
 {
   def up : Unit =
   {
-    create_table("types_test") { t =>
+    createTable("types_test") { t =>
       // The binary column is not tested because its representation is
       // database dependent.
 

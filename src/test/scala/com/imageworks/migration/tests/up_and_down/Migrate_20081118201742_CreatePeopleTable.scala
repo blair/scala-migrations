@@ -39,7 +39,7 @@ class Migrate_20081118201742_CreatePeopleTable
 {
   def up : Unit =
   {
-    create_table("people") { t =>
+    createTable("people") { t =>
       t.varbinary("pk_people", PrimaryKey, Limit(16))
       t.varbinary("pk_location", Limit(16), NotNull)
       t.integer("employee_id", Unique)

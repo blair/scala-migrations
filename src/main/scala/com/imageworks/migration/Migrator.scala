@@ -47,7 +47,7 @@ class CreateSchemaMigrationsTableMigration
 {
   def up : Unit =
   {
-    create_table(Migrator.schema_migrations_table_name) { t =>
+    createTable(Migrator.schema_migrations_table_name) { t =>
       t.varchar("version", Limit(32), NotNull)
     }
 

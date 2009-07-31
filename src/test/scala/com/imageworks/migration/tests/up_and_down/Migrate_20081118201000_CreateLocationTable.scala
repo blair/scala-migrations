@@ -39,7 +39,7 @@ class Migrate_20081118201000_CreateLocationTable
 {
   def up : Unit =
   {
-    create_table("location") { t =>
+    createTable("location") { t =>
       t.varbinary("pk_location", PrimaryKey, Limit(16))
       t.varchar("name", Unique, Limit(255), NotNull)
     }

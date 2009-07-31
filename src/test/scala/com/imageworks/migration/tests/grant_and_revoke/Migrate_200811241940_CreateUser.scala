@@ -61,7 +61,7 @@ class Migrate_200811241940_CreateUser
     execute("""CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
       'derby.database.fullAccessUsers', 'APP')""")
 
-    create_table("location") { t =>
+    createTable("location") { t =>
       t.varbinary("pk_location", PrimaryKey, Limit(16))
       t.varchar("name", Unique, Limit(255), NotNull)
     }

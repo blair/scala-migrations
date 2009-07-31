@@ -273,9 +273,9 @@ abstract class Migration
   }
 
   final
-  def create_table(table_name : String,
-                   options : TableOption*)
-                  (body : TableDefinition => Unit) : Unit =
+  def createTable(table_name : String,
+                  options : TableOption*)
+                 (body : TableDefinition => Unit) : Unit =
   {
     val table_definition = new TableDefinition(adapter_, table_name)
 

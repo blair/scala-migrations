@@ -39,7 +39,7 @@ class Migrate_200812041647_Foo
 {
   def up : Unit =
   {
-    create_table("foo") { t =>
+    createTable("foo") { t =>
       t.decimal("bar", Scale(3))
     }
   }
