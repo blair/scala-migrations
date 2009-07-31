@@ -309,8 +309,8 @@ class ColumnDefinition
     }
 
     for (option <- options) {
-      def append_check_sql(name : String,
-                           expr : String) : Unit =
+      def appendCheckSql(name : String,
+                         expr : String) : Unit =
       {
         options -= option
 
@@ -323,7 +323,7 @@ class ColumnDefinition
 
       option match {
         case NamedCheck(name, expr) => {
-          append_check_sql(name, expr)
+          appendCheckSql(name, expr)
         }
 
         case Check(expr) => {
@@ -331,7 +331,7 @@ class ColumnDefinition
           val on = new On(tbd)
           val (name, _) = adapter.generateCheckConstraintName(on)
 
-          append_check_sql(name, expr)
+          appendCheckSql(name, expr)
         }
 
         case _ =>
