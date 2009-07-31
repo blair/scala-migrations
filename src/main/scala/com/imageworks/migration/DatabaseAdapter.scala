@@ -226,7 +226,7 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
     // The GRANT and REVOKE syntax is basically the same
     val sql = new java.lang.StringBuilder(256)
                .append(action)
-               .append(" ")
+               .append(' ')
 
     def formatColumns(columns : Seq[String]) : String =
     {
@@ -266,9 +266,9 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
 
     sql.append(" ON ")
        .append(quoteTableName(table_name))
-       .append(" ")
+       .append(' ')
        .append(preposition)
-       .append(" ")
+       .append(' ')
        .append(grantees.mkString(", "))
        .toString
   }
