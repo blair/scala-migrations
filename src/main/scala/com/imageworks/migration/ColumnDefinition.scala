@@ -402,19 +402,19 @@ abstract class AbstractDecimalColumnDefinition
    * Concrete subclasses must define this to the name of the DECIMAL
    * or NUMERIC data type specific for the database.
    */
-  def decimal_sql_name : String
+  val decimalSqlName : String
 
   def sql =
   {
     (precision, scale) match {
       case (None, None) => {
-        decimal_sql_name
+        decimalSqlName
       }
       case (Some(p), None) => {
-        decimal_sql_name + "(" + p + ")"
+        decimalSqlName + "(" + p + ")"
       }
       case (Some(p), Some(s)) => {
-        decimal_sql_name + "(" + p + ", " + s + ")"
+        decimalSqlName + "(" + p + ", " + s + ")"
       }
       case (None, Some(_)) => {
         val message = "Cannot specify a scale without also specifying a " +
@@ -456,7 +456,8 @@ class DefaultCharColumnDefinition
 class DefaultDecimalColumnDefinition
   extends AbstractDecimalColumnDefinition
 {
-  val decimal_sql_name = "DECIMAL"
+  override
+  val decimalSqlName = "DECIMAL"
 }
 
 class DefaultIntegerColumnDefinition

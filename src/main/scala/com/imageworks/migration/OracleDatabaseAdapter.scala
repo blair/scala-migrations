@@ -78,7 +78,8 @@ class OracleCharColumnDefinition(use_nchar_type : Boolean)
 class OracleDecimalColumnDefinition
   extends AbstractDecimalColumnDefinition
 {
-  val decimal_sql_name = "NUMBER"
+  override
+  val decimalSqlName = "NUMBER"
 }
 
 /**
