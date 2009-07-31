@@ -218,8 +218,8 @@ abstract class Migration
    *        be given a new prepared statement
    */
   final
-  def with_prepared_statement(sql : String)
-                             (f : java.sql.PreparedStatement => Unit) : Unit =
+  def withPreparedStatement(sql : String)
+                           (f : java.sql.PreparedStatement => Unit) : Unit =
   {
     val c = connection_
     val auto_commit = c.getAutoCommit
