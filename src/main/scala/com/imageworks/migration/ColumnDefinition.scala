@@ -34,11 +34,51 @@ package com.imageworks.migration
 
 import org.slf4j.LoggerFactory
 
+/**
+ * Marker trait for a ColumnDefinition subclass that the column type
+ * supports a default value.
+ */
 trait ColumnSupportsDefault
-trait ColumnSupportsLimit
-trait ColumnSupportsPrecision
-trait ColumnSupportsScale
+{
+  this : ColumnDefinition =>
+}
 
+/**
+ * Marker trait for a ColumnDefinition subclass that the column type
+ * supports a limit on the range of values it supports,
+ * e.g. VARCHAR(32).
+ */
+trait ColumnSupportsLimit
+{
+  this : ColumnDefinition =>
+}
+
+/**
+ * Marker trait for a ColumnDefinition subclass that the column type
+ * supports a precision on numerical values it stores,
+ * e.g. DECIMAL(10).
+ */
+trait ColumnSupportsPrecision
+{
+  this : ColumnDefinition =>
+}
+
+/**
+ * Marker trait for a ColumnDefinition subclass that the column type
+ * supports a precision on numerical values it stores,
+ * e.g. DECIMAL(10, 5), where 5 is the scale.
+ */
+trait ColumnSupportsScale
+{
+  this : ColumnDefinition =>
+}
+
+/**
+ * Abstract base class for the definition of a column type.  It stores
+ * all the information for the column type, e.g. if it supports a
+ * default value, if it supports a limit on the range of values it can
+ * hold, etc.
+ */
 abstract
 class ColumnDefinition
 {
