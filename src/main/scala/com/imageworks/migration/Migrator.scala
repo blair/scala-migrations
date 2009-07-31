@@ -186,9 +186,9 @@ object Migrator
    *         Migration subclasses as the value
    */
   private
-  def find_migrations(package_name : String,
-                      search_sub_packages : Boolean,
-                      logger : Logger) : scala.collection.immutable.SortedMap[Long,Class[_ <: Migration]] =
+  def findMigrations(package_name : String,
+                     search_sub_packages : Boolean,
+                     logger : Logger) : scala.collection.immutable.SortedMap[Long,Class[_ <: Migration]] =
   {
     // Ask the current class loader for the resource corresponding to
     // the package, which can refer to a directory, a jar file
@@ -812,9 +812,9 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
       // unless the migration needs to be rolled back.
       val installed_versions =
         get_installed_versions_(schema_connection).toArray
-      val available_migrations = find_migrations(package_name,
-                                                 search_sub_packages,
-                                                 logger)
+      val available_migrations = findMigrations(package_name,
+                                                search_sub_packages,
+                                                logger)
       val available_versions = available_migrations.keySet.toArray
 
       for (installed_version <- installed_versions) {
@@ -928,9 +928,9 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     (package_name : String,
      search_sub_packages : Boolean) : MigrationStatuses =
   {
-    val available_migrations = find_migrations(package_name,
-                                               search_sub_packages,
-                                               logger)
+    val available_migrations = findMigrations(package_name,
+                                              search_sub_packages,
+                                              logger)
     val installed_versions = if (schema_migrations_table_exists) {
                                get_installed_versions
                              }
