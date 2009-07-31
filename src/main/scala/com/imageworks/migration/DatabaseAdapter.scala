@@ -72,13 +72,13 @@ object DatabaseAdapter
  * Base class for classes to customize SQL generation for specific
  * database drivers.
  *
- * @param schema_name_opt an optional schema name used to qualify
- *        all table names in the generated SQL; if Some(), then all
- *        table names are qualified with the name, otherwise, table
- *        names are unqualified
+ * @param schemaNameOpt an optional schema name used to qualify all
+ *        table names in the generated SQL; if Some(), then all table
+ *        names are qualified with the name, otherwise, table names
+ *        are unqualified
  */
 abstract
-class DatabaseAdapter(val schema_name_opt : Option[String])
+class DatabaseAdapter(val schemaNameOpt : Option[String])
 {
   protected final
   val logger = LoggerFactory.getLogger(this.getClass)
@@ -185,7 +185,7 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
   def quoteTableName(table_name : String) : String =
   {
     // use the default schema_name_opt defined in the adapter
-    quoteTableName(schema_name_opt, table_name)
+    quoteTableName(schemaNameOpt, table_name)
   }
 
   /**
@@ -212,7 +212,7 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
   def removeIndexSql(table_name : String,
                      index_name : String) : String =
   {
-    removeIndexSql(schema_name_opt, table_name, index_name)
+    removeIndexSql(schemaNameOpt, table_name, index_name)
   }
 
   private
@@ -314,7 +314,7 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
                grantees : Array[String],
                privileges : GrantPrivilegeType*) : String =
   {
-    grantSql(schema_name_opt, table_name, grantees, privileges : _*)
+    grantSql(schemaNameOpt, table_name, grantees, privileges : _*)
   }
 
   /**
@@ -355,7 +355,7 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
                 grantees : Array[String],
                 privileges : GrantPrivilegeType*) : String =
   {
-    revokeSql(schema_name_opt, table_name, grantees, privileges : _*)
+    revokeSql(schemaNameOpt, table_name, grantees, privileges : _*)
   }
 
   /**

@@ -50,8 +50,8 @@ class DerbyVarbinaryColumnDefinition
   def sql = sqlForColumnType("VARCHAR") + " FOR BIT DATA"
 }
 
-class DerbyDatabaseAdapter(override val schema_name_opt : Option[String])
-  extends DatabaseAdapter(schema_name_opt)
+class DerbyDatabaseAdapter(override val schemaNameOpt : Option[String])
+  extends DatabaseAdapter(schemaNameOpt)
 {
   override protected
   val unquotedNameConverter = UppercaseUnquotedNameConverter

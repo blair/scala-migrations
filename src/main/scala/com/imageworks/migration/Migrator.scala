@@ -627,7 +627,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     withLoggingConnection(AutoCommit) { connection =>
       val metadata = connection.getMetaData
       With.resultSet(metadata.getTables(null,
-                                        adapter.schema_name_opt.getOrElse(null),
+                                        adapter.schemaNameOpt.getOrElse(null),
                                         null,
                                         Array("TABLE"))) { rs =>
         val names = new scala.collection.mutable.HashSet[String]

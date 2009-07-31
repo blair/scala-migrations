@@ -177,8 +177,8 @@ class OracleVarcharColumnDefinition(use_nchar_type : Boolean)
               sqlForColumnType("VARCHAR2")
 }
 
-class OracleDatabaseAdapter(override val schema_name_opt : Option[String])
-  extends DatabaseAdapter(schema_name_opt)
+class OracleDatabaseAdapter(override val schemaNameOpt : Option[String])
+  extends DatabaseAdapter(schemaNameOpt)
 {
   override protected
   val unquotedNameConverter = UppercaseUnquotedNameConverter

@@ -39,8 +39,8 @@ class PostgresqlByteaColumnDefinition
   val sql = "BYTEA"
 }
 
-class PostgresqlDatabaseAdapter(override val schema_name_opt : Option[String])
-  extends DatabaseAdapter(schema_name_opt)
+class PostgresqlDatabaseAdapter(override val schemaNameOpt : Option[String])
+  extends DatabaseAdapter(schemaNameOpt)
 {
   override protected
   val unquotedNameConverter = LowercaseUnquotedNameConverter
