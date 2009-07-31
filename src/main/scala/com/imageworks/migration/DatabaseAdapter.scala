@@ -88,7 +88,7 @@ class DatabaseAdapter(val schema_name_opt : Option[String])
    * how the database treats with unquoted names.
    */
   protected
-  def unquotedNameConverter : UnquotedNameConverter
+  val unquotedNameConverter : UnquotedNameConverter
 
   /**
    * Given a table name, column name and column data type, return a
