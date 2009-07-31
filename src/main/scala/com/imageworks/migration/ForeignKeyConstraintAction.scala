@@ -48,6 +48,7 @@ sealed trait ForeignKeyConstraintAction
 case object Cascade
   extends ForeignKeyConstraintAction
 {
+  override
   val sql = "CASCADE"
 }
 
@@ -59,6 +60,7 @@ case object Cascade
 case object NoAction
   extends ForeignKeyConstraintAction
 {
+  override
   val sql = "NO ACTION"
 }
 
@@ -70,6 +72,7 @@ case object NoAction
 case object Restrict
   extends ForeignKeyConstraintAction
 {
+  override
   val sql = "RESTRICT"
 }
 
@@ -81,6 +84,7 @@ case object Restrict
 case object SetDefault
   extends ForeignKeyConstraintAction
 {
+  override
   val sql = "SET DEFAULT"
 }
 
@@ -92,5 +96,6 @@ case object SetDefault
 case object SetNull
   extends ForeignKeyConstraintAction
 {
+  override
   val sql = "SET NULL"
 }
