@@ -330,10 +330,21 @@ abstract class Migration
     (name, opts)
   }
 
+  /**
+   * Add an index to a table on a non-empty list of column names.  The
+   * name of the index is automatically generated unless Name() is
+   * given as a an option.
+   *
+   * @param table_name the table to add the index to
+   * @param column_names a list of one or more column names that the
+   *        index will be on
+   * @param options a possibly empty list of index options to
+   *        customize the creation of the index
+   */
   final
-  def add_index(table_name : String,
-                column_names : Array[String],
-                options : IndexOption*) : Unit =
+  def addIndex(table_name : String,
+               column_names : Array[String],
+               options : IndexOption*) : Unit =
   {
     if (column_names.isEmpty) {
       throw new IllegalArgumentException("Adding an index requires at " +
@@ -367,12 +378,22 @@ abstract class Migration
     execute(sql)
   }
 
+  /**
+   * Add an index to a table on a column.  The name of the index is
+   * automatically generated unless Name() is given as a an option.
+   *
+   * @param table_name the table to add the index to
+   * @param column_name the name of the column that the index will be
+   *        on
+   * @param options a possibly empty list of index options to
+   *        customize the creation of the index
+   */
   final
-  def add_index(table_name : String,
-                column_name : String,
-                options : IndexOption*) : Unit =
+  def addIndex(table_name : String,
+               column_name : String,
+               options : IndexOption*) : Unit =
   {
-    add_index(table_name, Array(column_name), options : _*)
+    addIndex(table_name, Array(column_name), options : _*)
   }
 
   final

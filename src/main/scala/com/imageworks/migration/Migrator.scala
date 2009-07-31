@@ -51,10 +51,10 @@ class CreateSchemaMigrationsTableMigration
       t.varchar("version", Limit(32), NotNull)
     }
 
-    add_index(Migrator.schema_migrations_table_name,
-              Array("version"),
-              Unique,
-              Name("unique_schema_migrations"))
+    addIndex(Migrator.schema_migrations_table_name,
+             Array("version"),
+             Unique,
+             Name("unique_schema_migrations"))
   }
 
   def down : Unit =

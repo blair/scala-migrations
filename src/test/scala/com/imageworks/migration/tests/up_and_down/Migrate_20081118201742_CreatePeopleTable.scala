@@ -56,7 +56,7 @@ class Migrate_20081118201742_CreatePeopleTable
       t.blob("image")
     }
 
-    add_index("people", "ssn", Unique)
+    addIndex("people", "ssn", Unique)
 
     add_foreign_key(on("people" -> "pk_location"),
                     references("location" -> "pk_location"),
