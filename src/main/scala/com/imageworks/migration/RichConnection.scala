@@ -42,12 +42,12 @@ object RichConnection
 }
 /**
  * A rich java.sql.Connection class that provides a
- * with_prepared_statement method.
+ * withPreparedStatement() method.
  */
 class RichConnection(self : java.sql.Connection)
 {
-  def with_prepared_statement[T](sql : String)
-                                (f : java.sql.PreparedStatement => T) : T =
+  def withPreparedStatement[T](sql : String)
+                              (f : java.sql.PreparedStatement => T) : T =
   {
     val statement = self.prepareStatement(sql)
     try {

@@ -676,7 +676,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
                          " WHERE version = ?"
           }
 
-        schema_connection.with_prepared_statement(sql) { statement =>
+        schema_connection.withPreparedStatement(sql) { statement =>
           statement.setString(1, version.toString)
           statement.execute()
         }
@@ -727,7 +727,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   {
     val sql = "SELECT version FROM " +
               adapter.quote_table_name(schema_migrations_table_name)
-    connection.with_prepared_statement(sql) { statement =>
+    connection.withPreparedStatement(sql) { statement =>
       With.resultSet(statement.executeQuery()) { rs =>
         var versions = new scala.collection.immutable.TreeSet[Long]
         while (rs.next()) {
@@ -797,7 +797,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
         val sql = "LOCK TABLE " +
                   adapter.quote_table_name(schema_migrations_table_name) +
                   " IN EXCLUSIVE MODE"
-        schema_connection.with_prepared_statement(sql) { statement =>
+        schema_connection.withPreparedStatement(sql) { statement =>
           statement.execute()
         }
       }
