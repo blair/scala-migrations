@@ -692,7 +692,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @return true if the "schema_migration" table exists
    */
   private
-  def schema_migrations_table_exists : Boolean =
+  def doesSchemaMigrationsTableExist : Boolean =
   {
     val smtn = Migrator.schema_migrations_table_name.toLowerCase
     getTableNames.find(_.toLowerCase == smtn) match {
@@ -707,7 +707,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
   private
   def initialize_schema_migrations_table() : Unit =
   {
-    if (! schema_migrations_table_exists) {
+    if (! doesSchemaMigrationsTableExist) {
       runMigration(classOf[CreateSchemaMigrationsTableMigration], Up, None)
     }
   }
@@ -930,7 +930,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     val available_migrations = findMigrations(package_name,
                                               search_sub_packages,
                                               logger)
-    val installed_versions = if (schema_migrations_table_exists) {
+    val installed_versions = if (doesSchemaMigrationsTableExist) {
                                get_installed_versions
                              }
                              else {
