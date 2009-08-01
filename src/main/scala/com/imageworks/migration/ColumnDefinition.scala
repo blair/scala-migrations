@@ -187,13 +187,13 @@ class ColumnDefinition
    * If a limit is specified for the column.
    */
   private
-  var limitOpt : Option[String] = None
+  var limit_ : Option[String] = None
 
   /**
    * Get the limit for the column.
    */
   protected
-  def limit = limitOpt
+  def limit = limit_
 
   /**
    * If a column can have a limit, then the derived class should call
@@ -206,12 +206,12 @@ class ColumnDefinition
     for (option @ Limit(length) <- options) {
       options -= option
 
-      if (limitOpt.isDefined && limitOpt.get != length) {
+      if (limit_.isDefined && limit_.get != length) {
         logger.warn("Redefining the limit for the '{}' column " +
                     "from '{}' to '{}'.",
-                    Array[AnyRef](columnName, limitOpt.get, length))
+                    Array[AnyRef](columnName, limit_.get, length))
       }
-      limitOpt = Some(length)
+      limit_ = Some(length)
     }
   }
 
