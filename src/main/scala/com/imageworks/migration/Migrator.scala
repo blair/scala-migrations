@@ -661,7 +661,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
     val migration = migration_class.getConstructor().newInstance()
     withConnections(AutoCommit) { connections =>
       migration.connection_ = connections.logging
-      migration.raw_connection_ = connections.raw
+      migration.rawConnectionOpt = Some(connections.raw)
       migration.adapter_ = adapter
 
       direction match {

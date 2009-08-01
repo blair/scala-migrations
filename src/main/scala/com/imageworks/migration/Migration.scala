@@ -92,7 +92,7 @@ abstract class Migration
    * constructor style injection, which makes for cleaner code for the
    * users of this migration framework.
    */
-  private[migration] var raw_connection_ : java.sql.Connection = _
+  private[migration] var rawConnectionOpt : Option[java.sql.Connection] = None
 
   /**
    * Get the raw connection to the database the migration can use for
@@ -104,7 +104,7 @@ abstract class Migration
    * good state, as all of the other migration methods defined in
    * Migration use the same connection.
    */
-  def rawConnection = raw_connection_
+  def rawConnection = rawConnectionOpt.get
 
   /**
    * The connection to the database that is used for the migration.
