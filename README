@@ -65,6 +65,7 @@ object Test
                      "com.imageworks.vnp.dao.migrations",
                      false)
   }
+}
 
 To rollback a database to its pristine state:
 
