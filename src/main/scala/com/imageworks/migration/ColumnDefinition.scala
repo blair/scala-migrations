@@ -209,9 +209,7 @@ class ColumnDefinition
       if (limit_.isDefined && limit_.get != length) {
         logger.warn("Redefining the limit for the '{}' column " +
                     "from '{}' to '{}'.",
-                    Array[AnyRef](columnName,
-                                  limit_.get,
-                                  length))
+                    Array[AnyRef](columnName, limit_.get, length))
       }
       limit_ = Some(length)
     }
