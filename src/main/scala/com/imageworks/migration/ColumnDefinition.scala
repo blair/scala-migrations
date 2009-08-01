@@ -102,9 +102,18 @@ class ColumnDefinition
   private def adapter = adapterOpt.get
 
   /**
-   * Table name associated with this column definition.
+   * Optional table name the column is defined in.
    */
-  protected[migration] var table_name : String = _
+  protected[migration] var tableNameOpt : Option[String] = None
+
+  /**
+   * Get the table name the column is defined in.
+   *
+   * @return the table name the column is defined in
+   * @throws java.util.NoSuchElementException if the table name has
+   *         not been set
+   */
+  private def tableName = tableNameOpt.get
 
   /**
    * Column name.
@@ -378,7 +387,7 @@ class ColumnDefinition
         }
 
         case Check(expr) => {
-          val tbd = new TableColumnDefinition(table_name, Array(column_name))
+          val tbd = new TableColumnDefinition(tableName, Array(column_name))
           val on = new On(tbd)
           val (name, _) = adapter.generateCheckConstraintName(on)
 
