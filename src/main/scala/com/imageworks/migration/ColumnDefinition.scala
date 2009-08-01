@@ -86,8 +86,8 @@ class ColumnDefinition
   val logger = LoggerFactory.getLogger(this.getClass)
 
   /**
-   * An optional database adapter associated with this column
-   * definition.
+   * The database adapter associated with this column definition,
+   * which may or may not be set.
    */
   protected[migration] var adapterOpt : Option[DatabaseAdapter] = None
 
@@ -102,7 +102,8 @@ class ColumnDefinition
   private def adapter = adapterOpt.get
 
   /**
-   * Optional table name the column is defined in.
+   * The table name the column is defined in, which may or may not be
+   * set.
    */
   protected[migration] var tableNameOpt : Option[String] = None
 
