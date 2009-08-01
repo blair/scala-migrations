@@ -139,7 +139,7 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
 
     d.adapterOpt = Some(this)
     d.tableNameOpt = Some(table_name)
-    d.column_name = column_name
+    d.columnNameOpt = Some(column_name)
     d.options = opts
 
     d.initialize()
