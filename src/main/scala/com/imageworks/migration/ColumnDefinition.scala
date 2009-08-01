@@ -220,7 +220,7 @@ class ColumnDefinition
    */
   private
   lazy
-  val not_null_opt : Option[Boolean] =
+  val notNullOpt : Option[Boolean] =
   {
     var n1 : Option[Boolean] = None
 
@@ -371,7 +371,7 @@ class ColumnDefinition
 
     // Not all databases, such as Derby, support specifying NULL for a
     // column that may have NULL values.
-    not_null_opt match {
+    notNullOpt match {
       case Some(true) => sb.append(" NOT NULL")
       case _ =>
     }
@@ -416,15 +416,15 @@ class ColumnDefinition
 
     // Warn about illegal combinations in some databases.
     if (isPrimaryKey &&
-        not_null_opt.isDefined &&
-        not_null_opt.get == false) {
+        notNullOpt.isDefined &&
+        notNullOpt.get == false) {
       logger.warn("Specifying PrimaryKey and Nullable in a column is not " +
                   "supported in all databases.")
     }
 
     // Warn when different options are used that specify the same
     // behavior so one can be removed.
-    if (isPrimaryKey && not_null_opt.isDefined && not_null_opt.get == true) {
+    if (isPrimaryKey && notNullOpt.isDefined && notNullOpt.get == true) {
       logger.warn("Specifying PrimaryKey and NotNull is redundant.")
     }
     if (isPrimaryKey && isUnique) {
