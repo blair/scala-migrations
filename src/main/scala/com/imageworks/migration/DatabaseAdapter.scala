@@ -137,7 +137,7 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
 
     val d = columnDefinitionFactory(column_type, character_set_opt)
 
-    d.adapter = this
+    d.adapterOpt = Some(this)
     d.table_name = table_name
     d.column_name = column_name
     d.options = opts

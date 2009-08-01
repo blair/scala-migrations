@@ -88,7 +88,9 @@ class ColumnDefinition
   /**
    * Adapter associated with this column definition.
    */
-  protected[migration] var adapter : DatabaseAdapter = _
+  protected[migration] var adapterOpt : Option[DatabaseAdapter] = None
+
+  private def adapter = adapterOpt.get
 
   /**
    * Table name associated with this column definition.
