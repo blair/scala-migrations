@@ -356,7 +356,7 @@ object Migrator
 
 private
 class RawAndLoggingConnections(val raw : java.sql.Connection,
-                               val logging : net.sf.log4jdbc.ConnectionSpy)
+                               val logging : java.sql.Connection)
 
 /**
  * This sealed trait's specifies the commit behavior on a database

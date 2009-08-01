@@ -32,7 +32,6 @@
  */
 package com.imageworks.migration
 
-import net.sf.log4jdbc.ConnectionSpy
 import org.slf4j.LoggerFactory
 
 /**
@@ -82,11 +81,12 @@ abstract class Migration
   def down() : Unit
 
   /**
-   * The raw connection to the database that underlies the
-   * ConnectionSpy connection.  This is provided in case the real
-   * database connection is needed because the ConnectionSpy
-   * connection does not provide a required feature.  This connection
-   * should not be used in normal use.
+
+   * The raw connection to the database that underlies the logging
+   * connection.  This is provided in case the real database
+   * connection is needed because the logging connection does not
+   * provide a required feature.  This connection should not be used
+   * in normal use.
    *
    * This is set using property style dependency injection instead of
    * constructor style injection, which makes for cleaner code for the
@@ -98,7 +98,7 @@ abstract class Migration
    * Get the raw connection to the database the migration can use for
    * any custom work.  This connection is the raw connection that
    * underlies the logging connection and does not log any operations
-   * performed on it.  It should only be used when the ConnectionSpy
+   * performed on it.  It should only be used when the logging
    * connection does not provide a required feature.  The Migration
    * subclass must be careful with this connection and leave it in a
    * good state, as all of the other migration methods defined in
@@ -114,7 +114,7 @@ abstract class Migration
    * constructor style injection, which makes for cleaner code for the
    * users of this migration framework.
    */
-  private[migration] var connection_ : net.sf.log4jdbc.ConnectionSpy = _
+  private[migration] var connection_ : java.sql.Connection = _
 
   /**
    * Get the connection to the database the migration can use for any
