@@ -61,6 +61,35 @@ Scala Migrations currently supports
 
 Patches for other databases are welcome.
 
+DEPENDENCIES and SETUP
+----------------------
+
+Scala Migrations depends upon:
+
+- The Simple Logging Facade for Java (SLF4J). 
+
+  http://www.slf4j.org/
+
+  You will need to choose logging framework that SLF4J will log to.
+  See the SLF4J website for more information on how to set up and use
+  SLF4J.
+
+- The log4jdbc logging JDBC wrapper that logs all JDBC operations.
+
+  http://code.google.com/p/log4jdbc/
+
+  Since running a migration on a production database is dangerous
+  operation that can leave irreversible damage if anything goes wrong,
+  the JDBC connection given to all migrations is a log4jdbc
+  net.sf.log4jdbc.ConnectionSpy that wraps the real connection.  This
+  logs all method calls so that any migration errors can be fully
+  debugged.  log4jdbc uses SLF4J; see the log4jdbc website on how to
+  set up the loggers and logging level for log4jdbc messages.
+
+  Scala Migrations manually wraps the real database connection, so no
+  special work needs to be done by the migration writer to use this
+  feature.
+
 MIGRATION NAMING
 ----------------
 
