@@ -86,10 +86,19 @@ class ColumnDefinition
   val logger = LoggerFactory.getLogger(this.getClass)
 
   /**
-   * Adapter associated with this column definition.
+   * An optional database adapter associated with this column
+   * definition.
    */
   protected[migration] var adapterOpt : Option[DatabaseAdapter] = None
 
+  /**
+   * The database adapter associated with this column definition.
+   *
+   * @return the database adapter associated with this column
+   *         definition
+   * @throws java.util.NoSuchElementException if the database adapter
+   *         has not been associated with this column definition
+   */
   private def adapter = adapterOpt.get
 
   /**
