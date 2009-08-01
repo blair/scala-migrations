@@ -1020,8 +1020,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
       }
 
       sb.append('.')
-      val message = sb.toString
-      Some(message)
+
+      Some(sb.toString)
     }
   }
 }
