@@ -44,6 +44,48 @@ class Migrate_20081118201742_CreatePeopleTable
   }
 }
 
+To migrate a database to the latest version requires code similar to:
+
+import com.imageworks.migration.{DatabaseAdapter,
+                                 InstallAllMigrations,
+                                 Vendor}
+
+object Test
+{
+  def main(args: Array[String]) : Unit = {
+    val driver_class_name = "org.postgresql.Driver"
+    val vendor = Vendor.forDriver(driver_class_name)
+    val migration_adapter = DatabaseAdapter.forVendor(vendor, None)
+    val data_source: javax.sql.DataSource = ...
+    val migrator = new Migrator(data_source, migration_adapter)
+
+    // Now apply all migrations that are in the
+    // com.imageworks.vnp.dao.migrations package.
+    migrator.migrate(InstallAllMigrations,
+                     "com.imageworks.vnp.dao.migrations",
+                     false)
+  }
+
+To rollback a database to its pristine state:
+
+  migrator.migrate(RemoveAllMigrations,
+                   "com.imageworks.vnp.dao.migrations",
+                   false)
+
+To rollback two migrations:
+
+  migrator.migrate(RollbackMigration(2),
+                   "com.imageworks.vnp.dao.migrations",
+                   false)
+
+And to migrate to a specific migration, rollbacking back migrations
+that are newer than the requested migration version and installing
+migrations older than the requested version.
+
+  migrator.migrate(MigrateToVersion(20090731),
+                   "com.imageworks.vnp.dao.migrations",
+                   false)
+
 The style of the Migration classes used for Scala Migrations is
 similar to the Ruby on Rails migrations.  The implementation uses the
 same schema_migrations table appearing in Ruby on Rails 2.1 and
