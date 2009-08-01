@@ -1,5 +1,19 @@
 <project xmlns:ivy="antlib:org.apache.ivy.ant">
 
+  <!-- determine the JDBC version so the correct log4jdbc jar file is used -->
+  <condition property="jdbc.version" value="3">
+    <equals arg1="1.4" arg2="${ant.java.version}" />
+  </condition>
+  <condition property="jdbc.version" value="3">
+    <equals arg1="1.5" arg2="${ant.java.version}" />
+  </condition>
+  <condition property="jdbc.version" value="4">
+    <equals arg1="1.6" arg2="${ant.java.version}" />
+  </condition>
+  <condition property="jdbc.version" value="4">
+    <equals arg1="1.7" arg2="${ant.java.version}" />
+  </condition>
+
   <!-- defaults for all projects -->
   <property name="source.dir" value="${basedir}/src/main" />
   <property name="test.source.dir" value="${basedir}/src/test" />
@@ -13,7 +27,7 @@
   <property name="jsch.install.version" value="0.1.29" />
   <property name="jsch.jar.file" value="${ivy.jar.dir}/jsch-${jsch.install.version}.jar" />
   <property name="log4jdbc.install.version" value="1.1" />
-  <property name="log4jdbc.jar.file" value="${basedir}/libs/log4jdbc4-${log4jdbc.install.version}.jar" />
+  <property name="log4jdbc.jar.file" value="${basedir}/libs/log4jdbc${jdbc.version}-${log4jdbc.install.version}.jar" />
 
   <!--
     download ivy, jsch and log4jdbc from the web site so that it can be
@@ -41,7 +55,7 @@
     <condition property="log4jdbc.url" value="file:${log4jdbc.jar.file}">
       <available file="${log4jdbc.jar.file}" />
     </condition>
-    <property name="log4jdbc.url" value="http://log4jdbc.googlecode.com/files/log4jdbc4-${log4jdbc.install.version}.jar" />
+    <property name="log4jdbc.url" value="http://log4jdbc.googlecode.com/files/log4jdbc${jdbc.version}-${log4jdbc.install.version}.jar" />
     <get src="${log4jdbc.url}" dest="${log4jdbc.jar.file}.download" usetimestamp="true" />
     <move file="${log4jdbc.jar.file}.download" tofile="${log4jdbc.jar.file}" />
   </target>
