@@ -8,9 +8,9 @@ A sample Scala migration looks like
 class Migrate_20081118201742_CreatePeopleTable
   extends Migration
 {
-  def up : Unit =
+  def up() : Unit =
   {
-    create_table("people") { t =>
+    createTable("people") { t =>
       t.varbinary("pk_people", PrimaryKey, Limit(16))
       t.varbinary("pk_location", Limit(16), NotNull)
       t.integer("employee_id", Unique)
@@ -27,20 +27,20 @@ class Migrate_20081118201742_CreatePeopleTable
       t.blob("image")
     }
 
-    add_index("people", "ssn", Unique)
+    addIndex("people", "ssn", Unique)
 
-    add_foreign_key(on("people" -> "pk_location"),
-                    references("location" -> "pk_location"),
-                    OnDelete(Cascade),
-                    OnUpdate(Restrict))
+    addForeignKey(on("people" -> "pk_location"),
+                  references("location" -> "pk_location"),
+                  OnDelete(Cascade),
+                  OnUpdate(Restrict))
 
-    add_check(on("people" -> "vacation_days"),
-              "vacation_days >= 0")
+    addCheck(on("people" -> "vacation_days"),
+             "vacation_days >= 0")
   }
 
-  def down : Unit =
+  def down() : Unit =
   {
-    drop_table("people")
+    dropTable("people")
   }
 }
 
