@@ -270,6 +270,37 @@ abstract class Migration
   }
 
   final
+  def addColumn(table_name : String,
+                column_name : String,
+                column_type : SqlType,
+                options : ColumnOption*)
+  {
+    val table_definition = new TableDefinition(adapter, table_name)
+
+    table_definition.column(column_name, column_type, options : _*)
+    val sql = new java.lang.StringBuilder(512)
+                .append("ALTER TABLE ")
+                .append(adapter.quoteTableName(table_name))
+                .append(" ADD ")
+                .append(table_definition.toSql)
+                .toString
+    execute(sql)
+  }
+
+  final
+  def removeColumn(table_name : String,
+                   column_name : String)
+  {
+    val sql = new java.lang.StringBuilder(512)
+                .append("ALTER TABLE ")
+                .append(adapter.quoteTableName(table_name))
+                .append(" DROP ")
+                .append(adapter.quoteColumnName(column_name))
+                .toString
+    execute(sql)
+  }
+
+  final
   def dropTable(table_name : String) : Unit =
   {
     val sql = new java.lang.StringBuilder(512)
