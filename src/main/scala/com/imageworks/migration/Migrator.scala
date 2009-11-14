@@ -622,7 +622,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @return a set of table names; no modifications of the case of
    *         table names is done
    */
-  def getTableNames : scala.collection.Set[String] =
+  def getTableNames : scala.collection.mutable.Set[String] =
   {
     withLoggingConnection(AutoCommit) { connection =>
       val metadata = connection.getMetaData
@@ -634,7 +634,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
         while (rs.next()) {
           names += rs.getString(3)
         }
-        names.readOnly
+        names
       }
     }
   }
