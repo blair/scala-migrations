@@ -255,28 +255,56 @@ case object TriggerPrivilege
   extends GrantPrivilegeType
 
 /**
+ * Scala 2.8 deprecates case classes extending other case classes.
+ * Instead of implementing PrivilegeWithColumns as a case class to get
+ * an extractor for the column names implement it as a non-case class
+ * with an explicit extractor.
+ */
+object PrivilegeWithColumns
+{
+  /**
+   * An extractor to return a sequence of column names.
+   *
+   * @param a any object
+   * @return an optional sequence of column names
+   */
+  def unapply(a : Any) : Option[Seq[String]] =
+  {
+    a match {
+      case p : PrivilegeWithColumns =>
+        Some(p.columns)
+      case _ =>
+        None
+    }
+  }
+}
+
+/**
  * A base class for all privileges that take a list of columns to affect.
  */
-abstract case class PrivilegeWithColumns(columns : Seq[String])
+abstract class PrivilegeWithColumns
   extends GrantPrivilegeType
+{
+  val columns : Seq[String]
+}
 
 /**
  * Maps to GRANT REFERENCES.
  */
 case class ReferencesPrivilege(override val columns : Seq[String])
-  extends PrivilegeWithColumns(columns)
+  extends PrivilegeWithColumns
 
 /**
  * Maps to GRANT SELECT.
  */
 case class SelectPrivilege(override val columns : Seq[String])
-  extends PrivilegeWithColumns(columns)
+  extends PrivilegeWithColumns
 
 /**
  * Maps to GRANT UPDATE.
  */
 case class UpdatePrivilege(override val columns : Seq[String])
-  extends PrivilegeWithColumns(columns)
+  extends PrivilegeWithColumns
 
 // These next three are here as case objects to allow
 // a no-parameters form in user code
