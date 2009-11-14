@@ -224,10 +224,12 @@ Boolean Mapping
 
 Scala Migrations does not define a mapping for the Boolean datatype in
 databases that do not have a native Boolean datatype.  The reason is
-that there are many ways of representing a Boolean value database and
-Scala Migrations is not an ORM layer, so this decision is left to the
+that there are many ways of representing a Boolean value and Scala
+Migrations is not an ORM layer, so this decision is left to the
 application developer.
 
+The application developer may want to use a non-BOOLEAN column type to
+represent Booleans which would be portable to all databases.
 Different representations that have been used in schemas include:
 
 1) A CHAR(1) column containing a 'Y' or 'N' value.  The column may
