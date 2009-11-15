@@ -46,10 +46,10 @@ class JavaMigratorTests
   Class.forName("org.apache.derby.jdbc.EmbeddedDriver")
 
   private
-  var java_migrator : JavaMigrator = _
+  var java_migrator: JavaMigrator = _
 
   @Before
-  def set_up() : Unit =
+  def set_up(): Unit =
   {
     val db_name = System.currentTimeMillis.toString
     val url = "jdbc:derby:" + db_name + ";create=true"
@@ -61,21 +61,21 @@ class JavaMigratorTests
   }
 
   @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
-  def duplicate_descriptions_throw_exception : Unit =
+  def duplicate_descriptions_throw_exception: Unit =
   {
     java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_descriptions",
                                        false)
   }
 
   @Test { val expected = classOf[DuplicateMigrationVersionException] }
-  def duplicate_versions_throw_exception : Unit =
+  def duplicate_versions_throw_exception: Unit =
   {
     java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_versions",
                                        false)
   }
 
   @Test
-  def migrate_up_and_down : Unit =
+  def migrate_up_and_down: Unit =
   {
     // There should be no tables in the schema initially.
     assertEquals(0, java_migrator.getTableNames.size)

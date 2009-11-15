@@ -41,7 +41,7 @@ sealed abstract class MigrationDirection
   /**
    * A human readable string representing the migration direction.
    */
-  val str : String
+  val str: String
 }
 
 /**

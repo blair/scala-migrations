@@ -45,7 +45,7 @@ sealed trait UnquotedNameConverter
    * @param name the name to convert
    * @return the converted name
    */
-  def apply(name : String) : String
+  def apply(name: String): String
 }
 
 /**
@@ -54,7 +54,7 @@ sealed trait UnquotedNameConverter
 case object CasePreservingUnquotedNameConverter
   extends UnquotedNameConverter
 {
-  def apply(name : String) : String =
+  def apply(name: String): String =
   {
     name
   }
@@ -67,7 +67,7 @@ case object CasePreservingUnquotedNameConverter
 case object LowercaseUnquotedNameConverter
   extends UnquotedNameConverter
 {
-  def apply(name : String) : String =
+  def apply(name: String): String =
   {
     name.toLowerCase
   }
@@ -81,7 +81,7 @@ case object LowercaseUnquotedNameConverter
 case object UppercaseUnquotedNameConverter
   extends UnquotedNameConverter
 {
-  def apply(name : String) : String =
+  def apply(name: String): String =
   {
     name.toUpperCase
   }

@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory
  */
 trait ColumnSupportsDefault
 {
-  this : ColumnDefinition =>
+  this: ColumnDefinition =>
 }
 
 /**
@@ -50,7 +50,7 @@ trait ColumnSupportsDefault
  */
 trait ColumnSupportsLimit
 {
-  this : ColumnDefinition =>
+  this: ColumnDefinition =>
 }
 
 /**
@@ -60,7 +60,7 @@ trait ColumnSupportsLimit
  */
 trait ColumnSupportsPrecision
 {
-  this : ColumnDefinition =>
+  this: ColumnDefinition =>
 }
 
 /**
@@ -70,7 +70,7 @@ trait ColumnSupportsPrecision
  */
 trait ColumnSupportsScale
 {
-  this : ColumnDefinition =>
+  this: ColumnDefinition =>
 }
 
 /**
@@ -89,7 +89,7 @@ class ColumnDefinition
    * The database adapter associated with this column definition,
    * which may or may not be set.
    */
-  protected[migration] var adapterOpt : Option[DatabaseAdapter] = None
+  protected[migration] var adapterOpt: Option[DatabaseAdapter] = None
 
   /**
    * The database adapter associated with this column definition.
@@ -105,7 +105,7 @@ class ColumnDefinition
    * The table name the column is defined in, which may or may not be
    * set.
    */
-  protected[migration] var tableNameOpt : Option[String] = None
+  protected[migration] var tableNameOpt: Option[String] = None
 
   /**
    * Get the table name the column is defined in.
@@ -119,7 +119,7 @@ class ColumnDefinition
   /**
    * The column's name, which may or may not be set.
    */
-  protected[migration] var columnNameOpt : Option[String] = None
+  protected[migration] var columnNameOpt: Option[String] = None
 
   /**
    * Get the column's name.
@@ -133,18 +133,18 @@ class ColumnDefinition
   /**
    * Column options.
    */
-  protected[migration] var options : List[ColumnOption] = _
+  protected[migration] var options: List[ColumnOption] = _
 
   /**
    * If a default is specified for the column.
    */
   private
-  var default : Option[String] = None
+  var default: Option[String] = None
 
   /**
    * Called after the above properties have been wired.
    */
-  def initialize() : Unit =
+  def initialize(): Unit =
   {
     if (this.isInstanceOf[ColumnSupportsLimit]) {
       checkForLimit()
@@ -220,9 +220,9 @@ class ColumnDefinition
    */
   private
   lazy
-  val notNullOpt : Option[Boolean] =
+  val notNullOpt: Option[Boolean] =
   {
-    var n1 : Option[Boolean] = None
+    var n1: Option[Boolean] = None
 
     for (option <- options) {
       val n2 = option match {
@@ -252,7 +252,7 @@ class ColumnDefinition
    */
   private
   lazy
-  val isPrimaryKey : Boolean =
+  val isPrimaryKey: Boolean =
   {
     var is_primary = false
 
@@ -333,7 +333,7 @@ class ColumnDefinition
    */
   private
   lazy
-  val isUnique : Boolean =
+  val isUnique: Boolean =
   {
     var unique = false
 
@@ -346,10 +346,10 @@ class ColumnDefinition
   }
 
   protected
-  def sql : String
+  def sql: String
 
   final
-  def toSql : String =
+  def toSql: String =
   {
     val sb = new java.lang.StringBuilder(512)
                .append(columnName)
@@ -377,8 +377,8 @@ class ColumnDefinition
     }
 
     for (option <- options) {
-      def appendCheckSql(name : String,
-                         expr : String) : Unit =
+      def appendCheckSql(name: String,
+                         expr: String): Unit =
       {
         options -= option
 
@@ -442,8 +442,8 @@ class ColumnDefinition
    * @return the column type name with the limit syntax if a limit was
    *         given
    */
-  def sqlForColumnType(column_type_name : String,
-                       limit_opt : Option[String]) : String =
+  def sqlForColumnType(column_type_name: String,
+                       limit_opt: Option[String]): String =
   {
     limit_opt match {
       case Some(l) => column_type_name + "(" + l + ")"
@@ -459,7 +459,7 @@ class ColumnDefinition
    * @return the column type name with the limit syntax if the column
    *         definition specifies a limit
    */
-  def sqlForColumnType(column_type_name : String) : String =
+  def sqlForColumnType(column_type_name: String): String =
   {
     sqlForColumnType(column_type_name, limit)
   }
@@ -479,7 +479,7 @@ abstract class AbstractDecimalColumnDefinition
    * Concrete subclasses must define this to the name of the DECIMAL
    * or NUMERIC data type specific for the database.
    */
-  val decimalSqlName : String
+  val decimalSqlName: String
 
   override
   def sql =

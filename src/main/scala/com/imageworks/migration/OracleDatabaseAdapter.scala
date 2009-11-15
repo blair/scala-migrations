@@ -65,7 +65,7 @@ class OracleBigintColumnDefinition
   val sql = "NUMBER(19, 0)"
 }
 
-class OracleCharColumnDefinition(use_nchar_type : Boolean)
+class OracleCharColumnDefinition(use_nchar_type: Boolean)
   extends ColumnDefinition
   with ColumnSupportsDefault
   with ColumnSupportsLimit
@@ -165,7 +165,7 @@ class OracleVarbinaryColumnDefinition
   }
 }
 
-class OracleVarcharColumnDefinition(use_nchar_type : Boolean)
+class OracleVarcharColumnDefinition(use_nchar_type: Boolean)
   extends ColumnDefinition
   with ColumnSupportsDefault
   with ColumnSupportsLimit
@@ -177,7 +177,7 @@ class OracleVarcharColumnDefinition(use_nchar_type : Boolean)
               sqlForColumnType("VARCHAR2")
 }
 
-class OracleDatabaseAdapter(override val schemaNameOpt : Option[String])
+class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
   extends DatabaseAdapter(schemaNameOpt)
 {
   override protected
@@ -185,8 +185,8 @@ class OracleDatabaseAdapter(override val schemaNameOpt : Option[String])
 
   override
   def columnDefinitionFactory
-    (column_type : SqlType,
-     character_set_opt : Option[CharacterSet]) : ColumnDefinition =
+    (column_type: SqlType,
+     character_set_opt: Option[CharacterSet]): ColumnDefinition =
   {
     val use_nchar_type =
       character_set_opt match {
@@ -234,9 +234,9 @@ class OracleDatabaseAdapter(override val schemaNameOpt : Option[String])
   }
 
   override
-  def removeIndexSql(schema_name_opt : Option[String],
-                     table_name : String,
-                     index_name : String) : String =
+  def removeIndexSql(schema_name_opt: Option[String],
+                     table_name: String,
+                     index_name: String): String =
   {
     "DROP INDEX " +
     quoteColumnName(index_name) +
@@ -245,10 +245,10 @@ class OracleDatabaseAdapter(override val schemaNameOpt : Option[String])
   }
 
   override
-  def grantSql(schema_name_opt : Option[String],
-               table_name : String,
-               grantees : Array[String],
-               privileges : GrantPrivilegeType*) : String =
+  def grantSql(schema_name_opt: Option[String],
+               table_name: String,
+               grantees: Array[String],
+               privileges: GrantPrivilegeType*): String =
   {
     // Check that no columns are defined for any SELECT privs
     for {
@@ -260,14 +260,14 @@ class OracleDatabaseAdapter(override val schemaNameOpt : Option[String])
       throw new IllegalArgumentException(message)
     }
 
-    super.grantSql(schema_name_opt, table_name, grantees, privileges : _*)
+    super.grantSql(schema_name_opt, table_name, grantees, privileges: _*)
   }
 
   override
-  def revokeSql(schema_name_opt : Option[String],
-                table_name : String,
-                grantees : Array[String],
-                privileges : GrantPrivilegeType*) : String =
+  def revokeSql(schema_name_opt: Option[String],
+                table_name: String,
+                grantees: Array[String],
+                privileges: GrantPrivilegeType*): String =
   {
     // Check that no columns are defined for any privs with columns
     for {
@@ -279,7 +279,7 @@ class OracleDatabaseAdapter(override val schemaNameOpt : Option[String])
       throw new IllegalArgumentException(message)
     }
 
-    super.revokeSql(schema_name_opt, table_name, grantees, privileges : _*)
+    super.revokeSql(schema_name_opt, table_name, grantees, privileges: _*)
   }
 
   /**
@@ -297,7 +297,7 @@ class OracleDatabaseAdapter(override val schemaNameOpt : Option[String])
    *        relationship
    */
   override
-  def onDeleteSql(on_delete_opt : Option[OnDelete]) : String =
+  def onDeleteSql(on_delete_opt: Option[OnDelete]): String =
   {
     on_delete_opt match {
       case Some(OnDelete(Restrict)) => ""

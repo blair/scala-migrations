@@ -40,12 +40,12 @@ import com.imageworks.migration.{
 class Migrate_200811261513_Grants
   extends Migration
 {
-  def up() : Unit =
+  def up(): Unit =
   {
     grant("location", "test", SelectPrivilege)
   }
 
-  def down() : Unit =
+  def down(): Unit =
   {
     revoke("location", "test", SelectPrivilege)
   }
