@@ -46,7 +46,7 @@ class CreateSchemaMigrationsTableMigration
   extends Migration
 {
   override
-  def up() : Unit =
+  def up(): Unit =
   {
     createTable(Migrator.schemaMigrationsTableName) { t =>
       t.varchar("version", Limit(32), NotNull)
@@ -59,7 +59,7 @@ class CreateSchemaMigrationsTableMigration
   }
 
   override
-  def down() : Unit =
+  def down(): Unit =
   {
     throw new IrreversibleMigrationException
   }
@@ -86,9 +86,9 @@ object Migrator
    */
   private
   def classNamesInJar
-    (path : String,
-     package_name : String,
-     search_sub_packages : Boolean) : scala.collection.mutable.HashSet[String] =
+    (path: String,
+     package_name: String,
+     search_sub_packages: Boolean): scala.collection.mutable.HashSet[String] =
   {
     // Search for the package in the JAR file by mapping the package
     // name to the expected name in the JAR file, then append a '/' to
@@ -97,7 +97,7 @@ object Migrator
     val pn = package_name.replace('.', '/') + '/'
 
     val class_names = new scala.collection.mutable.HashSet[String]
-    var jar : java.util.jar.JarFile = null
+    var jar: java.util.jar.JarFile = null
     try {
       jar = new java.util.jar.JarFile(path, false)
       val entries = jar.entries
@@ -136,14 +136,14 @@ object Migrator
    * @return a set of the class names the directory contains
    */
   private
-  def classNamesInDir(file : java.io.File,
-                      package_name : String,
-                      search_sub_packages : Boolean) : scala.collection.mutable.HashSet[String] =
+  def classNamesInDir(file: java.io.File,
+                      package_name: String,
+                      search_sub_packages: Boolean): scala.collection.mutable.HashSet[String] =
   {
     val class_names = new scala.collection.mutable.HashSet[String]
 
-    def scan(f : java.io.File,
-             pn : String) : Unit =
+    def scan(f: java.io.File,
+             pn: String): Unit =
     {
       val child_files = f.listFiles
 
@@ -192,9 +192,9 @@ object Migrator
    *         Migration subclasses as the value
    */
   private
-  def findMigrations(package_name : String,
-                     search_sub_packages : Boolean,
-                     logger : Logger) : scala.collection.immutable.SortedMap[Long,Class[_ <: Migration]] =
+  def findMigrations(package_name: String,
+                     search_sub_packages: Boolean,
+                     logger: Logger): scala.collection.immutable.SortedMap[Long,Class[_ <: Migration]] =
   {
     // Ask the current class loader for the resource corresponding to
     // the package, which can refer to a directory, a jar file
@@ -318,7 +318,7 @@ object Migrator
       new scala.collection.immutable.TreeMap[Long,Class[_ <: Migration]]
 
     for ((version, class_name) <- seen_versions) {
-      var c : Class[_] = null
+      var c: Class[_] = null
       try {
         c = Class.forName(class_name)
         if (classOf[Migration].isAssignableFrom(c) &&
@@ -331,7 +331,7 @@ object Migrator
             results = results.insert(version, casted_class)
           }
           catch {
-            case e : java.lang.NoSuchMethodException => {
+            case e: java.lang.NoSuchMethodException => {
               logger.debug("Unable to find a no-argument constructor for '" +
                            class_name +
                            "'",
@@ -355,8 +355,8 @@ object Migrator
 }
 
 private
-class RawAndLoggingConnections(val raw : java.sql.Connection,
-                               val logging : java.sql.Connection)
+class RawAndLoggingConnections(val raw: java.sql.Connection,
+                               val logging: java.sql.Connection)
 
 /**
  * This sealed trait's specifies the commit behavior on a database
@@ -399,9 +399,9 @@ private case object CommitUponReturnRollbackUponException
 /**
  * This class migrates the database into the desired state.
  */
-class Migrator private (jdbc_conn : Either[DataSource, String],
-                        jdbc_login : Option[Tuple2[String,String]],
-                        adapter : DatabaseAdapter)
+class Migrator private (jdbc_conn: Either[DataSource, String],
+                        jdbc_login: Option[Tuple2[String,String]],
+                        adapter: DatabaseAdapter)
 {
   import Migrator._
   import RichConnection._
@@ -419,8 +419,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
    */
-  def this(jdbc_url : String,
-           adapter : DatabaseAdapter) =
+  def this(jdbc_url: String,
+           adapter: DatabaseAdapter) =
   {
     this(Right(jdbc_url), None, adapter)
   }
@@ -434,10 +434,10 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
    */
-  def this(jdbc_url : String,
-           jdbc_username : String,
-           jdbc_password : String,
-           adapter : DatabaseAdapter) =
+  def this(jdbc_url: String,
+           jdbc_username: String,
+           jdbc_password: String,
+           adapter: DatabaseAdapter) =
   {
     this(Right(jdbc_url),
          Some((jdbc_username, jdbc_password)),
@@ -450,8 +450,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
    */
-  def this(jdbc_datasource : DataSource,
-           adapter : DatabaseAdapter) =
+  def this(jdbc_datasource: DataSource,
+           adapter: DatabaseAdapter) =
   {
     this(Left(jdbc_datasource), None, adapter)
   }
@@ -466,10 +466,10 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
    */
-  def this(jdbc_datasource : DataSource,
-           jdbc_username : String,
-           jdbc_password : String,
-           adapter : DatabaseAdapter) =
+  def this(jdbc_datasource: DataSource,
+           jdbc_username: String,
+           jdbc_password: String,
+           adapter: DatabaseAdapter) =
   {
     this(Left(jdbc_datasource),
          Some((jdbc_username, jdbc_password)),
@@ -491,8 +491,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    */
   // http://lampsvn.epfl.ch/trac/scala/ticket/442
   private[migration] def withRawConnection[T]
-    (commit_behavior : CommitBehavior)
-    (f : java.sql.Connection => T) : T =
+    (commit_behavior: CommitBehavior)
+    (f: java.sql.Connection => T): T =
   {
     val raw_connection = {
       (jdbc_conn, jdbc_login) match {
@@ -582,8 +582,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @return what f returns
    */
   private[migration] def withLoggingConnection[T]
-    (commit_behavior : CommitBehavior)
-    (f : java.sql.Connection => T) : T =
+    (commit_behavior: CommitBehavior)
+    (f: java.sql.Connection => T): T =
   {
     withRawConnection(commit_behavior) { raw_connection =>
       f(new net.sf.log4jdbc.ConnectionSpy(raw_connection))
@@ -605,8 +605,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @return what f returns
    */
   private[migration] def withConnections[T]
-    (commit_behavior : CommitBehavior)
-    (f : RawAndLoggingConnections => T) : T =
+    (commit_behavior: CommitBehavior)
+    (f: RawAndLoggingConnections => T): T =
   {
     withRawConnection(commit_behavior) { raw_connection =>
       val logging_connection =
@@ -622,7 +622,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @return a set of table names; no modifications of the case of
    *         table names is done
    */
-  def getTableNames : scala.collection.Set[String] =
+  def getTableNames: scala.collection.Set[String] =
   {
     withLoggingConnection(AutoCommit) { connection =>
       val metadata = connection.getMetaData
@@ -650,9 +650,9 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    */
   private
   def runMigration
-    (migration_class : Class[_ <: Migration],
-     direction : MigrationDirection,
-     version_update_opt : Option[Tuple2[java.sql.Connection,Long]]) : Unit =
+    (migration_class: Class[_ <: Migration],
+     direction: MigrationDirection,
+     version_update_opt: Option[Tuple2[java.sql.Connection,Long]]): Unit =
   {
     logger.info("Migrating {} with '{}'.",
                 direction.str,
@@ -698,7 +698,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @return true if the "schema_migration" table exists
    */
   private
-  def doesSchemaMigrationsTableExist : Boolean =
+  def doesSchemaMigrationsTableExist: Boolean =
   {
     val smtn = Migrator.schemaMigrationsTableName.toLowerCase
     getTableNames.find(_.toLowerCase == smtn) match {
@@ -711,7 +711,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * Creates the schema migrations table if it does not exist.
    */
   private
-  def initializeSchemaMigrationsTable() : Unit =
+  def initializeSchemaMigrationsTable(): Unit =
   {
     if (! doesSchemaMigrationsTableExist) {
       runMigration(classOf[CreateSchemaMigrationsTableMigration], Up, None)
@@ -728,7 +728,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    */
   private
   def getInstalledVersions
-    (connection : java.sql.Connection) : scala.collection.SortedSet[Long] =
+    (connection: java.sql.Connection): scala.collection.SortedSet[Long] =
   {
     val sql = "SELECT version FROM " +
               adapter.quoteTableName(schemaMigrationsTableName)
@@ -742,7 +742,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
             versions = versions.insert(version)
           }
           catch {
-            case e : java.lang.NumberFormatException => {
+            case e: java.lang.NumberFormatException => {
               logger.warn("Ignoring installed migration with unparsable " +
                           "version number '" +
                           version_str +
@@ -763,7 +763,7 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @return a sorted set of version numbers of the installed
    *         migrations
    */
-  def getInstalledVersions : scala.collection.SortedSet[Long] =
+  def getInstalledVersions: scala.collection.SortedSet[Long] =
   {
     withLoggingConnection(AutoCommit) { connection =>
       getInstalledVersions(connection)
@@ -784,9 +784,9 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *       should be searched
    * @param operation the migration operation that should be performed
    */
-  def migrate(operation : MigratorOperation,
-              package_name : String,
-              search_sub_packages : Boolean) : Unit =
+  def migrate(operation: MigratorOperation,
+              package_name: String,
+              search_sub_packages: Boolean): Unit =
   {
     initializeSchemaMigrationsTable()
 
@@ -834,8 +834,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
         logger.info("No migrations found, nothing to do.")
       }
 
-      case class InstallRemove(install_versions : Array[Long],
-                               remove_versions : Array[Long])
+      case class InstallRemove(install_versions: Array[Long],
+                               remove_versions: Array[Long])
 
       // From the operation, determine the migrations to install and
       // the ones to uninstall.
@@ -928,8 +928,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    * @parm search_sub_packages true if sub-packages of package_name
    *       should be searched
    */
-  def getMigrationStatuses(package_name : String,
-                           search_sub_packages : Boolean) : MigrationStatuses =
+  def getMigrationStatuses(package_name: String,
+                           search_sub_packages: Boolean): MigrationStatuses =
   {
     val available_migrations = findMigrations(package_name,
                                               search_sub_packages,
@@ -987,8 +987,8 @@ class Migrator private (jdbc_conn : Either[DataSource, String],
    *         installed migrations that do not have a matching
    *         Migration subclass
    */
-  def whyNotMigrated(package_name : String,
-                     search_sub_packages : Boolean) : Option[String] =
+  def whyNotMigrated(package_name: String,
+                     search_sub_packages: Boolean): Option[String] =
   {
     val migration_statuses = getMigrationStatuses(package_name,
                                                   search_sub_packages)

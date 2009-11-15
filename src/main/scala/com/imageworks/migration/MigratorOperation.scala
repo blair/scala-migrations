@@ -55,7 +55,7 @@ case object RemoveAllMigrations
  * Remove all migrations with versions greater than the given version
  * and install all migrations less then or equal to the given version.
  */
-case class MigrateToVersion(version : Long)
+case class MigrateToVersion(version: Long)
   extends MigratorOperation
 
 /**
@@ -65,7 +65,7 @@ case class MigrateToVersion(version : Long)
  * version less then the target version.  This rollback operation only
  * removes migrations from the database.
  */
-case class RollbackMigration(count : Int)
+case class RollbackMigration(count: Int)
   extends MigratorOperation
 {
   if (count < 1) {

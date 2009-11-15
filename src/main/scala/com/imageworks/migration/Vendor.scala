@@ -58,7 +58,7 @@ object Vendor
    *         null, scala.MatchError if an appropriate vendor cannot be
    *         found
    */
-  def forDriver(driver_class_name : String) : Vendor =
+  def forDriver(driver_class_name: String): Vendor =
   {
     driver_class_name match {
       case "oracle.jdbc.driver.OracleDriver" =>
@@ -98,7 +98,7 @@ object Vendor
    *         null, scala.MatchError if an appropriate vendor cannot be
    *         found
    */
-  def forDriver(driver_class : Class[_]) : Vendor =
+  def forDriver(driver_class: Class[_]): Vendor =
   {
     if (driver_class eq null) {
       val message = "Must pass a non-null JDBC driver class to this function."

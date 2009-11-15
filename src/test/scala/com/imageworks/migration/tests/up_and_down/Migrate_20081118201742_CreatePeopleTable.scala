@@ -37,7 +37,7 @@ import com.imageworks.migration.Migration
 class Migrate_20081118201742_CreatePeopleTable
   extends Migration
 {
-  def up() : Unit =
+  def up(): Unit =
   {
     createTable("people") { t =>
       t.varbinary("pk_people", PrimaryKey, Limit(16))
@@ -68,7 +68,7 @@ class Migrate_20081118201742_CreatePeopleTable
     addCheck(on("people" -> "vacation_days"), "vacation_days >= 0")
   }
 
-  def down() : Unit =
+  def down(): Unit =
   {
     removeCheck(on("people" -> "vacation_days"))
     removeForeignKey(on("people" -> "pk_location"),

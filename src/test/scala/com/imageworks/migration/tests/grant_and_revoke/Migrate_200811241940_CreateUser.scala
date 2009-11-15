@@ -37,7 +37,7 @@ import com.imageworks.migration.Migration
 class Migrate_200811241940_CreateUser
   extends Migration
 {
-  def up() : Unit =
+  def up(): Unit =
   {
     // These commands configure Derby to turn on user authentication,
     // create users, and enable SQL authorization, needed for GRANT
@@ -67,7 +67,7 @@ class Migrate_200811241940_CreateUser
     }
   }
 
-  def down() : Unit =
+  def down(): Unit =
   {
     dropTable("location")
 
