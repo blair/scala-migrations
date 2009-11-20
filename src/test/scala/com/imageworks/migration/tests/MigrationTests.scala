@@ -52,13 +52,13 @@ class MigrationTests
   Class.forName("org.apache.derby.jdbc.EmbeddedDriver")
 
   private
-  var migrator : Migrator = _
+  var migrator: Migrator = _
 
   private
-  var url : String = _
+  var url: String = _
 
   @Before
-  def set_up() : Unit =
+  def set_up(): Unit =
   {
     val db_name = System.currentTimeMillis.toString
     url = "jdbc:derby:" + db_name
@@ -70,7 +70,7 @@ class MigrationTests
   }
 
   @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
-  def duplicate_descriptions_throw_exception : Unit =
+  def duplicate_descriptions_throw_exception: Unit =
   {
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.duplicate_descriptions",
@@ -78,7 +78,7 @@ class MigrationTests
   }
 
   @Test { val expected = classOf[DuplicateMigrationVersionException] }
-  def duplicate_versions_throw_exception : Unit =
+  def duplicate_versions_throw_exception: Unit =
   {
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.duplicate_versions",
@@ -86,7 +86,7 @@ class MigrationTests
   }
 
   @Test { val expected = classOf[IllegalArgumentException] }
-  def scale_without_precision : Unit =
+  def scale_without_precision: Unit =
   {
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.scale_without_precision",
@@ -94,7 +94,7 @@ class MigrationTests
   }
 
   @Test
-  def migrate_up_and_down : Unit =
+  def migrate_up_and_down: Unit =
   {
     // There should be no tables in the schema initially.
     assertEquals(0, migrator.getTableNames.size)
@@ -206,7 +206,7 @@ class MigrationTests
   }
 
   @Test
-  def get_migration_statuses_does_not_create_schema_migrations : Unit =
+  def get_migration_statuses_does_not_create_schema_migrations: Unit =
   {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
@@ -241,7 +241,7 @@ class MigrationTests
   }
 
   @Test
-  def why_not_migrated_does_not_create_schema_migrations : Unit =
+  def why_not_migrated_does_not_create_schema_migrations: Unit =
   {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
@@ -266,7 +266,7 @@ class MigrationTests
   }
 
   @Test
-  def grant_and_revoke : Unit =
+  def grant_and_revoke: Unit =
   {
     // create a second user, make a table
     migrator.migrate(MigrateToVersion(200811241940L),
@@ -281,13 +281,13 @@ class MigrationTests
     }
     catch {
       // For JDBC3 (JDK 1.5)
-      case e : org.apache.derby.impl.jdbc.EmbedSQLException =>
+      case e: org.apache.derby.impl.jdbc.EmbedSQLException =>
 
       // For JDBC4 (JDK 1.6), a
       // java.sql.SQLNonTransientConnectionException is
       // thrown, but this exception class does not exist in JDK 1.5,
       // so catch a java.sql.SQLException instead.
-      case e : java.sql.SQLException =>
+      case e: java.sql.SQLException =>
     }
 
     // new connection with test user
@@ -298,7 +298,7 @@ class MigrationTests
 
     val select_sql = "SELECT name FROM APP.location"
 
-    def run_select : Unit =
+    def run_select: Unit =
     {
       test_migrator.withLoggingConnection(AutoCommit) { connection =>
         val statement = connection.prepareStatement(select_sql)
@@ -319,7 +319,7 @@ class MigrationTests
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
       // could be caught here, but for 1.5 compaitibility, only a
       // java.sql.SQLException is caught.
-      case e : java.sql.SQLException => // expected
+      case e: java.sql.SQLException => // expected
     }
 
     // new connection with APP user
@@ -341,7 +341,7 @@ class MigrationTests
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
       // could be caught here, but for 1.5 compaitibility, only a
       // java.sql.SQLException is caught.
-      case e : java.sql.SQLException =>
+      case e: java.sql.SQLException =>
         // failure if got here
         fail("SELECT permission failure unexpected")
     }
@@ -362,12 +362,12 @@ class MigrationTests
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
       // could be caught here, but for 1.5 compaitibility, only a
       // java.sql.SQLException is caught.
-      case e : java.sql.SQLException => // expected
+      case e: java.sql.SQLException => // expected
     }
   }
 
   @Test
-  def columns_can_hold_types : Unit =
+  def columns_can_hold_types: Unit =
   {
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.types",
@@ -397,7 +397,7 @@ class MigrationTests
         val select_statement = connection.prepareStatement(select_sql)
         select_statement.setObject(1, v)
         With.resultSet(select_statement.executeQuery()) { rs =>
-          var counts : List[Int] = Nil
+          var counts: List[Int] = Nil
           while (rs.next()) {
             counts = rs.getInt(1) :: counts
           }
@@ -410,7 +410,7 @@ class MigrationTests
   }
 
   @Test
-  def with_result_set_closes_on_normal_return : Unit =
+  def with_result_set_closes_on_normal_return: Unit =
   {
     val mock_rs = context.mock(classOf[java.sql.ResultSet])
 
@@ -418,11 +418,11 @@ class MigrationTests
                        oneOf (mock_rs).close()
                      })
 
-    var rs1 : java.sql.ResultSet = null
+    var rs1: java.sql.ResultSet = null
 
     val m = new Migration {
               override
-              def up() : Unit =
+              def up(): Unit =
               {
                 withResultSet(mock_rs) { rs2 =>
                   rs1 = rs2
@@ -430,7 +430,7 @@ class MigrationTests
               }
 
               override
-              def down() : Unit =
+              def down(): Unit =
               {
               }
             }
@@ -443,7 +443,7 @@ class MigrationTests
   }
 
   @Test
-  def with_result_set_closes_on_throw : Unit =
+  def with_result_set_closes_on_throw: Unit =
   {
     val mock_rs = context.mock(classOf[java.sql.ResultSet])
 
@@ -451,14 +451,14 @@ class MigrationTests
                        oneOf (mock_rs).close()
                      })
 
-    var rs1 : java.sql.ResultSet = null
+    var rs1: java.sql.ResultSet = null
 
     class ThisSpecialException
       extends java.lang.Throwable
 
     val m = new Migration {
               override
-              def up() : Unit =
+              def up(): Unit =
               {
                 withResultSet(mock_rs) { rs2 =>
                   rs1 = rs2
@@ -467,7 +467,7 @@ class MigrationTests
               }
 
               override
-              def down() : Unit =
+              def down(): Unit =
               {
               }
             }
@@ -476,7 +476,7 @@ class MigrationTests
       m.up()
     }
     catch {
-      case _ : ThisSpecialException =>
+      case _: ThisSpecialException =>
     }
 
     context.assertIsSatisfied()

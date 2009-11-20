@@ -37,7 +37,7 @@ import com.imageworks.migration.Migration
 class Migrate_20081212213908_CreateTypetestTable
   extends Migration
 {
-  def up() : Unit =
+  def up(): Unit =
   {
     createTable("types_test") { t =>
       // The binary column is not tested because its representation is
@@ -54,7 +54,7 @@ class Migrate_20081212213908_CreateTypetestTable
     }
   }
 
-  def down() : Unit =
+  def down(): Unit =
   {
     dropTable("types_test")
   }

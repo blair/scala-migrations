@@ -49,14 +49,14 @@ import org.slf4j.LoggerFactory
  * allows it to be overloaded on the second type of the Tuple2.  The
  * MigrationArrowAssoc class has the new -> method.
  */
-class MigrationArrowAssoc(s : String)
+class MigrationArrowAssoc(s: String)
 {
-  def `->`(other : String) : TableColumnDefinition =
+  def `->`(other: String): TableColumnDefinition =
   {
     new TableColumnDefinition(s, Array(other))
   }
 
-  def `->`(other : Tuple2[String,String]) : TableColumnDefinition =
+  def `->`(other: Tuple2[String,String]): TableColumnDefinition =
   {
     new TableColumnDefinition(s, Array(other._1, other._2))
   }
@@ -71,14 +71,14 @@ abstract class Migration
    * Concrete migration classes must define this method to migrate the
    * database up to a new migration.
    */
-  def up() : Unit
+  def up(): Unit
 
   /**
    * Concrete migration classes must define this method to back out of
    * this migration.  If the migration cannot be reversed, then a
    * IrreversibleMigrationException should be thrown.
    */
-  def down() : Unit
+  def down(): Unit
 
   /**
 
@@ -92,7 +92,7 @@ abstract class Migration
    * constructor style injection, which makes for cleaner code for the
    * users of this migration framework.
    */
-  private[migration] var rawConnectionOpt : Option[java.sql.Connection] = None
+  private[migration] var rawConnectionOpt: Option[java.sql.Connection] = None
 
   /**
    * Get the raw connection to the database the migration can use for
@@ -114,7 +114,7 @@ abstract class Migration
    * constructor style injection, which makes for cleaner code for the
    * users of this migration framework.
    */
-  private[migration] var connectionOpt : Option[java.sql.Connection] = None
+  private[migration] var connectionOpt: Option[java.sql.Connection] = None
 
   /**
    * Get the connection to the database the migration can use for any
@@ -132,7 +132,7 @@ abstract class Migration
    * constructor style injection, which makes for cleaner code for the
    * users of this migration framework.
    */
-  private[migration] var adapterOpt : Option[DatabaseAdapter] = None
+  private[migration] var adapterOpt: Option[DatabaseAdapter] = None
 
   /**
    * The The database adapter that will be used for the migration.
@@ -145,7 +145,7 @@ abstract class Migration
    * the above comment on the MigrationArrowAssoc class why this is
    * done.
    */
-  implicit def stringToMigrationArrowAssoc(s : String) : MigrationArrowAssoc =
+  implicit def stringToMigrationArrowAssoc(s: String): MigrationArrowAssoc =
   {
     new MigrationArrowAssoc(s)
   }
@@ -154,7 +154,7 @@ abstract class Migration
    * Convert a table and column name definition into a On foreign key
    * instance.
    */
-  def on(definition : TableColumnDefinition) : On =
+  def on(definition: TableColumnDefinition): On =
   {
     new On(definition)
   }
@@ -163,13 +163,13 @@ abstract class Migration
    * Convert a table and column name definition into a References
    * foreign key instance.
    */
-  def references(definition : TableColumnDefinition) : References =
+  def references(definition: TableColumnDefinition): References =
   {
     new References(definition)
   }
 
   final
-  def execute(sql : String) : Unit =
+  def execute(sql: String): Unit =
   {
     val statement = connection.createStatement
     try {
@@ -196,8 +196,8 @@ abstract class Migration
    *        be given a new prepared statement
    */
   final
-  def withPreparedStatement(sql : String)
-                           (f : java.sql.PreparedStatement => Unit) : Unit =
+  def withPreparedStatement(sql: String)
+                           (f: java.sql.PreparedStatement => Unit): Unit =
   {
     val c = connection
     val auto_commit = c.getAutoCommit
@@ -244,16 +244,16 @@ abstract class Migration
    * @return the result of f if f returns normally
    */
   final
-  def withResultSet[R](rs : java.sql.ResultSet)
-                      (f : java.sql.ResultSet => R) : R =
+  def withResultSet[R](rs: java.sql.ResultSet)
+                      (f: java.sql.ResultSet => R): R =
   {
     With.resultSet(rs)(f)
   }
 
   final
-  def createTable(table_name : String,
-                  options : TableOption*)
-                 (body : TableDefinition => Unit) : Unit =
+  def createTable(table_name: String,
+                  options: TableOption*)
+                 (body: TableDefinition => Unit): Unit =
   {
     val table_definition = new TableDefinition(adapter, table_name)
 
@@ -270,14 +270,14 @@ abstract class Migration
   }
 
   final
-  def addColumn(table_name : String,
-                column_name : String,
-                column_type : SqlType,
-                options : ColumnOption*)
+  def addColumn(table_name: String,
+                column_name: String,
+                column_type: SqlType,
+                options: ColumnOption*)
   {
     val table_definition = new TableDefinition(adapter, table_name)
 
-    table_definition.column(column_name, column_type, options : _*)
+    table_definition.column(column_name, column_type, options: _*)
     val sql = new java.lang.StringBuilder(512)
                 .append("ALTER TABLE ")
                 .append(adapter.quoteTableName(table_name))
@@ -288,8 +288,8 @@ abstract class Migration
   }
 
   final
-  def removeColumn(table_name : String,
-                   column_name : String)
+  def removeColumn(table_name: String,
+                   column_name: String)
   {
     val sql = new java.lang.StringBuilder(512)
                 .append("ALTER TABLE ")
@@ -301,7 +301,7 @@ abstract class Migration
   }
 
   final
-  def dropTable(table_name : String) : Unit =
+  def dropTable(table_name: String): Unit =
   {
     val sql = new java.lang.StringBuilder(512)
                 .append("DROP TABLE ")
@@ -311,13 +311,13 @@ abstract class Migration
   }
 
   private
-  def indexNameFor(table_name : String,
-                   column_names : Array[String],
-                   options : IndexOption*) : Tuple2[String,List[IndexOption]] =
+  def indexNameFor(table_name: String,
+                   column_names: Array[String],
+                   options: IndexOption*): Tuple2[String,List[IndexOption]] =
   {
     var opts = options.toList
 
-    var index_name_opt : Option[String] = None
+    var index_name_opt: Option[String] = None
 
     for (opt @ Name(name) <- opts) {
       opts -= opt
@@ -351,16 +351,16 @@ abstract class Migration
    *        customize the creation of the index
    */
   final
-  def addIndex(table_name : String,
-               column_names : Array[String],
-               options : IndexOption*) : Unit =
+  def addIndex(table_name: String,
+               column_names: Array[String],
+               options: IndexOption*): Unit =
   {
     if (column_names.isEmpty) {
       throw new IllegalArgumentException("Adding an index requires at " +
                                          "least one column name.")
     }
 
-    var (name, opts) = indexNameFor(table_name, column_names, options : _*)
+    var (name, opts) = indexNameFor(table_name, column_names, options: _*)
 
     var unique = false
     for (option @ Unique <- opts) {
@@ -399,11 +399,11 @@ abstract class Migration
    *        customize the creation of the index
    */
   final
-  def addIndex(table_name : String,
-               column_name : String,
-               options : IndexOption*) : Unit =
+  def addIndex(table_name: String,
+               column_name: String,
+               options: IndexOption*): Unit =
   {
-    addIndex(table_name, Array(column_name), options : _*)
+    addIndex(table_name, Array(column_name), options: _*)
   }
 
   /**
@@ -418,16 +418,16 @@ abstract class Migration
    *        customize the removal of the index
    */
   final
-  def removeIndex(table_name : String,
-                  column_names : Array[String],
-                  options : Name*) : Unit =
+  def removeIndex(table_name: String,
+                  column_names: Array[String],
+                  options: Name*): Unit =
   {
     if (column_names.isEmpty) {
       throw new IllegalArgumentException("Removing an index requires at " +
                                          "least one column name.")
     }
 
-    val (name, opts) = indexNameFor(table_name, column_names, options : _*)
+    val (name, opts) = indexNameFor(table_name, column_names, options: _*)
 
     val sql = adapter.removeIndexSql(table_name, name)
 
@@ -445,11 +445,11 @@ abstract class Migration
    *        customize the removal of the index
    */
   final
-  def removeIndex(table_name : String,
-                  column_name : String,
-                  options : Name*) : Unit =
+  def removeIndex(table_name: String,
+                  column_name: String,
+                  options: Name*): Unit =
   {
-    removeIndex(table_name, Array(column_name), options : _*)
+    removeIndex(table_name, Array(column_name), options: _*)
   }
 
   /**
@@ -465,13 +465,13 @@ abstract class Migration
    */
   private
   def foreignKeyNameFor
-    (on : On,
-     references : References,
-     options : ForeignKeyOption*) : Tuple2[String,List[ForeignKeyOption]] =
+    (on: On,
+     references: References,
+     options: ForeignKeyOption*): Tuple2[String,List[ForeignKeyOption]] =
   {
     var opts = options.toList
 
-    var fk_name_opt : Option[String] = None
+    var fk_name_opt: Option[String] = None
 
     for (opt @ Name(name) <- opts) {
       opts -= opt
@@ -508,9 +508,9 @@ abstract class Migration
    * @param options a possibly empty list of foreign key options to
    *        customize the creation of the foreign key
    */
-  def addForeignKey(on : On,
-                    references : References,
-                    options : ForeignKeyOption*) : Unit =
+  def addForeignKey(on: On,
+                    references: References,
+                    options: ForeignKeyOption*): Unit =
   {
     if (on.columnNames.length == 0) {
       throw new IllegalArgumentException("Adding a foreign key constraint " +
@@ -524,7 +524,7 @@ abstract class Migration
                                          "from the table being referenced.")
     }
 
-    var (name, opts) = foreignKeyNameFor(on, references, options : _*)
+    var (name, opts) = foreignKeyNameFor(on, references, options: _*)
 
     val a = adapter
     val quoted_on_column_names = on.columnNames.map {
@@ -535,7 +535,7 @@ abstract class Migration
                                            a.quoteColumnName(_)
                                          }.mkString(", ")
 
-    var on_delete_opt : Option[OnDelete] = None
+    var on_delete_opt: Option[OnDelete] = None
 
     for (opt @ OnDelete(action) <- opts) {
       if (on_delete_opt.isDefined && action != on_delete_opt.get.action) {
@@ -547,7 +547,7 @@ abstract class Migration
       on_delete_opt = Some(opt)
     }
 
-    var on_update_opt : Option[OnUpdate] = None
+    var on_update_opt: Option[OnUpdate] = None
 
     for (opt @ OnUpdate(action) <- opts) {
       if (on_update_opt.isDefined && action != on_update_opt.get.action) {
@@ -598,11 +598,11 @@ abstract class Migration
    * @param options a possibly empty list of foreign key options to
    *        customize the creation of the foreign key
    */
-  def addForeignKey(references : References,
-                    on : On,
-                    options : ForeignKeyOption*) : Unit =
+  def addForeignKey(references: References,
+                    on: On,
+                    options: ForeignKeyOption*): Unit =
   {
-    addForeignKey(on, references, options : _*)
+    addForeignKey(on, references, options: _*)
   }
 
   /**
@@ -616,9 +616,9 @@ abstract class Migration
    * @param options a possibly empty list of foreign key options to
    *        customize the removal of the foreign key
    */
-  def removeForeignKey(on : On,
-                       references : References,
-                       options : Name*) : Unit =
+  def removeForeignKey(on: On,
+                       references: References,
+                       options: Name*): Unit =
   {
     if (on.columnNames.length == 0) {
       throw new IllegalArgumentException("Removing a foreign key constraint " +
@@ -632,7 +632,7 @@ abstract class Migration
                                          "from the table being referenced.")
     }
 
-    var (name, opts) = foreignKeyNameFor(on, references, options : _*)
+    var (name, opts) = foreignKeyNameFor(on, references, options: _*)
 
     execute("ALTER TABLE " +
             adapter.quoteTableName(on.tableName) +
@@ -651,11 +651,11 @@ abstract class Migration
    * @param options a possibly empty list of foreign key options to
    *        customize the removal of the foreign key
    */
-  def removeForeignKey(references : References,
-                       on : On,
-                       options : Name*) : Unit =
+  def removeForeignKey(references: References,
+                       on: On,
+                       options: Name*): Unit =
   {
-    removeForeignKey(on, references, options : _*)
+    removeForeignKey(on, references, options: _*)
   }
 
   /**
@@ -667,9 +667,9 @@ abstract class Migration
    *        grantees
    */
   final
-  def grant(table_name : String,
-            grantees : Array[String],
-            privileges : GrantPrivilegeType*) : Unit =
+  def grant(table_name: String,
+            grantees: Array[String],
+            privileges: GrantPrivilegeType*): Unit =
   {
     if (grantees.isEmpty) {
       throw new IllegalArgumentException("Granting permissions requires " +
@@ -681,7 +681,7 @@ abstract class Migration
                                          "at least one privilege.")
     }
 
-    val sql = adapter.grantSql(table_name, grantees, privileges : _*)
+    val sql = adapter.grantSql(table_name, grantees, privileges: _*)
 
     execute(sql)
   }
@@ -695,11 +695,11 @@ abstract class Migration
    *        grantees
    */
   final
-  def grant(table_name : String,
-            grantee : String,
-            privileges : GrantPrivilegeType*) : Unit =
+  def grant(table_name: String,
+            grantee: String,
+            privileges: GrantPrivilegeType*): Unit =
   {
-    grant(table_name, Array(grantee), privileges : _*)
+    grant(table_name, Array(grantee), privileges: _*)
   }
 
   /**
@@ -711,9 +711,9 @@ abstract class Migration
    *        the grantees
    */
   final
-  def revoke(table_name : String,
-             grantees : Array[String],
-             privileges : GrantPrivilegeType*) : Unit =
+  def revoke(table_name: String,
+             grantees: Array[String],
+             privileges: GrantPrivilegeType*): Unit =
   {
     if (grantees.isEmpty) {
       throw new IllegalArgumentException("Revoking permissions requires " +
@@ -725,7 +725,7 @@ abstract class Migration
                                          "at least one privilege.")
     }
 
-    val sql = adapter.revokeSql(table_name, grantees, privileges : _*)
+    val sql = adapter.revokeSql(table_name, grantees, privileges: _*)
 
     execute(sql)
   }
@@ -739,11 +739,11 @@ abstract class Migration
    *        the grantees
    */
   final
-  def revoke(table_name : String,
-             grantee : String,
-             privileges : GrantPrivilegeType*) : Unit =
+  def revoke(table_name: String,
+             grantee: String,
+             privileges: GrantPrivilegeType*): Unit =
   {
-    revoke(table_name, Array(grantee), privileges : _*)
+    revoke(table_name, Array(grantee), privileges: _*)
   }
 
   /**
@@ -756,9 +756,9 @@ abstract class Migration
    * @param options a possibly empty list of check options to
    *        customize the creation of the CHECK constraint
    */
-  def addCheck(on : On,
-               expr : String,
-               options : CheckOption*) : Unit =
+  def addCheck(on: On,
+               expr: String,
+               options: CheckOption*): Unit =
   {
     if (on.columnNames.isEmpty) {
       throw new IllegalArgumentException("Adding a check constraint " +
@@ -767,7 +767,7 @@ abstract class Migration
     }
 
     val a = adapter
-    var (name, opts) = a.generateCheckConstraintName(on, options : _*)
+    var (name, opts) = a.generateCheckConstraintName(on, options: _*)
 
     val quoted_on_column_names = on.columnNames.map {
                                    a.quoteColumnName(_)
@@ -795,8 +795,8 @@ abstract class Migration
    * @param options a possibly empty list of check options to
    *        customize the removal of the CHECK constraint
    */
-  def removeCheck(on : On,
-                  options : Name*) : Unit =
+  def removeCheck(on: On,
+                  options: Name*): Unit =
   {
     if (on.columnNames.isEmpty) {
       throw new IllegalArgumentException("Removing a check constraint " +
@@ -804,7 +804,7 @@ abstract class Migration
                                          "in the table adding the constraint.")
     }
 
-    var (name, opts) = adapter.generateCheckConstraintName(on, options : _*)
+    var (name, opts) = adapter.generateCheckConstraintName(on, options: _*)
 
     execute("ALTER TABLE " +
             adapter.quoteTableName(on.tableName) +

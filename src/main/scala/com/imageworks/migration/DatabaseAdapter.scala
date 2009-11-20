@@ -47,8 +47,8 @@ object DatabaseAdapter
    *        names are unqualified
    * @return a DatabaseAdapter suitable to use for the database
    */
-  def forVendor(vendor : Vendor,
-                schema_name_opt : Option[String]) : DatabaseAdapter =
+  def forVendor(vendor: Vendor,
+                schema_name_opt: Option[String]): DatabaseAdapter =
   {
     vendor match {
       case Derby =>
@@ -78,7 +78,7 @@ object DatabaseAdapter
  *        are unqualified
  */
 abstract
-class DatabaseAdapter(val schemaNameOpt : Option[String])
+class DatabaseAdapter(val schemaNameOpt: Option[String])
 {
   protected final
   val logger = LoggerFactory.getLogger(this.getClass)
@@ -88,7 +88,7 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
    * how the database treats with unquoted names.
    */
   protected
-  val unquotedNameConverter : UnquotedNameConverter
+  val unquotedNameConverter: UnquotedNameConverter
 
   /**
    * Given a table name, column name and column data type, return a
@@ -102,15 +102,15 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
    * @param options a list of column options customizing the column
    * @return a new ColumnDefinition
    */
-  def newColumnDefinition(table_name : String,
-                          column_name : String,
-                          column_type : SqlType,
-                          options : ColumnOption*) : ColumnDefinition =
+  def newColumnDefinition(table_name: String,
+                          column_name: String,
+                          column_type: SqlType,
+                          options: ColumnOption*): ColumnDefinition =
   {
     var opts = options.toList
 
     // Search for a CharacterSet option.
-    var character_set_opt : Option[CharacterSet] = None
+    var character_set_opt: Option[CharacterSet] = None
 
     for (opt @ CharacterSet(name) <- opts) {
       opts -= opt
@@ -159,16 +159,16 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
    */
   protected
   def columnDefinitionFactory
-    (column_type : SqlType,
-     character_set_opt : Option[CharacterSet]) : ColumnDefinition
+    (column_type: SqlType,
+     character_set_opt: Option[CharacterSet]): ColumnDefinition
 
-  def quoteColumnName(column_name : String) : String =
+  def quoteColumnName(column_name: String): String =
   {
     column_name
   }
 
-  def quoteTableName(schema_name_opt : Option[String],
-                     table_name : String) : String =
+  def quoteTableName(schema_name_opt: Option[String],
+                     table_name: String): String =
   {
     if (schema_name_opt.isDefined) {
       '"' +
@@ -182,7 +182,7 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
     }
   }
 
-  def quoteTableName(table_name : String) : String =
+  def quoteTableName(table_name: String): String =
   {
     // use the default schema_name_opt defined in the adapter
     quoteTableName(schemaNameOpt, table_name)
@@ -197,9 +197,9 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
    * @param index_name the name of the index
    * @return the SQL to drop the index
    */
-  def removeIndexSql(schema_name_opt : Option[String],
-                     table_name : String,
-                     index_name : String) : String
+  def removeIndexSql(schema_name_opt: Option[String],
+                     table_name: String,
+                     index_name: String): String
 
   /**
    * Different databases require different SQL to drop an index.
@@ -209,26 +209,26 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
    * @param index_name the name of the index
    * @return the SQL to drop the index
    */
-  def removeIndexSql(table_name : String,
-                     index_name : String) : String =
+  def removeIndexSql(table_name: String,
+                     index_name: String): String =
   {
     removeIndexSql(schemaNameOpt, table_name, index_name)
   }
 
   private
-  def grantRevokeCommon(action : String,
-                        preposition : String,
-                        schema_name_opt : Option[String],
-                        table_name : String,
-                        grantees : Array[String],
-                        privileges : GrantPrivilegeType*) : String =
+  def grantRevokeCommon(action: String,
+                        preposition: String,
+                        schema_name_opt: Option[String],
+                        table_name: String,
+                        grantees: Array[String],
+                        privileges: GrantPrivilegeType*): String =
   {
     // The GRANT and REVOKE syntax is basically the same
     val sql = new java.lang.StringBuilder(256)
                .append(action)
                .append(' ')
 
-    def formatColumns(columns : Seq[String]) : String =
+    def formatColumns(columns: Seq[String]): String =
     {
       if (columns.isEmpty) {
         ""
@@ -284,10 +284,10 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
    *        types of permissions to grant.
    * @return the SQL to grant permissions
    */
-  def grantSql(schema_name_opt : Option[String],
-               table_name : String,
-               grantees : Array[String],
-               privileges : GrantPrivilegeType*) : String =
+  def grantSql(schema_name_opt: Option[String],
+               table_name: String,
+               grantees: Array[String],
+               privileges: GrantPrivilegeType*): String =
   {
     val sql = new java.lang.StringBuilder(256)
                .append("GRANT")
@@ -297,7 +297,7 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
                       schema_name_opt,
                       table_name,
                       grantees,
-                      privileges : _*)
+                      privileges: _*)
   }
 
   /**
@@ -310,11 +310,11 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
    *        types of permissions to grant.
    * @return the SQL to grant permissions
    */
-  def grantSql(table_name : String,
-               grantees : Array[String],
-               privileges : GrantPrivilegeType*) : String =
+  def grantSql(table_name: String,
+               grantees: Array[String],
+               privileges: GrantPrivilegeType*): String =
   {
-    grantSql(schemaNameOpt, table_name, grantees, privileges : _*)
+    grantSql(schemaNameOpt, table_name, grantees, privileges: _*)
   }
 
   /**
@@ -328,17 +328,17 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
    *        types of permissions to grant.
    * @return the SQL to grant permissions
    */
-  def revokeSql(schema_name_opt : Option[String],
-                table_name : String,
-                grantees : Array[String],
-                privileges : GrantPrivilegeType*) : String =
+  def revokeSql(schema_name_opt: Option[String],
+                table_name: String,
+                grantees: Array[String],
+                privileges: GrantPrivilegeType*): String =
   {
     grantRevokeCommon("REVOKE",
                       "FROM",
                       schema_name_opt,
                       table_name,
                       grantees,
-                      privileges : _*)
+                      privileges: _*)
   }
 
   /**
@@ -351,11 +351,11 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
    *        types of permissions to grant.
    * @return the SQL to grant permissions
    */
-  def revokeSql(table_name : String,
-                grantees : Array[String],
-                privileges : GrantPrivilegeType*) : String =
+  def revokeSql(table_name: String,
+                grantees: Array[String],
+                privileges: GrantPrivilegeType*): String =
   {
-    revokeSql(schemaNameOpt, table_name, grantees, privileges : _*)
+    revokeSql(schemaNameOpt, table_name, grantees, privileges: _*)
   }
 
   /**
@@ -367,13 +367,13 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
    * @return a Tuple2 with the calculated name or the overridden name
    *         from a Name and the remaining options
    */
-  def generateCheckConstraintName(on : On,
-                                  options : CheckOption*)
-    : Tuple2[String,List[CheckOption]] =
+  def generateCheckConstraintName
+    (on: On,
+     options: CheckOption*) : Tuple2[String,List[CheckOption]] =
   {
     var opts = options.toList
 
-    var chk_name_opt : Option[String] = None
+    var chk_name_opt: Option[String] = None
 
     for (opt @ Name(name) <- opts) {
       opts -= opt
@@ -403,7 +403,7 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
    * @param the SQL text to append to the SQL to create a foreign key
    *        relationship
    */
-  def onDeleteSql(on_delete_opt : Option[OnDelete]) : String =
+  def onDeleteSql(on_delete_opt: Option[OnDelete]): String =
   {
     on_delete_opt match {
       case Some(on_delete) => "ON DELETE " + on_delete.action.sql
@@ -419,7 +419,7 @@ class DatabaseAdapter(val schemaNameOpt : Option[String])
    * @param the SQL text to append to the SQL to create a foreign key
    *        relationship
    */
-  def onUpdateSql(on_update_opt : Option[OnUpdate]) : String =
+  def onUpdateSql(on_update_opt: Option[OnUpdate]): String =
   {
     on_update_opt match {
       case Some(on_update) => "ON UPDATE " + on_update.action.sql

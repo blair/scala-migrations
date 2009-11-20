@@ -50,7 +50,7 @@ class DerbyVarbinaryColumnDefinition
   def sql = sqlForColumnType("VARCHAR") + " FOR BIT DATA"
 }
 
-class DerbyDatabaseAdapter(override val schemaNameOpt : Option[String])
+class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
   extends DatabaseAdapter(schemaNameOpt)
 {
   override protected
@@ -58,8 +58,8 @@ class DerbyDatabaseAdapter(override val schemaNameOpt : Option[String])
 
   override
   def columnDefinitionFactory
-    (column_type : SqlType,
-     character_set_opt : Option[CharacterSet]) : ColumnDefinition =
+    (column_type: SqlType,
+     character_set_opt: Option[CharacterSet]): ColumnDefinition =
   {
     character_set_opt match {
       case None =>
@@ -99,9 +99,9 @@ class DerbyDatabaseAdapter(override val schemaNameOpt : Option[String])
   }
 
   override
-  def removeIndexSql(schema_name_opt : Option[String],
-                     table_name : String,
-                     index_name : String) : String =
+  def removeIndexSql(schema_name_opt: Option[String],
+                     table_name: String,
+                     index_name: String): String =
   {
     "DROP INDEX " +
     quoteColumnName(index_name)

@@ -45,7 +45,7 @@ class WithTests
   val context = new Mockery
 
   @Test
-  def with_result_set_closes_on_normal_return : Unit =
+  def with_result_set_closes_on_normal_return: Unit =
   {
     val mock_rs = context.mock(classOf[java.sql.ResultSet])
 
@@ -53,7 +53,7 @@ class WithTests
                        oneOf (mock_rs).close()
                      })
 
-    var rs1 : java.sql.ResultSet = null
+    var rs1: java.sql.ResultSet = null
 
     val result = With.resultSet(mock_rs) { rs2 =>
                    rs1 = rs2
@@ -66,7 +66,7 @@ class WithTests
   }
 
   @Test
-  def with_result_set_closes_on_throw : Unit =
+  def with_result_set_closes_on_throw: Unit =
   {
     val mock_rs = context.mock(classOf[java.sql.ResultSet])
 
@@ -77,7 +77,7 @@ class WithTests
     class ThisSpecialException
       extends java.lang.Throwable
 
-    var rs1 : java.sql.ResultSet = null
+    var rs1: java.sql.ResultSet = null
 
     try {
       With.resultSet(mock_rs) { rs2 =>
@@ -86,7 +86,7 @@ class WithTests
       }
     }
     catch {
-      case _ : ThisSpecialException =>
+      case _: ThisSpecialException =>
     }
 
     assertSame(mock_rs, rs1)

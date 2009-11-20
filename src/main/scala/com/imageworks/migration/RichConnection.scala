@@ -35,7 +35,7 @@ package com.imageworks.migration
 object RichConnection
 {
   implicit
-  def connectionToRichConnection(c : java.sql.Connection) : RichConnection =
+  def connectionToRichConnection(c: java.sql.Connection): RichConnection =
   {
     new RichConnection(c)
   }
@@ -44,10 +44,10 @@ object RichConnection
  * A rich java.sql.Connection class that provides a
  * withPreparedStatement() method.
  */
-class RichConnection(self : java.sql.Connection)
+class RichConnection(self: java.sql.Connection)
 {
-  def withPreparedStatement[T](sql : String)
-                              (f : java.sql.PreparedStatement => T) : T =
+  def withPreparedStatement[T](sql: String)
+                              (f: java.sql.PreparedStatement => T): T =
   {
     val statement = self.prepareStatement(sql)
     try {

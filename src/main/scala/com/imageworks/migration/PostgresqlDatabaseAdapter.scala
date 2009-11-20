@@ -39,7 +39,7 @@ class PostgresqlByteaColumnDefinition
   val sql = "BYTEA"
 }
 
-class PostgresqlDatabaseAdapter(override val schemaNameOpt : Option[String])
+class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
   extends DatabaseAdapter(schemaNameOpt)
 {
   override protected
@@ -47,8 +47,8 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt : Option[String])
 
   override
   def columnDefinitionFactory
-    (column_type : SqlType,
-     character_set_opt : Option[CharacterSet]) : ColumnDefinition =
+    (column_type: SqlType,
+     character_set_opt: Option[CharacterSet]): ColumnDefinition =
   {
     character_set_opt match {
       case None =>
@@ -84,9 +84,9 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt : Option[String])
   }
 
   override
-  def removeIndexSql(schema_name_opt : Option[String],
-                     table_name : String,
-                     index_name : String) : String =
+  def removeIndexSql(schema_name_opt: Option[String],
+                     table_name: String,
+                     index_name: String): String =
   {
     "DROP INDEX " +
     quoteColumnName(index_name)

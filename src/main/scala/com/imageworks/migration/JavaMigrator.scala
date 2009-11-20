@@ -38,7 +38,7 @@ package com.imageworks.migration
  * from a pure Java environment.  This class exposes a Java-style
  * interface and delegates to the Scala Migrator class.
  */
-class JavaMigrator private (migrator : Migrator)
+class JavaMigrator private (migrator: Migrator)
 {
   /**
    * JavaMigrator constructor.
@@ -47,8 +47,8 @@ class JavaMigrator private (migrator : Migrator)
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
    */
-  def this(jdbc_url : String,
-           adapter : DatabaseAdapter) =
+  def this(jdbc_url: String,
+           adapter: DatabaseAdapter) =
   {
     this(new Migrator(jdbc_url, adapter))
   }
@@ -63,10 +63,10 @@ class JavaMigrator private (migrator : Migrator)
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
    */
-  def this(jdbc_url : String,
-           jdbc_username : String,
-           jdbc_password : String,
-           adapter : DatabaseAdapter) =
+  def this(jdbc_url: String,
+           jdbc_username: String,
+           jdbc_password: String,
+           adapter: DatabaseAdapter) =
   {
     this(new Migrator(jdbc_url,
                       jdbc_username,
@@ -81,7 +81,7 @@ class JavaMigrator private (migrator : Migrator)
    * @return a set of table names; no modifications of the case of
    *         table names is done
    */
-  def getTableNames : java.util.Set[String] =
+  def getTableNames: java.util.Set[String] =
   {
     val table_names = migrator.getTableNames
 
@@ -101,8 +101,8 @@ class JavaMigrator private (migrator : Migrator)
    * @parm search_sub_packages true if sub-packages of package_name
    *       should be searched
    */
-  def installAllMigrations(package_name : String,
-                           search_sub_packages : Boolean) : Unit =
+  def installAllMigrations(package_name: String,
+                           search_sub_packages: Boolean): Unit =
   {
     migrator.migrate(InstallAllMigrations, package_name, search_sub_packages)
   }
@@ -115,8 +115,8 @@ class JavaMigrator private (migrator : Migrator)
    * @parm search_sub_packages true if sub-packages of package_name
    *       should be searched
    */
-  def removeAllMigrations(package_name : String,
-                          search_sub_packages : Boolean) : Unit =
+  def removeAllMigrations(package_name: String,
+                          search_sub_packages: Boolean): Unit =
   {
     migrator.migrate(RemoveAllMigrations, package_name, search_sub_packages)
   }
@@ -131,9 +131,9 @@ class JavaMigrator private (migrator : Migrator)
    * @parm search_sub_packages true if sub-packages of package_name
    *       should be searched
    */
-  def migrateTo(version : Long,
-                package_name : String,
-                search_sub_packages : Boolean) : Unit =
+  def migrateTo(version: Long,
+                package_name: String,
+                search_sub_packages: Boolean): Unit =
   {
     migrator.migrate(MigrateToVersion(version),
                      package_name,
@@ -150,9 +150,9 @@ class JavaMigrator private (migrator : Migrator)
    * @parm search_sub_packages true if sub-packages of package_name
    *       should be searched
    */
-  def rollback(count : Int,
-               package_name : String,
-               search_sub_packages : Boolean) : Unit =
+  def rollback(count: Int,
+               package_name: String,
+               search_sub_packages: Boolean): Unit =
   {
     migrator.migrate(RollbackMigration(count),
                      package_name,
@@ -179,8 +179,8 @@ class JavaMigrator private (migrator : Migrator)
    *         with the not-installed migrations and the installed
    *         migrations that do not have a matching Migration subclass
    */
-  def whyNotMigrated(package_name : String,
-                     search_sub_packages : Boolean) : String =
+  def whyNotMigrated(package_name: String,
+                     search_sub_packages: Boolean): String =
   {
     migrator.whyNotMigrated(package_name, search_sub_packages) match {
       case Some(message) => message
