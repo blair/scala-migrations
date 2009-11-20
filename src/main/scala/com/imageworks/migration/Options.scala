@@ -268,10 +268,10 @@ object PrivilegeWithColumns
    * @param a any object
    * @return an optional sequence of column names
    */
-  def unapply(a : Any) : Option[Seq[String]] =
+  def unapply(a: Any): Option[Seq[String]] =
   {
     a match {
-      case p : PrivilegeWithColumns =>
+      case p: PrivilegeWithColumns =>
         Some(p.columns)
       case _ =>
         None
@@ -285,7 +285,7 @@ object PrivilegeWithColumns
 abstract class PrivilegeWithColumns
   extends GrantPrivilegeType
 {
-  val columns : Seq[String]
+  val columns: Seq[String]
 }
 
 /**

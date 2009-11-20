@@ -8,7 +8,7 @@ A sample Scala migration looks like
 class Migrate_20081118201742_CreatePeopleTable
   extends Migration
 {
-  def up() : Unit =
+  def up(): Unit =
   {
     createTable("people") { t =>
       t.varbinary("pk_people", PrimaryKey, Limit(16))
@@ -38,7 +38,7 @@ class Migrate_20081118201742_CreatePeopleTable
              "vacation_days >= 0")
   }
 
-  def down() : Unit =
+  def down(): Unit =
   {
     dropTable("people")
   }
@@ -52,7 +52,7 @@ import com.imageworks.migration.{DatabaseAdapter,
 
 object Test
 {
-  def main(args: Array[String]) : Unit = {
+  def main(args: Array[String]): Unit = {
     val driver_class_name = "org.postgresql.Driver"
     val vendor = Vendor.forDriver(driver_class_name)
     val migration_adapter = DatabaseAdapter.forVendor(vendor, None)
