@@ -172,7 +172,7 @@ class ColumnDefinition
   def checkForDefault() =
   {
     for (option @ Default(value) <- options) {
-      options -= option
+      options = options.filter(_ != option)
 
       if (default.isDefined && default.get != value) {
         logger.warn("Redefining the default value for the '{}' column " +
@@ -204,7 +204,7 @@ class ColumnDefinition
   def checkForLimit() =
   {
     for (option @ Limit(length) <- options) {
-      options -= option
+      options = options.filter(_ != option)
 
       if (limit_.isDefined && limit_.get != length) {
         logger.warn("Redefining the limit for the '{}' column " +
@@ -231,7 +231,7 @@ class ColumnDefinition
                  case _ => None
                }
       if (n2.isDefined) {
-        options -= option
+        options = options.filter(_ != option)
 
         if (n1.isDefined && n1 != n2) {
           logger.warn("Redefining the '{}' column's nullability " +
@@ -257,7 +257,7 @@ class ColumnDefinition
     var is_primary = false
 
     for (option @ PrimaryKey <- options) {
-      options -= option
+      options = options.filter(_ != option)
       is_primary = true
     }
 
@@ -283,7 +283,7 @@ class ColumnDefinition
   def checkForPrecision() =
   {
     for (option @ Precision(value) <- options) {
-      options -= option
+      options = options.filter(_ != option)
 
       if (precision_.isDefined && precision_.get != value) {
         logger.warn("Redefining the precision for the '{}' column " +
@@ -315,7 +315,7 @@ class ColumnDefinition
   def checkForScale() =
   {
     for (option @ Scale(value) <- options) {
-      options -= option
+      options = options.filter(_ != option)
 
       if (scale_.isDefined && scale_.get != value) {
         logger.warn("Redefining the scale for the '{}' column " +
@@ -338,7 +338,7 @@ class ColumnDefinition
     var unique = false
 
     for (option @ Unique <- options) {
-      options -= option
+      options = options.filter(_ != option)
       unique = true
     }
 
@@ -380,7 +380,7 @@ class ColumnDefinition
       def appendCheckSql(name: String,
                          expr: String): Unit =
       {
-        options -= option
+        options = options.filter(_ != option)
 
         sb.append(" CONSTRAINT ")
           .append(name)
