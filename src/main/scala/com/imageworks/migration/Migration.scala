@@ -320,7 +320,7 @@ abstract class Migration
     var index_name_opt: Option[String] = None
 
     for (opt @ Name(name) <- opts) {
-      opts -= opt
+      opts = opts.filter(_ != opt)
       if (index_name_opt.isDefined && index_name_opt.get != name) {
         logger.warn("Redefining the index name from '{}' to '{}'.",
                     index_name_opt.get +
@@ -363,8 +363,8 @@ abstract class Migration
     var (name, opts) = indexNameFor(table_name, column_names, options: _*)
 
     var unique = false
-    for (option @ Unique <- opts) {
-      opts -= option
+    for (opt @ Unique <- opts) {
+      opts = opts.filter(_ != opt)
       unique = true
     }
 
@@ -474,7 +474,7 @@ abstract class Migration
     var fk_name_opt: Option[String] = None
 
     for (opt @ Name(name) <- opts) {
-      opts -= opt
+      opts = opts.filter(_ != opt)
       if (fk_name_opt.isDefined && fk_name_opt.get != name) {
         logger.warn("Redefining the foreign key name from '{}'' to '{}'.",
                     fk_name_opt.get,
@@ -543,7 +543,7 @@ abstract class Migration
                     on_delete_opt.get.action,
                     action)
       }
-      opts -= opt
+      opts = opts.filter(_ != opt)
       on_delete_opt = Some(opt)
     }
 
@@ -555,7 +555,7 @@ abstract class Migration
                     on_update_opt.get.action,
                     action)
       }
-      opts -= opt
+      opts = opts.filter(_ != opt)
       on_update_opt = Some(opt)
     }
 

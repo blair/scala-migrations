@@ -113,7 +113,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
     var character_set_opt: Option[CharacterSet] = None
 
     for (opt @ CharacterSet(name) <- opts) {
-      opts -= opt
+      opts = opts.filter(_ != opt)
       if (character_set_opt.isDefined && character_set_opt.get != name) {
         logger.warn("Redefining the character set from '{}'' to '{}'.",
                     character_set_opt.get,
@@ -376,7 +376,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
     var chk_name_opt: Option[String] = None
 
     for (opt @ Name(name) <- opts) {
-      opts -= opt
+      opts = opts.filter(_ != opt)
       if (chk_name_opt.isDefined && chk_name_opt.get != name) {
         logger.warn("Redefining the check constraint name from '{}'' to '{}'.",
                     chk_name_opt.get,
