@@ -32,7 +32,11 @@
  */
 package com.imageworks.migration.tests.up_and_down
 
-import com.imageworks.migration.Migration
+import com.imageworks.migration.{Limit,
+                                 Migration,
+                                 NotNull,                          
+                                 PrimaryKey,
+                                 Unique}
 
 class Migrate_20081118201000_CreateLocationTable
   extends Migration

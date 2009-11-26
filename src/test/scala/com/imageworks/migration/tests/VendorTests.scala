@@ -36,6 +36,11 @@ import org.junit.Assert._
 import org.junit.{Before,
                   Test}
 
+import com.imageworks.migration.{Derby,
+                                 Oracle,
+                                 Postgresql,
+                                 Vendor}
+
 class VendorTests
 {
   @Test

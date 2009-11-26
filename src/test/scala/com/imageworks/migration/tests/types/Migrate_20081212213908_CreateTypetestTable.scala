@@ -32,7 +32,10 @@
  */
 package com.imageworks.migration.tests.types
 
-import com.imageworks.migration.Migration
+import com.imageworks.migration.{Limit,
+                                 Migration,
+                                 Precision,
+                                 Scale}
 
 class Migrate_20081212213908_CreateTypetestTable
   extends Migration

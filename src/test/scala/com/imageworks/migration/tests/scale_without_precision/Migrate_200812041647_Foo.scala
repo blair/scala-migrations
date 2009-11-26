@@ -32,7 +32,8 @@
  */
 package com.imageworks.migration.tests.scale_without_precision
 
-import com.imageworks.migration.Migration
+import com.imageworks.migration.{Migration,
+                                 Scale}
 
 class Migrate_200812041647_Foo
   extends Migration

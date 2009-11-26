@@ -39,6 +39,18 @@ import org.junit.{Before,
 import org.jmock.{Expectations,
                   Mockery}
 
+import com.imageworks.migration.{AutoCommit,
+                                 DerbyDatabaseAdapter,
+                                 DuplicateMigrationDescriptionException,
+                                 DuplicateMigrationVersionException,
+                                 InstallAllMigrations,
+                                 MigrateToVersion,
+                                 Migration,
+                                 Migrator,
+                                 RemoveAllMigrations,
+                                 RollbackMigration,
+                                 With}
+
 class MigrationTests
 {
   private
