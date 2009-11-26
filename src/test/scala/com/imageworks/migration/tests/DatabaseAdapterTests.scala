@@ -51,7 +51,7 @@ class DatabaseAdapterTests
                  DatabaseAdapter.forVendor(Postgresql, None).getClass)
   }
 
-  @Test { val expected = classOf[java.lang.IllegalArgumentException] }
+  @Test(expected=classOf[java.lang.IllegalArgumentException])
   def for_null_existent_driver_class: Unit =
   {
     DatabaseAdapter.forVendor(null, None)
