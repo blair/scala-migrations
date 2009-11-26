@@ -57,25 +57,25 @@ class VendorTests
                Vendor.forDriver("org.postgresql.Driver"))
   }
 
-  @Test { val expected = classOf[scala.MatchError] }
+  @Test(expected=classOf[scala.MatchError])
   def for_non_existent_driver: Unit =
   {
     Vendor.forDriver("no.such.driver")
   }
 
-  @Test { val expected = classOf[scala.MatchError] }
+  @Test(expected=classOf[scala.MatchError])
   def for_non_driver_class: Unit =
   {
     Vendor.forDriver(classOf[java.lang.String])
   }
 
-  @Test { val expected = classOf[java.lang.IllegalArgumentException] }
+  @Test(expected=classOf[java.lang.IllegalArgumentException])
   def for_null_existent_driver_class: Unit =
   {
     Vendor.forDriver(null: Class[_])
   }
 
-  @Test { val expected = classOf[java.lang.IllegalArgumentException] }
+  @Test(expected=classOf[java.lang.IllegalArgumentException])
   def for_null_existent_driver_class_name: Unit =
   {
     Vendor.forDriver(null: String)
