@@ -1,6 +1,6 @@
 <project xmlns:ivy="antlib:org.apache.ivy.ant">
 
-  <target name="vscaladoc" depends="prepare" unless="skip.docs">
+  <target name="scaladoc" depends="prepare" unless="skip.docs">
     <delete dir="${docs.target.dir}/scaladoc" />
     <mkdir dir="${docs.target.dir}/scaladoc" />
     <pathconvert property="doc.sources" pathsep=" ">
@@ -10,26 +10,15 @@
       <path refid="bootstrap.path" />
       <pathelement location="${target.dir}/classes" />
     </path>
-    <echo message="Building vscaladoc..." />
-    <java classname="org.scala_tools.vscaladoc.Main" fork="true" failonerror="true">
-      <classpath>
-        <path refid="bootstrap.path" />
-      </classpath>
-      <arg value="-classpath" />
-      <arg pathref="docs.path" />
-      <arg value="-d" />
-      <arg value="${docs.target.dir}/scaladoc" />
-      <arg value="-sourcepath" />
-      <arg value="${source.dir}/scala" />
-      <arg value="-windowtitle" />
-      <arg value="${ivy.module} ${ivy.revision}" />
-      <arg value="-doctitle" />
-      <arg value="${ivy.module} ${ivy.revision}" />
-      <arg value="-linksource" />
-      <arg line="${doc.sources}" />
-    </java>
+    <echo message="Building scaladoc..." />
+    <scaladoc srcdir="${source.dir}/scala"
+              destdir="${docs.target.dir}/scaladoc"
+              windowtitle="${ivy.module} ${ivy.revision}"
+              doctitle="${ivy.module} ${ivy.revision}"
+              classpathref="docs.path">
+    </scaladoc>
   </target>
 
-  <target name="docs" depends="prepare,vscaladoc" unless="skip.docs"  description="build source documentation" />
+  <target name="docs" depends="prepare,scaladoc" unless="skip.docs"  description="build source documentation" />
 
 </project>
