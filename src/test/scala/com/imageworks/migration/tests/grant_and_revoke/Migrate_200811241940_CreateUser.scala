@@ -32,7 +32,11 @@
  */
 package com.imageworks.migration.tests.grant_and_revoke
 
-import com.imageworks.migration.Migration
+import com.imageworks.migration.{Limit,
+                                 Migration,
+                                 NotNull,
+                                 PrimaryKey,
+                                 Unique}
 
 class Migrate_200811241940_CreateUser
   extends Migration

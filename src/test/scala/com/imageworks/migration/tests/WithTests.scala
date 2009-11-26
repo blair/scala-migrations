@@ -39,6 +39,8 @@ import org.junit.{Before,
 import org.jmock.{Expectations,
                   Mockery}
 
+import com.imageworks.migration.With
+
 class WithTests
 {
   private

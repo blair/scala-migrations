@@ -36,6 +36,11 @@ import org.junit.Assert._
 import org.junit.{Before,
                   Test}
 
+import com.imageworks.migration.{DuplicateMigrationDescriptionException,
+                                 DuplicateMigrationVersionException,
+                                 JavaDatabaseAdapter,
+                                 JavaMigrator}
+
 class JavaMigratorTests
 {
   // Set the Derby system home to a test-databases directory so the

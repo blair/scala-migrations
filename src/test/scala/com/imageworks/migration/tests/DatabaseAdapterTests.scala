@@ -36,6 +36,14 @@ import org.junit.Assert._
 import org.junit.{Before,
                   Test}
 
+import com.imageworks.migration.{DatabaseAdapter,
+                                 Derby,
+                                 DerbyDatabaseAdapter,
+                                 Oracle,
+                                 OracleDatabaseAdapter,
+                                 Postgresql,
+                                 PostgresqlDatabaseAdapter}
+
 class DatabaseAdapterTests
 {
   @Test

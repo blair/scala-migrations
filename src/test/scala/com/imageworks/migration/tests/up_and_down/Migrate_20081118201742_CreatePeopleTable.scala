@@ -32,7 +32,23 @@
  */
 package com.imageworks.migration.tests.up_and_down
 
-import com.imageworks.migration.Migration
+import com.imageworks.migration.{Cascade,
+                                 CharacterSet,
+                                 Check,
+                                 Default,
+                                 Limit,
+                                 Migration,
+                                 NotNull,
+                                 Nullable,
+                                 OnDelete,
+                                 OnUpdate,
+                                 Precision,
+                                 PrimaryKey,
+                                 Restrict,
+                                 Scale,
+                                 Unicode,
+                                 Unique,
+                                 VarbinaryType}
 
 class Migrate_20081118201742_CreatePeopleTable
   extends Migration
