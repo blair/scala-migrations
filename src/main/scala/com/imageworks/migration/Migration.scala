@@ -363,8 +363,8 @@ abstract class Migration
     var (name, opts) = indexNameFor(table_name, column_names, options: _*)
 
     var unique = false
-    for (option @ Unique <- opts) {
-      opts = opts.filter(_ != option)
+    for (opt @ Unique <- opts) {
+      opts = opts.filter(_ != opt)
       unique = true
     }
 
