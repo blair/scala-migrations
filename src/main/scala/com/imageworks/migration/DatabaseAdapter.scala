@@ -369,7 +369,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    */
   def generateCheckConstraintName
     (on: On,
-     options: CheckOption*) : Tuple2[String,List[CheckOption]] =
+     options: CheckOption*): Tuple2[String,List[CheckOption]] =
   {
     var opts = options.toList
 
