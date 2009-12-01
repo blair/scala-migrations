@@ -1,7 +1,7 @@
 <ivy-module version="1.0" xmlns:e="http://ant.apache.org/ivy/extra">
   <info organisation="com.imageworks"
     module="scala-migrations"
-    revision="0.9.2"
+    revision="0.9.2-2.8.0.Beta1-RC2"
     e:buildpackage="com.imageworks.migration"
     e:testclass=""
   />
