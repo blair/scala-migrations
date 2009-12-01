@@ -274,7 +274,7 @@ the code needs to work with other databases.  Columns wishing to use a
 NUMBER(38) should use a DecimalType column.
 
 NUMERIC and DECIMAL
-------------------
+-------------------
 
 There is a minor difference in the definition of the NUMERIC and
 DECIMAL types according to the SQL 1992 standard downloaded from
