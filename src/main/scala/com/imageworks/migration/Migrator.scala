@@ -80,8 +80,8 @@ object Migrator
    * @param path path to the JAR file
    * @param package_name the package name that the classes should be
    *        in
-   * @parm search_sub_packages true if sub-packages of package_name
-   *       should be searched
+   * @param search_sub_packages true if sub-packages of package_name
+   *        should be searched
    * @return a set of the class names the JAR file contains
    */
   private
@@ -131,8 +131,8 @@ object Migrator
    * @param file the java.io.File corresponding to the directory
    * @param package_name the package name that the classes should be
    *        in
-   * @parm search_sub_packages true if sub-packages of package_name
-   *       should be searched
+   * @param search_sub_packages true if sub-packages of package_name
+   *        should be searched
    * @return a set of the class names the directory contains
    */
   private
@@ -186,8 +186,8 @@ object Migrator
    *
    * @param package_name the Java package name to search for Migration
    *        subclasses
-   * @parm search_sub_packages true if sub-packages of package_name
-   *       should be searched
+   * @param search_sub_packages true if sub-packages of package_name
+   *        should be searched
    * @return a sorted map with version number keys and the concrete
    *         Migration subclasses as the value
    */
@@ -780,8 +780,8 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
    *
    * @param package_name the Java package name to search for Migration
    *        subclasses
-   * @parm search_sub_packages true if sub-packages of package_name
-   *       should be searched
+   * @param search_sub_packages true if sub-packages of package_name
+   *        should be searched
    * @param operation the migration operation that should be performed
    */
   def migrate(operation: MigratorOperation,
@@ -925,8 +925,8 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
    *
    * @param package_name the Java package name to search for Migration
    *        subclasses
-   * @parm search_sub_packages true if sub-packages of package_name
-   *       should be searched
+   * @param search_sub_packages true if sub-packages of package_name
+   *        should be searched
    */
   def getMigrationStatuses(package_name: String,
                            search_sub_packages: Boolean): MigrationStatuses =
@@ -978,8 +978,8 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
    *
    * @param package_name the Java package name to search for Migration
    *        subclasses
-   * @parm search_sub_packages true if sub-packages of package_name
-   *       should be searched
+   * @param search_sub_packages true if sub-packages of package_name
+   *        should be searched
    * @return None if all available migrations are installed and all
    *         installed migrations have a corresponding Migration
    *         subclass; Some(message) with a message suitable for

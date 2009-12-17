@@ -98,8 +98,8 @@ class JavaMigrator private (migrator: Migrator)
    *
    * @param package_name the package name that the Migration
    *        subclasses should be searched for
-   * @parm search_sub_packages true if sub-packages of package_name
-   *       should be searched
+   * @param search_sub_packages true if sub-packages of package_name
+   *        should be searched
    */
   def installAllMigrations(package_name: String,
                            search_sub_packages: Boolean): Unit =
@@ -112,8 +112,8 @@ class JavaMigrator private (migrator: Migrator)
    *
    * @param package_name the package name that the Migration
    *        subclasses should be searched for
-   * @parm search_sub_packages true if sub-packages of package_name
-   *       should be searched
+   * @param search_sub_packages true if sub-packages of package_name
+   *        should be searched
    */
   def removeAllMigrations(package_name: String,
                           search_sub_packages: Boolean): Unit =
@@ -128,8 +128,8 @@ class JavaMigrator private (migrator: Migrator)
    *        to
    * @param package_name the package name that the Migration
    *        subclasses should be searched for
-   * @parm search_sub_packages true if sub-packages of package_name
-   *       should be searched
+   * @param search_sub_packages true if sub-packages of package_name
+   *        should be searched
    */
   def migrateTo(version: Long,
                 package_name: String,
@@ -147,8 +147,8 @@ class JavaMigrator private (migrator: Migrator)
    *        to
    * @param package_name the package name that the Migration
    *        subclasses should be searched for
-   * @parm search_sub_packages true if sub-packages of package_name
-   *       should be searched
+   * @param search_sub_packages true if sub-packages of package_name
+   *        should be searched
    */
   def rollback(count: Int,
                package_name: String,
@@ -171,8 +171,8 @@ class JavaMigrator private (migrator: Migrator)
    *
    * @param package_name the Java package name to search for Migration
    *        subclasses
-   * @parm search_sub_packages true if sub-packages of package_name
-   *       should be searched
+   * @param search_sub_packages true if sub-packages of package_name
+   *        should be searched
    * @return null if all available migrations are installed and all
    *         installed migrations have a corresponding Migration
    *         subclass; a non-null message suitable for for logging
