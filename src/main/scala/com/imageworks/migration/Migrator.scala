@@ -807,9 +807,6 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
         }
       }
 
-      case class InstallRemove(install_versions: Array[Long],
-                               remove_versions: Array[Long])
-
       // Get a list of all available and installed migrations.  Check
       // that all installed migrations have a migration class
       // available to migrate out of that migration.  This can happen
@@ -836,6 +833,9 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
       if (available_migrations.isEmpty) {
         logger.info("No migrations found, nothing to do.")
       }
+
+      case class InstallRemove(install_versions: Array[Long],
+                               remove_versions: Array[Long])
 
       // From the operation, determine the migrations to install and
       // the ones to uninstall.
