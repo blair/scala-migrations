@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 Sony Pictures Imageworks
+ * Copyright (c) 2010 Sony Pictures Imageworks
  *
  * All rights reserved.
  *
@@ -32,6 +32,8 @@
  */
 package com.imageworks.migration
 
+import org.slf4j.LoggerFactory
+
 /**
  * Utility object that contains functions that ensure a resource is
  * released once it has been used.  Each function takes resource
@@ -42,6 +44,9 @@ package com.imageworks.migration
  */
 object With
 {
+  private final
+  val logger = LoggerFactory.getLogger(this.getClass)
+
   /**
    * Take a SQL result set, pass it to a closure and ensure that the
    * result set is closed after the closure returns, either normally
@@ -60,7 +65,12 @@ object With
       f(rs)
     }
     finally {
-      rs.close()
+      try {
+        rs.close()
+      }
+      catch {
+        case e => logger.warn("Error in closing result set:", e)
+      }
     }
   }
 }

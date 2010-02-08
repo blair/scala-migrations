@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 Sony Pictures Imageworks
+ * Copyright (c) 2010 Sony Pictures Imageworks
  *
  * All rights reserved.
  *
@@ -176,7 +176,12 @@ abstract class Migration
       statement.execute(sql)
     }
     finally {
-      statement.close()
+      try {
+        statement.close()
+      }
+      catch {
+        case e => logger.warn("Error in closing statement:", e)
+      }
     }
   }
 
@@ -224,7 +229,12 @@ abstract class Migration
         }
       }
       finally {
-        statement.close()
+        try {
+          statement.close()
+        }
+        catch {
+          case e3 => logger.warn("Error in closing prepared statement:", e3)
+        }
       }
     }
     finally {
