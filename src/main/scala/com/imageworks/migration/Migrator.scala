@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 Sony Pictures Imageworks
+ * Copyright (c) 2010 Sony Pictures Imageworks
  *
  * All rights reserved.
  *
@@ -564,7 +564,12 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
       }
     }
     finally {
-      raw_connection.close()
+      try {
+        raw_connection.close()
+      }
+      catch {
+        case e => logger.warn("Error in closing connection:", e)
+      }
     }
   }
 

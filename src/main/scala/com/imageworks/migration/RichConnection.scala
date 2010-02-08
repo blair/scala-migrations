@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 Sony Pictures Imageworks
+ * Copyright (c) 2010 Sony Pictures Imageworks
  *
  * All rights reserved.
  *
@@ -32,6 +32,8 @@
  */
 package com.imageworks.migration
 
+import org.slf4j.LoggerFactory
+
 object RichConnection
 {
   implicit
@@ -40,12 +42,16 @@ object RichConnection
     new RichConnection(c)
   }
 }
+
 /**
  * A rich java.sql.Connection class that provides a
  * withPreparedStatement() method.
  */
 class RichConnection(self: java.sql.Connection)
 {
+  private final
+  val logger = LoggerFactory.getLogger(this.getClass)
+
   def withPreparedStatement[T](sql: String)
                               (f: java.sql.PreparedStatement => T): T =
   {
@@ -54,7 +60,12 @@ class RichConnection(self: java.sql.Connection)
       f(statement)
     }
     finally {
-      statement.close()
+      try {
+        statement.close()
+      }
+      catch {
+        case e => logger.warn("Error in closing prepared statement:", e)
+      }
     }
   }
 }
