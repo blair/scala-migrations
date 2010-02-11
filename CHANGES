@@ -1,3 +1,24 @@
+Version 1.0.0 - February 11th, 2010
+  * Provide Scala 2.8.0.Beta1 support.  Code modifications that work
+    under both Scala 2.7.x and 2.8.x were applied to the default
+    (2.7.x) branch and merged to the scala-2.8 branch to minimize the
+    differences between the branches.
+  * Fix a bug in dropping indices in Oracle.
+  * Index names are now quoted and potentially case converted in the
+    same manner as column names.
+  * Provide a addingForeignKeyConstraintCreatesIndex method in
+    Migration and DatabaseAdaper that returns true if the database
+    implicitly adds an index on the column that has a foreign key
+    constraint added to it.  This can be used to dynamically add an
+    index for those databases that don't implicitly add an index on
+    foreign key columns.
+  * Switch to using scaladoc instead of vscaladoc when compiling with
+    Scala 2.7.x to be consistent with compilation with Scala 2.8.x.
+  * Update the test suite to run against Derby 10.5.3 instead of
+    10.5.1.1.
+  * Switch code style to be more compliant with standard Scala code,
+    specifically, remove the space before a : in type annotations.
+
 Version 0.9.2 - November 2nd, 2009
   * Build with Scala 2.7.7.
 
