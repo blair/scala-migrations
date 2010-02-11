@@ -164,7 +164,9 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
 
   def quoteColumnName(column_name: String): String =
   {
-    column_name
+    '"' +
+    unquotedNameConverter(column_name) +
+    '"'
   }
 
   def quoteTableName(schema_name_opt: Option[String],
