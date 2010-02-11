@@ -167,6 +167,26 @@ abstract class Migration
     new References(definition)
   }
 
+  /**
+   * This value is true if the database implicitly adds an index on
+   * the column that has a foreign key constraint added to it.
+   *
+   * The following SQL can be used to test the database.  The last
+   * statement will fail with a message that there already is an index
+   * on the column.
+   *
+   *   create table parent (pk int primary key);
+   *   create table child (pk int primary key, pk_parent int not null);
+   *   alter table child
+   *     add constraint idx_child_pk_parent foreign key (pk_parent)
+   *     references parent (pk);
+   *   create index idx_child_pk_parent on child (pk_parent);
+   */
+  def addingForeignKeyConstraintCreatesIndex: Boolean =
+  {
+    adapter.addingForeignKeyConstraintCreatesIndex
+  }
+
   final
   def execute(sql: String): Unit =
   {

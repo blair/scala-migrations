@@ -57,6 +57,9 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
   val unquotedNameConverter = UppercaseUnquotedNameConverter
 
   override
+  val addingForeignKeyConstraintCreatesIndex = true
+
+  override
   def columnDefinitionFactory
     (column_type: SqlType,
      character_set_opt: Option[CharacterSet]): ColumnDefinition =

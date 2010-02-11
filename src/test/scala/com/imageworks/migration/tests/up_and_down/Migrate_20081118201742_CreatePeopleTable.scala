@@ -79,6 +79,10 @@ class Migrate_20081118201742_CreatePeopleTable
                   OnDelete(Cascade),
                   OnUpdate(Restrict))
 
+    if (! addingForeignKeyConstraintCreatesIndex) {
+      addIndex("people", "pk_location", Name("idx_people_pk_location"))
+    }
+
     addColumn("people", "secret_key", VarbinaryType, Limit(16))
 
     addCheck(on("people" -> "vacation_days"), "vacation_days >= 0")
@@ -87,8 +91,12 @@ class Migrate_20081118201742_CreatePeopleTable
   def down(): Unit =
   {
     removeCheck(on("people" -> "vacation_days"))
+    if (! addingForeignKeyConstraintCreatesIndex) {
+      removeIndex("people", "pk_location", Name("idx_people_pk_location"))
+    }
     removeForeignKey(on("people" -> "pk_location"),
                      references("location" -> "pk_location"))
+
     removeIndex("people", "ssn")
     removeColumn("people", "secret_key")
     dropTable("people")
