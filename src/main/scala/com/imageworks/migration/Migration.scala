@@ -81,7 +81,6 @@ abstract class Migration
   def down(): Unit
 
   /**
-
    * The raw connection to the database that underlies the logging
    * connection.  This is provided in case the real database
    * connection is needed because the logging connection does not
