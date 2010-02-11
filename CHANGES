@@ -1,9 +1,10 @@
 Version 0.9.2 - November 2nd, 2009
-  Build with Scala 2.7.7.
+  * Build with Scala 2.7.7.
 
 Version 0.9.1 - September 2nd, 2009
-  Add the ability to add and drop columns in existing tables.  The new
-  methods are addColumn() and removeColumn() in the Migration class.
+  * Add the ability to add and drop columns in existing tables.  The
+    new methods are addColumn() and removeColumn() in the Migration
+    class.
 
 Version 0.9.0 - August 1st, 2009
-  First public release.
+  * First public release.
