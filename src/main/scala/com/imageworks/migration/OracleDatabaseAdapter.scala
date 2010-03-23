@@ -237,20 +237,6 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
   }
 
   override
-  def removeColumnSql(schema_name_opt: Option[String],
-                      table_name: String,
-                      column_name: String): String =
-  {
-    // Oracle requires COLUMN keyword.
-    new java.lang.StringBuilder(512)
-      .append("ALTER TABLE ")
-      .append(quoteTableName(schema_name_opt, table_name))
-      .append(" DROP COLUMN ")
-      .append(quoteColumnName(column_name))
-      .toString
-  }
-
-  override
   def removeIndexSql(schema_name_opt: Option[String],
                      table_name: String,
                      index_name: String): String =

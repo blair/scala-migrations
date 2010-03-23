@@ -208,41 +208,6 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   }
 
   /**
-   * Different databases require different SQL to drop a column.
-   *
-   * @param schema_name_opt the optional schema name to qualify the
-   *        table name
-   * @param table_name the name of the table with the index
-   * @param column_name the name of the index
-   * @return the SQL to drop the index
-   */
-  def removeColumnSql(schema_name_opt: Option[String],
-                      table_name: String,
-                      column_name: String): String =
-  {
-    new java.lang.StringBuilder(512)
-      .append("ALTER TABLE ")
-      .append(quoteTableName(schema_name_opt, table_name))
-      .append(" DROP ")
-      .append(quoteColumnName(column_name))
-      .toString
-  }
-
-  /**
-   * Different databases require different SQL to drop a column.
-   * Uses the schema_name_opt defined in the adapter.
-   *
-   * @param table_name the name of the table with the index
-   * @param column_name the name of the index
-   * @return the SQL to drop the index
-   */
-  def removeColumnSql(table_name: String,
-                      column_name: String): String =
-  {
-    removeColumnSql(schemaNameOpt, table_name, column_name)
-  }
-
-  /**
    * Different databases require different SQL to drop an index.
    *
    * @param schema_name_opt the optional schema name to qualify the

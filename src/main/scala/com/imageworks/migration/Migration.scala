@@ -320,7 +320,13 @@ abstract class Migration
   def removeColumn(table_name: String,
                    column_name: String)
   {
-    execute(adapter.removeColumnSql(table_name, column_name))
+    val sql = new java.lang.StringBuilder(512)
+                .append("ALTER TABLE ")
+                .append(adapter.quoteTableName(table_name))
+                .append(" DROP ")
+                .append(adapter.quoteColumnName(column_name))
+                .toString
+    execute(sql)
   }
 
   final
