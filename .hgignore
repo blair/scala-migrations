@@ -1,0 +1,5 @@
+^dist$
+^libs/log4jdbc3-1.1.jar$
+^libs/log4jdbc4-1.1.jar$
+^target$
+^test-databases$
