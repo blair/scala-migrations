@@ -31,7 +31,8 @@
   </macrodef>
 
   <target name="run-unit-tests" unless="skip.test" if="ivy.extra.testclass">
-    <copy file="log4j.properties" todir="${target.dir}/test-classes" />
+    <copy file="${test.source.dir}/resources/log4j.properties"
+          todir="${target.dir}/test-classes" />
     <junit printsummary="yes" haltonerror="yes" haltonfailure="yes">
       <classpath>
         <path refid="test.path"/>
