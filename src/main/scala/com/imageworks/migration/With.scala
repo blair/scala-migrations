@@ -34,6 +34,8 @@ package com.imageworks.migration
 
 import org.slf4j.LoggerFactory
 
+import java.sql.ResultSet
+
 /**
  * Utility object that contains functions that ensure a resource is
  * released once it has been used.  Each function takes resource
@@ -54,12 +56,11 @@ object With
    * result.
    *
    * @param rs a SQL result set
-   * @param f a Function1[java.sql.ResultSet,R] that operates on the
-   *        result set
+   * @param f a Function1[ResultSet,R] that operates on the result set
    * @return the result of f
    */
-  def resultSet[R](rs: java.sql.ResultSet)
-                  (f: java.sql.ResultSet => R): R =
+  def resultSet[R](rs: ResultSet)
+                  (f: ResultSet => R): R =
   {
     try {
       f(rs)
