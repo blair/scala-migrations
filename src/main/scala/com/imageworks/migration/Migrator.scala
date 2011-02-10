@@ -852,7 +852,7 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
                               installed_versions.reverse)
           }
           case MigrateToVersion(version) => {
-            val index = available_versions.findIndexOf(_ == version)
+            val index = available_versions.indexWhere(_ == version)
             if (index == -1) {
               val message = "The target version " +
                             version +
@@ -1010,7 +1010,7 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
 
       if (! not_installed.isEmpty) {
         sb.append("the following migrations are not installed: ")
-        sb.append(not_installed.values.map(_.getName).mkString(", "))
+        sb.append(not_installed.valuesIterator.map(_.getName).mkString(", "))
         if (! installed_without_available_implementation.isEmpty) {
           sb.append(" and ")
         }
