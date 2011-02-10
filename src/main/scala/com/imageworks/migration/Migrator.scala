@@ -381,6 +381,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
   /**
    * Construct a migrator to a database that does not need a username
    * and password.
+   *
    * @param jdbc_url the JDBC URL to connect to the database
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
@@ -393,6 +394,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
 
   /**
    * Construct a migrator to a database that needs a username and password.
+   *
    * @param jdbc_url the JDBC URL to connect to the database
    * @param jdbc_username the username to log into the database
    * @param jdbc_password the password associated with the database
@@ -412,6 +414,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
 
   /**
    * Construct a migrator to a database with an existing DataSource.
+   *
    * @param jdbc_datasource the JDBC DataSource to connect to the database
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
@@ -425,6 +428,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
   /**
    * Construct a migrator to a database with an existing DataSource but
    * override default username and password.
+   *
    * @param jdbc_datasource the JDBC DataSource to connect to the database
    * @param jdbc_username the username to log into the database
    * @param jdbc_password the password associated with the database
