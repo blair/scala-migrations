@@ -492,9 +492,8 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
    * @return what f returns
    */
   // http://lampsvn.epfl.ch/trac/scala/ticket/442
-  private[migration] def withRawConnection[T]
-    (commit_behavior: CommitBehavior)
-    (f: Connection => T): T =
+  private[migration] def withRawConnection[T](commit_behavior: CommitBehavior)
+                                             (f: Connection => T): T =
   {
     val raw_connection = {
       (jdbc_conn, jdbc_login) match {
