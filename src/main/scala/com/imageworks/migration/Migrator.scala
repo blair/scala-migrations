@@ -32,6 +32,8 @@
  */
 package com.imageworks.migration
 
+import net.sf.log4jdbc.ConnectionSpy
+
 import org.slf4j.{Logger,
                   LoggerFactory}
 
@@ -592,7 +594,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
     (f: Connection => T): T =
   {
     withRawConnection(commit_behavior) { raw_connection =>
-      f(new net.sf.log4jdbc.ConnectionSpy(raw_connection))
+      f(new ConnectionSpy(raw_connection))
     }
   }
 
@@ -615,8 +617,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
     (f: RawAndLoggingConnections => T): T =
   {
     withRawConnection(commit_behavior) { raw_connection =>
-      val logging_connection =
-        new net.sf.log4jdbc.ConnectionSpy(raw_connection)
+      val logging_connection = new ConnectionSpy(raw_connection)
       f(new RawAndLoggingConnections(raw_connection, logging_connection))
     }
   }
