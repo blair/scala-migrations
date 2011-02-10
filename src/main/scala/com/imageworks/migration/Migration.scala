@@ -34,6 +34,8 @@ package com.imageworks.migration
 
 import org.slf4j.LoggerFactory
 
+import java.sql.Connection
+
 /**
  * Due to the JVM erasure, the scala.Predef.ArrowAssoc.->
  * method generates a Tuple2 and the following cannot be distinguished
@@ -91,7 +93,7 @@ abstract class Migration
    * constructor style injection, which makes for cleaner code for the
    * users of this migration framework.
    */
-  private[migration] var rawConnectionOpt: Option[java.sql.Connection] = None
+  private[migration] var rawConnectionOpt: Option[Connection] = None
 
   /**
    * Get the raw connection to the database the migration can use for
@@ -113,7 +115,7 @@ abstract class Migration
    * constructor style injection, which makes for cleaner code for the
    * users of this migration framework.
    */
-  private[migration] var connectionOpt: Option[java.sql.Connection] = None
+  private[migration] var connectionOpt: Option[Connection] = None
 
   /**
    * Get the connection to the database the migration can use for any

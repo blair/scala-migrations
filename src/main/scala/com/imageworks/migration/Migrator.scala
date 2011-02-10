@@ -35,6 +35,7 @@ package com.imageworks.migration
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import java.sql.Connection
 import javax.sql.DataSource
 
 /**
@@ -355,8 +356,8 @@ object Migrator
 }
 
 private
-class RawAndLoggingConnections(val raw: java.sql.Connection,
-                               val logging: java.sql.Connection)
+class RawAndLoggingConnections(val raw: Connection,
+                               val logging: Connection)
 
 /**
  * This sealed trait's specifies the commit behavior on a database
@@ -485,14 +486,14 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
    *        connection and whether to commit() or rollback() the
    *        transaction if the auto-commit mode is disabled on the
    *        connection
-   * @param f a Function1[java.sql.Connection,T] that is passed a new
+   * @param f a Function1[Connection,T] that is passed a new
    *        connection
    * @return what f returns
    */
   // http://lampsvn.epfl.ch/trac/scala/ticket/442
   private[migration] def withRawConnection[T]
     (commit_behavior: CommitBehavior)
-    (f: java.sql.Connection => T): T =
+    (f: Connection => T): T =
   {
     val raw_connection = {
       (jdbc_conn, jdbc_login) match {
@@ -582,13 +583,13 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
    *        connection and whether to commit() or rollback() the
    *        transaction if the auto-commit mode is disabled on the
    *        connection
-   * @param f a Function1[java.sql.Connection,T] that is passed a new
+   * @param f a Function1[Connection,T] that is passed a new
    *        connection
    * @return what f returns
    */
   private[migration] def withLoggingConnection[T]
     (commit_behavior: CommitBehavior)
-    (f: java.sql.Connection => T): T =
+    (f: Connection => T): T =
   {
     withRawConnection(commit_behavior) { raw_connection =>
       f(new net.sf.log4jdbc.ConnectionSpy(raw_connection))
@@ -657,7 +658,7 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
   def runMigration
     (migration_class: Class[_ <: Migration],
      direction: MigrationDirection,
-     version_update_opt: Option[Tuple2[java.sql.Connection,Long]]): Unit =
+     version_update_opt: Option[Tuple2[Connection,Long]]): Unit =
   {
     logger.info("Migrating {} with '{}'.",
                 direction.str,
@@ -733,7 +734,7 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
    */
   private
   def getInstalledVersions
-    (connection: java.sql.Connection): scala.collection.SortedSet[Long] =
+    (connection: Connection): scala.collection.SortedSet[Long] =
   {
     val sql = "SELECT version FROM " +
               adapter.quoteTableName(schemaMigrationsTableName)

@@ -34,20 +34,22 @@ package com.imageworks.migration
 
 import org.slf4j.LoggerFactory
 
+import java.sql.Connection
+
 object RichConnection
 {
   implicit
-  def connectionToRichConnection(c: java.sql.Connection): RichConnection =
+  def connectionToRichConnection(c: Connection): RichConnection =
   {
     new RichConnection(c)
   }
 }
 
 /**
- * A rich java.sql.Connection class that provides a
- * withPreparedStatement() method.
+ * A rich Connection class that provides a withPreparedStatement()
+ * method.
  */
-class RichConnection(self: java.sql.Connection)
+class RichConnection(self: Connection)
 {
   private final
   val logger = LoggerFactory.getLogger(this.getClass)
