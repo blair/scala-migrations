@@ -34,7 +34,8 @@ package com.imageworks.migration
 
 import org.slf4j.LoggerFactory
 
-import java.sql.Connection
+import java.sql.{Connection,
+                 PreparedStatement}
 
 /**
  * Due to the JVM erasure, the scala.Predef.ArrowAssoc.->
@@ -207,8 +208,8 @@ abstract class Migration
   }
 
   /**
-   * Given a SQL string and a Function1[java.sql.PreparedStatement,Unit],
-   * start a new transaction by turning off auto-commit mode on the
+   * Given a SQL string and a Function1[PreparedStatement,Unit], start
+   * a new transaction by turning off auto-commit mode on the
    * connection then create a new prepared statement with the SQL
    * string and pass the prepared statement to the closure argument.
    * The closure should not perform the commit as this method will
@@ -218,12 +219,12 @@ abstract class Migration
    * to the value the connection had before this method was called.
    *
    * @param sql the SQL text that will be prepared
-   * @param f the Function1[java.sql.PreparedStatement,Unit] that will
-   *        be given a new prepared statement
+   * @param f the Function1[PreparedStatement,Unit] that will be given
+   *        a new prepared statement
    */
   final
   def withPreparedStatement(sql: String)
-                           (f: java.sql.PreparedStatement => Unit): Unit =
+                           (f: PreparedStatement => Unit): Unit =
   {
     val c = connection
     val auto_commit = c.getAutoCommit
