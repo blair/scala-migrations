@@ -342,8 +342,8 @@ class MigrationTests
 
     // perform grants
     migrator2.migrate(MigrateToVersion(200811261513L),
-                     "com.imageworks.migration.tests.grant_and_revoke",
-                     false)
+                      "com.imageworks.migration.tests.grant_and_revoke",
+                      false)
 
     // try to select table, should succeed now that grant has been given
     try {
