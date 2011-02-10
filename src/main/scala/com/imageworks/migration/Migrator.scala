@@ -388,7 +388,7 @@ private case object AutoCommit
  * Regardless if the closure passed to Migrator#with*Connection()
  * returns or throws an exception the transaction is committed.
  */
-private case object CommitUponReturnAndException
+private case object CommitUponReturnOrException
   extends CommitBehavior
 
 /**
@@ -520,7 +520,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
     try {
       val auto_commit = commit_behavior match {
                           case AutoCommit => true
-                          case CommitUponReturnAndException => false
+                          case CommitUponReturnOrException => false
                           case CommitUponReturnOrRollbackUponException => false
                         }
       raw_connection.setAutoCommit(auto_commit)
@@ -529,7 +529,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
 
       commit_behavior match {
         case AutoCommit =>
-        case CommitUponReturnAndException => raw_connection.commit()
+        case CommitUponReturnOrException => raw_connection.commit()
         case CommitUponReturnOrRollbackUponException => raw_connection.commit()
       }
 
@@ -542,7 +542,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
                         case AutoCommit =>
                           ("", () => ())
 
-                        case CommitUponReturnAndException =>
+                        case CommitUponReturnOrException =>
                           ("commit", () => { raw_connection.commit() })
 
                         case CommitUponReturnOrRollbackUponException =>
@@ -802,7 +802,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
     // any modifications to schema_migrations regardless if an
     // exception is thrown or not, this ensures that any migrations
     // that were successfully run are recorded.
-    withLoggingConnection(CommitUponReturnAndException) { schema_connection =>
+    withLoggingConnection(CommitUponReturnOrException) { schema_connection =>
       logger.debug("Getting an exclusive lock on the '{}' table.",
                    schemaMigrationsTableName)
       val sql = adapter.lockTableSql(schemaMigrationsTableName)
