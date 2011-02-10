@@ -53,7 +53,7 @@ object With
    * or by an exception.  If the closure returns normally, return its
    * result.
    *
-   * @param rs the a SQL result set
+   * @param rs a SQL result set
    * @param f a Function1[java.sql.ResultSet,R] that operates on the
    *        result set
    * @return the result of f
