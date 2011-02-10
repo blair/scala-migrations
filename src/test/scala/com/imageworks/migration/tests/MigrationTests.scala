@@ -51,7 +51,8 @@ import com.imageworks.migration.{AutoCommit,
                                  RollbackMigration,
                                  With}
 
-import java.sql.DriverManager
+import java.sql.{DriverManager,
+                 ResultSet}
 
 class MigrationTests
 {
@@ -426,13 +427,13 @@ class MigrationTests
   @Test
   def with_result_set_closes_on_normal_return: Unit =
   {
-    val mock_rs = context.mock(classOf[java.sql.ResultSet])
+    val mock_rs = context.mock(classOf[ResultSet])
 
     context.checking(new Expectations {
                        oneOf (mock_rs).close()
                      })
 
-    var rs1: java.sql.ResultSet = null
+    var rs1: ResultSet = null
 
     val m = new Migration {
               override
@@ -459,13 +460,13 @@ class MigrationTests
   @Test
   def with_result_set_closes_on_throw: Unit =
   {
-    val mock_rs = context.mock(classOf[java.sql.ResultSet])
+    val mock_rs = context.mock(classOf[ResultSet])
 
     context.checking(new Expectations {
                        oneOf (mock_rs).close()
                      })
 
-    var rs1: java.sql.ResultSet = null
+    var rs1: ResultSet = null
 
     class ThisSpecialException
       extends java.lang.Throwable

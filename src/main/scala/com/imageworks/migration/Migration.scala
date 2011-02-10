@@ -35,7 +35,8 @@ package com.imageworks.migration
 import org.slf4j.LoggerFactory
 
 import java.sql.{Connection,
-                 PreparedStatement}
+                 PreparedStatement,
+                 ResultSet}
 
 /**
  * Due to the JVM erasure, the scala.Predef.ArrowAssoc.->
@@ -265,19 +266,19 @@ abstract class Migration
   }
 
   /**
-   * Given a SQL result set and a Function1[java.sql.ResultSet,R],
-   * pass the result set to the closure.  After the closure has
-   * completed, either normally via a return or by throwing an
-   * exception, close the result set.
+   * Given a SQL result set and a Function1[ResultSet,R], pass the
+   * result set to the closure.  After the closure has completed,
+   * either normally via a return or by throwing an exception, close
+   * the result set.
    *
    * @param rs the SQL result set
-   * @param f the Function1[java.sql.ResultSet,R] that will be given
-   *        the result set
+   * @param f the Function1[ResultSet,R] that will be given the result
+   *        set
    * @return the result of f if f returns normally
    */
   final
-  def withResultSet[R](rs: java.sql.ResultSet)
-                      (f: java.sql.ResultSet => R): R =
+  def withResultSet[R](rs: ResultSet)
+                      (f: ResultSet => R): R =
   {
     With.resultSet(rs)(f)
   }
