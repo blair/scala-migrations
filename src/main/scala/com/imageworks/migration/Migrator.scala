@@ -365,9 +365,8 @@ class RawAndLoggingConnections(val raw: Connection,
 /**
  * This class migrates the database into the desired state.
  */
-class Migrator private (jdbc_connection_info: Either[DataSource, String],
-                        jdbc_login: Option[Tuple2[String,String]],
-                        adapter: DatabaseAdapter)
+class Migrator(connection_builder: ConnectionBuilder,
+               adapter: DatabaseAdapter)
 {
   import Migrator._
   import RichConnection._
@@ -389,7 +388,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
   def this(jdbc_url: String,
            adapter: DatabaseAdapter) =
   {
-    this(Right(jdbc_url), None, adapter)
+    this(new ConnectionBuilder(jdbc_url), adapter)
   }
 
   /**
@@ -407,8 +406,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
            jdbc_password: String,
            adapter: DatabaseAdapter) =
   {
-    this(Right(jdbc_url),
-         Some((jdbc_username, jdbc_password)),
+    this(new ConnectionBuilder(jdbc_url, jdbc_username, jdbc_password),
          adapter)
   }
 
@@ -422,7 +420,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
   def this(jdbc_datasource: DataSource,
            adapter: DatabaseAdapter) =
   {
-    this(Left(jdbc_datasource), None, adapter)
+    this(new ConnectionBuilder(jdbc_datasource), adapter)
   }
 
   /**
@@ -441,105 +439,8 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
            jdbc_password: String,
            adapter: DatabaseAdapter) =
   {
-    this(Left(jdbc_datasource),
-         Some((jdbc_username, jdbc_password)),
+    this(new ConnectionBuilder(jdbc_datasource, jdbc_username, jdbc_password),
          adapter)
-  }
-
-  /**
-   * Get a raw database connection and pass it to a closure for the
-   * closure to use.  After the closure returns, normally or by
-   * throwing an exception, close the connection.
-   *
-   * @param commit_behavior specify the auto-commit mode on the
-   *        connection and whether to commit() or rollback() the
-   *        transaction if the auto-commit mode is disabled on the
-   *        connection
-   * @param f a Function1[Connection,T] that is passed a new
-   *        connection
-   * @return what f returns
-   */
-  // http://lampsvn.epfl.ch/trac/scala/ticket/442
-  private[migration] def withRawConnection[T](commit_behavior: CommitBehavior)
-                                             (f: Connection => T): T =
-  {
-    val raw_connection = {
-      (jdbc_connection_info, jdbc_login) match {
-        case (Left(jdbc_datasource), Some((username, password))) => {
-          jdbc_datasource.getConnection(username, password)
-        }
-
-        case (Left(jdbc_datasource), None) => {
-          jdbc_datasource.getConnection
-        }
-
-        case (Right(jdbc_url), Some((username, password))) => {
-          DriverManager.getConnection(jdbc_url, username, password)
-        }
-
-        case (Right(jdbc_url), None) => {
-          DriverManager.getConnection(jdbc_url)
-        }
-      }
-    }
-
-    try {
-      val auto_commit = commit_behavior match {
-                          case AutoCommit => true
-                          case CommitUponReturnOrException => false
-                          case CommitUponReturnOrRollbackUponException => false
-                        }
-      raw_connection.setAutoCommit(auto_commit)
-
-      val result = f(raw_connection)
-
-      commit_behavior match {
-        case AutoCommit =>
-        case CommitUponReturnOrException => raw_connection.commit()
-        case CommitUponReturnOrRollbackUponException => raw_connection.commit()
-      }
-
-      result
-    }
-    catch {
-      case e1 => {
-        val (operation,
-             thunk) = commit_behavior match {
-                        case AutoCommit =>
-                          ("", () => ())
-
-                        case CommitUponReturnOrException =>
-                          ("commit", () => { raw_connection.commit() })
-
-                        case CommitUponReturnOrRollbackUponException =>
-                          ("rollback", () => { raw_connection.rollback() })
-                      }
-
-        try {
-          thunk()
-        }
-        catch {
-          case e2 => {
-            logger.warn("Trying to " +
-                        operation +
-                        " the connection after catching " +
-                        e1 +
-                        " threw:",
-                        e2)
-          }
-        }
-
-        throw e1
-      }
-    }
-    finally {
-      try {
-        raw_connection.close()
-      }
-      catch {
-        case e => logger.warn("Error in closing connection:", e)
-      }
-    }
   }
 
   /**
@@ -559,7 +460,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
     (commit_behavior: CommitBehavior)
     (f: Connection => T): T =
   {
-    withRawConnection(commit_behavior) { raw_connection =>
+    connection_builder.withConnection(commit_behavior) { raw_connection =>
       f(new ConnectionSpy(raw_connection))
     }
   }
@@ -582,7 +483,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
     (commit_behavior: CommitBehavior)
     (f: RawAndLoggingConnections => T): T =
   {
-    withRawConnection(commit_behavior) { raw_connection =>
+    connection_builder.withConnection(commit_behavior) { raw_connection =>
       val logging_connection = new ConnectionSpy(raw_connection)
       f(new RawAndLoggingConnections(raw_connection, logging_connection))
     }
