@@ -92,11 +92,11 @@ class Migrate_20081118201742_CreatePeopleTable
   def down(): Unit =
   {
     removeCheck(on("people" -> "vacation_days"))
+    removeForeignKey(on("people" -> "pk_location"),
+                     references("location" -> "pk_location"))
     if (! addingForeignKeyConstraintCreatesIndex) {
       removeIndex("people", "pk_location", Name("idx_people_pk_location"))
     }
-    removeForeignKey(on("people" -> "pk_location"),
-                     references("location" -> "pk_location"))
 
     removeIndex("people", "ssn")
     removeColumn("people", "secret_key")
