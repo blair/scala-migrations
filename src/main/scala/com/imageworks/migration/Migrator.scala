@@ -401,7 +401,7 @@ private case object CommitUponReturnRollbackUponException
 /**
  * This class migrates the database into the desired state.
  */
-class Migrator private (jdbc_conn: Either[DataSource, String],
+class Migrator private (jdbc_connection_info: Either[DataSource, String],
                         jdbc_login: Option[Tuple2[String,String]],
                         adapter: DatabaseAdapter)
 {
@@ -496,7 +496,7 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
                                              (f: Connection => T): T =
   {
     val raw_connection = {
-      (jdbc_conn, jdbc_login) match {
+      (jdbc_connection_info, jdbc_login) match {
         case (Left(jdbc_datasource), Some((username, password))) => {
           jdbc_datasource.getConnection(username, password)
         }
