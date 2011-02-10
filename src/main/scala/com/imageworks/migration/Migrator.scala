@@ -804,9 +804,7 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
       {
         logger.debug("Getting an exclusive lock on the '{}' table.",
                      schemaMigrationsTableName)
-        val sql = "LOCK TABLE " +
-                  adapter.quoteTableName(schemaMigrationsTableName) +
-                  " IN EXCLUSIVE MODE"
+        val sql = adapter.lockTableSql(schemaMigrationsTableName)
         schema_connection.withPreparedStatement(sql) { statement =>
           statement.execute()
         }
