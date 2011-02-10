@@ -98,12 +98,12 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * statement will fail with a message that there already is an index
    * on the column.
    *
-   *   create table parent (pk int primary key);
-   *   create table child (pk int primary key, pk_parent int not null);
-   *   alter table child
-   *     add constraint idx_child_pk_parent foreign key (pk_parent)
-   *     references parent (pk);
-   *   create index idx_child_pk_parent on child (pk_parent);
+   *   CREATE TABLE parent (pk INT PRIMARY KEY);
+   *   CREATE TABLE child (pk INT PRIMARY KEY, pk_parent INT NOT NULL);
+   *   ALTER TABLE child
+   *     ADD CONSTRAINT idx_child_pk_parent FOREIGN KEY (pk_parent)
+   *     REFERENCES parent (pk);
+   *   CREATE INDEX idx_child_pk_parent ON CHILD (pk_parent);
    */
   val addingForeignKeyConstraintCreatesIndex: Boolean
 
