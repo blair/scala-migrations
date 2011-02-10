@@ -49,7 +49,8 @@ class Migrate_200811241940_CreateUser
     execute("""CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
       'derby.connection.requireAuthentication', 'true')""")
 
-    // this cannot be undone
+    // Setting this property cannot be undone.  See
+    // http://db.apache.org/derby/docs/10.7/ref/rrefpropersqlauth.html .
     execute("""CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
       'derby.database.sqlAuthorization', 'true')""")
 
