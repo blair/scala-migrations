@@ -51,6 +51,8 @@ import com.imageworks.migration.{AutoCommit,
                                  RollbackMigration,
                                  With}
 
+import java.sql.DriverManager
+
 class MigrationTests
 {
   private
@@ -289,7 +291,7 @@ class MigrationTests
     // shutting down the database.  Connection shuts the database down,
     // but also throws an exception.
     try {
-      java.sql.DriverManager.getConnection(url + ";shutdown=true")
+      DriverManager.getConnection(url + ";shutdown=true")
     }
     catch {
       // For JDBC3 (JDK 1.5)

@@ -35,7 +35,8 @@ package com.imageworks.migration
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import java.sql.Connection
+import java.sql.{Connection,
+                 DriverManager}
 import javax.sql.DataSource
 
 /**
@@ -506,11 +507,11 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
         }
 
         case (Right(jdbc_url), Some((username, password))) => {
-          java.sql.DriverManager.getConnection(jdbc_url, username, password)
+          DriverManager.getConnection(jdbc_url, username, password)
         }
 
         case (Right(jdbc_url), None) => {
-          java.sql.DriverManager.getConnection(jdbc_url)
+          DriverManager.getConnection(jdbc_url)
         }
       }
     }
