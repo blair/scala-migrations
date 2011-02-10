@@ -802,13 +802,11 @@ class Migrator private (jdbc_conn: Either[DataSource, String],
     // exception is thrown or not, this ensures that any migrations
     // that were successfully run are recorded.
     withLoggingConnection(CommitUponReturnAndException) { schema_connection =>
-      {
-        logger.debug("Getting an exclusive lock on the '{}' table.",
-                     schemaMigrationsTableName)
-        val sql = adapter.lockTableSql(schemaMigrationsTableName)
-        schema_connection.withPreparedStatement(sql) { statement =>
-          statement.execute()
-        }
+      logger.debug("Getting an exclusive lock on the '{}' table.",
+                   schemaMigrationsTableName)
+      val sql = adapter.lockTableSql(schemaMigrationsTableName)
+      schema_connection.withPreparedStatement(sql) { statement =>
+        statement.execute()
       }
 
       // Get a list of all available and installed migrations.  Check
