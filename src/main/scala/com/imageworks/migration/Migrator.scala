@@ -397,7 +397,7 @@ private case object CommitUponReturnAndException
  * normally then transaction is committed; if it throws an exception
  * then the transaction is rolled back.
  */
-private case object CommitUponReturnRollbackUponException
+private case object CommitUponReturnOrRollbackUponException
   extends CommitBehavior
 
 /**
@@ -521,7 +521,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
       val auto_commit = commit_behavior match {
                           case AutoCommit => true
                           case CommitUponReturnAndException => false
-                          case CommitUponReturnRollbackUponException => false
+                          case CommitUponReturnOrRollbackUponException => false
                         }
       raw_connection.setAutoCommit(auto_commit)
 
@@ -530,7 +530,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
       commit_behavior match {
         case AutoCommit =>
         case CommitUponReturnAndException => raw_connection.commit()
-        case CommitUponReturnRollbackUponException => raw_connection.commit()
+        case CommitUponReturnOrRollbackUponException => raw_connection.commit()
       }
 
       result
@@ -545,7 +545,7 @@ class Migrator private (jdbc_connection_info: Either[DataSource, String],
                         case CommitUponReturnAndException =>
                           ("commit", () => { raw_connection.commit() })
 
-                        case CommitUponReturnRollbackUponException =>
+                        case CommitUponReturnOrRollbackUponException =>
                           ("rollback", () => { raw_connection.rollback() })
                       }
 
