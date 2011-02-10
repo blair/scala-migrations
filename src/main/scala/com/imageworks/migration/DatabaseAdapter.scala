@@ -208,6 +208,33 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   }
 
   /**
+   * Different databases require different SQL to lock a table.
+   *
+   * @param schema_name_opt the optional schema name to qualify the
+   *        table name
+   * @param table_name the name of the table to lock
+   * @return the SQL to lock the table
+   */
+  def lockTableSql(schema_name_opt: Option[String],
+                   table_name: String): String =
+  {
+    "LOCK TABLE " +
+    quoteTableName(schema_name_opt, table_name) +
+    " IN EXCLUSIVE MODE"
+  }
+
+  /**
+   * Different databases require different SQL to lock a table.
+   *
+   * @param table_name the name of the table to lock
+   * @return the SQL to lock the table
+   */
+  def lockTableSql(table_name: String): String =
+  {
+    lockTableSql(schemaNameOpt, table_name)
+  }
+
+  /**
    * Different databases require different SQL to drop a column.
    *
    * @param schema_name_opt the optional schema name to qualify the
