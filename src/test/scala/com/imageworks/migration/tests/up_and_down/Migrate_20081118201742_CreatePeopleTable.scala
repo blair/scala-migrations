@@ -83,7 +83,7 @@ class Migrate_20081118201742_CreatePeopleTable
     if (! addingForeignKeyConstraintCreatesIndex) {
       addIndex("scala_migrations_people",
                "pk_location",
-               Name("idx_people_pk_location"))
+               Name("idx_sm_people_pk_location"))
     }
 
     addColumn("scala_migrations_people",
@@ -103,7 +103,7 @@ class Migrate_20081118201742_CreatePeopleTable
     if (! addingForeignKeyConstraintCreatesIndex) {
       removeIndex("scala_migrations_people",
                   "pk_location",
-                  Name("idx_people_pk_location"))
+                  Name("idx_sm_people_pk_location"))
     }
 
     removeIndex("scala_migrations_people", "ssn")
