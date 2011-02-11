@@ -121,7 +121,7 @@ class MigrationTests
 
     // There should only be the schema migrations table now.
     assertEquals(1, migrator.getTableNames.size)
-    assertFalse(migrator.getTableNames.find(_.toLowerCase == "locations").isDefined)
+    assertFalse(migrator.getTableNames.find(_.toLowerCase == "location").isDefined)
     assertFalse(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_people").isDefined)
 
     // The database should not be completely migrated.
