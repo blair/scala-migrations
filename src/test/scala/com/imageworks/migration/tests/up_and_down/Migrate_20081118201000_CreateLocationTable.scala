@@ -43,14 +43,14 @@ class Migrate_20081118201000_CreateLocationTable
 {
   def up(): Unit =
   {
-    createTable("location") { t =>
-      t.varbinary("pk_location", PrimaryKey, Limit(16))
+    createTable("scala_migrations_location") { t =>
+      t.varbinary("pk_scala_migrations_location", PrimaryKey, Limit(16))
       t.varchar("name", Unique, Limit(255), NotNull)
     }
   }
 
   def down(): Unit =
   {
-    dropTable("location")
+    dropTable("scala_migrations_location")
   }
 }

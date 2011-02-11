@@ -121,7 +121,7 @@ class MigrationTests
 
     // There should only be the schema migrations table now.
     assertEquals(1, migrator.getTableNames.size)
-    assertFalse(migrator.getTableNames.find(_.toLowerCase == "location").isDefined)
+    assertFalse(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_location").isDefined)
     assertFalse(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_people").isDefined)
 
     // The database should not be completely migrated.
@@ -144,7 +144,7 @@ class MigrationTests
                      false)
 
     assertEquals(3, migrator.getTableNames.size)
-    assertTrue(migrator.getTableNames.find(_.toLowerCase == "location").isDefined)
+    assertTrue(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_location").isDefined)
     assertTrue(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_people").isDefined)
 
     // The database should be completely migrated.
@@ -171,10 +171,10 @@ class MigrationTests
                      "com.imageworks.migration.tests.up_and_down",
                      false)
 
-    // There should only be the schema migrations and location tables
-    // now.
+    // There should only be the schema migrations and
+    // scala_migrations_location tables now.
     assertEquals(2, migrator.getTableNames.size)
-    assertTrue(migrator.getTableNames.find(_.toLowerCase == "location").isDefined)
+    assertTrue(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_location").isDefined)
     assertFalse(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_people").isDefined)
 
     // The database should not be completely migrated.
@@ -311,7 +311,7 @@ class MigrationTests
                                      "password",
                                      new DerbyDatabaseAdapter(Some("APP")))
 
-    val select_sql = "SELECT name FROM APP.location"
+    val select_sql = "SELECT name FROM APP.scala_migrations_location"
 
     def run_select: Unit =
     {

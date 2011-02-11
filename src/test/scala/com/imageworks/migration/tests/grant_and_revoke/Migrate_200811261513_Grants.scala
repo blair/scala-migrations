@@ -40,11 +40,11 @@ class Migrate_200811261513_Grants
 {
   def up(): Unit =
   {
-    grant("location", "test", SelectPrivilege)
+    grant("scala_migrations_location", "test", SelectPrivilege)
   }
 
   def down(): Unit =
   {
-    revoke("location", "test", SelectPrivilege)
+    revoke("scala_migrations_location", "test", SelectPrivilege)
   }
 }

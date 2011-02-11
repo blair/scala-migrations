@@ -58,7 +58,7 @@ class Migrate_20081118201742_CreatePeopleTable
   {
     createTable("scala_migrations_people") { t =>
       t.varbinary("pk_scala_migrations_people", PrimaryKey, Limit(16))
-      t.varbinary("pk_location", Limit(16), NotNull)
+      t.varbinary("pk_scala_migrations_location", Limit(16), NotNull)
       t.integer("employee_id", Unique)
       t.integer("ssn", NotNull)
       t.varchar("first_name", Limit(255), NotNull, CharacterSet(Unicode))
@@ -75,15 +75,17 @@ class Migrate_20081118201742_CreatePeopleTable
 
     addIndex("scala_migrations_people", "ssn", Unique)
 
-    addForeignKey(on("scala_migrations_people" -> "pk_location"),
-                  references("location" -> "pk_location"),
+    addForeignKey(on("scala_migrations_people" ->
+                       "pk_scala_migrations_location"),
+                  references("scala_migrations_location" ->
+                               "pk_scala_migrations_location"),
                   OnDelete(Cascade),
                   OnUpdate(Restrict))
 
     if (! addingForeignKeyConstraintCreatesIndex) {
       addIndex("scala_migrations_people",
-               "pk_location",
-               Name("idx_sm_people_pk_location"))
+               "pk_scala_migrations_location",
+               Name("idx_sm_people_pk_sm_location"))
     }
 
     addColumn("scala_migrations_people",
@@ -98,12 +100,14 @@ class Migrate_20081118201742_CreatePeopleTable
   def down(): Unit =
   {
     removeCheck(on("scala_migrations_people" -> "vacation_days"))
-    removeForeignKey(on("scala_migrations_people" -> "pk_location"),
-                     references("location" -> "pk_location"))
+    removeForeignKey(on("scala_migrations_people" ->
+                          "pk_scala_migrations_location"),
+                     references("scala_migrations_location" ->
+                                  "pk_scala_migrations_location"))
     if (! addingForeignKeyConstraintCreatesIndex) {
       removeIndex("scala_migrations_people",
-                  "pk_location",
-                  Name("idx_sm_people_pk_location"))
+                  "pk_scala_migrations_location",
+                  Name("idx_sm_people_pk_sm_location"))
     }
 
     removeIndex("scala_migrations_people", "ssn")

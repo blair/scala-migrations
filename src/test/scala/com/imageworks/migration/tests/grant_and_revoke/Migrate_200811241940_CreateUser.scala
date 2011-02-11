@@ -63,15 +63,15 @@ class Migrate_200811241940_CreateUser
     execute("""CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
       'derby.user.test', 'password')""")
 
-    createTable("location") { t =>
-      t.varbinary("pk_location", PrimaryKey, Limit(16))
+    createTable("scala_migrations_location") { t =>
+      t.varbinary("pk_scala_migrations_location", PrimaryKey, Limit(16))
       t.varchar("name", Unique, Limit(255), NotNull)
     }
   }
 
   def down(): Unit =
   {
-    dropTable("location")
+    dropTable("scala_migrations_location")
 
     execute("""CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
       'derby.user.test', null)""")
