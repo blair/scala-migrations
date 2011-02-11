@@ -57,7 +57,7 @@ class Migrate_20081118201742_CreatePeopleTable
   def up(): Unit =
   {
     createTable("scala_migrations_people") { t =>
-      t.varbinary("pk_people", PrimaryKey, Limit(16))
+      t.varbinary("pk_scala_migrations_people", PrimaryKey, Limit(16))
       t.varbinary("pk_location", Limit(16), NotNull)
       t.integer("employee_id", Unique)
       t.integer("ssn", NotNull)
