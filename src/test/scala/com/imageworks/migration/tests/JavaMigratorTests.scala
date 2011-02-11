@@ -99,14 +99,14 @@ class JavaMigratorTests
 
     // There should only be the schema migrations table now.
     assertEquals(1, java_migrator.getTableNames.size)
-    assertFalse(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "people").isDefined)
+    assertFalse(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "scala_migrations_people").isDefined)
 
     // Apply all the migrations.
     java_migrator.installAllMigrations("com.imageworks.migration.tests.up_and_down",
                                        false)
 
     assertEquals(3, java_migrator.getTableNames.size)
-    assertTrue(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "people").isDefined)
+    assertTrue(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "scala_migrations_people").isDefined)
 
     // The database should be completely migrated.
     assertNull(java_migrator.whyNotMigrated("com.imageworks.migration.tests.up_and_down",
@@ -118,6 +118,6 @@ class JavaMigratorTests
 
     // There should only be the schema migrations table now.
     assertEquals(1, java_migrator.getTableNames.size)
-    assertFalse(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "people").isDefined)
+    assertFalse(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "scala_migrations_people").isDefined)
   }
 }

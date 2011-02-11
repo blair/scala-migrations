@@ -56,7 +56,7 @@ class Migrate_20081118201742_CreatePeopleTable
 {
   def up(): Unit =
   {
-    createTable("people") { t =>
+    createTable("scala_migrations_people") { t =>
       t.varbinary("pk_people", PrimaryKey, Limit(16))
       t.varbinary("pk_location", Limit(16), NotNull)
       t.integer("employee_id", Unique)
@@ -73,33 +73,41 @@ class Migrate_20081118201742_CreatePeopleTable
       t.blob("image")
     }
 
-    addIndex("people", "ssn", Unique)
+    addIndex("scala_migrations_people", "ssn", Unique)
 
-    addForeignKey(on("people" -> "pk_location"),
+    addForeignKey(on("scala_migrations_people" -> "pk_location"),
                   references("location" -> "pk_location"),
                   OnDelete(Cascade),
                   OnUpdate(Restrict))
 
     if (! addingForeignKeyConstraintCreatesIndex) {
-      addIndex("people", "pk_location", Name("idx_people_pk_location"))
+      addIndex("scala_migrations_people",
+               "pk_location",
+               Name("idx_people_pk_location"))
     }
 
-    addColumn("people", "secret_key", VarbinaryType, Limit(16))
+    addColumn("scala_migrations_people",
+              "secret_key",
+              VarbinaryType,
+              Limit(16))
 
-    addCheck(on("people" -> "vacation_days"), "vacation_days >= 0")
+    addCheck(on("scala_migrations_people" -> "vacation_days"),
+             "vacation_days >= 0")
   }
 
   def down(): Unit =
   {
-    removeCheck(on("people" -> "vacation_days"))
-    removeForeignKey(on("people" -> "pk_location"),
+    removeCheck(on("scala_migrations_people" -> "vacation_days"))
+    removeForeignKey(on("scala_migrations_people" -> "pk_location"),
                      references("location" -> "pk_location"))
     if (! addingForeignKeyConstraintCreatesIndex) {
-      removeIndex("people", "pk_location", Name("idx_people_pk_location"))
+      removeIndex("scala_migrations_people",
+                  "pk_location",
+                  Name("idx_people_pk_location"))
     }
 
-    removeIndex("people", "ssn")
-    removeColumn("people", "secret_key")
-    dropTable("people")
+    removeIndex("scala_migrations_people", "ssn")
+    removeColumn("scala_migrations_people", "secret_key")
+    dropTable("scala_migrations_people")
   }
 }

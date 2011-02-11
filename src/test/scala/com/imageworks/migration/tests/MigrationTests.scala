@@ -122,7 +122,7 @@ class MigrationTests
     // There should only be the schema migrations table now.
     assertEquals(1, migrator.getTableNames.size)
     assertFalse(migrator.getTableNames.find(_.toLowerCase == "locations").isDefined)
-    assertFalse(migrator.getTableNames.find(_.toLowerCase == "people").isDefined)
+    assertFalse(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_people").isDefined)
 
     // The database should not be completely migrated.
     assertTrue(migrator.whyNotMigrated("com.imageworks.migration.tests.up_and_down",
@@ -145,7 +145,7 @@ class MigrationTests
 
     assertEquals(3, migrator.getTableNames.size)
     assertTrue(migrator.getTableNames.find(_.toLowerCase == "location").isDefined)
-    assertTrue(migrator.getTableNames.find(_.toLowerCase == "people").isDefined)
+    assertTrue(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_people").isDefined)
 
     // The database should be completely migrated.
     assertFalse(migrator.whyNotMigrated("com.imageworks.migration.tests.up_and_down",
@@ -175,7 +175,7 @@ class MigrationTests
     // now.
     assertEquals(2, migrator.getTableNames.size)
     assertTrue(migrator.getTableNames.find(_.toLowerCase == "location").isDefined)
-    assertFalse(migrator.getTableNames.find(_.toLowerCase == "people").isDefined)
+    assertFalse(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_people").isDefined)
 
     // The database should not be completely migrated.
     assertTrue(migrator.whyNotMigrated("com.imageworks.migration.tests.up_and_down",
@@ -203,7 +203,7 @@ class MigrationTests
 
     // There should only be the schema migrations table now.
     assertEquals(1, migrator.getTableNames.size)
-    assertFalse(migrator.getTableNames.find(_.toLowerCase == "people").isDefined)
+    assertFalse(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_people").isDefined)
 
     // The database should not be completely migrated.
     assertTrue(migrator.whyNotMigrated("com.imageworks.migration.tests.up_and_down",
