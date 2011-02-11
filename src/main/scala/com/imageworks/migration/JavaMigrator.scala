@@ -43,6 +43,20 @@ class JavaMigrator private (migrator: Migrator)
   /**
    * JavaMigrator constructor.
    *
+   * @param connection_builder a builder of connections to the
+   *        database
+   * @param adapter a concrete DatabaseAdapter that the migrator uses
+   *        to handle database specific features
+   */
+  def this(connection_builder: ConnectionBuilder,
+           adapter: DatabaseAdapter) =
+  {
+    this(new Migrator(connection_builder, adapter))
+  }
+
+  /**
+   * JavaMigrator constructor.
+   *
    * @param jdbc_url the JDBC URL to connect to the database
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
@@ -50,7 +64,7 @@ class JavaMigrator private (migrator: Migrator)
   def this(jdbc_url: String,
            adapter: DatabaseAdapter) =
   {
-    this(new Migrator(jdbc_url, adapter))
+    this(new ConnectionBuilder(jdbc_url), adapter)
   }
 
   /**
@@ -68,10 +82,8 @@ class JavaMigrator private (migrator: Migrator)
            jdbc_password: String,
            adapter: DatabaseAdapter) =
   {
-    this(new Migrator(jdbc_url,
-                      jdbc_username,
-                      jdbc_password,
-                      adapter))
+    this(new ConnectionBuilder(jdbc_url, jdbc_username, jdbc_password),
+         adapter)
   }
 
   /**
