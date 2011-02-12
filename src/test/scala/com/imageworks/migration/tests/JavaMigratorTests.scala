@@ -41,7 +41,8 @@ import java.sql.DriverManager
 import com.imageworks.migration.{DuplicateMigrationDescriptionException,
                                  DuplicateMigrationVersionException,
                                  JavaDatabaseAdapter,
-                                 JavaMigrator}
+                                 JavaMigrator,
+                                 With}
 
 class JavaMigratorTests
 {
