@@ -411,14 +411,22 @@ class MigrationTests
                            ("timestamp_column", new java.sql.Date(now)),
                            ("varbinary_column", varbinary_array),
                            ("varchar_column", "ABCD"))) {
-        val insert_sql = "INSERT INTO types_test (" + n + ") VALUES (?)"
+        val insert_sql = """INSERT INTO
+                              scala_migrations_types_test (""" + n + """)
+                            VALUES
+                              (?)""".replaceAll("\\s+", " ")
         val insert_statement = connection.prepareStatement(insert_sql)
         insert_statement.setObject(1, v)
         insert_statement.executeUpdate
         insert_statement.close()
 
         // Make sure that the value exists.
-        val select_sql = "SELECT COUNT(1) from types_test where " + n + " = ?"
+        val select_sql = """SELECT
+                              COUNT(1)
+                            FROM
+                              scala_migrations_types_test
+                            WHERE
+                              """ + n + """ = ?""".replaceAll("\\s+", " ")
         val select_statement = connection.prepareStatement(select_sql)
         select_statement.setObject(1, v)
         With.resultSet(select_statement.executeQuery()) { rs =>
