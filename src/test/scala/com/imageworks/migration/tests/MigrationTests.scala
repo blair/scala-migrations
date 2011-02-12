@@ -326,10 +326,9 @@ class MigrationTests
     def run_select: Unit =
     {
       test_migrator.withLoggingConnection(AutoCommit) { connection =>
-        val statement = connection.prepareStatement(select_sql)
-        val rs = statement.executeQuery
-        rs.close()
-        statement.close()
+        With.statement(connection.prepareStatement(select_sql)) { statement =>
+          With.resultSet(statement.executeQuery()) { rs => }
+        }
       }
     }
 
