@@ -36,6 +36,8 @@ import org.junit.Assert._
 import org.junit.{Before,
                   Test}
 
+import java.sql.DriverManager
+
 import com.imageworks.migration.{DuplicateMigrationDescriptionException,
                                  DuplicateMigrationVersionException,
                                  JavaDatabaseAdapter,
@@ -63,6 +65,19 @@ class JavaMigratorTests
     java_migrator = new JavaMigrator(
       url,
       JavaDatabaseAdapter.getDerbyDatabaseAdapter("APP"))
+
+    With.connection(DriverManager.getConnection(url)) { c =>
+      val table_names = java_migrator.getTableNames
+      val iter = table_names.iterator
+      while (iter.hasNext) {
+        val table_name = iter.next()
+        val tn = table_name.toLowerCase
+        if (tn == "schema_migrations" || tn.startsWith("scala_migrations_")) {
+          val sql = "DROP TABLE APP." + table_name
+          With.statement(c.prepareStatement(sql)) { _.execute }
+        }
+      }
+    }
   }
 
   @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
