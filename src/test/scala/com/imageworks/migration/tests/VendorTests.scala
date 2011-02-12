@@ -32,14 +32,14 @@
  */
 package com.imageworks.migration.tests
 
-import org.junit.Assert._
-import org.junit.{Before,
-                  Test}
-
 import com.imageworks.migration.{Derby,
                                  Oracle,
                                  Postgresql,
                                  Vendor}
+
+import org.junit.Assert._
+import org.junit.{Before,
+                  Test}
 
 class VendorTests
 {

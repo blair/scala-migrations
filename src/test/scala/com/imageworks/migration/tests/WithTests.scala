@@ -32,14 +32,14 @@
  */
 package com.imageworks.migration.tests
 
-import org.junit.Assert._
-import org.junit.{Before,
-                  Test}
+import com.imageworks.migration.With
 
 import org.jmock.{Expectations,
                   Mockery}
 
-import com.imageworks.migration.With
+import org.junit.Assert._
+import org.junit.{Before,
+                  Test}
 
 import java.sql.ResultSet
 

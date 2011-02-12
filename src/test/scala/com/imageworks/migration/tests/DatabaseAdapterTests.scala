@@ -32,10 +32,6 @@
  */
 package com.imageworks.migration.tests
 
-import org.junit.Assert._
-import org.junit.{Before,
-                  Test}
-
 import com.imageworks.migration.{DatabaseAdapter,
                                  Derby,
                                  DerbyDatabaseAdapter,
@@ -43,6 +39,10 @@ import com.imageworks.migration.{DatabaseAdapter,
                                  OracleDatabaseAdapter,
                                  Postgresql,
                                  PostgresqlDatabaseAdapter}
+
+import org.junit.Assert._
+import org.junit.{Before,
+                  Test}
 
 class DatabaseAdapterTests
 {
