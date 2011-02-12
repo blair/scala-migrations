@@ -32,13 +32,6 @@
  */
 package com.imageworks.migration.tests
 
-import org.junit.Assert._
-import org.junit.{Before,
-                  Test}
-
-import org.jmock.{Expectations,
-                  Mockery}
-
 import com.imageworks.migration.{AutoCommit,
                                  DerbyDatabaseAdapter,
                                  DuplicateMigrationDescriptionException,
@@ -50,6 +43,13 @@ import com.imageworks.migration.{AutoCommit,
                                  RemoveAllMigrations,
                                  RollbackMigration,
                                  With}
+
+import org.jmock.{Expectations,
+                  Mockery}
+
+import org.junit.Assert._
+import org.junit.{Before,
+                  Test}
 
 import java.sql.{DriverManager,
                  ResultSet}

@@ -32,16 +32,16 @@
  */
 package com.imageworks.migration.tests
 
+import com.imageworks.migration.{DuplicateMigrationDescriptionException,
+                                 DuplicateMigrationVersionException,
+                                 JavaDatabaseAdapter,
+                                 JavaMigrator}
+
 import org.junit.Assert._
 import org.junit.{Before,
                   Test}
 
 import java.sql.DriverManager
-
-import com.imageworks.migration.{DuplicateMigrationDescriptionException,
-                                 DuplicateMigrationVersionException,
-                                 JavaDatabaseAdapter,
-                                 JavaMigrator}
 
 class JavaMigratorTests
 {
