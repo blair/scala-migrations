@@ -94,7 +94,7 @@ class MigrationTests
     }
   }
 
-  @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
+  @Test(expected=classOf[DuplicateMigrationDescriptionException])
   def duplicate_descriptions_throw_exception: Unit =
   {
     migrator.migrate(InstallAllMigrations,
@@ -102,7 +102,7 @@ class MigrationTests
                      false)
   }
 
-  @Test { val expected = classOf[DuplicateMigrationVersionException] }
+  @Test(expected=classOf[DuplicateMigrationVersionException])
   def duplicate_versions_throw_exception: Unit =
   {
     migrator.migrate(InstallAllMigrations,
@@ -110,7 +110,7 @@ class MigrationTests
                      false)
   }
 
-  @Test { val expected = classOf[IllegalArgumentException] }
+  @Test(expected=classOf[IllegalArgumentException])
   def scale_without_precision: Unit =
   {
     migrator.migrate(InstallAllMigrations,
