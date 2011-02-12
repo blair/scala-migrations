@@ -34,7 +34,9 @@ package com.imageworks.migration
 
 import org.slf4j.LoggerFactory
 
-import java.sql.ResultSet
+import java.sql.{Connection,
+                 ResultSet,
+                 Statement}
 
 /**
  * Utility object that contains functions that ensure a resource is
@@ -48,6 +50,59 @@ object With
 {
   private final
   val logger = LoggerFactory.getLogger(this.getClass)
+
+  /**
+   * Take a SQL connection, pass it to a closure and ensure that the
+   * connection is closed after the closure returns, either normally
+   * or by an exception.  If the closure returns normally, return its
+   * result.
+   *
+   * @param c a SQL connection
+   * @param f a Function1[Connection,R] that operates on the
+   *        connection
+   * @return the result of f
+   */
+  def connection[R](c: Connection)
+                   (f: Connection => R): R =
+  {
+    try {
+      f(c)
+    }
+    finally {
+      try {
+        c.close()
+      }
+      catch {
+        case e => logger.warn("Error in closing connection:", c)
+      }
+    }
+  }
+
+  /**
+   * Take a SQL statement, pass it to a closure and ensure that the
+   * statement is closed after the closure returns, either normally or
+   * by an exception.  If the closure returns normally, return its
+   * result.
+   *
+   * @param s a SQL statement
+   * @param f a Function1[Statement,R] that operates on the statement
+   * @return the result of f
+   */
+  def statement[S <: Statement,R](s: S)
+                                 (f: S => R): R =
+  {
+    try {
+      f(s)
+    }
+    finally {
+      try {
+        s.close()
+      }
+      catch {
+        case e => logger.warn("Error in closing statement:", s)
+      }
+    }
+  }
 
   /**
    * Take a SQL result set, pass it to a closure and ensure that the

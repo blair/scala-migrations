@@ -82,6 +82,16 @@ class MigrationTests
 
     // The default schema for a Derby database is "APP".
     migrator = new Migrator(url_, new DerbyDatabaseAdapter(Some("APP")))
+
+    With.connection(DriverManager.getConnection(url_)) { c =>
+      for (table_name <- migrator.getTableNames) {
+        val tn = table_name.toLowerCase
+        if (tn == "schema_migrations" || tn.startsWith("scala_migrations_")) {
+          val sql = "DROP TABLE APP." + table_name
+          With.statement(c.prepareStatement(sql)) { _.execute }
+        }
+      }
+    }
   }
 
   @Test(expected=classOf[DuplicateMigrationDescriptionException])
