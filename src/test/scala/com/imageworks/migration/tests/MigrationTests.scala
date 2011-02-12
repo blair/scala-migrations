@@ -367,7 +367,7 @@ class MigrationTests
       // java.sql.SQLException is caught.
       case e: java.sql.SQLException =>
         // failure if got here
-        fail("SELECT permission failure unexpected")
+        fail("SELECT permission failure unexpected: " + e)
     }
 
     // preform revoke
