@@ -33,7 +33,6 @@
 package com.imageworks.migration.tests
 
 import com.imageworks.migration.{AutoCommit,
-                                 DerbyDatabaseAdapter,
                                  DuplicateMigrationDescriptionException,
                                  DuplicateMigrationVersionException,
                                  InstallAllMigrations,
@@ -59,35 +58,22 @@ class MigrationTests
   private
   val context = new Mockery
 
-  // Set the Derby system home to a test-databases directory so the
-  // derby.log file and all databases will be placed in there.
-  System.getProperties.setProperty("derby.system.home", "test-databases")
-
-  // Load the Derby database driver.
-  Class.forName("org.apache.derby.jdbc.EmbeddedDriver")
-
   private
   var migrator: Migrator = _
-
-  private
-  var url: String = _
 
   @Before
   def set_up(): Unit =
   {
-    val db_name = System.currentTimeMillis.toString
-    url = "jdbc:derby:" + db_name
+    val connection_builder = TestDatabase.getAdminConnectionBuilder
+    val database_adapter = TestDatabase.getDatabaseAdapter
 
-    val url_ = url + ";create=true"
+    migrator = new Migrator(connection_builder, database_adapter)
 
-    // The default schema for a Derby database is "APP".
-    migrator = new Migrator(url_, new DerbyDatabaseAdapter(Some("APP")))
-
-    With.connection(DriverManager.getConnection(url_)) { c =>
+    connection_builder.withConnection(AutoCommit) { c =>
       for (table_name <- migrator.getTableNames) {
         val tn = table_name.toLowerCase
         if (tn == "schema_migrations" || tn.startsWith("scala_migrations_")) {
-          val sql = "DROP TABLE APP." + table_name
+          val sql = "DROP TABLE " + database_adapter.quoteTableName(tn)
           With.statement(c.prepareStatement(sql)) { _.execute }
         }
       }
@@ -293,35 +279,20 @@ class MigrationTests
   @Test
   def grant_and_revoke: Unit =
   {
-    // create a second user, make a table
+    val connection_builder = TestDatabase.getUserConnectionBuilder
+    val database_adapter = TestDatabase.getDatabaseAdapter
+
+    // Make a table, migrate with admin account.
     migrator.migrate(MigrateToVersion(200811241940L),
                      "com.imageworks.migration.tests.grant_and_revoke",
                      false)
 
-    // "Reboot" database for database property changes to take effect by
-    // shutting down the database.  Connection shuts the database down,
-    // but also throws an exception.
-    try {
-      DriverManager.getConnection(url + ";shutdown=true")
-    }
-    catch {
-      // For JDBC3 (JDK 1.5)
-      case e: org.apache.derby.impl.jdbc.EmbedSQLException =>
+    // New connection with user account.
+    val test_migrator = new Migrator(connection_builder, database_adapter)
 
-      // For JDBC4 (JDK 1.6), a
-      // java.sql.SQLNonTransientConnectionException is
-      // thrown, but this exception class does not exist in JDK 1.5,
-      // so catch a java.sql.SQLException instead.
-      case e: java.sql.SQLException =>
-    }
-
-    // new connection with test user
-    val test_migrator = new Migrator(url,
-                                     "test",
-                                     "password",
-                                     new DerbyDatabaseAdapter(Some("APP")))
-
-    val select_sql = "SELECT name FROM APP.scala_migrations_location"
+    val select_sql =
+      "SELECT name FROM " +
+      database_adapter.quoteTableName("scala_migrations_location")
 
     def run_select: Unit =
     {
@@ -346,16 +317,10 @@ class MigrationTests
       case e: java.sql.SQLException => // expected
     }
 
-    // new connection with APP user
-    val migrator2 = new Migrator(url,
-                                 "APP",
-                                 "password",
-                                 new DerbyDatabaseAdapter(Some("APP")))
-
     // perform grants
-    migrator2.migrate(MigrateToVersion(200811261513L),
-                      "com.imageworks.migration.tests.grant_and_revoke",
-                      false)
+    migrator.migrate(MigrateToVersion(200811261513L),
+                     "com.imageworks.migration.tests.grant_and_revoke",
+                     false)
 
     // try to select table, should succeed now that grant has been given
     try {
@@ -371,9 +336,9 @@ class MigrationTests
     }
 
     // preform revoke
-    migrator2.migrate(RollbackMigration(1),
-                      "com.imageworks.migration.tests.grant_and_revoke",
-                      false)
+    migrator.migrate(RollbackMigration(1),
+                     "com.imageworks.migration.tests.grant_and_revoke",
+                     false)
 
     // try to select table, should give a permissions error again
     try {
