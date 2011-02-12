@@ -32,7 +32,8 @@
  */
 package com.imageworks.migration.tests
 
-import com.imageworks.migration.{DuplicateMigrationDescriptionException,
+import com.imageworks.migration.{AutoCommit,
+                                 DuplicateMigrationDescriptionException,
                                  DuplicateMigrationVersionException,
                                  JavaMigrator,
                                  With}
