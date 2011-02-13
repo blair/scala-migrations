@@ -32,7 +32,11 @@
  */
 package com.imageworks.migration.tests
 
-import com.imageworks.migration.With
+import com.imageworks.migration.{AutoCommit,
+                                 ConnectionBuilder,
+                                 DatabaseAdapter,
+                                 DerbyDatabaseAdapter,
+                                 With}
 
 import java.sql.DriverManager
 
