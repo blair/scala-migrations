@@ -36,6 +36,7 @@ import com.imageworks.migration.{AutoCommit,
                                  ConnectionBuilder,
                                  DatabaseAdapter,
                                  DerbyDatabaseAdapter,
+                                 H2DatabaseAdapter,
                                  With}
 
 import java.sql.DriverManager
