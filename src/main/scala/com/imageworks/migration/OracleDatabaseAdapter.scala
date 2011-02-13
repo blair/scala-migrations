@@ -180,7 +180,7 @@ class OracleVarcharColumnDefinition(use_nchar_type: Boolean)
 class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
   extends DatabaseAdapter(schemaNameOpt)
 {
-  override protected
+  override
   val unquotedNameConverter = UppercaseUnquotedNameConverter
 
   override

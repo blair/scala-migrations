@@ -42,7 +42,7 @@ class PostgresqlByteaColumnDefinition
 class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
   extends DatabaseAdapter(schemaNameOpt)
 {
-  override protected
+  override
   val unquotedNameConverter = LowercaseUnquotedNameConverter
 
   override

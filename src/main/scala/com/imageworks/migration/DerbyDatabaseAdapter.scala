@@ -53,7 +53,7 @@ class DerbyVarbinaryColumnDefinition
 class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
   extends DatabaseAdapter(schemaNameOpt)
 {
-  override protected
+  override
   val unquotedNameConverter = UppercaseUnquotedNameConverter
 
   override
