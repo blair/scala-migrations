@@ -75,6 +75,9 @@ object Vendor
       case "org.apache.derby.jdbc.ClientDriver" =>
         Derby
 
+      case "org.h2.Driver" =>
+        H2
+
       case "org.postgresql.Driver" =>
         Postgresql
 

@@ -58,6 +58,9 @@ class VendorTests
     assertSame(Derby,
                Vendor.forDriver("org.apache.derby.jdbc.ClientDriver"))
 
+    assertSame(H2,
+               Vendor.forDriver("org.h2.Driver"))
+
     assertSame(Postgresql,
                Vendor.forDriver("org.postgresql.Driver"))
   }
