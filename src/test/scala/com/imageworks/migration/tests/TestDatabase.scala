@@ -75,10 +75,9 @@ object DerbyTestDatabase
   extends TestDatabase
 {
   // Username of the admin account, which will be the owner of the
-  // database.  Use "APP" to be the same as the default username if
-  // one isn't specified in Derby.
+  // database.
   private
-  val admin_username = "APP"
+  val admin_username = "admin"
 
   // Password for the admin account.
   private
@@ -111,7 +110,9 @@ object DerbyTestDatabase
   // "boot" it with connection and SQL authorizations enabled.
 
   // Create the database.
-  With.connection(DriverManager.getConnection(url + ";create=true")) { c =>
+  With.connection(DriverManager.getConnection(url + ";create=true",
+                                              admin_username,
+                                              admin_password)) { c =>
     TestDatabase.execute(
       getAdminConnectionBuilder,
       """CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
@@ -142,7 +143,9 @@ object DerbyTestDatabase
 
   // Shutdown Derby.
   try {
-    With.connection(DriverManager.getConnection(url + ";shutdown=true")) { _ =>
+    With.connection(DriverManager.getConnection(url + ";shutdown=true",
+                                                admin_username,
+                                                admin_password)) { _ =>
     }
   }
   catch {
@@ -177,7 +180,7 @@ object DerbyTestDatabase
   override
   def getDatabaseAdapter: DatabaseAdapter =
   {
-    new DerbyDatabaseAdapter(Some(admin_username))
+    new DerbyDatabaseAdapter(Some(getSchemaName))
   }
 }
 
