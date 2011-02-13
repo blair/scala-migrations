@@ -344,12 +344,15 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
           "UPDATE" + formatColumns(columns)
       }).mkString(", "))
 
+    val quoted_grantees = for (g <- grantees)
+                            yield '"' + unquotedNameConverter(g) + '"'
+
     sql.append(" ON ")
        .append(quoteTableName(table_name))
        .append(' ')
        .append(preposition)
        .append(' ')
-       .append(grantees.mkString(", "))
+       .append(quoted_grantees.mkString(", "))
        .toString
   }
 
