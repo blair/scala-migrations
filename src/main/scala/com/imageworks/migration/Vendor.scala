@@ -40,6 +40,8 @@ sealed trait Vendor
 
 case object Derby
   extends Vendor
+case object H2
+  extends Vendor
 case object Oracle
   extends Vendor
 case object Postgresql
