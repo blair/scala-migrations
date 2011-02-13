@@ -47,10 +47,20 @@ sealed trait TestDatabase
   def getSchemaName: String
 
   /**
+   * Get the username of the admin account.
+   */
+  def getAdminAccountName: String
+
+  /**
    * Get a connection builder that builds connections with access to
    * the entire schema.
    */
   def getAdminConnectionBuilder: ConnectionBuilder
+
+  /**
+   * Get the username of the user account.
+   */
+  def getUserAccountName: String
 
   /**
    * Get a connection builder that builds connections that connect as
@@ -75,15 +85,21 @@ object DerbyTestDatabase
   private
   val admin_username = "admin"
 
+  override
+  def getAdminAccountName = admin_username
+
   // Password for the admin account.
   private
   val admin_password = "foobar"
 
   // Username of the user account.
   private
-  val user_username = "test"
+  val user_username = "user"
 
-  // Password for "test".
+  override
+  def getUserAccountName = user_username
+
+  // Password for the user account.
   private
   val user_password = "baz"
 
@@ -205,7 +221,11 @@ object TestDatabase
 
   override def getSchemaName = db.getSchemaName
 
+  override def getAdminAccountName = db.getAdminAccountName
+
   override def getAdminConnectionBuilder = db.getAdminConnectionBuilder
+
+  override def getUserAccountName = db.getUserAccountName
 
   override def getUserConnectionBuilder = db.getUserConnectionBuilder
 
