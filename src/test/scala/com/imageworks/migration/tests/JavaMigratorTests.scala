@@ -32,9 +32,11 @@
  */
 package com.imageworks.migration.tests
 
-import com.imageworks.migration.{DuplicateMigrationDescriptionException,
+import com.imageworks.migration.{AutoCommit,
+                                 DuplicateMigrationDescriptionException,
                                  DuplicateMigrationVersionException,
-                                 JavaMigrator}
+                                 JavaMigrator,
+                                 With}
 
 import org.junit.Assert._
 import org.junit.{Before,
@@ -69,14 +71,14 @@ class JavaMigratorTests
     }
   }
 
-  @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
+  @Test(expected=classOf[DuplicateMigrationDescriptionException])
   def duplicate_descriptions_throw_exception: Unit =
   {
     java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_descriptions",
                                        false)
   }
 
-  @Test { val expected = classOf[DuplicateMigrationVersionException] }
+  @Test(expected=classOf[DuplicateMigrationVersionException])
   def duplicate_versions_throw_exception: Unit =
   {
     java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_versions",
