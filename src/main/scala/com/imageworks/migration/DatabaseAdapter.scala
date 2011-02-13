@@ -191,15 +191,17 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   def quoteTableName(schema_name_opt: Option[String],
                      table_name: String): String =
   {
-    if (schema_name_opt.isDefined) {
-      '"' +
-      unquotedNameConverter(schema_name_opt.get) +
-      "\".\"" +
-      unquotedNameConverter(table_name) +
-      '"'
-    }
-    else {
-      '"' + unquotedNameConverter(table_name) + '"'
+    schema_name_opt match {
+      case Some(schema_name) => {
+        '"' +
+        unquotedNameConverter(schema_name) +
+        "\".\"" +
+        unquotedNameConverter(table_name) +
+        '"'
+      }
+      case None => {
+        '"' + unquotedNameConverter(table_name) + '"'
+      }
     }
   }
 
