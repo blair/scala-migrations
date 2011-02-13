@@ -499,9 +499,13 @@ class Migrator(connection_builder: ConnectionBuilder,
   def getTableNames: scala.collection.mutable.Set[String] =
   {
     withLoggingConnection(AutoCommit) { connection =>
+      val schema_pattern = adapter.schemaNameOpt match {
+                             case Some(n) => adapter.unquotedNameConverter(n)
+                             case None => null
+                           }
       val metadata = connection.getMetaData
       With.resultSet(metadata.getTables(null,
-                                        adapter.schemaNameOpt.getOrElse(null),
+                                        schema_pattern,
                                         null,
                                         Array("TABLE"))) { rs =>
         val names = new scala.collection.mutable.HashSet[String]

@@ -87,7 +87,6 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * To properly quote table names the database adapter needs to know
    * how the database treats with unquoted names.
    */
-  protected
   val unquotedNameConverter: UnquotedNameConverter
 
   /**
