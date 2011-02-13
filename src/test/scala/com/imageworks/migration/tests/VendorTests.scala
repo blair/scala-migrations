@@ -33,6 +33,7 @@
 package com.imageworks.migration.tests
 
 import com.imageworks.migration.{Derby,
+                                 H2,
                                  Oracle,
                                  Postgresql,
                                  Vendor}
