@@ -88,15 +88,6 @@ class H2DatabaseAdapter(override val schemaNameOpt: Option[String])
   }
 
   override
-  def removeIndexSql(schema_name_opt: Option[String],
-                     table_name: String,
-                     index_name: String): String =
-  {
-    "DROP INDEX " +
-    quoteColumnName(index_name)
-  }
-
-  override
   def lockTableSql(table_name: String): String =
   {
     // This isn't perfect, since it won't lock an empty table.  It

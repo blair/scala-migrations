@@ -251,15 +251,6 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
   }
 
   override
-  def removeIndexSql(schema_name_opt: Option[String],
-                     table_name: String,
-                     index_name: String): String =
-  {
-    "DROP INDEX " +
-    quoteColumnName(index_name)
-  }
-
-  override
   def grantSql(schema_name_opt: Option[String],
                table_name: String,
                grantees: Array[String],

@@ -85,13 +85,4 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
         new DefaultVarcharColumnDefinition
     }
   }
-
-  override
-  def removeIndexSql(schema_name_opt: Option[String],
-                     table_name: String,
-                     index_name: String): String =
-  {
-    "DROP INDEX " +
-    quoteColumnName(index_name)
-  }
 }
