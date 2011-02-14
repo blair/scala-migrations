@@ -42,7 +42,7 @@ class TableDefinition(adapter: DatabaseAdapter,
                       table_name: String)
 {
   private
-  val columns = new mutable.ListBuffer[ColumnDefinition]
+  val column_definitions = new mutable.ListBuffer[ColumnDefinition]
 
   /**
    * Generate a SQL string representation of the columns in the table.
@@ -54,7 +54,7 @@ class TableDefinition(adapter: DatabaseAdapter,
   {
     val sb = new java.lang.StringBuilder(512)
     var first_column = true
-    for (column_definition <- columns) {
+    for (column_definition <- column_definitions) {
       if (first_column) {
         first_column = false
       }
@@ -88,7 +88,7 @@ class TableDefinition(adapter: DatabaseAdapter,
                                              name,
                                              column_type,
                                              options: _*)
-    columns += column
+    column_definitions += column
     this
   }
 
