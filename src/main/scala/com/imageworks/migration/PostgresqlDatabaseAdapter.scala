@@ -85,4 +85,18 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
         new DefaultVarcharColumnDefinition
     }
   }
+
+  override protected
+  def alterColumnSql(schema_name_opt: Option[String],
+                     column_definition: ColumnDefinition): String =
+  {
+    new java.lang.StringBuilder(512)
+      .append("ALTER TABLE ")
+      .append(quoteTableName(schema_name_opt, column_definition.getTableName))
+      .append(" ALTER COLUMN ")
+      .append(quoteColumnName(column_definition.getColumnName))
+      .append(" TYPE ")
+      .append(column_definition.toSql)
+      .toString
+  }
 }

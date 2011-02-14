@@ -238,6 +238,59 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
     lockTableSql(schemaNameOpt, table_name)
   }
 
+  protected
+  def alterColumnSql(schema_name_opt: Option[String],
+                     column_definition: ColumnDefinition): String
+
+  /**
+   * Different databases require different SQL to alter a column's
+   * definition.
+   *
+   * @param schema_name_opt the optional schema name to qualify the
+   *        table name
+   * @param table_name the name of the table with the column
+   * @param column_name the name of the column
+   * @param column_type the type the column is being altered to
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the SQL to alter the column
+   */
+  def alterColumnSql(schema_name_opt: Option[String],
+                     table_name: String,
+                     column_name: String,
+                     column_type: SqlType,
+                     options: ColumnOption*): String =
+  {
+    alterColumnSql(schema_name_opt,
+                   newColumnDefinition(table_name,
+                                       column_name,
+                                       column_type,
+                                       options: _*))
+  }
+
+  /**
+   * Different databases require different SQL to alter a column's
+   * definition.  Uses the schema_name_opt defined in the adapter.
+   *
+   * @param table_name the name of the table with the column
+   * @param column_name the name of the column
+   * @param column_type the type the column is being altered to
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the SQL to alter the column
+   */
+  def alterColumnSql(table_name: String,
+                     column_name: String,
+                     column_type: SqlType,
+                     options: ColumnOption*): String =
+  {
+    alterColumnSql(schemaNameOpt,
+                   table_name,
+                   column_name,
+                   column_type,
+                   options: _*)
+  }
+
   /**
    * Different databases require different SQL to drop a column.
    *

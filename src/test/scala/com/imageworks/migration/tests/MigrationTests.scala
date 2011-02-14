@@ -277,6 +277,62 @@ class MigrationTests
   }
 
   @Test
+  def alter_column: Unit =
+  {
+    // In a brand new database there should be no tables.
+    assertEquals(0, migrator.getTableNames.size)
+
+    // Create the table with a short VarcharType column.
+    migrator.migrate(MigrateToVersion(20110214054347L),
+                     "com.imageworks.migration.tests.alter_column",
+                     false)
+
+    assertEquals(2, migrator.getTableNames.size)
+
+    // Assert that an INSERT with a short Varchar value works while a
+    // long one fails.
+    val name = "x" * 100
+    val sql_start = "INSERT INTO scala_migrations_altering VALUES ('"
+    val sql_end = "')"
+    val short_name_sql = sql_start + name + sql_end
+    val long_name_sql = sql_start + name + name + sql_end
+
+    val connection_builder = TestDatabase.getAdminConnectionBuilder
+
+    connection_builder.withConnection(AutoCommit) { c =>
+      With.statement(c.prepareStatement(short_name_sql)) { s =>
+        s.execute()
+      }
+
+      With.statement(c.prepareStatement(long_name_sql)) { s =>
+        try {
+          s.execute()
+          fail("Expected a truncation error from the database.")
+        }
+        catch {
+          case _: java.sql.SQLException =>
+        }
+      }
+    }
+
+    // Apply the migration that extends the length of the column then
+    // assert that the same INSERT that failed now works.
+    migrator.migrate(MigrateToVersion(20110214060042L),
+                     "com.imageworks.migration.tests.alter_column",
+                     false)
+
+    connection_builder.withConnection(AutoCommit) { c =>
+      With.statement(c.prepareStatement(long_name_sql)) { s =>
+        s.execute()
+      }
+    }
+
+    // Do not rollback all the migrations because the last migration
+    // is irreversible.  Let set_up() for the next unit test clean up
+    // the left over tables.
+  }
+
+  @Test
   def grant_and_revoke: Unit =
   {
     val connection_builder = TestDatabase.getUserConnectionBuilder

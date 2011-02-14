@@ -94,4 +94,18 @@ class H2DatabaseAdapter(override val schemaNameOpt: Option[String])
     // also may have a performance penalty when the table gets large.
     "SELECT * FROM " + quoteTableName(table_name) + " FOR UPDATE"
   }
+
+  override protected
+  def alterColumnSql(schema_name_opt: Option[String],
+                     column_definition: ColumnDefinition): String =
+  {
+    new java.lang.StringBuilder(512)
+      .append("ALTER TABLE ")
+      .append(quoteTableName(schema_name_opt, column_definition.getTableName))
+      .append(" ALTER COLUMN ")
+      .append(quoteColumnName(column_definition.getColumnName))
+      .append(' ')
+      .append(column_definition.toSql)
+      .toString
+  }
 }

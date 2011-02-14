@@ -320,6 +320,27 @@ abstract class Migration
     execute(sql)
   }
 
+  /**
+   * Alter the definition of an existing column.
+   *
+   * @param table_name the name of the table with the column
+   * @param column_name the name of the column
+   * @param column_type the type the column is being altered to
+   * @param a possibly empty array of column options to customize the
+   *        column
+   */
+  final
+  def alterColumn(table_name: String,
+                  column_name: String,
+                  column_type: SqlType,
+                  options: ColumnOption*): Unit =
+  {
+    execute(adapter.alterColumnSql(table_name,
+                                   column_name,
+                                   column_type,
+                                   options: _*))
+  }
+
   final
   def removeColumn(table_name: String,
                    column_name: String): Unit =
