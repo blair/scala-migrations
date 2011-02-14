@@ -56,7 +56,7 @@
 	<properties>
 		<scala.version>2.7.7</scala.version>
 		<scala.plugin.version>2.15.1</scala.plugin.version>
-		<jvm.target>1.5</jvm.target>
+		<jvm.target>1.6</jvm.target>
 
 		<!-- Common plugin settings -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
