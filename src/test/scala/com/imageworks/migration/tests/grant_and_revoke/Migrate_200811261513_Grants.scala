@@ -32,6 +32,7 @@
  */
 package com.imageworks.migration.tests.grant_and_revoke
 
+import com.imageworks.migration.tests.TestDatabase
 import com.imageworks.migration.{Migration,
                                  SelectPrivilege}
 
