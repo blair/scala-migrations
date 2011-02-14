@@ -169,7 +169,7 @@ class ColumnDefinition
    * will remove the default option from the option list.
    */
   private
-  def checkForDefault() =
+  def checkForDefault(): Unit =
   {
     for (option @ Default(value) <- options) {
       options = options.filter(_ != option)
@@ -201,7 +201,7 @@ class ColumnDefinition
    * option from the option list.
    */
   private
-  def checkForLimit() =
+  def checkForLimit(): Unit =
   {
     for (option @ Limit(length) <- options) {
       options = options.filter(_ != option)
@@ -280,7 +280,7 @@ class ColumnDefinition
    * Look for a Precision column option.
    */
   private
-  def checkForPrecision() =
+  def checkForPrecision(): Unit =
   {
     for (option @ Precision(value) <- options) {
       options = options.filter(_ != option)
@@ -312,7 +312,7 @@ class ColumnDefinition
    * Look for a Scale column option.
    */
   private
-  def checkForScale() =
+  def checkForScale(): Unit =
   {
     for (option @ Scale(value) <- options) {
       options = options.filter(_ != option)
@@ -481,7 +481,7 @@ abstract class AbstractDecimalColumnDefinition
   val decimalSqlName: String
 
   override
-  def sql =
+  def sql: String =
   {
     (precision, scale) match {
       case (None, None) => {

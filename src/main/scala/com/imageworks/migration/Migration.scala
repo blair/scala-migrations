@@ -306,7 +306,7 @@ abstract class Migration
   def addColumn(table_name: String,
                 column_name: String,
                 column_type: SqlType,
-                options: ColumnOption*)
+                options: ColumnOption*): Unit =
   {
     val table_definition = new TableDefinition(adapter, table_name)
 
@@ -322,7 +322,7 @@ abstract class Migration
 
   final
   def removeColumn(table_name: String,
-                   column_name: String)
+                   column_name: String): Unit =
   {
     execute(adapter.removeColumnSql(table_name, column_name))
   }
