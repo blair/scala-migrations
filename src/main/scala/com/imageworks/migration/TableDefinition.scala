@@ -32,6 +32,8 @@
  */
 package com.imageworks.migration
 
+import scala.collection.mutable
+
 /**
  * A builder to define a table.  Its methods add the specified type of
  * column to the table's definition.
@@ -40,7 +42,7 @@ class TableDefinition(adapter: DatabaseAdapter,
                       table_name: String)
 {
   private
-  val columns = new scala.collection.mutable.ListBuffer[ColumnDefinition]
+  val columns = new mutable.ListBuffer[ColumnDefinition]
 
   /**
    * Generate a SQL string representation of the columns in the table.

@@ -37,6 +37,9 @@ import net.sf.log4jdbc.ConnectionSpy
 import org.slf4j.{Logger,
                   LoggerFactory}
 
+import scala.collection.{immutable,
+                         mutable}
+
 import java.sql.{Connection,
                  DriverManager}
 import javax.sql.DataSource
@@ -92,7 +95,7 @@ object Migrator
   def classNamesInJar
     (path: String,
      package_name: String,
-     search_sub_packages: Boolean): scala.collection.mutable.HashSet[String] =
+     search_sub_packages: Boolean): mutable.HashSet[String] =
   {
     // Search for the package in the JAR file by mapping the package
     // name to the expected name in the JAR file, then append a '/' to
@@ -100,7 +103,7 @@ object Migrator
     // different packages that share a common substring.
     val pn = package_name.replace('.', '/') + '/'
 
-    val class_names = new scala.collection.mutable.HashSet[String]
+    val class_names = new mutable.HashSet[String]
     var jar: java.util.jar.JarFile = null
     try {
       jar = new java.util.jar.JarFile(path, false)
@@ -142,9 +145,9 @@ object Migrator
   private
   def classNamesInDir(file: java.io.File,
                       package_name: String,
-                      search_sub_packages: Boolean): scala.collection.mutable.HashSet[String] =
+                      search_sub_packages: Boolean): mutable.HashSet[String] =
   {
-    val class_names = new scala.collection.mutable.HashSet[String]
+    val class_names = new mutable.HashSet[String]
 
     def scan(f: java.io.File,
              pn: String): Unit =
@@ -198,7 +201,7 @@ object Migrator
   private
   def findMigrations(package_name: String,
                      search_sub_packages: Boolean,
-                     logger: Logger): scala.collection.immutable.SortedMap[Long,Class[_ <: Migration]] =
+                     logger: Logger): immutable.SortedMap[Long,Class[_ <: Migration]] =
   {
     // Ask the current class loader for the resource corresponding to
     // the package, which can refer to a directory, a jar file
@@ -253,8 +256,8 @@ object Migrator
     // subclasses of Migration that have a no argument constructor.
     // Use a sorted map mapping the version to the class name so the
     // final results will be sorted in numerically increasing order.
-    var seen_versions = new scala.collection.immutable.TreeMap[Long,String]
-    val seen_descriptions = new scala.collection.mutable.HashMap[String,String]
+    var seen_versions = new immutable.TreeMap[Long,String]
+    val seen_descriptions = new mutable.HashMap[String,String]
 
     // Search for classes that have the proper format.
     val re_str = """Migrate_(\d+)_([_a-zA-Z0-9]*)"""
@@ -263,7 +266,7 @@ object Migrator
     // Classes to be skipped.  class_names cannot have items removed from it
     // inside the for loop below or not all elements in class_names may be
     // visited (iterator corruption).
-    val skip_names = new scala.collection.mutable.HashSet[String]
+    val skip_names = new mutable.HashSet[String]
 
     for (class_name <- class_names) {
       val index = class_name.lastIndexOf('.')
@@ -319,7 +322,7 @@ object Migrator
     class_names --= skip_names
 
     var results =
-      new scala.collection.immutable.TreeMap[Long,Class[_ <: Migration]]
+      new immutable.TreeMap[Long,Class[_ <: Migration]]
 
     for ((version, class_name) <- seen_versions) {
       var c: Class[_] = null
@@ -496,7 +499,7 @@ class Migrator(connection_builder: ConnectionBuilder,
    * @return a set of table names; no modifications of the case of
    *         table names is done
    */
-  def getTableNames: scala.collection.mutable.Set[String] =
+  def getTableNames: mutable.Set[String] =
   {
     withLoggingConnection(AutoCommit) { connection =>
       val schema_pattern = adapter.schemaNameOpt match {
@@ -508,7 +511,7 @@ class Migrator(connection_builder: ConnectionBuilder,
                                         schema_pattern,
                                         null,
                                         Array("TABLE"))) { rs =>
-        val names = new scala.collection.mutable.HashSet[String]
+        val names = new mutable.HashSet[String]
         while (rs.next()) {
           names += rs.getString(3)
         }
@@ -612,7 +615,7 @@ class Migrator(connection_builder: ConnectionBuilder,
               adapter.quoteTableName(schemaMigrationsTableName)
     connection.withPreparedStatement(sql) { statement =>
       With.resultSet(statement.executeQuery()) { rs =>
-        var versions = new scala.collection.immutable.TreeSet[Long]
+        var versions = new immutable.TreeSet[Long]
         while (rs.next()) {
           val version_str = rs.getString(1)
           try {
@@ -812,14 +815,14 @@ class Migrator(connection_builder: ConnectionBuilder,
                                getInstalledVersions
                              }
                              else {
-                               new scala.collection.immutable.TreeSet[Long]
+                               new immutable.TreeSet[Long]
                              }
 
     var not_installed = available_migrations
     var installed_with_available_implementation =
-      new scala.collection.immutable.TreeMap[Long,Class[_ <: Migration]]
+      new immutable.TreeMap[Long,Class[_ <: Migration]]
     var installed_without_available_implementation =
-      new scala.collection.immutable.TreeSet[Long]
+      new immutable.TreeSet[Long]
 
     for (installed_version <- installed_versions) {
       not_installed -= installed_version
