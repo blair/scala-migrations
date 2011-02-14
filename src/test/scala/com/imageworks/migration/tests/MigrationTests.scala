@@ -32,15 +32,7 @@
  */
 package com.imageworks.migration.tests
 
-import org.junit.Assert._
-import org.junit.{Before,
-                  Test}
-
-import org.jmock.{Expectations,
-                  Mockery}
-
 import com.imageworks.migration.{AutoCommit,
-                                 DerbyDatabaseAdapter,
                                  DuplicateMigrationDescriptionException,
                                  DuplicateMigrationVersionException,
                                  InstallAllMigrations,
@@ -51,6 +43,13 @@ import com.imageworks.migration.{AutoCommit,
                                  RollbackMigration,
                                  With}
 
+import org.jmock.{Expectations,
+                  Mockery}
+
+import org.junit.Assert._
+import org.junit.{Before,
+                  Test}
+
 import java.sql.{DriverManager,
                  ResultSet}
 
@@ -59,29 +58,26 @@ class MigrationTests
   private
   val context = new Mockery
 
-  // Set the Derby system home to a test-databases directory so the
-  // derby.log file and all databases will be placed in there.
-  System.getProperties.setProperty("derby.system.home", "test-databases")
-
-  // Load the Derby database driver.
-  Class.forName("org.apache.derby.jdbc.EmbeddedDriver")
-
   private
   var migrator: Migrator = _
-
-  private
-  var url: String = _
 
   @Before
   def set_up(): Unit =
   {
-    val db_name = System.currentTimeMillis.toString
-    url = "jdbc:derby:" + db_name
+    val connection_builder = TestDatabase.getAdminConnectionBuilder
+    val database_adapter = TestDatabase.getDatabaseAdapter
 
-    val url_ = url + ";create=true"
+    migrator = new Migrator(connection_builder, database_adapter)
 
-    // The default schema for a Derby database is "APP".
-    migrator = new Migrator(url_, new DerbyDatabaseAdapter(Some("APP")))
+    connection_builder.withConnection(AutoCommit) { c =>
+      for (table_name <- migrator.getTableNames) {
+        val tn = table_name.toLowerCase
+        if (tn == "schema_migrations" || tn.startsWith("scala_migrations_")) {
+          val sql = "DROP TABLE " + database_adapter.quoteTableName(tn)
+          With.statement(c.prepareStatement(sql)) { _.execute }
+        }
+      }
+    }
   }
 
   @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
@@ -281,45 +277,85 @@ class MigrationTests
   }
 
   @Test
+  def alter_column: Unit =
+  {
+    // In a brand new database there should be no tables.
+    assertEquals(0, migrator.getTableNames.size)
+
+    // Create the table with a short VarcharType column.
+    migrator.migrate(MigrateToVersion(20110214054347L),
+                     "com.imageworks.migration.tests.alter_column",
+                     false)
+
+    assertEquals(2, migrator.getTableNames.size)
+
+    // Assert that an INSERT with a short Varchar value works while a
+    // long one fails.
+    val name = "x" * 100
+    val sql_start = "INSERT INTO scala_migrations_altering VALUES ('"
+    val sql_end = "')"
+    val short_name_sql = sql_start + name + sql_end
+    val long_name_sql = sql_start + name + name + sql_end
+
+    val connection_builder = TestDatabase.getAdminConnectionBuilder
+
+    connection_builder.withConnection(AutoCommit) { c =>
+      With.statement(c.prepareStatement(short_name_sql)) { s =>
+        s.execute()
+      }
+
+      With.statement(c.prepareStatement(long_name_sql)) { s =>
+        try {
+          s.execute()
+          fail("Expected a truncation error from the database.")
+        }
+        catch {
+          case _: java.sql.SQLException =>
+        }
+      }
+    }
+
+    // Apply the migration that extends the length of the column then
+    // assert that the same INSERT that failed now works.
+    migrator.migrate(MigrateToVersion(20110214060042L),
+                     "com.imageworks.migration.tests.alter_column",
+                     false)
+
+    connection_builder.withConnection(AutoCommit) { c =>
+      With.statement(c.prepareStatement(long_name_sql)) { s =>
+        s.execute()
+      }
+    }
+
+    // Do not rollback all the migrations because the last migration
+    // is irreversible.  Let set_up() for the next unit test clean up
+    // the left over tables.
+  }
+
+  @Test
   def grant_and_revoke: Unit =
   {
-    // create a second user, make a table
+    val connection_builder = TestDatabase.getUserConnectionBuilder
+    val database_adapter = TestDatabase.getDatabaseAdapter
+
+    // Make a table, migrate with admin account.
     migrator.migrate(MigrateToVersion(200811241940L),
                      "com.imageworks.migration.tests.grant_and_revoke",
                      false)
 
-    // "Reboot" database for database property changes to take effect by
-    // shutting down the database.  Connection shuts the database down,
-    // but also throws an exception.
-    try {
-      DriverManager.getConnection(url + ";shutdown=true")
-    }
-    catch {
-      // For JDBC3 (JDK 1.5)
-      case e: org.apache.derby.impl.jdbc.EmbedSQLException =>
+    // New connection with user account.
+    val test_migrator = new Migrator(connection_builder, database_adapter)
 
-      // For JDBC4 (JDK 1.6), a
-      // java.sql.SQLNonTransientConnectionException is
-      // thrown, but this exception class does not exist in JDK 1.5,
-      // so catch a java.sql.SQLException instead.
-      case e: java.sql.SQLException =>
-    }
-
-    // new connection with test user
-    val test_migrator = new Migrator(url,
-                                     "test",
-                                     "password",
-                                     new DerbyDatabaseAdapter(Some("APP")))
-
-    val select_sql = "SELECT name FROM APP.scala_migrations_location"
+    val select_sql =
+      "SELECT name FROM " +
+      database_adapter.quoteTableName("scala_migrations_location")
 
     def run_select: Unit =
     {
       test_migrator.withLoggingConnection(AutoCommit) { connection =>
-        val statement = connection.prepareStatement(select_sql)
-        val rs = statement.executeQuery
-        rs.close()
-        statement.close()
+        With.statement(connection.prepareStatement(select_sql)) { statement =>
+          With.resultSet(statement.executeQuery()) { rs => }
+        }
       }
     }
 
@@ -337,16 +373,10 @@ class MigrationTests
       case e: java.sql.SQLException => // expected
     }
 
-    // new connection with APP user
-    val migrator2 = new Migrator(url,
-                                 "APP",
-                                 "password",
-                                 new DerbyDatabaseAdapter(Some("APP")))
-
     // perform grants
-    migrator2.migrate(MigrateToVersion(200811261513L),
-                      "com.imageworks.migration.tests.grant_and_revoke",
-                      false)
+    migrator.migrate(MigrateToVersion(200811261513L),
+                     "com.imageworks.migration.tests.grant_and_revoke",
+                     false)
 
     // try to select table, should succeed now that grant has been given
     try {
@@ -358,13 +388,13 @@ class MigrationTests
       // java.sql.SQLException is caught.
       case e: java.sql.SQLException =>
         // failure if got here
-        fail("SELECT permission failure unexpected")
+        fail("SELECT permission failure unexpected: " + e)
     }
 
     // preform revoke
-    migrator2.migrate(RollbackMigration(1),
-                      "com.imageworks.migration.tests.grant_and_revoke",
-                      false)
+    migrator.migrate(RollbackMigration(1),
+                     "com.imageworks.migration.tests.grant_and_revoke",
+                     false)
 
     // try to select table, should give a permissions error again
     try {
@@ -401,14 +431,22 @@ class MigrationTests
                            ("timestamp_column", new java.sql.Date(now)),
                            ("varbinary_column", varbinary_array),
                            ("varchar_column", "ABCD"))) {
-        val insert_sql = "INSERT INTO types_test (" + n + ") VALUES (?)"
+        val insert_sql = """INSERT INTO
+                              scala_migrations_types_test (""" + n + """)
+                            VALUES
+                              (?)""".replaceAll("\\s+", " ")
         val insert_statement = connection.prepareStatement(insert_sql)
         insert_statement.setObject(1, v)
         insert_statement.executeUpdate
         insert_statement.close()
 
         // Make sure that the value exists.
-        val select_sql = "SELECT COUNT(1) from types_test where " + n + " = ?"
+        val select_sql = """SELECT
+                              COUNT(1)
+                            FROM
+                              scala_migrations_types_test
+                            WHERE
+                              """ + n + """ = ?""".replaceAll("\\s+", " ")
         val select_statement = connection.prepareStatement(select_sql)
         select_statement.setObject(1, v)
         With.resultSet(select_statement.executeQuery()) { rs =>

@@ -32,37 +32,43 @@
  */
 package com.imageworks.migration.tests
 
+import com.imageworks.migration.{AutoCommit,
+                                 DuplicateMigrationDescriptionException,
+                                 DuplicateMigrationVersionException,
+                                 JavaMigrator,
+                                 With}
+
 import org.junit.Assert._
 import org.junit.{Before,
                   Test}
 
-import com.imageworks.migration.{DuplicateMigrationDescriptionException,
-                                 DuplicateMigrationVersionException,
-                                 JavaDatabaseAdapter,
-                                 JavaMigrator}
+import java.sql.DriverManager
 
 class JavaMigratorTests
 {
-  // Set the Derby system home to a test-databases directory so the
-  // derby.log file and all databases will be placed in there.
-  System.getProperties.setProperty("derby.system.home", "test-databases")
-
-  // Load the Derby database driver.
-  Class.forName("org.apache.derby.jdbc.EmbeddedDriver")
-
   private
   var java_migrator: JavaMigrator = _
 
   @Before
   def set_up(): Unit =
   {
-    val db_name = System.currentTimeMillis.toString
-    val url = "jdbc:derby:" + db_name + ";create=true"
+    val connection_builder = TestDatabase.getAdminConnectionBuilder
+    val database_adapter = TestDatabase.getDatabaseAdapter
 
-    // The default schema for a Derby database is "APP".
-    java_migrator = new JavaMigrator(
-      url,
-      JavaDatabaseAdapter.getDerbyDatabaseAdapter("APP"))
+    java_migrator = new JavaMigrator(connection_builder, database_adapter)
+
+    connection_builder.withConnection(AutoCommit) { c =>
+      val table_names = java_migrator.getTableNames
+      val iter = table_names.iterator
+      while (iter.hasNext) {
+        val table_name = iter.next()
+        val tn = table_name.toLowerCase
+        if (tn == "schema_migrations" || tn.startsWith("scala_migrations_")) {
+          val sql = "DROP TABLE " + database_adapter.quoteTableName(tn)
+          With.statement(c.prepareStatement(sql)) { _.execute }
+        }
+      }
+    }
   }
 
   @Test { val expected = classOf[DuplicateMigrationDescriptionException] }

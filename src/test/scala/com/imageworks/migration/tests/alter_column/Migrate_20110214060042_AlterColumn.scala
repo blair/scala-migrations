@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009 Sony Pictures Imageworks Inc.
+ * Copyright (c) 2011 Sony Pictures Imageworks Inc.
  *
  * All rights reserved.
  *
@@ -30,59 +30,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.imageworks.migration.tests
+package com.imageworks.migration.tests.alter_column
 
-import com.imageworks.migration.{Derby,
-                                 Oracle,
-                                 Postgresql,
-                                 Vendor}
+import com.imageworks.migration.{IrreversibleMigrationException,
+                                 Limit,
+                                 Migration,
+                                 VarcharType}
 
-import org.junit.Assert._
-import org.junit.{Before,
-                  Test}
-
-class VendorTests
+class Migrate_20110214060042_AlterColumn
+  extends Migration
 {
-  @Test
-  def forDriver: Unit =
+  def up(): Unit =
   {
-    assertSame(Oracle,
-               Vendor.forDriver("oracle.jdbc.OracleDriver"))
-
-    assertSame(Derby,
-               Vendor.forDriver("org.apache.derby.jdbc.EmbeddedDriver"))
-
-    assertSame(Derby,
-               Vendor.forDriver(classOf[org.apache.derby.jdbc.EmbeddedDriver]))
-
-    assertSame(Derby,
-               Vendor.forDriver("org.apache.derby.jdbc.ClientDriver"))
-
-    assertSame(Postgresql,
-               Vendor.forDriver("org.postgresql.Driver"))
+    alterColumn("scala_migrations_altering",
+                "name",
+                VarcharType,
+                Limit(255))
   }
 
-  @Test { val expected = classOf[scala.MatchError] }
-  def for_non_existent_driver: Unit =
+  def down(): Unit =
   {
-    Vendor.forDriver("no.such.driver")
-  }
-
-  @Test { val expected = classOf[scala.MatchError] }
-  def for_non_driver_class: Unit =
-  {
-    Vendor.forDriver(classOf[java.lang.String])
-  }
-
-  @Test { val expected = classOf[java.lang.IllegalArgumentException] }
-  def for_null_existent_driver_class: Unit =
-  {
-    Vendor.forDriver(null: Class[_])
-  }
-
-  @Test { val expected = classOf[java.lang.IllegalArgumentException] }
-  def for_null_existent_driver_class_name: Unit =
-  {
-    Vendor.forDriver(null: String)
+    throw new IrreversibleMigrationException
   }
 }

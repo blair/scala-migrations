@@ -87,7 +87,6 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * To properly quote table names the database adapter needs to know
    * how the database treats with unquoted names.
    */
-  protected
   val unquotedNameConverter: UnquotedNameConverter
 
   /**
@@ -189,15 +188,17 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   def quoteTableName(schema_name_opt: Option[String],
                      table_name: String): String =
   {
-    if (schema_name_opt.isDefined) {
-      '"' +
-      unquotedNameConverter(schema_name_opt.get) +
-      "\".\"" +
-      unquotedNameConverter(table_name) +
-      '"'
-    }
-    else {
-      '"' + unquotedNameConverter(table_name) + '"'
+    schema_name_opt match {
+      case Some(schema_name) => {
+        '"' +
+        unquotedNameConverter(schema_name) +
+        "\".\"" +
+        unquotedNameConverter(table_name) +
+        '"'
+      }
+      case None => {
+        '"' + unquotedNameConverter(table_name) + '"'
+      }
     }
   }
 
@@ -232,6 +233,59 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   def lockTableSql(table_name: String): String =
   {
     lockTableSql(schemaNameOpt, table_name)
+  }
+
+  protected
+  def alterColumnSql(schema_name_opt: Option[String],
+                     column_definition: ColumnDefinition): String
+
+  /**
+   * Different databases require different SQL to alter a column's
+   * definition.
+   *
+   * @param schema_name_opt the optional schema name to qualify the
+   *        table name
+   * @param table_name the name of the table with the column
+   * @param column_name the name of the column
+   * @param column_type the type the column is being altered to
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the SQL to alter the column
+   */
+  def alterColumnSql(schema_name_opt: Option[String],
+                     table_name: String,
+                     column_name: String,
+                     column_type: SqlType,
+                     options: ColumnOption*): String =
+  {
+    alterColumnSql(schema_name_opt,
+                   newColumnDefinition(table_name,
+                                       column_name,
+                                       column_type,
+                                       options: _*))
+  }
+
+  /**
+   * Different databases require different SQL to alter a column's
+   * definition.  Uses the schema_name_opt defined in the adapter.
+   *
+   * @param table_name the name of the table with the column
+   * @param column_name the name of the column
+   * @param column_type the type the column is being altered to
+   * @param a possibly empty array of column options to customize the
+   *        column
+   * @return the SQL to alter the column
+   */
+  def alterColumnSql(table_name: String,
+                     column_name: String,
+                     column_type: SqlType,
+                     options: ColumnOption*): String =
+  {
+    alterColumnSql(schemaNameOpt,
+                   table_name,
+                   column_name,
+                   column_type,
+                   options: _*)
   }
 
   /**
@@ -280,7 +334,11 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    */
   def removeIndexSql(schema_name_opt: Option[String],
                      table_name: String,
-                     index_name: String): String
+                     index_name: String): String =
+  {
+    "DROP INDEX " +
+    quoteTableName(schema_name_opt, index_name)
+  }
 
   /**
    * Different databases require different SQL to drop an index.
@@ -345,12 +403,15 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
           "UPDATE" + formatColumns(columns)
       }).mkString(", "))
 
+    val quoted_grantees = for (g <- grantees)
+                            yield '"' + unquotedNameConverter(g) + '"'
+
     sql.append(" ON ")
        .append(quoteTableName(table_name))
        .append(' ')
        .append(preposition)
        .append(' ')
-       .append(grantees.mkString(", "))
+       .append(quoted_grantees.mkString(", "))
        .toString
   }
 
@@ -450,7 +511,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    */
   def generateCheckConstraintName
     (on: On,
-     options: CheckOption*) : Tuple2[String,List[CheckOption]] =
+     options: CheckOption*): Tuple2[String,List[CheckOption]] =
   {
     var opts = options.toList
 

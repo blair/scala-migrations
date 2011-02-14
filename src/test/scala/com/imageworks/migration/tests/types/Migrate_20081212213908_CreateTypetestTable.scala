@@ -42,7 +42,7 @@ class Migrate_20081212213908_CreateTypetestTable
 {
   def up(): Unit =
   {
-    createTable("types_test") { t =>
+    createTable("scala_migrations_types_test") { t =>
       // The binary column is not tested because its representation is
       // database dependent.
 
@@ -59,6 +59,6 @@ class Migrate_20081212213908_CreateTypetestTable
 
   def down(): Unit =
   {
-    dropTable("types_test")
+    dropTable("scala_migrations_types_test")
   }
 }

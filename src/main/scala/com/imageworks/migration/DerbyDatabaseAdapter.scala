@@ -53,7 +53,7 @@ class DerbyVarbinaryColumnDefinition
 class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
   extends DatabaseAdapter(schemaNameOpt)
 {
-  override protected
+  override
   val unquotedNameConverter = UppercaseUnquotedNameConverter
 
   override
@@ -101,12 +101,17 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
     }
   }
 
-  override
-  def removeIndexSql(schema_name_opt: Option[String],
-                     table_name: String,
-                     index_name: String): String =
+  override protected
+  def alterColumnSql(schema_name_opt: Option[String],
+                     column_definition: ColumnDefinition): String =
   {
-    "DROP INDEX " +
-    quoteColumnName(index_name)
+    new java.lang.StringBuilder(512)
+      .append("ALTER TABLE ")
+      .append(quoteTableName(schema_name_opt, column_definition.getTableName))
+      .append(" ALTER ")
+      .append(quoteColumnName(column_definition.getColumnName))
+      .append(" SET DATA TYPE ")
+      .append(column_definition.toSql)
+      .toString
   }
 }

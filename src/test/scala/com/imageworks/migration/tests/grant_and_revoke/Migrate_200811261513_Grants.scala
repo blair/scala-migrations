@@ -32,6 +32,7 @@
  */
 package com.imageworks.migration.tests.grant_and_revoke
 
+import com.imageworks.migration.tests.TestDatabase
 import com.imageworks.migration.{Migration,
                                  SelectPrivilege}
 
@@ -40,11 +41,15 @@ class Migrate_200811261513_Grants
 {
   def up(): Unit =
   {
-    grant("scala_migrations_location", "test", SelectPrivilege)
+    grant("scala_migrations_location",
+          TestDatabase.getUserAccountName,
+          SelectPrivilege)
   }
 
   def down(): Unit =
   {
-    revoke("scala_migrations_location", "test", SelectPrivilege)
+    revoke("scala_migrations_location",
+           TestDatabase.getUserAccountName,
+           SelectPrivilege)
   }
 }

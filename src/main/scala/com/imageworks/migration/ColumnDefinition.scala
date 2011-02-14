@@ -99,7 +99,7 @@ class ColumnDefinition
    * @throws java.util.NoSuchElementException if the database adapter
    *         has not been associated with this column definition
    */
-  private def adapter = adapterOpt.get
+  protected[migration] def getAdapter = adapterOpt.get
 
   /**
    * The table name the column is defined in, which may or may not be
@@ -114,7 +114,7 @@ class ColumnDefinition
    * @throws java.util.NoSuchElementException if the table name has
    *         not been set
    */
-  private def tableName = tableNameOpt.get
+  protected[migration] def getTableName = tableNameOpt.get
 
   /**
    * The column's name, which may or may not be set.
@@ -128,7 +128,7 @@ class ColumnDefinition
    * @throws java.util.NoSuchElementException if the column name has
    *         not been set
    */
-  private def columnName = columnNameOpt.get
+  protected[migration] def getColumnName = columnNameOpt.get
 
   /**
    * Column options.
@@ -169,7 +169,7 @@ class ColumnDefinition
    * will remove the default option from the option list.
    */
   private
-  def checkForDefault() =
+  def checkForDefault(): Unit =
   {
     for (option @ Default(value) <- options) {
       options = options.filter(_ != option)
@@ -177,7 +177,7 @@ class ColumnDefinition
       if (default.isDefined && default.get != value) {
         logger.warn("Redefining the default value for the '{}' column " +
                     "from '{}' to '{}'.",
-                    Array[AnyRef](columnName, default.get, value))
+                    Array[AnyRef](getColumnName, default.get, value))
       }
       default = Some(value)
     }
@@ -201,7 +201,7 @@ class ColumnDefinition
    * option from the option list.
    */
   private
-  def checkForLimit() =
+  def checkForLimit(): Unit =
   {
     for (option @ Limit(length) <- options) {
       options = options.filter(_ != option)
@@ -209,7 +209,7 @@ class ColumnDefinition
       if (limit_.isDefined && limit_.get != length) {
         logger.warn("Redefining the limit for the '{}' column " +
                     "from '{}' to '{}'.",
-                    Array[AnyRef](columnName, limit_.get, length))
+                    Array[AnyRef](getColumnName, limit_.get, length))
       }
       limit_ = Some(length)
     }
@@ -236,7 +236,7 @@ class ColumnDefinition
         if (n1.isDefined && n1 != n2) {
           logger.warn("Redefining the '{}' column's nullability " +
                       "from {} to {}.",
-                      Array[AnyRef](columnName,
+                      Array[AnyRef](getColumnName,
                                     if (n1.get) "NOT NULL" else "NULL",
                                     if (n2.get) "NOT NULL" else "NULL"))
         }
@@ -280,7 +280,7 @@ class ColumnDefinition
    * Look for a Precision column option.
    */
   private
-  def checkForPrecision() =
+  def checkForPrecision(): Unit =
   {
     for (option @ Precision(value) <- options) {
       options = options.filter(_ != option)
@@ -288,7 +288,7 @@ class ColumnDefinition
       if (precision_.isDefined && precision_.get != value) {
         logger.warn("Redefining the precision for the '{}' column " +
                     "from '{}' to '{}'.",
-                    Array[AnyRef](columnName,
+                    Array[AnyRef](getColumnName,
                                   java.lang.Integer.valueOf(precision_.get),
                                   java.lang.Integer.valueOf(value)))
       }
@@ -312,7 +312,7 @@ class ColumnDefinition
    * Look for a Scale column option.
    */
   private
-  def checkForScale() =
+  def checkForScale(): Unit =
   {
     for (option @ Scale(value) <- options) {
       options = options.filter(_ != option)
@@ -320,7 +320,7 @@ class ColumnDefinition
       if (scale_.isDefined && scale_.get != value) {
         logger.warn("Redefining the scale for the '{}' column " +
                     "from '{}' to '{}'.",
-                    Array[AnyRef](columnName,
+                    Array[AnyRef](getColumnName,
                                   java.lang.Integer.valueOf(scale_.get),
                                   java.lang.Integer.valueOf(value)))
       }
@@ -352,8 +352,6 @@ class ColumnDefinition
   def toSql: String =
   {
     val sb = new java.lang.StringBuilder(512)
-               .append(columnName)
-               .append(' ')
                .append(sql)
 
     if (default.isDefined) {
@@ -395,9 +393,10 @@ class ColumnDefinition
         }
 
         case Check(expr) => {
-          val tbd = new TableColumnDefinition(tableName, Array(columnName))
+          val tbd = new TableColumnDefinition(getTableName,
+                                              Array(getColumnName))
           val on = new On(tbd)
-          val (name, _) = adapter.generateCheckConstraintName(on)
+          val (name, _) = getAdapter.generateCheckConstraintName(on)
 
           appendCheckSql(name, expr)
         }
@@ -410,7 +409,7 @@ class ColumnDefinition
     if (! options.isEmpty) {
       logger.warn("The following options for the '{}' column are " +
                   "unused: {}.",
-                  columnName,
+                  getColumnName,
                   options)
     }
 
@@ -482,7 +481,7 @@ abstract class AbstractDecimalColumnDefinition
   val decimalSqlName: String
 
   override
-  def sql =
+  def sql: String =
   {
     (precision, scale) match {
       case (None, None) => {

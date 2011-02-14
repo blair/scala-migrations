@@ -62,6 +62,27 @@ object JavaDatabaseAdapter
   }
 
   /**
+   * Create an Oracle Database Adapter.
+   *
+   * @return newly constructed OracleDatabaseAdapter
+   */
+  def getOracleDatabaseAdapter(): OracleDatabaseAdapter =
+  {
+    new OracleDatabaseAdapter(None)
+  }
+
+  /**
+   * Create an Oracle Database Adapter.
+   *
+   * @param schema_name the default schema name in the adapter
+   * @return newly constructed OracleDatabaseAdapter
+   */
+  def getOracleDatabaseAdapter(schema_name: String): OracleDatabaseAdapter =
+  {
+    new OracleDatabaseAdapter(Some(schema_name))
+  }
+
+  /**
    * Create a PostgreSQL Database Adapter.
    *
    * @return newly constructed PostgresqlDatabaseAdapter
@@ -81,26 +102,5 @@ object JavaDatabaseAdapter
     (schema_name: String): PostgresqlDatabaseAdapter =
   {
     new PostgresqlDatabaseAdapter(Some(schema_name))
-  }
-
-  /**
-   * Create an Oracle Database Adapter.
-   *
-   * @return newly constructed OracleDatabaseAdapter
-   */
-  def getOracleDatabaseAdapter(): OracleDatabaseAdapter =
-  {
-    new OracleDatabaseAdapter(None)
-  }
-
-  /**
-   * Create an Oracle Database Adapter.
-   *
-   * @param schema_name the default schema name in the adapter
-   * @return newly constructed OracleDatabaseAdapter
-   */
-  def getOracleDatabaseAdapter(schema_name: String): OracleDatabaseAdapter =
-  {
-    new OracleDatabaseAdapter(Some(schema_name))
   }
 }

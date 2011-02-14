@@ -43,26 +43,6 @@ class Migrate_200811241940_CreateUser
 {
   def up(): Unit =
   {
-    // These commands configure Derby to turn on user authentication,
-    // create users, and enable SQL authorization, needed for GRANT
-    // statements to work.
-    execute("""CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
-      'derby.connection.requireAuthentication', 'true')""")
-
-    // Setting this property cannot be undone.  See
-    // http://db.apache.org/derby/docs/10.7/ref/rrefpropersqlauth.html .
-    execute("""CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
-      'derby.database.sqlAuthorization', 'true')""")
-
-    execute("""CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
-      'derby.authentication.provider', 'BUILTIN')""")
-
-    execute("""CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
-      'derby.user.APP', 'password')""")
-
-    execute("""CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
-      'derby.user.test', 'password')""")
-
     createTable("scala_migrations_location") { t =>
       t.varbinary("pk_scala_migrations_location", PrimaryKey, Limit(16))
       t.varchar("name", Unique, Limit(255), NotNull)
@@ -72,8 +52,5 @@ class Migrate_200811241940_CreateUser
   def down(): Unit =
   {
     dropTable("scala_migrations_location")
-
-    execute("""CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
-      'derby.user.test', null)""")
   }
 }

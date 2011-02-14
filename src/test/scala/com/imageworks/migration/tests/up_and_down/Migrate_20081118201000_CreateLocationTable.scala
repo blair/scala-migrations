@@ -34,7 +34,7 @@ package com.imageworks.migration.tests.up_and_down
 
 import com.imageworks.migration.{Limit,
                                  Migration,
-                                 NotNull,                          
+                                 NotNull,
                                  PrimaryKey,
                                  Unique}
 

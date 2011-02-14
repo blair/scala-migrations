@@ -180,7 +180,7 @@ class OracleVarcharColumnDefinition(use_nchar_type: Boolean)
 class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
   extends DatabaseAdapter(schemaNameOpt)
 {
-  override protected
+  override
   val unquotedNameConverter = UppercaseUnquotedNameConverter
 
   override
@@ -236,6 +236,21 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
     }
   }
 
+  override protected
+  def alterColumnSql(schema_name_opt: Option[String],
+                     column_definition: ColumnDefinition): String =
+  {
+    new java.lang.StringBuilder(512)
+      .append("ALTER TABLE ")
+      .append(quoteTableName(schema_name_opt, column_definition.getTableName))
+      .append(" MODIFY (")
+      .append(quoteColumnName(column_definition.getColumnName))
+      .append(' ')
+      .append(column_definition.toSql)
+      .append(')')
+      .toString
+  }
+
   override
   def removeColumnSql(schema_name_opt: Option[String],
                       table_name: String,
@@ -248,15 +263,6 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
       .append(" DROP COLUMN ")
       .append(quoteColumnName(column_name))
       .toString
-  }
-
-  override
-  def removeIndexSql(schema_name_opt: Option[String],
-                     table_name: String,
-                     index_name: String): String =
-  {
-    "DROP INDEX " +
-    quoteColumnName(index_name)
   }
 
   override
