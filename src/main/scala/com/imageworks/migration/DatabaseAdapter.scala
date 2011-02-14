@@ -284,7 +284,11 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    */
   def removeIndexSql(schema_name_opt: Option[String],
                      table_name: String,
-                     index_name: String): String
+                     index_name: String): String =
+  {
+    "DROP INDEX " +
+    quoteColumnName(index_name)
+  }
 
   /**
    * Different databases require different SQL to drop an index.
