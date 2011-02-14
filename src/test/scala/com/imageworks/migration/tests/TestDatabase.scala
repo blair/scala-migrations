@@ -36,7 +36,6 @@ import com.imageworks.migration.{AutoCommit,
                                  ConnectionBuilder,
                                  DatabaseAdapter,
                                  DerbyDatabaseAdapter,
-                                 H2DatabaseAdapter,
                                  With}
 
 import java.sql.DriverManager
@@ -202,82 +201,6 @@ object DerbyTestDatabase
 }
 
 /**
- * H2 test database implementation.
- */
-object H2TestDatabase
-  extends TestDatabase
-{
-  // Username of the admin account, which will be the owner of the
-  // database.
-  private
-  val admin_username = "admin"
-
-  override
-  def getAdminAccountName = admin_username
-
-  // Password for the admin account.
-  private
-  val admin_password = "foobar"
-
-  // Username of the user account.
-  private
-  val user_username = "user"
-
-  override
-  def getUserAccountName = user_username
-
-  // Password for the user account.
-  private
-  val user_password = "baz"
-
-  private
-  val url =
-  {
-    val db_name = System.currentTimeMillis.toString
-    "jdbc:h2:" + db_name // + ";TRACE_LEVEL_SYSTEM_OUT=2"
-  }
-
-  // Set the H2 baseDir to a test-databases directory so that all
-  // databases will be placed in there.
-  System.getProperties.setProperty("h2.baseDir", "test-databases")
-
-  // Load the H2 database driver.
-  Class.forName("org.h2.Driver")
-
-  // Create the database and add the user account.
-  TestDatabase.execute(getAdminConnectionBuilder,
-                       "CREATE USER " +
-                       user_username.toUpperCase +
-                       " PASSWORD '" +
-                       user_password +
-                       "'")
-
-  override
-  def getSchemaName: String =
-  {
-    "PUBLIC"
-  }
-
-  override
-  def getAdminConnectionBuilder: ConnectionBuilder =
-  {
-    new ConnectionBuilder(url, admin_username, admin_password)
-  }
-
-  override
-  def getUserConnectionBuilder: ConnectionBuilder =
-  {
-    new ConnectionBuilder(url, user_username, user_password)
-  }
-
-  override
-  def getDatabaseAdapter: DatabaseAdapter =
-  {
-    new H2DatabaseAdapter(Some(getSchemaName))
-  }
-}
-
-/**
  * Object which builds the correct TestDatabase according to the
  * system property "scala-migrations.db.vendor", defaulting to Derby if
  * the property is not set.
@@ -291,9 +214,6 @@ object TestDatabase
     System.getProperty("scala-migrations.db.vendor", "derby") match {
       case "derby" => {
         DerbyTestDatabase
-      }
-      case "h2" => {
-        H2TestDatabase
       }
       case v => {
         val m = "Unexpected value for scala-migrations.db.vendor property: " +

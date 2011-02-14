@@ -35,8 +35,6 @@ package com.imageworks.migration.tests
 import com.imageworks.migration.{DatabaseAdapter,
                                  Derby,
                                  DerbyDatabaseAdapter,
-                                 H2,
-                                 H2DatabaseAdapter,
                                  Oracle,
                                  OracleDatabaseAdapter,
                                  Postgresql,
@@ -53,9 +51,6 @@ class DatabaseAdapterTests
   {
     assertEquals(classOf[DerbyDatabaseAdapter],
                  DatabaseAdapter.forVendor(Derby, None).getClass)
-
-    assertEquals(classOf[H2DatabaseAdapter],
-                 DatabaseAdapter.forVendor(H2, None).getClass)
 
     assertEquals(classOf[OracleDatabaseAdapter],
                  DatabaseAdapter.forVendor(Oracle, None).getClass)

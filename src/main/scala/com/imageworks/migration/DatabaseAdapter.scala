@@ -54,9 +54,6 @@ object DatabaseAdapter
       case Derby =>
         new DerbyDatabaseAdapter(schema_name_opt)
 
-      case H2 =>
-        new H2DatabaseAdapter(schema_name_opt)
-
       case Oracle =>
         new OracleDatabaseAdapter(schema_name_opt)
 
