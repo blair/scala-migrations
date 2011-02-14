@@ -92,10 +92,9 @@ object Migrator
    * @return a set of the class names the JAR file contains
    */
   private
-  def classNamesInJar
-    (path: String,
-     package_name: String,
-     search_sub_packages: Boolean): mutable.HashSet[String] =
+  def classNamesInJar(path: String,
+                      package_name: String,
+                      search_sub_packages: Boolean): mutable.HashSet[String] =
   {
     // Search for the package in the JAR file by mapping the package
     // name to the expected name in the JAR file, then append a '/' to
@@ -199,9 +198,10 @@ object Migrator
    *         Migration subclasses as the value
    */
   private
-  def findMigrations(package_name: String,
-                     search_sub_packages: Boolean,
-                     logger: Logger): immutable.SortedMap[Long,Class[_ <: Migration]] =
+  def findMigrations(
+    package_name: String,
+    search_sub_packages: Boolean,
+    logger: Logger): immutable.SortedMap[Long,Class[_ <: Migration]] =
   {
     // Ask the current class loader for the resource corresponding to
     // the package, which can refer to a directory, a jar file
@@ -321,8 +321,7 @@ object Migrator
     // Remove all the skipped class names from class_names.
     class_names --= skip_names
 
-    var results =
-      new immutable.TreeMap[Long,Class[_ <: Migration]]
+    var results = new immutable.TreeMap[Long,Class[_ <: Migration]]
 
     for ((version, class_name) <- seen_versions) {
       var c: Class[_] = null
