@@ -50,7 +50,20 @@ class TableDefinition(adapter: DatabaseAdapter,
   final
   def toSql: String =
   {
-    columns.map(_.toSql).mkString("", ", ", "")
+    val sb = new java.lang.StringBuilder(512)
+    var first_column = true
+    for (column_definition <- columns) {
+      if (first_column) {
+        first_column = false
+      }
+      else {
+        sb.append(", ")
+      }
+      sb.append(column_definition.getColumnName)
+        .append(' ')
+        .append(column_definition.toSql)
+    }
+    sb.toString
   }
 
   /**

@@ -352,8 +352,6 @@ class ColumnDefinition
   def toSql: String =
   {
     val sb = new java.lang.StringBuilder(512)
-               .append(getColumnName)
-               .append(' ')
                .append(sql)
 
     if (default.isDefined) {
