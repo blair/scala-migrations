@@ -287,7 +287,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
                      index_name: String): String =
   {
     "DROP INDEX " +
-    quoteColumnName(index_name)
+    quoteTableName(schema_name_opt, index_name)
   }
 
   /**
