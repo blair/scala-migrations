@@ -323,6 +323,14 @@ abstract class Migration
   /**
    * Alter the definition of an existing column.
    *
+   * NOTE: if the original column definition uses CharacterSet() then
+   * it must be used here again, unless the base SQL data type is
+   * being changed.  For example, on Oracle, creating a column without
+   * CharacterSet uses VARCHAR2 while using CharacterSet(Unicode) uses
+   * NVARCHAR2, so if the original column used CharacterSet(Unicode)
+   * and #alterColumn() is not passed CharacterSet(Unicode), then the
+   * column's data type will be change from NVARCHAR2 to VARCHAR2.
+   *
    * @param table_name the name of the table with the column
    * @param column_name the name of the column
    * @param column_type the type the column is being altered to
