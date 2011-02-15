@@ -103,7 +103,7 @@ class JavaMigratorTests
     // an Array[String] and not Array[AnyRef].
     val ea = new Array[String](0)
 
-    // There should only be the schema migrations table now.
+    // There should only be the schema_migrations table now.
     assertEquals(1, java_migrator.getTableNames.size)
     assertFalse(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "scala_migrations_people").isDefined)
 
@@ -122,7 +122,7 @@ class JavaMigratorTests
     java_migrator.removeAllMigrations("com.imageworks.migration.tests.up_and_down",
                                       false)
 
-    // There should only be the schema migrations table now.
+    // There should only be the schema_migrations table now.
     assertEquals(1, java_migrator.getTableNames.size)
     assertFalse(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "scala_migrations_people").isDefined)
   }

@@ -115,7 +115,7 @@ class MigrationTests
                      "com.imageworks.migration.tests.up_and_down",
                      false)
 
-    // There should only be the schema migrations table now.
+    // There should only be the schema_migrations table now.
     assertEquals(1, migrator.getTableNames.size)
     assertFalse(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_location").isDefined)
     assertFalse(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_people").isDefined)
@@ -167,7 +167,7 @@ class MigrationTests
                      "com.imageworks.migration.tests.up_and_down",
                      false)
 
-    // There should only be the schema migrations and
+    // There should only be the schema_migrations and
     // scala_migrations_location tables now.
     assertEquals(2, migrator.getTableNames.size)
     assertTrue(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_location").isDefined)
@@ -197,7 +197,7 @@ class MigrationTests
                      "com.imageworks.migration.tests.up_and_down",
                      false)
 
-    // There should only be the schema migrations table now.
+    // There should only be the schema_migrations table now.
     assertEquals(1, migrator.getTableNames.size)
     assertFalse(migrator.getTableNames.find(_.toLowerCase == "scala_migrations_people").isDefined)
 

@@ -1,3 +1,20 @@
+Version 1.0.1 - February 14th, 2010
+  * New method Migration#alterColumn() which allows column definitions
+    to be altered.
+  * Initial support for building with Maven.  It only builds jars for
+    JDBC 4/JDK 1.6, not for JDBC 3/JDK 1.5.  Build with ant to build
+    JDBC 3/JDK 1.5 jars.
+  * Usernames for Migration#grant() and #revoke() are now converted
+    into the database's canonical case, e.g. lowercase or uppercase,
+    and then quoted.
+  * Refactor the unit tests to allow for testing with databases other
+    than Derby.
+  * The table names in the unit tests have been renamed to all start
+    with "scala_migrations_".  This makes it easier to unit test the
+    project in an existing schema.  The only table that doesn't start
+    with "scala_migrations_" is "schema_migrations".
+  * Lots of internal refactoring and code cleanup.
+
 Version 1.0.0 - February 11th, 2010
   * Provide Scala 2.8.0.Beta1 support.  Code modifications that work
     under both Scala 2.7.x and 2.8.x were applied to the default
