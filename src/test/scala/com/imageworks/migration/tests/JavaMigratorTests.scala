@@ -71,14 +71,14 @@ class JavaMigratorTests
     }
   }
 
-  @Test { val expected = classOf[DuplicateMigrationDescriptionException] }
+  @Test(expected=classOf[DuplicateMigrationDescriptionException])
   def duplicate_descriptions_throw_exception: Unit =
   {
     java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_descriptions",
                                        false)
   }
 
-  @Test { val expected = classOf[DuplicateMigrationVersionException] }
+  @Test(expected=classOf[DuplicateMigrationVersionException])
   def duplicate_versions_throw_exception: Unit =
   {
     java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_versions",
