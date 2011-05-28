@@ -254,25 +254,30 @@ object Migrator
     search_sub_packages: Boolean,
     logger: Logger): immutable.SortedMap[Long,Class[_ <: Migration]] =
   {
-    // Ask the current class loader for the resource corresponding to
-    // the package, which can refer to a directory, a jar file
-    // accessible via the local filesystem or a remotely accessible
-    // jar file.  Only the first two are handled.
-    val url =
-      {
-        val pn = package_name.replace('.', '/')
-        val u = this.getClass.getClassLoader.getResource(pn)
-        if (u eq null) {
-          throw new RuntimeException("Cannot find a resource for the '" +
-                                     package_name +
-                                     "'.")
-        }
-        u
-      }
+    // Ask the current class loader for the resources corresponding to
+    // the package, which can refer to directories, jar files
+    // accessible via the local filesystem or remotely accessible jar
+    // files.  Only the first two are handled.
+    val pn = package_name.replace('.', '/')
 
-    val class_names = classNamesInResource(url,
+    val urls = this.getClass.getClassLoader.getResources(pn)
+    if (! urls.hasMoreElements) {
+      throw new RuntimeException("Cannot find a resource for package '" +
+                                 package_name +
+                                 "'.")
+    }
+
+    val class_names = new mutable.HashSet[String]
+    while (urls.hasMoreElements) {
+      val url = urls.nextElement
+      logger.debug("For package '{}' found resource at '{}'.",
+                   package_name,
+                   url)
+
+      class_names ++= classNamesInResource(url,
                                            package_name,
                                            search_sub_packages)
+    }
 
     // Search through the class names for ones that are concrete
     // subclasses of Migration that have a no argument constructor.
