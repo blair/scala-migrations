@@ -40,8 +40,7 @@ import org.slf4j.{Logger,
 import scala.collection.{immutable,
                          mutable}
 
-import java.sql.{Connection,
-                 DriverManager}
+import java.sql.Connection
 import javax.sql.DataSource
 
 /**
