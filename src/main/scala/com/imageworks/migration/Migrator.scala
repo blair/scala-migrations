@@ -40,6 +40,7 @@ import org.slf4j.{Logger,
 import scala.collection.{immutable,
                          mutable}
 
+import java.net.URL
 import java.sql.Connection
 import javax.sql.DataSource
 
@@ -179,6 +180,57 @@ object Migrator
   }
 
   /**
+   * Given a resource's URL, return the names of all the classes in
+   * the resource.
+   *
+   * @param url the resource's URL
+   * @param package_name the Java package name to search for Migration
+   *        subclasses
+   * @param search_sub_packages true if sub-packages of package_name
+   *        should be searched
+   * @return a set of class names in the resource
+   */
+  private
+  def classNamesInResource(
+    url: URL,
+    package_name: String,
+    search_sub_packages: Boolean): mutable.HashSet[String] =
+  {
+    val u = url.toString
+
+    if (u.startsWith("jar:file:")) {
+      // This URL ends with a ! character followed by the name of the
+      // resource in the jar file, so just get the jar file path.
+      val index = u.lastIndexOf('!')
+      val path = if (index == -1)
+                   u.substring("jar:file:".length)
+                 else
+                   u.substring("jar:file:".length, index)
+      classNamesInJar(path, package_name, search_sub_packages)
+    }
+    else if (u.startsWith("file:")) {
+      val dir = u.substring("file:".length)
+      val file = new java.io.File(dir)
+      if (! file.isDirectory) {
+        val message = "The resource URL '" +
+                      u +
+                      "' should be a directory but is not."
+        throw new RuntimeException(message)
+      }
+      classNamesInDir(file, package_name, search_sub_packages)
+    }
+    else {
+      val message = "Do not know how to get a list of classes in the " +
+                    "resource at '" +
+                    u +
+                    "' corresponding to the package '" +
+                    package_name +
+                    "'."
+      throw new RuntimeException(message)
+    }
+  }
+
+  /**
    * Given a Java package name, return a set of concrete classes with
    * a no argument constructor that implement Migration.
    *
@@ -215,41 +267,12 @@ object Migrator
                                      package_name +
                                      "'.")
         }
-        u.toString
+        u
       }
 
-    val class_names =
-      if (url.startsWith("jar:file:")) {
-        // This URL ends with a ! character followed by the name of
-        // the resource in the jar file, so just get the jar file
-        // path.
-        val index = url.lastIndexOf('!')
-        val path = if (index == -1)
-                     url.substring("jar:file:".length)
-                   else
-                     url.substring("jar:file:".length, index)
-        classNamesInJar(path, package_name, search_sub_packages)
-      }
-      else if (url.startsWith("file:")) {
-        val dir = url.substring("file:".length)
-        val file = new java.io.File(dir)
-        if (! file.isDirectory) {
-          val message = "The resource URL '" +
-                        url +
-                        "' should be a directory but is not."
-          throw new RuntimeException(message)
-        }
-        classNamesInDir(file, package_name, search_sub_packages)
-      }
-      else {
-        val message = "Do not know how to get a list of classes in the " +
-                      "resource at '" +
-                      url +
-                      "' corresponding to the package '" +
-                      package_name +
-                      "'."
-        throw new RuntimeException(message)
-      }
+    val class_names = classNamesInResource(url,
+                                           package_name,
+                                           search_sub_packages)
 
     // Search through the class names for ones that are concrete
     // subclasses of Migration that have a no argument constructor.
