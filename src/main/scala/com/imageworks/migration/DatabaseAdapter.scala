@@ -102,7 +102,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    *   ALTER TABLE child
    *     ADD CONSTRAINT idx_child_pk_parent FOREIGN KEY (pk_parent)
    *     REFERENCES parent (pk);
-   *   CREATE INDEX idx_child_pk_parent ON CHILD (pk_parent);
+   *   CREATE INDEX idx_child_pk_parent ON child (pk_parent);
    */
   val addingForeignKeyConstraintCreatesIndex: Boolean
 
