@@ -1,3 +1,12 @@
+Version 1.0.2 - November 8th, 2011
+  * Issue #22: use java.lang.ClassLoader#getResources() instead of
+    #getResource() in case there are multiple resources with the same
+    package name.  Now all resources providing the package name are
+    searched.
+  * Issue #23: fix a bug by URL decoding resource URLs so that
+    resources in directories containing one or more space characters
+    can be found.
+
 Version 1.0.1 - February 14th, 2010
   * New method Migration#alterColumn() which allows column definitions
     to be altered.
