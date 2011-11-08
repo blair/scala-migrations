@@ -40,7 +40,8 @@ import org.slf4j.{Logger,
 import scala.collection.{immutable,
                          mutable}
 
-import java.net.URL
+import java.net.{URL,
+                 URLDecoder}
 import java.sql.Connection
 import javax.sql.DataSource
 
@@ -196,7 +197,7 @@ object Migrator
     package_name: String,
     search_sub_packages: Boolean): mutable.HashSet[String] =
   {
-    val u = url.toString
+    val u = URLDecoder.decode(url.toString, "UTF-8")
 
     if (u.startsWith("jar:file:")) {
       // This URL ends with a ! character followed by the name of the
