@@ -39,6 +39,7 @@ import com.imageworks.migration.{Cascade,
                                  Limit,
                                  Migration,
                                  Name,
+                                 NamedCheck,
                                  NotNull,
                                  Nullable,
                                  OnDelete,
@@ -65,7 +66,8 @@ class Migrate_20081118201742_CreatePeopleTable
       t.char("middle_initial", Limit(1), Nullable)
       t.varchar("last_name", Limit(255), NotNull, CharacterSet(Unicode))
       t.timestamp("birthdate", Limit(0), NotNull)
-      t.smallint("height", NotNull, Check("height > 0"))
+      t.smallint("height", NotNull, NamedCheck("chk_height_nonnegative",
+                                               "height > 0"))
       t.smallint("weight", NotNull, Check("weight > 0"))
       t.integer("vacation_days", NotNull, Default("0"))
       t.bigint("hire_time_micros", NotNull)
