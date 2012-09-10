@@ -401,11 +401,25 @@ class Migrator(connection_builder: ConnectionBuilder,
   import Migrator._
   import RichConnection._
 
-  // Load the log4jdbc database wrapper driver.
-  Class.forName("net.sf.log4jdbc.DriverSpy")
-
   private final
   val logger = LoggerFactory.getLogger(this.getClass)
+
+  // Since log4jdbc is not in any public Maven repository [1][2], to
+  // make it easier for developers that want to use Scala Migrations
+  // and are using a build tool which has automatic dependency
+  // resolution, so they do not need to manually download log4jdbc
+  // themselves, make log4jdbc optional by dynamically checking if it
+  // is available and use it if it is.
+  // [1] http://code.google.com/p/log4jdbc/wiki/FAQ
+  // [2] http://code.google.com/p/log4jdbc/issues/detail?id=19
+  private final
+  val use_log4jdbc = try {
+                       Class.forName("net.sf.log4jdbc.ConnectionSpy")
+                       true
+                      }
+                      catch {
+                        case _ => false
+                      }
 
   /**
    * Construct a migrator to a database that does not need a username
@@ -491,7 +505,11 @@ class Migrator(connection_builder: ConnectionBuilder,
     (f: Connection => T): T =
   {
     connection_builder.withConnection(commit_behavior) { raw_connection =>
-      f(new ConnectionSpy(raw_connection))
+      val c = if (use_log4jdbc)
+                new ConnectionSpy(raw_connection)
+              else
+                raw_connection
+      f(c)
     }
   }
 
@@ -514,8 +532,11 @@ class Migrator(connection_builder: ConnectionBuilder,
     (f: RawAndLoggingConnections => T): T =
   {
     connection_builder.withConnection(commit_behavior) { raw_connection =>
-      val logging_connection = new ConnectionSpy(raw_connection)
-      f(new RawAndLoggingConnections(raw_connection, logging_connection))
+      val c = if (use_log4jdbc)
+                new ConnectionSpy(raw_connection)
+              else
+                raw_connection
+      f(new RawAndLoggingConnections(raw_connection, c))
     }
   }
 

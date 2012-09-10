@@ -1,3 +1,12 @@
+Version 1.0.3 -
+  * Make log4jdbc optional by checking for it at runtime and using it
+    if it is available.  This is to workaround log4jdbc not present in
+    any public Maven repositories, to make it easier for developers
+    using build tools with automatic dependency resolution so they do
+    not have to download log4jdbc themselves:
+      http://code.google.com/p/log4jdbc/wiki/FAQ
+      http://code.google.com/p/log4jdbc/issues/detail?id=19
+
 Version 1.0.2 - November 8th, 2011
   * Issue #22: use java.lang.ClassLoader#getResources() instead of
     #getResource() in case there are multiple resources with the same
