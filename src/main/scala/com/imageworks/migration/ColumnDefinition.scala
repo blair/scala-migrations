@@ -177,7 +177,7 @@ class ColumnDefinition
       if (default.isDefined && default.get != value) {
         logger.warn("Redefining the default value for the '{}' column " +
                     "from '{}' to '{}'.",
-                    Array[AnyRef](getColumnName, default.get, value))
+                    Array[AnyRef](getColumnName, default.get, value): _*)
       }
       default = Some(value)
     }
@@ -209,7 +209,7 @@ class ColumnDefinition
       if (limit_.isDefined && limit_.get != length) {
         logger.warn("Redefining the limit for the '{}' column " +
                     "from '{}' to '{}'.",
-                    Array[AnyRef](getColumnName, limit_.get, length))
+                    Array[AnyRef](getColumnName, limit_.get, length): _*)
       }
       limit_ = Some(length)
     }
@@ -238,7 +238,7 @@ class ColumnDefinition
                       "from {} to {}.",
                       Array[AnyRef](getColumnName,
                                     if (n1.get) "NOT NULL" else "NULL",
-                                    if (n2.get) "NOT NULL" else "NULL"))
+                                    if (n2.get) "NOT NULL" else "NULL"): _*)
         }
         n1 = n2
       }
@@ -290,7 +290,7 @@ class ColumnDefinition
                     "from '{}' to '{}'.",
                     Array[AnyRef](getColumnName,
                                   java.lang.Integer.valueOf(precision_.get),
-                                  java.lang.Integer.valueOf(value)))
+                                  java.lang.Integer.valueOf(value)): _*)
       }
       precision_ = Some(value)
     }
@@ -322,7 +322,7 @@ class ColumnDefinition
                     "from '{}' to '{}'.",
                     Array[AnyRef](getColumnName,
                                   java.lang.Integer.valueOf(scale_.get),
-                                  java.lang.Integer.valueOf(value)))
+                                  java.lang.Integer.valueOf(value)): _*)
       }
       scale_ = Some(value)
     }
@@ -408,8 +408,7 @@ class ColumnDefinition
     // Warn for any unused options.
     if (! options.isEmpty) {
       logger.warn("The following options for the '{}' column are unused: {}.",
-                  getColumnName,
-                  options)
+                  Array[AnyRef](getColumnName, options): _*)
     }
 
     // Warn about illegal combinations in some databases.
