@@ -132,8 +132,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
       opts = opts.filter(_ != opt)
       if (character_set_opt.isDefined && character_set_opt.get != name) {
         logger.warn("Redefining the character set from '{}'' to '{}'.",
-                    character_set_opt.get,
-                    name)
+                    Array[AnyRef](character_set_opt.get, name): _*)
       }
       character_set_opt = Some(opt)
     }
@@ -146,8 +145,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
         case VarcharType =>
         case column_type => {
           logger.warn("The '{}' option cannot be used for a '{}' column type.",
-                      character_set_opt.get,
-                      column_type)
+                      Array[AnyRef](character_set_opt.get, column_type): _*)
       }
     }
 
@@ -521,8 +519,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
       opts = opts.filter(_ != opt)
       if (chk_name_opt.isDefined && chk_name_opt.get != name) {
         logger.warn("Redefining the check constraint name from '{}'' to '{}'.",
-                    chk_name_opt.get,
-                    name)
+                    Array[AnyRef](chk_name_opt.get, name): _*)
       }
       chk_name_opt = Some(name)
     }

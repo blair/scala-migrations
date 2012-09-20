@@ -533,8 +533,7 @@ abstract class Migration
       opts = opts.filter(_ != opt)
       if (fk_name_opt.isDefined && fk_name_opt.get != name) {
         logger.warn("Redefining the foreign key name from '{}'' to '{}'.",
-                    fk_name_opt.get,
-                    name)
+                    Array[AnyRef](fk_name_opt.get, name): _*)
       }
       fk_name_opt = Some(name)
     }
@@ -596,8 +595,7 @@ abstract class Migration
     for (opt @ OnDelete(action) <- opts) {
       if (on_delete_opt.isDefined && action != on_delete_opt.get.action) {
         logger.warn("Overriding the ON DELETE action from '{}' to '{}'.",
-                    on_delete_opt.get.action,
-                    action)
+                    Array[AnyRef](on_delete_opt.get.action, action): _*)
       }
       opts = opts.filter(_ != opt)
       on_delete_opt = Some(opt)
@@ -608,8 +606,7 @@ abstract class Migration
     for (opt @ OnUpdate(action) <- opts) {
       if (on_update_opt.isDefined && action != on_update_opt.get.action) {
         logger.warn("Overriding the ON UPDATE action from '{}' to '{}'.",
-                    on_update_opt.get.action,
-                    action)
+                    Array[AnyRef](on_update_opt.get.action, action): _*)
       }
       opts = opts.filter(_ != opt)
       on_update_opt = Some(opt)
