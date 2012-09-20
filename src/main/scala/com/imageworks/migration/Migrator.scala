@@ -272,8 +272,7 @@ object Migrator
     while (urls.hasMoreElements) {
       val url = urls.nextElement
       logger.debug("For package '{}' found resource at '{}'.",
-                   package_name,
-                   url)
+                   Array[AnyRef](package_name, url): _*)
 
       class_names ++= classNamesInResource(url,
                                            package_name,
@@ -341,8 +340,7 @@ object Migrator
       else {
         skip_names += class_name
         logger.debug("Skipping '{}' because it does not match '{}'.",
-                     class_name,
-                     re_str)
+                     Array[AnyRef](class_name, re_str): _*)
       }
     }
 
@@ -584,8 +582,7 @@ class Migrator(connection_builder: ConnectionBuilder,
      version_update_opt: Option[Tuple2[Connection,Long]]): Unit =
   {
     logger.info("Migrating {} with '{}'.",
-                direction.str,
-                migration_class.getName)
+                Array[AnyRef](direction.str, migration_class.getName): _*)
 
     val migration = migration_class.getConstructor().newInstance()
     withConnections(AutoCommit) { connections =>
