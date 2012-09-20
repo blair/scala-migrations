@@ -407,8 +407,7 @@ class ColumnDefinition
 
     // Warn for any unused options.
     if (! options.isEmpty) {
-      logger.warn("The following options for the '{}' column are " +
-                  "unused: {}.",
+      logger.warn("The following options for the '{}' column are unused: {}.",
                   getColumnName,
                   options)
     }
