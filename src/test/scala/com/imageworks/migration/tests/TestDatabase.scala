@@ -114,9 +114,10 @@ object DerbyTestDatabase
     "jdbc:derby:" + System.currentTimeMillis.toString
   }
 
-  // Set the Derby system home to a test-databases directory so the
-  // derby.log file and all databases will be placed in there.
-  System.getProperties.setProperty("derby.system.home", "test-databases")
+  // Set the Derby system home directory to "target/test-databases" so
+  // the derby.log file and all databases will be placed in there.
+  System.getProperties.setProperty("derby.system.home",
+                                   "target/test-databases")
 
   // Load the Derby database driver.
   Class.forName("org.apache.derby.jdbc.EmbeddedDriver")

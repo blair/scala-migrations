@@ -3,7 +3,6 @@
   <target name="clean" depends="init" description="erase built files and targets">
     <delete dir="${target.dir}" />
     <delete dir="${dist.dir}" />
-    <delete dir="test-databases" />
     <!-- i dont think this is really a good idea: -->
     <!-- delete dir="${ivy.jar.dir}/cache/${ivy.organisation}" /-->
   </target>
