@@ -1,4 +1,4 @@
-Version 1.0.3 -
+Version 1.0.3 - September 21st, 2012
   * Make log4jdbc optional by checking for it at runtime and using it
     if it is available.  This is to workaround log4jdbc not present in
     any public Maven repositories, to make it easier for developers
@@ -6,6 +6,10 @@ Version 1.0.3 -
     not have to download log4jdbc themselves:
       http://code.google.com/p/log4jdbc/wiki/FAQ
       http://code.google.com/p/log4jdbc/issues/detail?id=19
+  * For Scala 2.8.0 and greater, switch from ant/ivy to sbt to build
+    the project.  In addition to reducing the number of files checked
+    into source control to build the project, it also supports easy
+    publishing to Sonatype's open-source repository.
 
 Version 1.0.2 - November 8th, 2011
   * Issue #22: use java.lang.ClassLoader#getResources() instead of

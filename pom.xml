@@ -10,7 +10,7 @@
 	<groupId>com.googlecode</groupId>
 	<artifactId>scala-migrations</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.2-2.9.2-SNAPSHOT</version>
+	<version>1.0.3-2.9.2-SNAPSHOT</version>
 	<name>Scala Migrations</name>
 	<url>http://code.google.com/p/scala-migrations/</url>
 
