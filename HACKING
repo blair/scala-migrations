@@ -1,0 +1,62 @@
+### Original Commit
+
+Please do original work on `master`.  The `master` branch is for the
+latest stable branch of Scala, e.g. 2.9.Z where Z is the patch version
+number.  Your commit should work with all Scala patch versions.
+
+### Merge Commit For Older Scala Versions
+
+We maintain `scala-X.Y` branches for older stable Scala versions.
+
+At all times we support the current stable and previous stable Scala
+branches, e.g. 2.9.Z and 2.8.Z, so at a minimum merge your change from
+`master` to the branch for the previous stable Scala branch.
+
+We do this as a benefit for the community to add features for older
+Scala versions.  Additionally, Sony Pictures Imageworks doesn't have
+the cycles to immediately upgrade to the latest Scala version, so for
+selfish reasons, we would like it merged back ;)
+
+### Test Before Submitting Pull Request
+
+##### Testing On a Branch Using sbt
+
+If you are on a branch that uses sbt, please run the unit tests on all
+the Scala versions that the branch supports by using `sbt "+ test"`.
+For example, the `scala-2.8` branch supports 2.8.0, 2.8.1 and 2.8.2,
+so all three versions would need to be tested.
+
+We request this since sometimes changes are made to Scala that break
+the build on a specific patch version.  If the build does break then
+the pull request will not be accepted because we do a separate release
+for each Scala patch version.
+
+##### Testing On a Branch Using ant
+
+For the `scala-2.7` branch, testing with Scala 2.7.7 is sufficient.
+
+### Build and Test Commands
+
+##### Scala 2.8 and Above
+
+The `master` and `scala-X.Y` branches for X.Y >= 2.8 use sbt to build,
+run unit tests and package Scala Migrations.  Find sbt at
+http://www.scala-sbt.org/ .
+
+* Install sbt
+  * http://www.scala-sbt.org/release/docs/Getting-Started/Setup.html
+* To build: sbt compile
+* To test with the highest Scala version supported by the branch: sbt test
+* To test with all Scala versions supported by the branch: sbt "+ test"
+* To package all versions (instead of just one): sbt "+ package"
+* To generate IntelliJ project: sbt gen-idea
+
+##### Scala 2.7
+
+The `scala-2.7` branch uses ant to build, run unit tests and package
+Scala Migrations.
+
+* Install ant
+* To build: ant compile
+* To test: ant test
+* To package: ant
