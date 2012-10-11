@@ -368,7 +368,7 @@ class MigrationTests
     }
     catch {
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
-      // could be caught here, but for 1.5 compaitibility, only a
+      // could be caught here, but for 1.5 compatibility, only a
       // java.sql.SQLException is caught.
       case e: java.sql.SQLException => // expected
     }
@@ -384,7 +384,7 @@ class MigrationTests
     }
     catch {
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
-      // could be caught here, but for 1.5 compaitibility, only a
+      // could be caught here, but for 1.5 compatibility, only a
       // java.sql.SQLException is caught.
       case e: java.sql.SQLException =>
         // failure if got here
@@ -405,7 +405,7 @@ class MigrationTests
     }
     catch {
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
-      // could be caught here, but for 1.5 compaitibility, only a
+      // could be caught here, but for 1.5 compatibility, only a
       // java.sql.SQLException is caught.
       case e: java.sql.SQLException => // expected
     }
