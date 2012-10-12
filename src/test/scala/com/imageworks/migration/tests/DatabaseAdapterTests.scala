@@ -41,8 +41,7 @@ import com.imageworks.migration.{DatabaseAdapter,
                                  PostgresqlDatabaseAdapter}
 
 import org.junit.Assert._
-import org.junit.{Before,
-                  Test}
+import org.junit.Test
 
 class DatabaseAdapterTests
 {
