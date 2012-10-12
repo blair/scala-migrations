@@ -429,9 +429,6 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
                grantees: Array[String],
                privileges: GrantPrivilegeType*): String =
   {
-    val sql = new java.lang.StringBuilder(256)
-               .append("GRANT")
-
     grantRevokeCommon("GRANT",
                       "TO",
                       schema_name_opt,
