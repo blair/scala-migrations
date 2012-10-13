@@ -360,7 +360,7 @@ object Migrator
             results = results.insert(version, casted_class)
           }
           catch {
-            case e: java.lang.NoSuchMethodException => {
+            case e: NoSuchMethodException => {
               logger.debug("Unable to find a no-argument constructor for '" +
                            class_name +
                            "'",
