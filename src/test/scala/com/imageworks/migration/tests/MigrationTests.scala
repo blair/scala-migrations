@@ -62,8 +62,7 @@ class MigrationTests
   var migrator: Migrator = _
 
   @Before
-  def set_up(): Unit =
-  {
+  def set_up() {
     val connection_builder = TestDatabase.getAdminConnectionBuilder
     val database_adapter = TestDatabase.getDatabaseAdapter
 
@@ -81,32 +80,28 @@ class MigrationTests
   }
 
   @Test(expected=classOf[DuplicateMigrationDescriptionException])
-  def duplicate_descriptions_throw_exception: Unit =
-  {
+  def duplicate_descriptions_throw_exception {
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.duplicate_descriptions",
                      false)
   }
 
   @Test(expected=classOf[DuplicateMigrationVersionException])
-  def duplicate_versions_throw_exception: Unit =
-  {
+  def duplicate_versions_throw_exception {
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.duplicate_versions",
                      false)
   }
 
   @Test(expected=classOf[IllegalArgumentException])
-  def scale_without_precision: Unit =
-  {
+  def scale_without_precision {
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.scale_without_precision",
                      false)
   }
 
   @Test
-  def migrate_up_and_down: Unit =
-  {
+  def migrate_up_and_down {
     // There should be no tables in the schema initially.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -217,8 +212,7 @@ class MigrationTests
   }
 
   @Test
-  def get_migration_statuses_does_not_create_schema_migrations: Unit =
-  {
+  def get_migration_statuses_does_not_create_schema_migrations {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -252,8 +246,7 @@ class MigrationTests
   }
 
   @Test
-  def why_not_migrated_does_not_create_schema_migrations: Unit =
-  {
+  def why_not_migrated_does_not_create_schema_migrations {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -277,8 +270,7 @@ class MigrationTests
   }
 
   @Test
-  def alter_column: Unit =
-  {
+  def alter_column {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -333,8 +325,7 @@ class MigrationTests
   }
 
   @Test
-  def grant_and_revoke: Unit =
-  {
+  def grant_and_revoke {
     val connection_builder = TestDatabase.getUserConnectionBuilder
     val database_adapter = TestDatabase.getDatabaseAdapter
 
@@ -350,8 +341,7 @@ class MigrationTests
       "SELECT name FROM " +
       database_adapter.quoteTableName("scala_migrations_location")
 
-    def run_select: Unit =
-    {
+    def run_select {
       test_migrator.withLoggingConnection(AutoCommit) { connection =>
         With.statement(connection.prepareStatement(select_sql)) { statement =>
           With.resultSet(statement.executeQuery()) { rs => }
@@ -425,8 +415,7 @@ class MigrationTests
   }
 
   @Test
-  def columns_can_hold_types: Unit =
-  {
+  def columns_can_hold_types {
     migrator.migrate(InstallAllMigrations,
                      "com.imageworks.migration.tests.types",
                      false)
@@ -476,8 +465,7 @@ class MigrationTests
   }
 
   @Test
-  def with_result_set_closes_on_normal_return: Unit =
-  {
+  def with_result_set_closes_on_normal_return {
     val mock_rs = context.mock(classOf[ResultSet])
 
     context.checking(new Expectations {
@@ -488,17 +476,14 @@ class MigrationTests
 
     val m = new Migration {
               override
-              def up(): Unit =
-              {
+              def up() {
                 withResultSet(mock_rs) { rs2 =>
                   rs1 = rs2
                 }
               }
 
               override
-              def down(): Unit =
-              {
-              }
+              def down() { }
             }
 
     m.up()
@@ -509,8 +494,7 @@ class MigrationTests
   }
 
   @Test
-  def with_result_set_closes_on_throw: Unit =
-  {
+  def with_result_set_closes_on_throw {
     val mock_rs = context.mock(classOf[ResultSet])
 
     context.checking(new Expectations {
@@ -524,8 +508,7 @@ class MigrationTests
 
     val m = new Migration {
               override
-              def up(): Unit =
-              {
+              def up() {
                 withResultSet(mock_rs) { rs2 =>
                   rs1 = rs2
                   throw new ThisSpecialException
@@ -533,9 +516,7 @@ class MigrationTests
               }
 
               override
-              def down(): Unit =
-              {
-              }
+              def down() { }
             }
 
     try {

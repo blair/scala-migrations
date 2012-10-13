@@ -114,8 +114,7 @@ class JavaMigrator private (migrator: Migrator)
    *        should be searched
    */
   def installAllMigrations(package_name: String,
-                           search_sub_packages: Boolean): Unit =
-  {
+                           search_sub_packages: Boolean) {
     migrator.migrate(InstallAllMigrations, package_name, search_sub_packages)
   }
 
@@ -128,8 +127,7 @@ class JavaMigrator private (migrator: Migrator)
    *        should be searched
    */
   def removeAllMigrations(package_name: String,
-                          search_sub_packages: Boolean): Unit =
-  {
+                          search_sub_packages: Boolean) {
     migrator.migrate(RemoveAllMigrations, package_name, search_sub_packages)
   }
 
@@ -145,8 +143,7 @@ class JavaMigrator private (migrator: Migrator)
    */
   def migrateTo(version: Long,
                 package_name: String,
-                search_sub_packages: Boolean): Unit =
-  {
+                search_sub_packages: Boolean) {
     migrator.migrate(MigrateToVersion(version),
                      package_name,
                      search_sub_packages)
@@ -164,8 +161,7 @@ class JavaMigrator private (migrator: Migrator)
    */
   def rollback(count: Int,
                package_name: String,
-               search_sub_packages: Boolean): Unit =
-  {
+               search_sub_packages: Boolean) {
     migrator.migrate(RollbackMigration(count),
                      package_name,
                      search_sub_packages)

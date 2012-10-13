@@ -192,8 +192,7 @@ abstract class Migration
   }
 
   final
-  def execute(sql: String): Unit =
-  {
+  def execute(sql: String) {
     val statement = connection.createStatement
     try {
       statement.execute(sql)
@@ -225,8 +224,7 @@ abstract class Migration
    */
   final
   def withPreparedStatement(sql: String)
-                           (f: PreparedStatement => Unit): Unit =
-  {
+                           (f: PreparedStatement => Unit) {
     val c = connection
     val auto_commit = c.getAutoCommit
     try {
@@ -286,8 +284,7 @@ abstract class Migration
   final
   def createTable(table_name: String,
                   options: TableOption*)
-                 (body: TableDefinition => Unit): Unit =
-  {
+                 (body: TableDefinition => Unit) {
     val table_definition = new TableDefinition(adapter, table_name)
 
     body(table_definition)
@@ -306,8 +303,7 @@ abstract class Migration
   def addColumn(table_name: String,
                 column_name: String,
                 column_type: SqlType,
-                options: ColumnOption*): Unit =
-  {
+                options: ColumnOption*) {
     val table_definition = new TableDefinition(adapter, table_name)
 
     table_definition.column(column_name, column_type, options: _*)
@@ -341,8 +337,7 @@ abstract class Migration
   def alterColumn(table_name: String,
                   column_name: String,
                   column_type: SqlType,
-                  options: ColumnOption*): Unit =
-  {
+                  options: ColumnOption*) {
     execute(adapter.alterColumnSql(table_name,
                                    column_name,
                                    column_type,
@@ -351,14 +346,12 @@ abstract class Migration
 
   final
   def removeColumn(table_name: String,
-                   column_name: String): Unit =
-  {
+                   column_name: String) {
     execute(adapter.removeColumnSql(table_name, column_name))
   }
 
   final
-  def dropTable(table_name: String): Unit =
-  {
+  def dropTable(table_name: String) {
     val sql = new java.lang.StringBuilder(512)
                 .append("DROP TABLE ")
                 .append(adapter.quoteTableName(table_name))
@@ -409,8 +402,7 @@ abstract class Migration
   final
   def addIndex(table_name: String,
                column_names: Array[String],
-               options: IndexOption*): Unit =
-  {
+               options: IndexOption*) {
     if (column_names.isEmpty) {
       throw new IllegalArgumentException("Adding an index requires at " +
                                          "least one column name.")
@@ -457,8 +449,7 @@ abstract class Migration
   final
   def addIndex(table_name: String,
                column_name: String,
-               options: IndexOption*): Unit =
-  {
+               options: IndexOption*) {
     addIndex(table_name, Array(column_name), options: _*)
   }
 
@@ -476,8 +467,7 @@ abstract class Migration
   final
   def removeIndex(table_name: String,
                   column_names: Array[String],
-                  options: Name*): Unit =
-  {
+                  options: Name*) {
     if (column_names.isEmpty) {
       throw new IllegalArgumentException("Removing an index requires at " +
                                          "least one column name.")
@@ -503,8 +493,7 @@ abstract class Migration
   final
   def removeIndex(table_name: String,
                   column_name: String,
-                  options: Name*): Unit =
-  {
+                  options: Name*) {
     removeIndex(table_name, Array(column_name), options: _*)
   }
 
@@ -565,8 +554,7 @@ abstract class Migration
    */
   def addForeignKey(on: On,
                     references: References,
-                    options: ForeignKeyOption*): Unit =
-  {
+                    options: ForeignKeyOption*) {
     if (on.columnNames.length == 0) {
       throw new IllegalArgumentException("Adding a foreign key constraint " +
                                          "requires at least one column name " +
@@ -653,8 +641,7 @@ abstract class Migration
    */
   def addForeignKey(references: References,
                     on: On,
-                    options: ForeignKeyOption*): Unit =
-  {
+                    options: ForeignKeyOption*) {
     addForeignKey(on, references, options: _*)
   }
 
@@ -671,8 +658,7 @@ abstract class Migration
    */
   def removeForeignKey(on: On,
                        references: References,
-                       options: Name*): Unit =
-  {
+                       options: Name*) {
     if (on.columnNames.length == 0) {
       throw new IllegalArgumentException("Removing a foreign key constraint " +
                                          "requires at least one column name " +
@@ -706,8 +692,7 @@ abstract class Migration
    */
   def removeForeignKey(references: References,
                        on: On,
-                       options: Name*): Unit =
-  {
+                       options: Name*) {
     removeForeignKey(on, references, options: _*)
   }
 
@@ -722,8 +707,7 @@ abstract class Migration
   final
   def grant(table_name: String,
             grantees: Array[String],
-            privileges: GrantPrivilegeType*): Unit =
-  {
+            privileges: GrantPrivilegeType*) {
     if (grantees.isEmpty) {
       throw new IllegalArgumentException("Granting permissions requires " +
                                          "at least one grantee.")
@@ -750,8 +734,7 @@ abstract class Migration
   final
   def grant(table_name: String,
             grantee: String,
-            privileges: GrantPrivilegeType*): Unit =
-  {
+            privileges: GrantPrivilegeType*) {
     grant(table_name, Array(grantee), privileges: _*)
   }
 
@@ -766,8 +749,7 @@ abstract class Migration
   final
   def revoke(table_name: String,
              grantees: Array[String],
-             privileges: GrantPrivilegeType*): Unit =
-  {
+             privileges: GrantPrivilegeType*) {
     if (grantees.isEmpty) {
       throw new IllegalArgumentException("Revoking permissions requires " +
                                          "at least one grantee.")
@@ -794,8 +776,7 @@ abstract class Migration
   final
   def revoke(table_name: String,
              grantee: String,
-             privileges: GrantPrivilegeType*): Unit =
-  {
+             privileges: GrantPrivilegeType*) {
     revoke(table_name, Array(grantee), privileges: _*)
   }
 
@@ -811,8 +792,7 @@ abstract class Migration
    */
   def addCheck(on: On,
                expr: String,
-               options: CheckOption*): Unit =
-  {
+               options: CheckOption*) {
     if (on.columnNames.isEmpty) {
       throw new IllegalArgumentException("Adding a check constraint " +
                                          "requires at least one column name " +
@@ -849,8 +829,7 @@ abstract class Migration
    *        customize the removal of the CHECK constraint
    */
   def removeCheck(on: On,
-                  options: Name*): Unit =
-  {
+                  options: Name*) {
     if (on.columnNames.isEmpty) {
       throw new IllegalArgumentException("Removing a check constraint " +
                                          "requires at least one column name " +

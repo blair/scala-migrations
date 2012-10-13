@@ -55,8 +55,7 @@ import com.imageworks.migration.{Cascade,
 class Migrate_20081118201742_CreatePeopleTable
   extends Migration
 {
-  def up(): Unit =
-  {
+  def up() {
     createTable("scala_migrations_people") { t =>
       t.varbinary("pk_scala_migrations_people", PrimaryKey, Limit(16))
       t.varbinary("pk_scala_migrations_location", Limit(16), NotNull)
@@ -99,8 +98,7 @@ class Migrate_20081118201742_CreatePeopleTable
              "vacation_days >= 0")
   }
 
-  def down(): Unit =
-  {
+  def down() {
     removeCheck(on("scala_migrations_people" -> "vacation_days"))
     removeForeignKey(on("scala_migrations_people" ->
                           "pk_scala_migrations_location"),

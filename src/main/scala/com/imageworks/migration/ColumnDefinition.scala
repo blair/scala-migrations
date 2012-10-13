@@ -144,8 +144,7 @@ class ColumnDefinition
   /**
    * Called after the above properties have been wired.
    */
-  def initialize(): Unit =
-  {
+  def initialize() {
     if (this.isInstanceOf[ColumnSupportsLimit]) {
       checkForLimit()
     }
@@ -169,8 +168,7 @@ class ColumnDefinition
    * will remove the default option from the option list.
    */
   private
-  def checkForDefault(): Unit =
-  {
+  def checkForDefault() {
     for (option @ Default(value) <- options) {
       options = options.filter(_ != option)
 
@@ -201,8 +199,7 @@ class ColumnDefinition
    * option from the option list.
    */
   private
-  def checkForLimit(): Unit =
-  {
+  def checkForLimit() {
     for (option @ Limit(length) <- options) {
       options = options.filter(_ != option)
 
@@ -280,8 +277,7 @@ class ColumnDefinition
    * Look for a Precision column option.
    */
   private
-  def checkForPrecision(): Unit =
-  {
+  def checkForPrecision() {
     for (option @ Precision(value) <- options) {
       options = options.filter(_ != option)
 
@@ -312,8 +308,7 @@ class ColumnDefinition
    * Look for a Scale column option.
    */
   private
-  def checkForScale(): Unit =
-  {
+  def checkForScale() {
     for (option @ Scale(value) <- options) {
       options = options.filter(_ != option)
 
@@ -376,8 +371,7 @@ class ColumnDefinition
 
     for (option <- options) {
       def appendCheckSql(name: String,
-                         expr: String): Unit =
-      {
+                         expr: String) {
         options = options.filter(_ != option)
 
         sb.append(" CONSTRAINT ")

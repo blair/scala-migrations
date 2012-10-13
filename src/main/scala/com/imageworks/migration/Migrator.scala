@@ -54,8 +54,7 @@ class CreateSchemaMigrationsTableMigration
   extends Migration
 {
   override
-  def up(): Unit =
-  {
+  def up() {
     createTable(Migrator.schemaMigrationsTableName) { t =>
       t.varchar("version", Limit(32), NotNull)
     }
@@ -67,8 +66,7 @@ class CreateSchemaMigrationsTableMigration
   }
 
   override
-  def down(): Unit =
-  {
+  def down() {
     throw new IrreversibleMigrationException
   }
 }
@@ -150,8 +148,7 @@ object Migrator
     val class_names = new mutable.HashSet[String]
 
     def scan(f: java.io.File,
-             pn: String): Unit =
-    {
+             pn: String) {
       val child_files = f.listFiles
 
       for (child_file <- child_files) {
@@ -579,8 +576,7 @@ class Migrator(connection_builder: ConnectionBuilder,
   def runMigration
     (migration_class: Class[_ <: Migration],
      direction: MigrationDirection,
-     version_update_opt: Option[Tuple2[Connection,Long]]): Unit =
-  {
+     version_update_opt: Option[Tuple2[Connection,Long]]) {
     logger.info("Migrating {} with '{}'.",
                 Array[AnyRef](direction.str, migration_class.getName): _*)
 
@@ -637,8 +633,7 @@ class Migrator(connection_builder: ConnectionBuilder,
    * Creates the schema migrations table if it does not exist.
    */
   private
-  def initializeSchemaMigrationsTable(): Unit =
-  {
+  def initializeSchemaMigrationsTable() {
     if (! doesSchemaMigrationsTableExist) {
       runMigration(classOf[CreateSchemaMigrationsTableMigration], Up, None)
     }
@@ -712,8 +707,7 @@ class Migrator(connection_builder: ConnectionBuilder,
    */
   def migrate(operation: MigratorOperation,
               package_name: String,
-              search_sub_packages: Boolean): Unit =
-  {
+              search_sub_packages: Boolean) {
     initializeSchemaMigrationsTable()
 
     // Get a new connection that locks the schema_migrations table.

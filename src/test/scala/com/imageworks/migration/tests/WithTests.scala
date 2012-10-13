@@ -49,8 +49,7 @@ class WithTests
   val context = new Mockery
 
   @Test
-  def with_result_set_closes_on_normal_return: Unit =
-  {
+  def with_result_set_closes_on_normal_return {
     val mock_rs = context.mock(classOf[ResultSet])
 
     context.checking(new Expectations {
@@ -70,8 +69,7 @@ class WithTests
   }
 
   @Test
-  def with_result_set_closes_on_throw: Unit =
-  {
+  def with_result_set_closes_on_throw {
     val mock_rs = context.mock(classOf[ResultSet])
 
     context.checking(new Expectations {

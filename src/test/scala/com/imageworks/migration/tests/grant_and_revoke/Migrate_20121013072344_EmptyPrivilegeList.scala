@@ -38,14 +38,12 @@ import com.imageworks.migration.Migration
 class Migrate_20121013072344_EmptyPrivilegeList
   extends Migration
 {
-  def up(): Unit =
-  {
+  def up() {
     grant("scala_migrations_location",
           TestDatabase.getUserAccountName)
   }
 
-  def down(): Unit =
-  {
+  def down() {
     revoke("scala_migrations_location",
            TestDatabase.getUserAccountName)
   }

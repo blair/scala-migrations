@@ -39,15 +39,13 @@ import com.imageworks.migration.{Migration,
 class Migrate_200811261513_Grants
   extends Migration
 {
-  def up(): Unit =
-  {
+  def up() {
     grant("scala_migrations_location",
           TestDatabase.getUserAccountName,
           SelectPrivilege)
   }
 
-  def down(): Unit =
-  {
+  def down() {
     revoke("scala_migrations_location",
            TestDatabase.getUserAccountName,
            SelectPrivilege)

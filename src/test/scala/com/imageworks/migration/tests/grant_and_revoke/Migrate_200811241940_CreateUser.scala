@@ -41,16 +41,14 @@ import com.imageworks.migration.{Limit,
 class Migrate_200811241940_CreateUser
   extends Migration
 {
-  def up(): Unit =
-  {
+  def up() {
     createTable("scala_migrations_location") { t =>
       t.varbinary("pk_scala_migrations_location", PrimaryKey, Limit(16))
       t.varchar("name", Unique, Limit(255), NotNull)
     }
   }
 
-  def down(): Unit =
-  {
+  def down() {
     dropTable("scala_migrations_location")
   }
 }

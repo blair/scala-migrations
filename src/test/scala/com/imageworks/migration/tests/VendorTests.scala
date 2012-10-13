@@ -44,8 +44,7 @@ import org.junit.{Before,
 class VendorTests
 {
   @Test
-  def forDriver: Unit =
-  {
+  def forDriver {
     assertSame(Oracle,
                Vendor.forDriver("oracle.jdbc.OracleDriver"))
 
@@ -63,26 +62,22 @@ class VendorTests
   }
 
   @Test(expected=classOf[scala.MatchError])
-  def for_non_existent_driver: Unit =
-  {
+  def for_non_existent_driver {
     Vendor.forDriver("no.such.driver")
   }
 
   @Test(expected=classOf[scala.MatchError])
-  def for_non_driver_class: Unit =
-  {
+  def for_non_driver_class {
     Vendor.forDriver(classOf[java.lang.String])
   }
 
   @Test(expected=classOf[java.lang.IllegalArgumentException])
-  def for_null_existent_driver_class: Unit =
-  {
+  def for_null_existent_driver_class {
     Vendor.forDriver(null: Class[_])
   }
 
   @Test(expected=classOf[java.lang.IllegalArgumentException])
-  def for_null_existent_driver_class_name: Unit =
-  {
+  def for_null_existent_driver_class_name {
     Vendor.forDriver(null: String)
   }
 }

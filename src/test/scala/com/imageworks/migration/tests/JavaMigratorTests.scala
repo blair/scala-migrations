@@ -50,8 +50,7 @@ class JavaMigratorTests
   var java_migrator: JavaMigrator = _
 
   @Before
-  def set_up(): Unit =
-  {
+  def set_up() {
     val connection_builder = TestDatabase.getAdminConnectionBuilder
     val database_adapter = TestDatabase.getDatabaseAdapter
 
@@ -72,22 +71,19 @@ class JavaMigratorTests
   }
 
   @Test(expected=classOf[DuplicateMigrationDescriptionException])
-  def duplicate_descriptions_throw_exception: Unit =
-  {
+  def duplicate_descriptions_throw_exception {
     java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_descriptions",
                                        false)
   }
 
   @Test(expected=classOf[DuplicateMigrationVersionException])
-  def duplicate_versions_throw_exception: Unit =
-  {
+  def duplicate_versions_throw_exception {
     java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_versions",
                                        false)
   }
 
   @Test
-  def migrate_up_and_down: Unit =
-  {
+  def migrate_up_and_down {
     // There should be no tables in the schema initially.
     assertEquals(0, java_migrator.getTableNames.size)
 
