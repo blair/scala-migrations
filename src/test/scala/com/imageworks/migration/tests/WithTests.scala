@@ -77,7 +77,7 @@ class WithTests
                      })
 
     class ThisSpecialException
-      extends java.lang.Throwable
+      extends Throwable
 
     var rs1: ResultSet = null
 

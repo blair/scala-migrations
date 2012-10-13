@@ -504,7 +504,7 @@ class MigrationTests
     var rs1: ResultSet = null
 
     class ThisSpecialException
-      extends java.lang.Throwable
+      extends Throwable
 
     val m = new Migration {
               override
