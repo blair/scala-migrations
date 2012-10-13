@@ -68,7 +68,7 @@ class VendorTests
 
   @Test(expected=classOf[scala.MatchError])
   def for_non_driver_class {
-    Vendor.forDriver(classOf[java.lang.String])
+    Vendor.forDriver(classOf[String])
   }
 
   @Test(expected=classOf[IllegalArgumentException])
