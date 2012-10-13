@@ -61,9 +61,8 @@ object DatabaseAdapter
         new PostgresqlDatabaseAdapter(schema_name_opt)
 
       case null =>
-        throw new java.lang.IllegalArgumentException("Must pass a non-null " +
-                                                     "vendor to this " +
-                                                     "function.")
+        throw new IllegalArgumentException("Must pass a non-null vendor to " +
+                                           "this function.")
     }
   }
 }

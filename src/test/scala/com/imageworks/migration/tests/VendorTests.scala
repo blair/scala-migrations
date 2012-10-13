@@ -71,12 +71,12 @@ class VendorTests
     Vendor.forDriver(classOf[java.lang.String])
   }
 
-  @Test(expected=classOf[java.lang.IllegalArgumentException])
+  @Test(expected=classOf[IllegalArgumentException])
   def for_null_existent_driver_class {
     Vendor.forDriver(null: Class[_])
   }
 
-  @Test(expected=classOf[java.lang.IllegalArgumentException])
+  @Test(expected=classOf[IllegalArgumentException])
   def for_null_existent_driver_class_name {
     Vendor.forDriver(null: String)
   }

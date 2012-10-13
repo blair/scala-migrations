@@ -54,9 +54,8 @@ object Vendor
    * @param driver_class_name the class name of the JDBC database
    *        driver
    * @return the corresponding Vendor object for the database
-   * @throws java.lang.IllegalArgumentException if the argument is
-   *         null, scala.MatchError if an appropriate vendor cannot be
-   *         found
+   * @throws IllegalArgumentException if the argument is null,
+   *         scala.MatchError if an appropriate vendor cannot be found
    */
   def forDriver(driver_class_name: String): Vendor =
   {
@@ -77,9 +76,9 @@ object Vendor
         Postgresql
 
       case null =>
-        throw new java.lang.IllegalArgumentException("Must pass a non-null " +
-                                                     "JDBC driver class " +
-                                                     "name to this function.")
+        throw new IllegalArgumentException("Must pass a non-null JDBC " +
+                                           "driver class name to this " +
+                                           "function.")
 
       case _ =>
         throw new scala.MatchError("No vendor can be found for the JDBC " +
@@ -94,15 +93,14 @@ object Vendor
    *
    * @param driver_class the class of the JDBC database driver
    * @return the corresponding Vendor object for the database
-   * @throws java.lang.IllegalArgumentException if the argument is
-   *         null, scala.MatchError if an appropriate vendor cannot be
-   *         found
+   * @throws IllegalArgumentException if the argument is null,
+   *         scala.MatchError if an appropriate vendor cannot be found
    */
   def forDriver(driver_class: Class[_]): Vendor =
   {
     if (driver_class eq null) {
       val message = "Must pass a non-null JDBC driver class to this function."
-      throw new java.lang.IllegalArgumentException(message)
+      throw new IllegalArgumentException(message)
     }
     else {
       forDriver(driver_class.getName)
