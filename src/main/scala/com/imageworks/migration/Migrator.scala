@@ -663,7 +663,7 @@ class Migrator(connection_builder: ConnectionBuilder,
             versions = versions.insert(version)
           }
           catch {
-            case e: java.lang.NumberFormatException => {
+            case e: NumberFormatException => {
               logger.warn("Ignoring installed migration with unparsable " +
                           "version number '" +
                           version_str +
