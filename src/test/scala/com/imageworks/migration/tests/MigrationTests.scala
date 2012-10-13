@@ -360,7 +360,7 @@ class MigrationTests
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
       // could be caught here, but for 1.5 compatibility, only a
       // java.sql.SQLException is caught.
-      case e: java.sql.SQLException => // expected
+      case _: java.sql.SQLException => // expected
     }
 
     // perform grants
@@ -410,7 +410,7 @@ class MigrationTests
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
       // could be caught here, but for 1.5 compatibility, only a
       // java.sql.SQLException is caught.
-      case e: java.sql.SQLException => // expected
+      case _: java.sql.SQLException => // expected
     }
   }
 
