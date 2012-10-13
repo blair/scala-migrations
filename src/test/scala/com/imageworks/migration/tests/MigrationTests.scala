@@ -391,6 +391,19 @@ class MigrationTests
         fail("SELECT permission failure unexpected: " + e)
     }
 
+    // Migrate to 20121013072344 which show throw an
+    // IllegalArgumentException.
+    try {
+      migrator.migrate(MigrateToVersion(20121013072344L),
+                       "com.imageworks.migration.tests.grant_and_revoke",
+                       false)
+      // failure if got here
+      fail("Expected IllegalArgumentException")
+    }
+    catch {
+      case _: IllegalArgumentException => // expected
+    }
+
     // preform revoke
     migrator.migrate(RollbackMigration(1),
                      "com.imageworks.migration.tests.grant_and_revoke",
