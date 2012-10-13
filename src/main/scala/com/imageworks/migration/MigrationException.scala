@@ -33,7 +33,7 @@
 package com.imageworks.migration
 
 class MigrationException(message: String)
-  extends java.lang.Exception(message)
+  extends Exception(message)
 
 class DuplicateMigrationDescriptionException(message: String)
   extends MigrationException(message)
