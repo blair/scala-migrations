@@ -513,7 +513,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
     for (opt @ Name(name) <- opts) {
       opts = opts.filter(_ != opt)
       if (chk_name_opt.isDefined && chk_name_opt.get != name) {
-        logger.warn("Redefining the check constraint name from '{}'' to '{}'.",
+        logger.warn("Redefining the check constraint name from '{}' to '{}'.",
                     Array[AnyRef](chk_name_opt.get, name): _*)
       }
       chk_name_opt = Some(name)
