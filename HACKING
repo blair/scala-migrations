@@ -40,7 +40,7 @@ For the `scala-2.7` branch, testing with Scala 2.7.7 is sufficient.
 ##### Scala 2.8 and Above
 
 The `master` and `scala-X.Y` branches for X.Y >= 2.8 use sbt to build,
-run unit tests and package Scala Migrations.  Find sbt at
+run unit tests, and package Scala Migrations.  Find sbt at
 http://www.scala-sbt.org/ .
 
 * Install sbt
