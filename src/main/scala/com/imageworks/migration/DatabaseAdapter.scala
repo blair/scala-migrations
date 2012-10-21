@@ -142,10 +142,9 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
       column_type match {
         case CharType =>
         case VarcharType =>
-        case column_type => {
+        case _ =>
           logger.warn("The '{}' option cannot be used for a '{}' column type.",
                       Array[AnyRef](character_set_opt.get, column_type): _*)
-      }
     }
 
     val d = columnDefinitionFactory(column_type, character_set_opt)
