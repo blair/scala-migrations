@@ -60,7 +60,7 @@ class MigrationArrowAssoc(s: String)
     new TableColumnDefinition(s, Array(other))
   }
 
-  def `->`(other: Tuple2[String,String]): TableColumnDefinition =
+  def `->`(other: (String, String)): TableColumnDefinition =
   {
     new TableColumnDefinition(s, Array(other._1, other._2))
   }
@@ -362,7 +362,7 @@ abstract class Migration
   private
   def indexNameFor(table_name: String,
                    column_names: Array[String],
-                   options: IndexOption*): Tuple2[String,List[IndexOption]] =
+                   options: IndexOption*): (String, List[IndexOption]) =
   {
     var opts = options.toList
 
@@ -512,7 +512,7 @@ abstract class Migration
   def foreignKeyNameFor
     (on: On,
      references: References,
-     options: ForeignKeyOption*): Tuple2[String,List[ForeignKeyOption]] =
+     options: ForeignKeyOption*): (String, List[ForeignKeyOption]) =
   {
     var opts = options.toList
 
