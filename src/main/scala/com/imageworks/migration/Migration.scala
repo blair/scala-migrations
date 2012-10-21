@@ -671,7 +671,7 @@ abstract class Migration
                                          "from the table being referenced.")
     }
 
-    var (name, opts) = foreignKeyNameFor(on, references, options: _*)
+    val (name, opts) = foreignKeyNameFor(on, references, options: _*)
 
     execute("ALTER TABLE " +
             adapter.quoteTableName(on.tableName) +
@@ -800,7 +800,7 @@ abstract class Migration
     }
 
     val a = adapter
-    var (name, opts) = a.generateCheckConstraintName(on, options: _*)
+    val (name, opts) = a.generateCheckConstraintName(on, options: _*)
 
     val sql = new java.lang.StringBuilder(512)
                .append("ALTER TABLE ")
@@ -832,7 +832,7 @@ abstract class Migration
                                          "in the table adding the constraint.")
     }
 
-    var (name, opts) = adapter.generateCheckConstraintName(on, options: _*)
+    val (name, opts) = adapter.generateCheckConstraintName(on, options: _*)
 
     execute("ALTER TABLE " +
             adapter.quoteTableName(on.tableName) +
