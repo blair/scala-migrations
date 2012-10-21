@@ -802,10 +802,6 @@ abstract class Migration
     val a = adapter
     var (name, opts) = a.generateCheckConstraintName(on, options: _*)
 
-    val quoted_on_column_names = on.columnNames.map {
-                                   a.quoteColumnName(_)
-                                 }.mkString(", ")
-
     val sql = new java.lang.StringBuilder(512)
                .append("ALTER TABLE ")
                .append(a.quoteTableName(on.tableName))
