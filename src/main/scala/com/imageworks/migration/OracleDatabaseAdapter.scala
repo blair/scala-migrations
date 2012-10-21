@@ -314,8 +314,8 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
    * Oracle ever does support that clause, which it does not in 10g.
    *
    * @param on_delete_opt an Option[OnDelete]
-   * @param the SQL text to append to the SQL to create a foreign key
-   *        relationship
+   * @return the SQL text to append to the SQL to create a foreign key
+   *         relationship
    */
   override
   def onDeleteSql(on_delete_opt: Option[OnDelete]): String =

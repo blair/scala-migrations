@@ -330,8 +330,8 @@ abstract class Migration
    * @param table_name the name of the table with the column
    * @param column_name the name of the column
    * @param column_type the type the column is being altered to
-   * @param a possibly empty array of column options to customize the
-   *        column
+   * @param options a possibly empty array of column options to
+   *        customize the column
    */
   final
   def alterColumn(table_name: String,
@@ -504,7 +504,7 @@ abstract class Migration
    * @param on the table and columns the foreign key constraint is on
    * @param references the table and columns the foreign key
    *        constraint references
-   * @options a varargs list of ForeignKeyOption's
+   * @param options a varargs list of ForeignKeyOption's
    * @return a Tuple2 with the calculated name or the overridden name
    *         from a Name and the remaining options
    */
@@ -766,12 +766,12 @@ abstract class Migration
   }
 
   /**
-   * Remove privileges on a table from one or more grantees.
+   * Remove privileges on a table from a grantee.
    *
    * @param table_name the table name to remove the grants from
-   * @param grantees a non-empty array of grantees
+   * @param grantee the grantee to revoke privileges from
    * @param privileges a non-empty array of privileges to remove from
-   *        the grantees
+   *        the grantee
    */
   final
   def revoke(table_name: String,

@@ -245,8 +245,8 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * @param table_name the name of the table with the column
    * @param column_name the name of the column
    * @param column_type the type the column is being altered to
-   * @param a possibly empty array of column options to customize the
-   *        column
+   * @param options a possibly empty array of column options to
+   *        customize the column
    * @return the SQL to alter the column
    */
   def alterColumnSql(schema_name_opt: Option[String],
@@ -269,8 +269,8 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * @param table_name the name of the table with the column
    * @param column_name the name of the column
    * @param column_type the type the column is being altered to
-   * @param a possibly empty array of column options to customize the
-   *        column
+   * @param options a possibly empty array of column options to
+   *        customize the column
    * @return the SQL to alter the column
    */
   def alterColumnSql(table_name: String,
@@ -418,9 +418,9 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * @param schema_name_opt the optional schema name to qualify the
    *        table name
    * @param table_name the name of the table with the index
-   * @param grantees one or more objects to grant the new privileges to.
+   * @param grantees one or more objects to grant the new privileges to
    * @param privileges one or more GrantPrivilegeType objects describing the
-   *        types of privileges to grant.
+   *        types of privileges to grant
    * @return the SQL to grant privileges
    */
   def grantSql(schema_name_opt: Option[String],
@@ -441,9 +441,9 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * Uses the schema_name_opt defined in the adapter.
    *
    * @param table_name the name of the table with the index
-   * @param grantees one or more objects to grant the new privileges to.
+   * @param grantees one or more objects to grant the new privileges to
    * @param privileges one or more GrantPrivilegeType objects describing the
-   *        types of privileges to grant.
+   *        types of privileges to grant
    * @return the SQL to grant privileges
    */
   def grantSql(table_name: String,
@@ -459,10 +459,10 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * @param schema_name_opt the optional schema name to qualify the
    *        table name
    * @param table_name the name of the table with the index
-   * @param grantees one or more objects to grant the new privileges to.
+   * @param grantees one or more objects to revoke the privileges from
    * @param privileges one or more GrantPrivilegeType objects describing the
-   *        types of privileges to grant.
-   * @return the SQL to grant privileges
+   *        types of privileges to revoke
+   * @return the SQL to revoke privileges
    */
   def revokeSql(schema_name_opt: Option[String],
                 table_name: String,
@@ -482,10 +482,10 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * Uses the schema_name_opt defined in the adapter.
    *
    * @param table_name the name of the table with the index
-   * @param grantees one or more objects to grant the new privileges to.
+   * @param grantees one or more objects to revoke the privileges from
    * @param privileges one or more GrantPrivilegeType objects describing the
-   *        types of privileges to grant.
-   * @return the SQL to grant privileges
+   *        types of privileges to revoke
+   * @return the SQL to revoke privileges
    */
   def revokeSql(table_name: String,
                 grantees: Array[String],
@@ -535,8 +535,8 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * ON DELETE clause.
    *
    * @param on_delete_opt an Option[OnDelete]
-   * @param the SQL text to append to the SQL to create a foreign key
-   *        relationship
+   * @return the SQL text to append to the SQL to create a foreign
+   *         key relationship
    */
   def onDeleteSql(on_delete_opt: Option[OnDelete]): String =
   {
@@ -551,8 +551,8 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * ON UPDATE clause.
    *
    * @param on_update_opt an Option[OnUpdate]
-   * @param the SQL text to append to the SQL to create a foreign key
-   *        relationship
+   * @return the SQL text to append to the SQL to create a foreign
+   *         key relationship
    */
   def onUpdateSql(on_update_opt: Option[OnUpdate]): String =
   {
