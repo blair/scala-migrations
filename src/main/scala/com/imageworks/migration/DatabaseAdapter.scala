@@ -418,10 +418,10 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * @param schema_name_opt the optional schema name to qualify the
    *        table name
    * @param table_name the name of the table with the index
-   * @param grantees one or more objects to grant the new permissions to.
+   * @param grantees one or more objects to grant the new privileges to.
    * @param privileges one or more GrantPrivilegeType objects describing the
-   *        types of permissions to grant.
-   * @return the SQL to grant permissions
+   *        types of privileges to grant.
+   * @return the SQL to grant privileges
    */
   def grantSql(schema_name_opt: Option[String],
                table_name: String,
@@ -441,10 +441,10 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * Uses the schema_name_opt defined in the adapter.
    *
    * @param table_name the name of the table with the index
-   * @param grantees one or more objects to grant the new permissions to.
+   * @param grantees one or more objects to grant the new privileges to.
    * @param privileges one or more GrantPrivilegeType objects describing the
-   *        types of permissions to grant.
-   * @return the SQL to grant permissions
+   *        types of privileges to grant.
+   * @return the SQL to grant privileges
    */
   def grantSql(table_name: String,
                grantees: Array[String],
@@ -459,10 +459,10 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * @param schema_name_opt the optional schema name to qualify the
    *        table name
    * @param table_name the name of the table with the index
-   * @param grantees one or more objects to grant the new permissions to.
+   * @param grantees one or more objects to grant the new privileges to.
    * @param privileges one or more GrantPrivilegeType objects describing the
-   *        types of permissions to grant.
-   * @return the SQL to grant permissions
+   *        types of privileges to grant.
+   * @return the SQL to grant privileges
    */
   def revokeSql(schema_name_opt: Option[String],
                 table_name: String,
@@ -482,10 +482,10 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * Uses the schema_name_opt defined in the adapter.
    *
    * @param table_name the name of the table with the index
-   * @param grantees one or more objects to grant the new permissions to.
+   * @param grantees one or more objects to grant the new privileges to.
    * @param privileges one or more GrantPrivilegeType objects describing the
-   *        types of permissions to grant.
-   * @return the SQL to grant permissions
+   *        types of privileges to grant.
+   * @return the SQL to grant privileges
    */
   def revokeSql(table_name: String,
                 grantees: Array[String],
