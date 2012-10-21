@@ -473,7 +473,7 @@ abstract class Migration
                                          "least one column name.")
     }
 
-    val (name, opts) = indexNameFor(table_name, column_names, options: _*)
+    val (name, _) = indexNameFor(table_name, column_names, options: _*)
 
     val sql = adapter.removeIndexSql(table_name, name)
 
@@ -671,7 +671,7 @@ abstract class Migration
                                          "from the table being referenced.")
     }
 
-    val (name, opts) = foreignKeyNameFor(on, references, options: _*)
+    val (name, _) = foreignKeyNameFor(on, references, options: _*)
 
     execute("ALTER TABLE " +
             adapter.quoteTableName(on.tableName) +
@@ -800,7 +800,7 @@ abstract class Migration
     }
 
     val a = adapter
-    val (name, opts) = a.generateCheckConstraintName(on, options: _*)
+    val (name, _) = a.generateCheckConstraintName(on, options: _*)
 
     val sql = new java.lang.StringBuilder(512)
                .append("ALTER TABLE ")
@@ -832,7 +832,7 @@ abstract class Migration
                                          "in the table adding the constraint.")
     }
 
-    val (name, opts) = adapter.generateCheckConstraintName(on, options: _*)
+    val (name, _) = adapter.generateCheckConstraintName(on, options: _*)
 
     execute("ALTER TABLE " +
             adapter.quoteTableName(on.tableName) +
