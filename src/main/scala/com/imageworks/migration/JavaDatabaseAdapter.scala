@@ -45,7 +45,7 @@ object JavaDatabaseAdapter
    *
    * @return newly constructed DerbyDatabaseAdapter
    */
-  def getDerbyDatabaseAdapter(): DerbyDatabaseAdapter =
+  def getDerbyDatabaseAdapter: DerbyDatabaseAdapter =
   {
     new DerbyDatabaseAdapter(None)
   }
@@ -66,7 +66,7 @@ object JavaDatabaseAdapter
    *
    * @return newly constructed OracleDatabaseAdapter
    */
-  def getOracleDatabaseAdapter(): OracleDatabaseAdapter =
+  def getOracleDatabaseAdapter: OracleDatabaseAdapter =
   {
     new OracleDatabaseAdapter(None)
   }
@@ -87,7 +87,7 @@ object JavaDatabaseAdapter
    *
    * @return newly constructed PostgresqlDatabaseAdapter
    */
-  def getPostgresqlDatabaseAdapter(): PostgresqlDatabaseAdapter =
+  def getPostgresqlDatabaseAdapter: PostgresqlDatabaseAdapter =
   {
     new PostgresqlDatabaseAdapter(None)
   }
