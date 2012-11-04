@@ -93,8 +93,8 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
       case BlobType =>
         new DerbyBlobColumnDefinition
       case BooleanType => {
-        val message = "Derby does not support a boolean type, you must " +
-                      "choose a mapping your self."
+        val message = "Derby 10.6 and older do not support BOOLEAN as a " +
+                      "legal data type, you must choose a mapping yourself."
         throw new UnsupportedColumnTypeException(message)
       }
       case CharType =>
