@@ -179,6 +179,12 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
     (column_type: SqlType,
      character_set_opt: Option[CharacterSet]): ColumnDefinition
 
+  /**
+   * Quote a column name.
+   *
+   * @param column_name the name of the column to quote
+   * @return a properly quoted column name
+   */
   def quoteColumnName(column_name: String): String =
   {
     '"' +
@@ -186,6 +192,16 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
     '"'
   }
 
+  /**
+   * Quote a table name, prepending the quoted schema name to the
+   * quoted table name along with a '.' if a schema name is provided.
+   *
+   * @param schema_name_opt an optional schema name
+   * @param table_name the name of the table to quote
+   * @return the table name properly quoted for the database,
+   *         prepended with the quoted schema name and a '.' if a
+   *         schema name is provided
+   */
   def quoteTableName(schema_name_opt: Option[String],
                      table_name: String): String =
   {
@@ -203,6 +219,16 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
     }
   }
 
+  /**
+   * Quote a table name.  If the database adapter was provided with a
+   * default schema name, then the quoted table name is prepended with
+   * the quoted schema name along with a '.'.
+   *
+   * @param table_name the name of the table to quote
+   * @return the table name properly quoted for the database,
+   *         prepended with the quoted schema name and a '.' if the
+   *         database adapter was provided with a default schema name
+   */
   def quoteTableName(table_name: String): String =
   {
     // use the default schema_name_opt defined in the adapter
