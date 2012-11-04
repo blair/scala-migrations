@@ -494,10 +494,10 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
    *        types of privileges to grant
    * @return the SQL to grant privileges
    */
-  def grantSql(schema_name_opt: Option[String],
-               table_name: String,
-               grantees: Array[User],
-               privileges: GrantPrivilegeType*): String = {
+  def grantOnTableSql(schema_name_opt: Option[String],
+                      table_name: String,
+                      grantees: Array[User],
+                      privileges: GrantPrivilegeType*): String = {
     grantRevokeCommon("GRANT",
       "TO",
       schema_name_opt,
@@ -516,10 +516,10 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
    *        types of privileges to grant
    * @return the SQL to grant privileges
    */
-  def grantSql(table_name: String,
-               grantees: Array[User],
-               privileges: GrantPrivilegeType*): String = {
-    grantSql(schemaNameOpt, table_name, grantees, privileges: _*)
+  def grantOnTableSql(table_name: String,
+                      grantees: Array[User],
+                      privileges: GrantPrivilegeType*): String = {
+    grantOnTableSql(schemaNameOpt, table_name, grantees, privileges: _*)
   }
 
   /**
