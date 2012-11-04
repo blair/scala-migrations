@@ -408,7 +408,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
                             yield '"' + unquotedNameConverter(g) + '"'
 
     sql.append(" ON ")
-       .append(quoteTableName(table_name))
+       .append(quoteTableName(schema_name_opt, table_name))
        .append(' ')
        .append(preposition)
        .append(' ')
