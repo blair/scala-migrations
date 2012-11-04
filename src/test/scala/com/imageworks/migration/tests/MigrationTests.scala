@@ -93,6 +93,13 @@ class MigrationTests
                      false)
   }
 
+  @Test
+  def vendor {
+    migrator.migrate(InstallAllMigrations,
+                     "com.imageworks.migration.tests.vendor",
+                     false)
+  }
+
   @Test(expected=classOf[IllegalArgumentException])
   def scale_without_precision {
     migrator.migrate(InstallAllMigrations,

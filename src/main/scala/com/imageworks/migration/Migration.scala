@@ -143,6 +143,11 @@ abstract class Migration
   private def adapter = adapterOpt.get
 
   /**
+   * The vendor of the database the migration is being run on.
+   */
+  def databaseVendor: Vendor = adapter.vendor
+
+  /**
    * Override the -> implicit definition to create a
    * MigrationArrowAssoc instead of a scala.Predef.ArrowAssoc.  See
    * the above comment on the MigrationArrowAssoc class why this is
