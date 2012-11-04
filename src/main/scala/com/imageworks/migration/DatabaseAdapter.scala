@@ -356,6 +356,39 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   }
 
   private
+  def privilegeToString(privilege: GrantPrivilegeType): String = {
+    def formatColumns(columns: Seq[String]): String = {
+      if (columns.isEmpty) ""
+      else columns.mkString(" (", ", ", ")")
+    }
+
+    privilege match {
+      case AllPrivileges =>
+        "ALL PRIVILEGES"
+      case DeletePrivilege =>
+        "DELETE"
+      case InsertPrivilege =>
+        "INSERT"
+      case TriggerPrivilege =>
+        "TRIGGER"
+
+      case ReferencesPrivilege =>
+        "REFERENCES"
+      case SelectPrivilege =>
+        "SELECT"
+      case UpdatePrivilege =>
+        "UPDATE"
+
+      case ReferencesPrivilege(columns) =>
+        "REFERENCES" + formatColumns(columns)
+      case SelectPrivilege(columns) =>
+        "SELECT" + formatColumns(columns)
+      case UpdatePrivilege(columns) =>
+        "UPDATE" + formatColumns(columns)
+    }
+  }
+
+  private
   def grantRevokeCommon(action: String,
                         preposition: String,
                         schema_name_opt: Option[String],
@@ -368,41 +401,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
                .append(action)
                .append(' ')
 
-    def formatColumns(columns: Seq[String]): String =
-    {
-      if (columns.isEmpty) {
-        ""
-      }
-      else {
-        columns.mkString(" (", ", ", ")")
-      }
-    }
-
-    sql.append((
-      for (priv <- privileges) yield priv match {
-        case AllPrivileges =>
-          "ALL PRIVILEGES"
-        case DeletePrivilege =>
-          "DELETE"
-        case InsertPrivilege =>
-          "INSERT"
-        case TriggerPrivilege =>
-          "TRIGGER"
-
-        case ReferencesPrivilege =>
-          "REFERENCES"
-        case SelectPrivilege =>
-          "SELECT"
-        case UpdatePrivilege =>
-          "UPDATE"
-
-        case ReferencesPrivilege(columns) =>
-          "REFERENCES" + formatColumns(columns)
-        case SelectPrivilege(columns) =>
-          "SELECT" + formatColumns(columns)
-        case UpdatePrivilege(columns) =>
-          "UPDATE" + formatColumns(columns)
-      }).mkString(", "))
+    sql.append(privileges map { privilegeToString(_) } mkString (", "))
 
     val quoted_grantees = for (g <- grantees)
                             yield '"' + unquotedNameConverter(g) + '"'
