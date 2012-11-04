@@ -183,9 +183,9 @@ class JavaMigrator private (migrator: Migrator)
    *        should be searched
    * @return null if all available migrations are installed and all
    *         installed migrations have a corresponding Migration
-   *         subclass; a non-null message suitable for for logging
-   *         with the not-installed migrations and the installed
-   *         migrations that do not have a matching Migration subclass
+   *         subclass; a non-null message suitable for logging with
+   *         the not-installed migrations and the installed migrations
+   *         that do not have a matching Migration subclass
    */
   def whyNotMigrated(package_name: String,
                      search_sub_packages: Boolean): String =

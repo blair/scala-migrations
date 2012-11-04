@@ -138,7 +138,7 @@ abstract class Migration
   private[migration] var adapterOpt: Option[DatabaseAdapter] = None
 
   /**
-   * The The database adapter that will be used for the migration.
+   * The database adapter that will be used for the migration.
    */
   private def adapter = adapterOpt.get
 
