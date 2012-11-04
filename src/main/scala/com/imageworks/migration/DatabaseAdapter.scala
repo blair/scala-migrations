@@ -426,7 +426,7 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
     removeIndexSql(schemaNameOpt, table_name, index_name)
   }
 
-  private def privilegeToString(privilege: GrantPrivilegeType): String = {
+  private def privilegeToString(privilege: Privilege): String = {
     def formatColumns(columns: Seq[String]): String = {
       if (columns.isEmpty) ""
       else columns.mkString(" (", ", ", ")")
@@ -455,15 +455,22 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
         "SELECT" + formatColumns(columns)
       case UpdatePrivilege(columns) =>
         "UPDATE" + formatColumns(columns)
+
+      case UsagePrivilege =>
+        "USAGE"
     }
   }
+
+  sealed trait PrivilegeTarget
+  case object SchemaPrivilegeTarget extends PrivilegeTarget
+  case class TablePrivilegeTarget(tableName: String) extends PrivilegeTarget
 
   private def grantRevokeCommon(action: String,
                                 preposition: String,
                                 schema_name_opt: Option[String],
-                                table_name: String,
+                                privilege_target: PrivilegeTarget,
                                 grantees: Array[User],
-                                privileges: GrantPrivilegeType*): String = {
+                                privileges: Privilege*): String = {
     // The GRANT and REVOKE syntax is basically the same
     val sb = new java.lang.StringBuilder(256)
       .append(action)
@@ -475,8 +482,16 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
       yield g.quoted(unquotedNameConverter)
 
     sb.append(" ON ")
-      .append(quoteTableName(schema_name_opt, table_name))
-      .append(' ')
+
+    privilege_target match {
+      case SchemaPrivilegeTarget =>
+        sb.append("SCHEMA ")
+          .append(quoteSchemaName(schema_name_opt.get))
+      case TablePrivilegeTarget(tableName) =>
+        sb.append(quoteTableName(schema_name_opt, tableName))
+    }
+
+    sb.append(' ')
       .append(preposition)
       .append(' ')
       .append(quoted_grantees.mkString(", "))
@@ -501,7 +516,7 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
     grantRevokeCommon("GRANT",
       "TO",
       schema_name_opt,
-      table_name,
+      TablePrivilegeTarget(table_name),
       grantees,
       privileges: _*)
   }
@@ -540,7 +555,7 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
     grantRevokeCommon("REVOKE",
       "FROM",
       schema_name_opt,
-      table_name,
+      TablePrivilegeTarget(table_name),
       grantees,
       privileges: _*)
   }
@@ -559,6 +574,75 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
                        grantees: Array[User],
                        privileges: GrantPrivilegeType*): String = {
     revokeOnTableSql(schemaNameOpt, table_name, grantees, privileges: _*)
+  }
+
+  /**
+   * Grant one or more privileges to a schema.
+   *
+   * @param schema_name the name of the schema to grant privileges on
+   * @param grantees one or more objects to grant the new privileges
+   *        to
+   * @param privileges one or more SchemaPrivilege objects describing
+   *        the types of privileges to grant
+   * @return the SQL to grant privileges
+   */
+  def grantOnSchemaSql(schema_name: String,
+                       grantees: Array[User],
+                       privileges: SchemaPrivilege*): String = {
+    grantRevokeCommon("GRANT",
+      "TO",
+      Some(schema_name),
+      SchemaPrivilegeTarget,
+      grantees,
+      privileges: _*)
+  }
+
+  /**
+   * Grant one or more privileges to a schema.
+   *
+   * @param grantees one or more objects to grant the new privileges
+   *        to
+   * @param privileges one or more SchemaPrivilege objects describing
+   *        the types of privileges to grant
+   * @return the SQL to grant privileges
+   */
+  def grantOnSchemaSql(grantees: Array[User],
+                       privileges: SchemaPrivilege*): String = {
+    grantOnSchemaSql(schemaNameOpt.get, grantees, privileges: _*)
+  }
+
+  /**
+   * Revoke one or more privileges from a schema.
+   *
+   * @param schema_name the name of the schema to revoke privileges
+   *        from
+   * @param grantees one or more objects to revoke the privileges from
+   * @param privileges one or more SchemaPrivilege objects describing
+   *        the types of privileges to revoke
+   * @return the SQL to revoke privileges
+   */
+  def revokeOnSchemaSql(schema_name: String,
+                        grantees: Array[User],
+                        privileges: SchemaPrivilege*): String = {
+    grantRevokeCommon("REVOKE",
+      "FROM",
+      Some(schema_name),
+      SchemaPrivilegeTarget,
+      grantees,
+      privileges: _*)
+  }
+
+  /**
+   * Revoke one or more privileges from a schema.
+   *
+   * @param grantees one or more objects to revoke the privileges from
+   * @param privileges one or more SchemaPrivilege objects describing
+   *        the types of privileges to revoke
+   * @return the SQL to revoke privileges
+   */
+  def revokeOnSchemaSql(grantees: Array[User],
+                        privileges: SchemaPrivilege*): String = {
+    revokeOnSchemaSql(schemaNameOpt.get, grantees, privileges: _*)
   }
 
   /**
