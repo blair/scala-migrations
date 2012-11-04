@@ -43,7 +43,7 @@ import javax.sql.DataSource
  * DriverManager or a DataSource.
  */
 class ConnectionBuilder private (either: Either[DataSource,String],
-                                 login_opt: Option[Tuple2[String,String]])
+                                 login_opt: Option[(String,String)])
 {
   private final
   val logger = LoggerFactory.getLogger(this.getClass)

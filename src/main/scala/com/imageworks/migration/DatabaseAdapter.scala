@@ -499,8 +499,8 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    *
    * @param on the table and columns the check constraint is on
    * @param options a varargs list of CheckOptions
-   * @return a Tuple2 with the calculated name or the overridden name
-   *         from a Name and the remaining options
+   * @return a two-tuple with the calculated name or the overridden
+   *         name from a Name and the remaining options
    */
   def generateCheckConstraintName
     (on: On,

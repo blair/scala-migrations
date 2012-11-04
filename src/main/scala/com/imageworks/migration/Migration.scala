@@ -505,8 +505,8 @@ abstract class Migration
    * @param references the table and columns the foreign key
    *        constraint references
    * @param options a varargs list of ForeignKeyOption's
-   * @return a Tuple2 with the calculated name or the overridden name
-   *         from a Name and the remaining options
+   * @return a two-tuple with the calculated name or the overridden
+   *         name from a Name and the remaining options
    */
   private
   def foreignKeyNameFor

@@ -576,7 +576,7 @@ class Migrator(connection_builder: ConnectionBuilder,
   def runMigration
     (migration_class: Class[_ <: Migration],
      direction: MigrationDirection,
-     version_update_opt: Option[Tuple2[Connection,Long]]) {
+     version_update_opt: Option[(Connection,Long)]) {
     logger.info("Migrating {} with '{}'.",
                 Array[AnyRef](direction.str, migration_class.getName): _*)
 

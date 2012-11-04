@@ -33,8 +33,7 @@
 package com.imageworks.migration
 
 /**
- * A Tuple2 like class for containing a table name and a list of
- * column names.
+ * A two-tuple containing a table name and a list of column names.
  */
 class TableColumnDefinition(val tableName: String,
                             val columnNames: Array[String])
