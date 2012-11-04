@@ -193,6 +193,19 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   }
 
   /**
+   * Quote an index name.
+   *
+   * @param index_name the name of the index to quote
+   * @return a properly quoted index name
+   */
+  def quoteIndexName(index_name: String): String =
+  {
+    '"' +
+    unquotedNameConverter(index_name) +
+    '"'
+  }
+
+  /**
    * Quote a table name, prepending the quoted schema name to the
    * quoted table name along with a '.' if a schema name is provided.
    *

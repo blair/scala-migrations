@@ -430,7 +430,7 @@ abstract class Migration
                .append("CREATE ")
                .append(if (unique) "UNIQUE " else "")
                .append("INDEX ")
-               .append(a.quoteColumnName(name))
+               .append(a.quoteIndexName(name))
                .append(" ON ")
                .append(a.quoteTableName(table_name))
                .append(" (")
