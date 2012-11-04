@@ -206,6 +206,19 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   }
 
   /**
+   * Quote a schema name.
+   *
+   * @param schema_name the name of the schema to quote
+   * @return a properly quoted schema name
+   */
+  def quoteSchemaName(schema_name: String): String =
+  {
+    '"' +
+    unquotedNameConverter(schema_name) +
+    '"'
+  }
+
+  /**
    * Quote a table name, prepending the quoted schema name to the
    * quoted table name along with a '.' if a schema name is provided.
    *
@@ -220,9 +233,8 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   {
     schema_name_opt match {
       case Some(schema_name) => {
-        '"' +
-        unquotedNameConverter(schema_name) +
-        "\".\"" +
+        quoteSchemaName(schema_name) +
+        ".\"" +
         unquotedNameConverter(table_name) +
         '"'
       }
