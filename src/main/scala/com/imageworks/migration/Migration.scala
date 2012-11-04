@@ -709,12 +709,12 @@ abstract class Migration
             grantees: Array[String],
             privileges: GrantPrivilegeType*) {
     if (grantees.isEmpty) {
-      throw new IllegalArgumentException("Granting permissions requires " +
+      throw new IllegalArgumentException("Granting privileges requires " +
                                          "at least one grantee.")
     }
 
     if (privileges.isEmpty) {
-      throw new IllegalArgumentException("Granting permissions requires " +
+      throw new IllegalArgumentException("Granting privileges requires " +
                                          "at least one privilege.")
     }
 
@@ -751,12 +751,12 @@ abstract class Migration
              grantees: Array[String],
              privileges: GrantPrivilegeType*) {
     if (grantees.isEmpty) {
-      throw new IllegalArgumentException("Revoking permissions requires " +
+      throw new IllegalArgumentException("Revoking privileges requires " +
                                          "at least one grantee.")
     }
 
     if (privileges.isEmpty) {
-      throw new IllegalArgumentException("Revoking permissions requires " +
+      throw new IllegalArgumentException("Revoking privileges requires " +
                                          "at least one privilege.")
     }
 
