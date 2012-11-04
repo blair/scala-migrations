@@ -83,6 +83,11 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   val logger = LoggerFactory.getLogger(this.getClass)
 
   /**
+   * The vendor of the database.
+   */
+  val vendor: Vendor
+
+  /**
    * To properly quote table names the database adapter needs to know
    * how the database treats unquoted names.
    */

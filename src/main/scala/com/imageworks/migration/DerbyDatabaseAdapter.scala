@@ -54,6 +54,9 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
   extends DatabaseAdapter(schemaNameOpt)
 {
   override
+  val vendor = Derby
+
+  override
   val unquotedNameConverter = UppercaseUnquotedNameConverter
 
   override

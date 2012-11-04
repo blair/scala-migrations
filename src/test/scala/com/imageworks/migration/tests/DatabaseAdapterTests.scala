@@ -61,4 +61,12 @@ class DatabaseAdapterTests
   def for_null_existent_driver_class {
     DatabaseAdapter.forVendor(null, None)
   }
+
+  @Test
+  def roundTrip {
+    for (vendor <- List(Derby, Postgresql, Oracle)) {
+      val adapter = DatabaseAdapter.forVendor(vendor, None)
+      assertSame(vendor, adapter.vendor)
+    }
+  }
 }

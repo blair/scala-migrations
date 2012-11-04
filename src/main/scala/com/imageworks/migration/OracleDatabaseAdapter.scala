@@ -181,6 +181,9 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
   extends DatabaseAdapter(schemaNameOpt)
 {
   override
+  val vendor = Oracle
+
+  override
   val unquotedNameConverter = UppercaseUnquotedNameConverter
 
   override

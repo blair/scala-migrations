@@ -43,6 +43,9 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
   extends DatabaseAdapter(schemaNameOpt)
 {
   override
+  val vendor = Postgresql
+
+  override
   val unquotedNameConverter = LowercaseUnquotedNameConverter
 
   override
