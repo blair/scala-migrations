@@ -55,9 +55,24 @@ trait ColumnOption
 sealed trait ForeignKeyOption
 
 /**
- * The base trait for all grant privilege types.
+ * The base trait for all privileges.
+ */
+sealed trait Privilege
+
+/**
+ * The base trait for all schema privileges.
+ */
+sealed trait SchemaPrivilege
+  extends Privilege
+
+/**
+ * The base trait for all table privileges.
+ *
+ * TODO: when an ABI breaking change is made to Scala Migrations,
+ * rename GrantPrivilegeType to TablePrivilege.
  */
 sealed trait GrantPrivilegeType
+  extends Privilege
 
 /**
  * The base trait for all index options.
@@ -310,9 +325,16 @@ case object AutoIncrement
 
 /**
  * Maps to GRANT ALL PRIVILEGES.
+ *
+ * Since PostgreSQL supports ALL PRIVILEGES on all object types [1],
+ * AllPrivileges extends all sealed traits that represent priveleges
+ * on database object types, e.g. tables and shemas.
+ *
+ * [1] http://www.postgresql.org/docs/9.1/static/sql-grant.html .
  */
 case object AllPrivileges
   extends GrantPrivilegeType
+  with SchemaPrivilege
 
 /**
  * Maps to GRANT DELETE.
@@ -391,6 +413,12 @@ case object SelectPrivilege
 
 case object UpdatePrivilege
   extends GrantPrivilegeType
+
+/**
+ * Maps to GRANT USAGE.
+ */
+case object UsagePrivilege
+  extends SchemaPrivilege
 
 /**
  * This class is defined to prevent ant from recompiling this source
