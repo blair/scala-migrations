@@ -266,10 +266,10 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
       privileges: _*)
   }
 
-  override def revokeSql(schema_name_opt: Option[String],
-                         table_name: String,
-                         grantees: Array[User],
-                         privileges: GrantPrivilegeType*): String = {
+  override def revokeOnTableSql(schema_name_opt: Option[String],
+                                table_name: String,
+                                grantees: Array[User],
+                                privileges: GrantPrivilegeType*): String = {
     // Check that no columns are defined for any privs with columns
     for {
       PrivilegeWithColumns(columns) <- privileges
@@ -280,7 +280,8 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
       throw new IllegalArgumentException(message)
     }
 
-    super.revokeSql(schema_name_opt, table_name, grantees, privileges: _*)
+    super.revokeOnTableSql(schema_name_opt, table_name, grantees,
+      privileges: _*)
   }
 
   /**

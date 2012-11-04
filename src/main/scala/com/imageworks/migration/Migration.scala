@@ -731,7 +731,7 @@ abstract class Migration {
         "at least one privilege.")
     }
 
-    val sql = adapter.revokeSql(table_name, grantees, privileges: _*)
+    val sql = adapter.revokeOnTableSql(table_name, grantees, privileges: _*)
 
     execute(sql)
   }
