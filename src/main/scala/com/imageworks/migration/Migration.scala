@@ -783,6 +783,130 @@ abstract class Migration {
   }
 
   /**
+   * Grant one or more privileges to a schema.
+   *
+   * @param grantees a non-empty array of grantees
+   * @param privileges a non-empty array of privileges to grant to the
+   *        grantees
+   */
+  final def grantSchemaPrivilege(grantees: Array[User],
+                                 privileges: SchemaPrivilege*) {
+    if (grantees.isEmpty) {
+      throw new IllegalArgumentException("Granting privileges requires " +
+        "at least one grantee.")
+    }
+
+    if (privileges.isEmpty) {
+      throw new IllegalArgumentException("Granting privileges requires " +
+        "at least one privilege.")
+    }
+
+    val sql = adapter.grantOnSchemaSql(grantees, privileges: _*)
+
+    execute(sql)
+  }
+
+  /**
+   * Grant one or more privileges to a schema.
+   *
+   * @param grantees a non-empty array of grantees
+   * @param privileges a non-empty array of privileges to grant to the
+   *        grantees
+   */
+  final def grantSchemaPrivilege(grantees: Array[String],
+                                 privileges: SchemaPrivilege*) {
+    grantSchemaPrivilege(grantees map { adapter.userFactory.nameToUser(_) },
+      privileges: _*)
+  }
+
+  /**
+   * Grant one or more privileges to a schema.
+   *
+   * @param grantee the grantee to grant the privileges to
+   * @param privileges a non-empty array of privileges to grant to the
+   *        grantee
+   */
+  final def grantSchemaPrivilege(grantee: User,
+                                 privileges: SchemaPrivilege*) {
+    grantSchemaPrivilege(Array(grantee), privileges: _*)
+  }
+
+  /**
+   * Grant one or more privileges to a schema.
+   *
+   * @param grantee the grantee to grant the privileges to
+   * @param privileges a non-empty array of privileges to grant to the
+   *        grantee
+   */
+  final def grantSchemaPrivilege(grantee: String,
+                                 privileges: SchemaPrivilege*) {
+    grantSchemaPrivilege(adapter.userFactory.nameToUser(grantee),
+      privileges: _*)
+  }
+
+  /**
+   * Revoke one or more privileges from a schema.
+   *
+   * @param grantees a non-empty array of grantees
+   * @param privileges a non-empty array of privileges to revoke from the
+   *        grantees
+   */
+  final def revokeSchemaPrivilege(grantees: Array[User],
+                                  privileges: SchemaPrivilege*) {
+    if (grantees.isEmpty) {
+      throw new IllegalArgumentException("Revoking privileges requires " +
+        "at least one grantee.")
+    }
+
+    if (privileges.isEmpty) {
+      throw new IllegalArgumentException("Revoking privileges requires " +
+        "at least one privilege.")
+    }
+
+    val sql = adapter.revokeOnSchemaSql(grantees, privileges: _*)
+
+    execute(sql)
+  }
+
+  /**
+   * Revoke one or more privileges from a schema.
+   *
+   * @param grantees a non-empty array of grantees
+   * @param privileges a non-empty array of privileges to revoke from the
+   *        grantees
+   */
+  final def revokeSchemaPrivilege(grantees: Array[String],
+                                  privileges: SchemaPrivilege*) {
+    revokeSchemaPrivilege(grantees map { adapter.userFactory.nameToUser(_) },
+      privileges: _*)
+  }
+
+  /**
+   * Revoke one or more privileges from a schema.
+   *
+   * @param grantee the grantee to revoke the privileges from
+   * @param privileges a non-empty array of privileges to revoke from
+   *        the grantee
+   */
+  final def revokeSchemaPrivilege(grantee: User,
+                                  privileges: SchemaPrivilege*) {
+    revokeSchemaPrivilege(Array(grantee), privileges: _*)
+  }
+
+  /**
+   * Revoke one or more privileges from a schema.
+   *
+   * @param grantee the grantee to revoke the privileges from
+   * @param privileges a non-empty array of privileges to revoke from
+   *        the grantee
+   */
+  final def revokeSchemaPrivilege(grantee: String,
+                                  privileges: SchemaPrivilege*) {
+    revokeSchemaPrivilege(adapter.userFactory.nameToUser(grantee),
+      privileges: _*)
+  }
+
+  /**
    * Add a CHECK constraint on a table and one or more columns.  The
    * constraint name is automatically generated unless Name() is given
    * as an option.
