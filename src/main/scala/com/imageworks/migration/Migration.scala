@@ -729,7 +729,7 @@ abstract class Migration
    * @param table_name the table name to add the grantees to
    * @param grantee the grantee to grant the privileges to
    * @param privileges a non-empty array of privileges to grant to the
-   *        grantees
+   *        grantee
    */
   final
   def grant(table_name: String,
