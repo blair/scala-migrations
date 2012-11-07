@@ -40,6 +40,8 @@ sealed trait Vendor
 
 case object Derby
   extends Vendor
+case object Mysql
+  extends Vendor
 case object Oracle
   extends Vendor
 case object Postgresql
@@ -60,6 +62,9 @@ object Vendor
   def forDriver(driver_class_name: String): Vendor =
   {
     driver_class_name match {
+      case "com.mysql.jdbc.Driver" =>
+        Mysql
+
       case "oracle.jdbc.driver.OracleDriver" =>
         Oracle
 

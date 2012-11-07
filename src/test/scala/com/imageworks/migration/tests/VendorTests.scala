@@ -33,6 +33,7 @@
 package com.imageworks.migration.tests
 
 import com.imageworks.migration.{Derby,
+                                 Mysql,
                                  Oracle,
                                  Postgresql,
                                  Vendor}
@@ -53,6 +54,9 @@ class VendorTests
 
     assertSame(Derby,
                Vendor.forDriver("org.apache.derby.jdbc.ClientDriver"))
+
+    assertSame(Mysql,
+               Vendor.forDriver("com.mysql.jdbc.Driver"))
 
     assertSame(Oracle,
                Vendor.forDriver("oracle.jdbc.OracleDriver"))

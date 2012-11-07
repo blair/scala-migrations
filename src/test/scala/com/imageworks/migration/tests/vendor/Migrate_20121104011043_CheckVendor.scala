@@ -34,6 +34,7 @@ package com.imageworks.migration.tests.vendor
 
 import com.imageworks.migration.{Derby,
                                  Migration,
+                                 Mysql,
                                  Oracle,
                                  Postgresql}
 
@@ -43,6 +44,7 @@ class Migrate_20121104011043_CheckVendor
   def up() {
     databaseVendor match {
       case Derby =>
+      case Mysql =>
       case Oracle =>
       case Postgresql =>
       case v => throw new AssertionError("Database vendor '" +

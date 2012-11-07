@@ -80,6 +80,48 @@ object User
   def apply(userName: String): PlainUser = new PlainUser(userName)
 }
 
+object MysqlUser
+{
+  /**
+   * Given a user name and a host name return a User appropriate for a
+   * MySQL database, see
+   * http://dev.mysql.com/doc/refman/5.5/en/account-names.html .
+   *
+   * @param userName a user name
+   * @param hostName a host name
+   */
+  def apply(userName: String,
+            hostName: String): MysqlUser =
+  {
+    new MysqlUser(userName, hostName)
+  }
+}
+
+/**
+ * Representation of a SQL user for MySQL which consists of a user
+ * name and a host name; see
+ * http://dev.mysql.com/doc/refman/5.5/en/account-names.html .
+ *
+ * @param userName the user name
+ * @param hostName the host name
+ */
+class MysqlUser(userName: String,
+                hostName: String)
+  extends User
+{
+  override
+  def quoted(unquotedNameConverter: UnquotedNameConverter): String =
+  {
+    val sb = new java.lang.StringBuilder(64)
+    sb.append('\'')
+      .append(unquotedNameConverter(userName))
+      .append("'@'")
+      .append(unquotedNameConverter(hostName))
+      .append('\'')
+      .toString
+  }
+}
+
 /**
  * A factory for User instances that are built from a user name.
  */
@@ -102,4 +144,19 @@ object PlainUserFactory
 {
   override
   def nameToUser(userName: String) = User(userName)
+}
+
+/**
+ * A singleton user factory to create MysqlUser instances.  This
+ * factory uses the input user name and defaults the host name to
+ * "localhost".
+ */
+object MysqlUserFactory
+  extends UserFactory[MysqlUser]
+{
+  override
+  def nameToUser(userName: String): MysqlUser =
+  {
+    new MysqlUser(userName, "localhost")
+  }
 }

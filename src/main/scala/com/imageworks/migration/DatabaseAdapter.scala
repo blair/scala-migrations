@@ -54,6 +54,9 @@ object DatabaseAdapter
       case Derby =>
         new DerbyDatabaseAdapter(schema_name_opt)
 
+      case Mysql =>
+        new MysqlDatabaseAdapter(schema_name_opt)
+
       case Oracle =>
         new OracleDatabaseAdapter(schema_name_opt)
 

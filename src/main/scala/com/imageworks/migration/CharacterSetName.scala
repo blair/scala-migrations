@@ -43,6 +43,12 @@ sealed trait CharacterSetName
  * On Derby, character data types are encoded using Unicode by
  * default so specifying this does not change the encoding.
  *
+ * On MySQL, this case object specifies the "utf8" character set.  If
+ * the collation is not specified then the "utf8_unicode_ci" collation
+ * is used.  See http://stackoverflow.com/questions/766809/ why this
+ * slower collation is used instead the "utf8_general_ci" collation,
+ * which is MySQL's default collation for the "utf8" character set.
+ *
  * On Oracle, this specifies that NCHAR is used for CharType and
  * NVARCHAR2 for VarcharType.
  *

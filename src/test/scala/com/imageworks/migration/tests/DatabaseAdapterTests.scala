@@ -35,6 +35,8 @@ package com.imageworks.migration.tests
 import com.imageworks.migration.{DatabaseAdapter,
                                  Derby,
                                  DerbyDatabaseAdapter,
+                                 Mysql,
+                                 MysqlDatabaseAdapter,
                                  Oracle,
                                  OracleDatabaseAdapter,
                                  Postgresql,
@@ -50,6 +52,9 @@ class DatabaseAdapterTests
     assertEquals(classOf[DerbyDatabaseAdapter],
                  DatabaseAdapter.forVendor(Derby, None).getClass)
 
+    assertEquals(classOf[MysqlDatabaseAdapter],
+                 DatabaseAdapter.forVendor(Mysql, None).getClass)
+
     assertEquals(classOf[OracleDatabaseAdapter],
                  DatabaseAdapter.forVendor(Oracle, None).getClass)
 
@@ -64,7 +69,7 @@ class DatabaseAdapterTests
 
   @Test
   def roundTrip {
-    for (vendor <- List(Derby, Postgresql, Oracle)) {
+    for (vendor <- List(Derby, Mysql, Postgresql, Oracle)) {
       val adapter = DatabaseAdapter.forVendor(vendor, None)
       assertSame(vendor, adapter.vendor)
     }
