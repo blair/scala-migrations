@@ -104,6 +104,9 @@ object Default {
 
 /**
  * A limit on the size of a column type.
+ *
+ * @throws IllegalArgumentException if the limit is less than zero;
+ *         zero is permitted for a limit on TIMESTAMP precision
  */
 case class Limit(expr: String)
   extends ColumnOption
