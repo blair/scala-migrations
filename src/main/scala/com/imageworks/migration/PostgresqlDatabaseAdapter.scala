@@ -34,6 +34,7 @@ package com.imageworks.migration
 
 class PostgresqlByteaColumnDefinition
   extends ColumnDefinition
+  with ColumnSupportsDefault
 {
   override
   val sql = "BYTEA"
