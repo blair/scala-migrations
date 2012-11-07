@@ -780,7 +780,7 @@ class Migrator(connection_builder: ConnectionBuilder,
               val message = "Attempting to rollback " +
                             count +
                             " migrations but the database only has " +
-                            installed_versions.length
+                            installed_versions.length +
                             " installed in it."
               throw new RuntimeException(message)
             }
