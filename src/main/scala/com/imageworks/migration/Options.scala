@@ -113,7 +113,7 @@ case class Limit(expr: String)
     if (length < 0) {
       val message = "The limit in " +
                     this +
-                    " must be greater than or equal to one."
+                    " must be greater than or equal to zero."
       throw new IllegalArgumentException(message)
     }
   }
