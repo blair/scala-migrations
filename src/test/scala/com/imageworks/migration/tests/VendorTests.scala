@@ -45,9 +45,6 @@ class VendorTests
 {
   @Test
   def forDriver {
-    assertSame(Oracle,
-               Vendor.forDriver("oracle.jdbc.OracleDriver"))
-
     assertSame(Derby,
                Vendor.forDriver("org.apache.derby.jdbc.EmbeddedDriver"))
 
@@ -56,6 +53,9 @@ class VendorTests
 
     assertSame(Derby,
                Vendor.forDriver("org.apache.derby.jdbc.ClientDriver"))
+
+    assertSame(Oracle,
+               Vendor.forDriver("oracle.jdbc.OracleDriver"))
 
     assertSame(Postgresql,
                Vendor.forDriver("org.postgresql.Driver"))
