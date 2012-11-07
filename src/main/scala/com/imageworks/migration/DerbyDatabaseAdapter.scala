@@ -32,6 +32,16 @@
  */
 package com.imageworks.migration
 
+// Derby 10.2 and greater support an optional limit on the BLOB's
+// size.
+class DerbyBlobColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsLimit
+{
+  override
+  val sql = "BLOB"
+}
+
 class DerbyTimestampColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
@@ -81,7 +91,7 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
       case BigintType =>
         new DefaultBigintColumnDefinition
       case BlobType =>
-        new DefaultBlobColumnDefinition
+        new DerbyBlobColumnDefinition
       case BooleanType => {
         val message = "Derby does not support a boolean type, you must " +
                       "choose a mapping your self."
