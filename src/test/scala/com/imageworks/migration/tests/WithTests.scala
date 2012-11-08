@@ -41,7 +41,8 @@ import org.junit.Assert._
 import org.junit.{Before,
                   Test}
 
-import java.sql.ResultSet
+import java.sql.{ResultSet,
+                 SQLException}
 
 class WithTests
 {
@@ -72,26 +73,31 @@ class WithTests
   def with_result_set_closes_on_throw {
     val mock_rs = context.mock(classOf[ResultSet])
 
+    val e1 = new RuntimeException
+    val e2 = new SQLException
+
     context.checking(new Expectations {
                        oneOf (mock_rs).close()
+                       will(Expectations.throwException(e2))
                      })
 
-    class ThisSpecialException
-      extends Throwable
-
+    var caughtExceptionOpt: Option[Throwable] = None
     var rs1: ResultSet = null
 
     try {
       With.resultSet(mock_rs) { rs2 =>
         rs1 = rs2
-        throw new ThisSpecialException
+        throw e1
       }
     }
     catch {
-      case _: ThisSpecialException =>
+      case e => caughtExceptionOpt = Some(e)
     }
 
     assertSame(mock_rs, rs1)
+    assertTrue("Failed to catch exception.", caughtExceptionOpt.isDefined)
+    assertSame("Failed to catch expected exception.",
+               e1, caughtExceptionOpt.get)
     context.assertIsSatisfied()
   }
 }
