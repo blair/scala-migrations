@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory
 import java.sql.{Connection,
                  ResultSet,
                  Statement}
+import java.util.jar.JarFile
 
 /**
  * Utility object that contains functions that ensure a resource is
@@ -126,6 +127,33 @@ object With
       }
       catch {
         case e => logger.warn("Error in closing result set:", e)
+      }
+    }
+  }
+
+  /**
+   * Take a jar file, pass it to a closure and ensure that the jar
+   * file is closed after the closure returns, either normally or by
+   * an exception.  If the closure returns normally, return its
+   * result.
+   *
+   * @param jarFile a jar file
+   * @param f a Function1[J <: JarFile,R] that operates on the jar
+   *        file
+   * @return the result of f
+   */
+  def jarFile[J <: JarFile,R](jarFile: J)
+                             (f: J => R): R =
+  {
+    try {
+      f(jarFile)
+    }
+    finally {
+      try {
+        jarFile.close()
+      }
+      catch {
+        case e => logger.warn("Error in closing jar file:", e)
       }
     }
   }
