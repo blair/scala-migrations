@@ -58,17 +58,6 @@ class RichConnection(self: Connection)
   def withPreparedStatement[T](sql: String)
                               (f: PreparedStatement => T): T =
   {
-    val statement = self.prepareStatement(sql)
-    try {
-      f(statement)
-    }
-    finally {
-      try {
-        statement.close()
-      }
-      catch {
-        case e => logger.warn("Error in closing prepared statement:", e)
-      }
-    }
+    With.statement(self.prepareStatement(sql))(f)
   }
 }
