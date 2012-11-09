@@ -119,53 +119,41 @@ class ConnectionBuilder private (either: Either[DataSource,String],
       }
 
     With.connection(connection) { c =>
-      val auto_commit = commit_behavior match {
-                          case AutoCommit => true
-                          case CommitUponReturnOrException => false
-                          case CommitUponReturnOrRollbackUponException => false
-                        }
-      c.setAutoCommit(auto_commit)
-
-      try {
-        val result = f(c)
-
-        commit_behavior match {
-          case AutoCommit =>
-          case CommitUponReturnOrException => c.commit()
-          case CommitUponReturnOrRollbackUponException => c.commit()
+      commit_behavior match {
+        case AutoCommit => {
+          c.setAutoCommit(true)
+          f(c)
         }
 
-        result
-      }
-      catch {
-        case e1 => {
-          val (operation,
-               thunk) = commit_behavior match {
-                          case AutoCommit =>
-                            ("", () => ())
+        case CommitUponReturnOrException => {
+          c.setAutoCommit(false)
+          With.resource(c, "committing transaction")(_.commit())(f)
+        }
 
-                          case CommitUponReturnOrException =>
-                            ("commit", () => { c.commit() })
+        case CommitUponReturnOrRollbackUponException => {
+          c.setAutoCommit(false)
 
-                          case CommitUponReturnOrRollbackUponException =>
-                            ("rollback", () => { c.rollback() })
-                        }
-
-          try {
-            thunk()
-          }
-          catch {
-            case e2 => {
-              logger.warn("Trying to " +
-                          operation +
-                          " the connection after catching " +
-                          e1 +
-                          " threw:",
-                          e2)
+          val result =
+            try {
+              f(c)
             }
-          }
+            catch {
+              case e1 => {
+                try {
+                  c.rollback()
+                }
+                catch {
+                  case e2 =>
+                    logger.warn("Suppressing exception when rolling back" +
+                                "transaction:", e2)
+                }
+                throw e1
+              }
+            }
 
-          throw e1
+          c.commit()
+
+          result
         }
       }
     }
