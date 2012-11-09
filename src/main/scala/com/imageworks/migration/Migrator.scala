@@ -364,7 +364,7 @@ object Migrator
         }
       }
       catch {
-        case e => {
+        case e: Exception => {
           logger.debug("Unable to load class '" +
                        class_name +
                        "'.",
@@ -407,7 +407,7 @@ class Migrator(connection_builder: ConnectionBuilder,
                        true
                       }
                       catch {
-                        case _ => false
+                        case _: Exception => false
                       }
 
   /**
