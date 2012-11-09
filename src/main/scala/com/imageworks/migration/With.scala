@@ -122,6 +122,63 @@ object With
   }
 
   /**
+   * Take a SQL connection, pass it to a closure and ensure that any
+   * work done on the connection after the closure returns is either
+   * left alone, committed or rolled back depending upon the given
+   * setting.  If the closure returns normally, return its result.
+   *
+   * @param connection a SQL connection
+   * @param commit_behavior the operation to implement on the
+   *        connection after f returns normally or via throwing an
+   *        exception
+   * @param f a Function1[Connection,R] that operates on the
+   *        connection
+   * @return the result of f
+   */
+  def autoCommittingConnection[R](connection: Connection,
+                                  commit_behavior: CommitBehavior)
+                                 (f: Connection => R): R =
+  {
+    commit_behavior match {
+      case AutoCommit => {
+        connection.setAutoCommit(true)
+        f(connection)
+      }
+
+      case CommitUponReturnOrException => {
+        connection.setAutoCommit(false)
+        With.resource(connection, "committing transaction")(_.commit())(f)
+      }
+
+      case CommitUponReturnOrRollbackUponException => {
+        connection.setAutoCommit(false)
+
+        val result =
+          try {
+            f(connection)
+          }
+          catch {
+            case e1 => {
+              try {
+                connection.rollback()
+              }
+              catch {
+                case e2 =>
+                  logger.warn("Suppressing exception when rolling back" +
+                              "transaction:", e2)
+              }
+              throw e1
+            }
+          }
+
+        connection.commit()
+
+        result
+      }
+    }
+  }
+
+  /**
    * Take a SQL statement, pass it to a closure and ensure that the
    * statement is closed after the closure returns, either normally or
    * by an exception.  If the closure returns normally, return its

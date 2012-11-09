@@ -119,43 +119,7 @@ class ConnectionBuilder private (either: Either[DataSource,String],
       }
 
     With.autoClosingConnection(connection) { c =>
-      commit_behavior match {
-        case AutoCommit => {
-          c.setAutoCommit(true)
-          f(c)
-        }
-
-        case CommitUponReturnOrException => {
-          c.setAutoCommit(false)
-          With.resource(c, "committing transaction")(_.commit())(f)
-        }
-
-        case CommitUponReturnOrRollbackUponException => {
-          c.setAutoCommit(false)
-
-          val result =
-            try {
-              f(c)
-            }
-            catch {
-              case e1 => {
-                try {
-                  c.rollback()
-                }
-                catch {
-                  case e2 =>
-                    logger.warn("Suppressing exception when rolling back" +
-                                "transaction:", e2)
-                }
-                throw e1
-              }
-            }
-
-          c.commit()
-
-          result
-        }
-      }
+      With.autoCommittingConnection(c, commit_behavior)(f)
     }
   }
 }
