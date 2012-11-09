@@ -58,20 +58,20 @@ object With
    * or by an exception.  If the closure returns normally, return its
    * result.
    *
-   * @param c a SQL connection
+   * @param connection a SQL connection
    * @param f a Function1[Connection,R] that operates on the
    *        connection
    * @return the result of f
    */
-  def connection[R](c: Connection)
+  def connection[R](connection: Connection)
                    (f: Connection => R): R =
   {
     try {
-      f(c)
+      f(connection)
     }
     finally {
       try {
-        c.close()
+        connection.close()
       }
       catch {
         case e => logger.warn("Error in closing connection:", e)
@@ -85,19 +85,19 @@ object With
    * by an exception.  If the closure returns normally, return its
    * result.
    *
-   * @param s a SQL statement
+   * @param statement a SQL statement
    * @param f a Function1[Statement,R] that operates on the statement
    * @return the result of f
    */
-  def statement[S <: Statement,R](s: S)
+  def statement[S <: Statement,R](statement: S)
                                  (f: S => R): R =
   {
     try {
-      f(s)
+      f(statement)
     }
     finally {
       try {
-        s.close()
+        statement.close()
       }
       catch {
         case e => logger.warn("Error in closing statement:", e)
@@ -111,19 +111,19 @@ object With
    * or by an exception.  If the closure returns normally, return its
    * result.
    *
-   * @param rs a SQL result set
+   * @param resultSet a SQL result set
    * @param f a Function1[ResultSet,R] that operates on the result set
    * @return the result of f
    */
-  def resultSet[R](rs: ResultSet)
+  def resultSet[R](resultSet: ResultSet)
                   (f: ResultSet => R): R =
   {
     try {
-      f(rs)
+      f(resultSet)
     }
     finally {
       try {
-        rs.close()
+        resultSet.close()
       }
       catch {
         case e => logger.warn("Error in closing result set:", e)
