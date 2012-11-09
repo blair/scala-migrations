@@ -53,6 +53,41 @@ object With
   val logger = LoggerFactory.getLogger(this.getClass)
 
   /**
+   * Given a resource and two functions, the first, a closer function
+   * that closes or releases the resource, and the second, a body
+   * function that uses the resource, invoke the body function on the
+   * resource and then ensure that the closer function closes the
+   * resource, regardless if the body function returns normally or
+   * throws an exception.
+   *
+   * @param resource a resource to use and then close
+   * @param closerDescription a textual description of what the closer
+   *        does; used to log any exception thrown by closer since it
+   *        is suppressed and will not be thrown to the caller
+   * @param closer the function that closes the resource
+   * @param body the function that uses the resource
+   * @return the result of invoking body on the resource
+   * @throws any exception that invoking body on the resource throws
+   */
+  def resource[A,B](resource: A, closerDescription: String)
+                   (closer: A => Unit)
+                   (body: A => B): B =
+  {
+    try {
+      body(resource)
+    }
+    finally {
+      try {
+        closer(resource)
+      }
+      catch {
+        case e =>
+          logger.warn("Error in " + closerDescription + ':', e)
+      }
+    }
+  }
+
+  /**
    * Take a SQL connection, pass it to a closure and ensure that the
    * connection is closed after the closure returns, either normally
    * or by an exception.  If the closure returns normally, return its
@@ -66,17 +101,7 @@ object With
   def connection[R](connection: Connection)
                    (f: Connection => R): R =
   {
-    try {
-      f(connection)
-    }
-    finally {
-      try {
-        connection.close()
-      }
-      catch {
-        case e => logger.warn("Error in closing connection:", e)
-      }
-    }
+    resource(connection, "closing connection")(_.close())(f)
   }
 
   /**
@@ -92,17 +117,7 @@ object With
   def statement[S <: Statement,R](statement: S)
                                  (f: S => R): R =
   {
-    try {
-      f(statement)
-    }
-    finally {
-      try {
-        statement.close()
-      }
-      catch {
-        case e => logger.warn("Error in closing statement:", e)
-      }
-    }
+    resource(statement, "closing statement")(_.close())(f)
   }
 
   /**
@@ -118,17 +133,7 @@ object With
   def resultSet[R](resultSet: ResultSet)
                   (f: ResultSet => R): R =
   {
-    try {
-      f(resultSet)
-    }
-    finally {
-      try {
-        resultSet.close()
-      }
-      catch {
-        case e => logger.warn("Error in closing result set:", e)
-      }
-    }
+    resource(resultSet, "closing result set")(_.close())(f)
   }
 
   /**
@@ -145,16 +150,6 @@ object With
   def jarFile[J <: JarFile,R](jarFile: J)
                              (f: J => R): R =
   {
-    try {
-      f(jarFile)
-    }
-    finally {
-      try {
-        jarFile.close()
-      }
-      catch {
-        case e => logger.warn("Error in closing jar file:", e)
-      }
-    }
+    resource(jarFile, "closing jar file")(_.close())(f)
   }
 }
