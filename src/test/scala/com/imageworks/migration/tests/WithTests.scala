@@ -100,4 +100,34 @@ class WithTests
                e1, caughtExceptionOpt.get)
     context.assertIsSatisfied()
   }
+
+  @Test
+  def close_exception_is_not_suppressed_if_closure_returns_normally {
+    val mock_rs = context.mock(classOf[ResultSet])
+
+    val e1 = new SQLException
+
+    context.checking(new Expectations {
+                       oneOf (mock_rs).close()
+                       will(Expectations.throwException(e1))
+                     })
+
+    var caughtExceptionOpt: Option[Throwable] = None
+    var rs1: ResultSet = null
+
+    try {
+      With.resultSet(mock_rs) { rs2 =>
+        rs1 = rs2
+      }
+    }
+    catch {
+      case e => caughtExceptionOpt = Some(e)
+    }
+
+    assertSame(mock_rs, rs1)
+    assertTrue("Failed to catch exception.", caughtExceptionOpt.isDefined)
+    assertSame("Failed to catch expected exception.",
+               e1, caughtExceptionOpt.get)
+    context.assertIsSatisfied()
+  }
 }

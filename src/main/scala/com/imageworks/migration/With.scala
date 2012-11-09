@@ -62,8 +62,10 @@ object With
    *
    * @param resource a resource to use and then close
    * @param closerDescription a textual description of what the closer
-   *        does; used to log any exception thrown by closer since it
-   *        is suppressed and will not be thrown to the caller
+   *        does; used to log any exception thrown by closer when the
+   *        body also throws an exception since in that case the
+   *        closer's exception will be suppressed and not thrown to
+   *        the caller
    * @param closer the function that closes the resource
    * @param body the function that uses the resource
    * @return the result of invoking body on the resource
@@ -73,16 +75,31 @@ object With
                    (closer: A => Unit)
                    (body: A => B): B =
   {
+    var primaryException: Throwable = null
     try {
       body(resource)
     }
+    catch {
+      case e => {
+        primaryException = e
+        throw e
+      }
+    }
     finally {
-      try {
+      if (primaryException eq null) {
         closer(resource)
       }
-      catch {
-        case e =>
-          logger.warn("Error in " + closerDescription + ':', e)
+      else {
+        try {
+          closer(resource)
+        }
+        catch {
+          case e =>
+            logger.warn("Suppressing exception when " +
+                        closerDescription +
+                        ':',
+                        e)
+        }
       }
     }
   }
