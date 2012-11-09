@@ -118,7 +118,7 @@ class ConnectionBuilder private (either: Either[DataSource,String],
           DriverManager.getConnection(url)
       }
 
-    With.connection(connection) { c =>
+    With.autoClosingConnection(connection) { c =>
       commit_behavior match {
         case AutoCommit => {
           c.setAutoCommit(true)

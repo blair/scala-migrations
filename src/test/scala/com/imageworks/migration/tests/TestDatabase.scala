@@ -127,9 +127,10 @@ object DerbyTestDatabase
   // "boot" it with connection and SQL authorizations enabled.
 
   // Create the database.
-  With.connection(DriverManager.getConnection(url + ";create=true",
-                                              admin_username,
-                                              admin_password)) { c =>
+  With.autoClosingConnection(DriverManager.getConnection(
+                               url + ";create=true",
+                               admin_username,
+                               admin_password)) { c =>
     TestDatabase.execute(
       getAdminConnectionBuilder,
       """CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
@@ -160,9 +161,10 @@ object DerbyTestDatabase
 
   // Shutdown Derby.
   try {
-    With.connection(DriverManager.getConnection(url + ";shutdown=true",
-                                                admin_username,
-                                                admin_password)) { _ =>
+    With.autoClosingConnection(DriverManager.getConnection(
+                                 url + ";shutdown=true",
+                                 admin_username,
+                                 admin_password)) { _ =>
     }
   }
   catch {

@@ -115,8 +115,8 @@ object With
    *        connection
    * @return the result of f
    */
-  def connection[R](connection: Connection)
-                   (f: Connection => R): R =
+  def autoClosingConnection[R](connection: Connection)
+                              (f: Connection => R): R =
   {
     resource(connection, "closing connection")(_.close())(f)
   }
