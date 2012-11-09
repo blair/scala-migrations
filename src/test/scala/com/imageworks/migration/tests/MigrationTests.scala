@@ -73,7 +73,7 @@ class MigrationTests
         val tn = table_name.toLowerCase
         if (tn == "schema_migrations" || tn.startsWith("scala_migrations_")) {
           val sql = "DROP TABLE " + database_adapter.quoteTableName(tn)
-          With.statement(c.prepareStatement(sql)) { _.execute }
+          With.autoClosingStatement(c.prepareStatement(sql)) { _.execute }
         }
       }
     }
@@ -299,11 +299,11 @@ class MigrationTests
     val connection_builder = TestDatabase.getAdminConnectionBuilder
 
     connection_builder.withConnection(AutoCommit) { c =>
-      With.statement(c.prepareStatement(short_name_sql)) { s =>
+      With.autoClosingStatement(c.prepareStatement(short_name_sql)) { s =>
         s.execute()
       }
 
-      With.statement(c.prepareStatement(long_name_sql)) { s =>
+      With.autoClosingStatement(c.prepareStatement(long_name_sql)) { s =>
         try {
           s.execute()
           fail("Expected a truncation error from the database.")
@@ -321,7 +321,7 @@ class MigrationTests
                      false)
 
     connection_builder.withConnection(AutoCommit) { c =>
-      With.statement(c.prepareStatement(long_name_sql)) { s =>
+      With.autoClosingStatement(c.prepareStatement(long_name_sql)) { s =>
         s.execute()
       }
     }
@@ -350,7 +350,8 @@ class MigrationTests
 
     def run_select {
       test_migrator.withLoggingConnection(AutoCommit) { connection =>
-        With.statement(connection.prepareStatement(select_sql)) { statement =>
+        With.autoClosingStatement(connection.prepareStatement(
+                                    select_sql)) { statement =>
           With.resultSet(statement.executeQuery()) { rs => }
         }
       }

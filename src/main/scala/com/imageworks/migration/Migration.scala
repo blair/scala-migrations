@@ -203,7 +203,7 @@ abstract class Migration
    */
   final
   def execute(sql: String) {
-    With.statement(connection.createStatement) { s =>
+    With.autoClosingStatement(connection.createStatement) { s =>
       s.execute(sql)
     }
   }

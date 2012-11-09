@@ -242,7 +242,7 @@ object TestDatabase
               sql: String): Boolean =
   {
     connection_builder.withConnection(AutoCommit) { c =>
-      With.statement(c.prepareStatement(sql)) { s =>
+      With.autoClosingStatement(c.prepareStatement(sql)) { s =>
         s.execute()
       }
     }

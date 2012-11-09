@@ -131,8 +131,8 @@ object With
    * @param f a Function1[Statement,R] that operates on the statement
    * @return the result of f
    */
-  def statement[S <: Statement,R](statement: S)
-                                 (f: S => R): R =
+  def autoClosingStatement[S <: Statement,R](statement: S)
+                                            (f: S => R): R =
   {
     resource(statement, "closing statement")(_.close())(f)
   }
