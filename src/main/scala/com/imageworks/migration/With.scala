@@ -121,11 +121,44 @@ object With
     resource(connection, "closing connection")(_.close())(f)
   }
 
+
+  /**
+   * Take a SQL connection, save its current auto-commit mode, put the
+   * connection into the requested auto-commit mode, pass the
+   * connection to a closure and ensure that the connection's
+   * auto-commit mode is restored after the closure returns, either
+   * normally or by an exception.  If the closure returns normally,
+   * return its result.
+   *
+   * The connection's auto-commit mode is always set, even if it is
+   * the same as the requested mode.  This is done to ensure any work
+   * the database would normally do when setting the auto-commit mode
+   * is always done.
+   *
+   * @param connection a SQL connection
+   * @param mode the auto-commit mode the connection's state should be
+   *        put in
+   * @param f a Function1[Connection,R] that operates on the
+   *        connection
+   * @return the result of f
+   */
+  def autoRestoringConnection[R](connection: Connection,
+                                 mode: Boolean)
+                                (f: Connection => R): R =
+  {
+    val current_mode = connection.getAutoCommit
+    With.resource(connection, "restoring connection auto-commit")(_.setAutoCommit(current_mode)) { c =>
+      c.setAutoCommit(mode)
+      f(c)
+    }
+  }
+
   /**
    * Take a SQL connection, pass it to a closure and ensure that any
    * work done on the connection after the closure returns is either
    * left alone, committed or rolled back depending upon the given
    * setting.  If the closure returns normally, return its result.
+   * The connection's auto-commit mode will be set and restored.
    *
    * @param connection a SQL connection
    * @param commit_behavior the operation to implement on the
@@ -139,41 +172,46 @@ object With
                                   commit_behavior: CommitBehavior)
                                  (f: Connection => R): R =
   {
-    commit_behavior match {
-      case AutoCommit => {
-        connection.setAutoCommit(true)
-        f(connection)
+    val new_auto_commit =
+      commit_behavior match {
+        case AutoCommit => true
+        case CommitUponReturnOrException => false
+        case CommitUponReturnOrRollbackUponException => false
       }
 
-      case CommitUponReturnOrException => {
-        connection.setAutoCommit(false)
-        With.resource(connection, "committing transaction")(_.commit())(f)
-      }
+    With.autoRestoringConnection(connection, new_auto_commit) { c =>
+      commit_behavior match {
+        case AutoCommit => {
+          f(connection)
+        }
 
-      case CommitUponReturnOrRollbackUponException => {
-        connection.setAutoCommit(false)
+        case CommitUponReturnOrException => {
+          With.resource(connection, "committing transaction")(_.commit())(f)
+        }
 
-        val result =
-          try {
-            f(connection)
-          }
-          catch {
-            case e1 => {
-              try {
-                connection.rollback()
-              }
-              catch {
-                case e2 =>
-                  logger.warn("Suppressing exception when rolling back" +
-                              "transaction:", e2)
-              }
-              throw e1
+        case CommitUponReturnOrRollbackUponException => {
+          val result =
+            try {
+              f(connection)
             }
-          }
+            catch {
+              case e1 => {
+                try {
+                  connection.rollback()
+                }
+                catch {
+                  case e2 =>
+                    logger.warn("Suppressing exception when rolling back" +
+                                "transaction:", e2)
+                }
+                throw e1
+              }
+            }
 
-        connection.commit()
+          connection.commit()
 
-        result
+          result
+        }
       }
     }
   }
