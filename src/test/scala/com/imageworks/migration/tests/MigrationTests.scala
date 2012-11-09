@@ -352,7 +352,7 @@ class MigrationTests
       test_migrator.withLoggingConnection(AutoCommit) { connection =>
         With.autoClosingStatement(connection.prepareStatement(
                                     select_sql)) { statement =>
-          With.resultSet(statement.executeQuery()) { rs => }
+          With.autoClosingResultSet(statement.executeQuery()) { rs => }
         }
       }
     }
@@ -459,7 +459,7 @@ class MigrationTests
                               """ + n + """ = ?""".replaceAll("\\s+", " ")
         val select_statement = connection.prepareStatement(select_sql)
         select_statement.setObject(1, v)
-        With.resultSet(select_statement.executeQuery()) { rs =>
+        With.autoClosingResultSet(select_statement.executeQuery()) { rs =>
           var counts: List[Int] = Nil
           while (rs.next()) {
             counts = rs.getInt(1) :: counts

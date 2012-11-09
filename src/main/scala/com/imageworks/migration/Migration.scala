@@ -279,7 +279,7 @@ abstract class Migration
   def withResultSet[R](rs: ResultSet)
                       (f: ResultSet => R): R =
   {
-    With.resultSet(rs)(f)
+    With.autoClosingResultSet(rs)(f)
   }
 
   final

@@ -59,7 +59,7 @@ class WithTests
 
     var rs1: ResultSet = null
 
-    val result = With.resultSet(mock_rs) { rs2 =>
+    val result = With.autoClosingResultSet(mock_rs) { rs2 =>
                    rs1 = rs2
                    "foobar"
                  }
@@ -85,7 +85,7 @@ class WithTests
     var rs1: ResultSet = null
 
     try {
-      With.resultSet(mock_rs) { rs2 =>
+      With.autoClosingResultSet(mock_rs) { rs2 =>
         rs1 = rs2
         throw e1
       }
@@ -116,7 +116,7 @@ class WithTests
     var rs1: ResultSet = null
 
     try {
-      With.resultSet(mock_rs) { rs2 =>
+      With.autoClosingResultSet(mock_rs) { rs2 =>
         rs1 = rs2
       }
     }
