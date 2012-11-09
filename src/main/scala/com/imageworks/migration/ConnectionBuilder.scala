@@ -118,61 +118,55 @@ class ConnectionBuilder private (either: Either[DataSource,String],
           DriverManager.getConnection(url)
       }
 
-    try {
+    With.connection(connection) { c =>
       val auto_commit = commit_behavior match {
                           case AutoCommit => true
                           case CommitUponReturnOrException => false
                           case CommitUponReturnOrRollbackUponException => false
                         }
-      connection.setAutoCommit(auto_commit)
+      c.setAutoCommit(auto_commit)
 
-      val result = f(connection)
-
-      commit_behavior match {
-        case AutoCommit =>
-        case CommitUponReturnOrException => connection.commit()
-        case CommitUponReturnOrRollbackUponException => connection.commit()
-      }
-
-      result
-    }
-    catch {
-      case e1 => {
-        val (operation,
-             thunk) = commit_behavior match {
-                        case AutoCommit =>
-                          ("", () => ())
-
-                        case CommitUponReturnOrException =>
-                          ("commit", () => { connection.commit() })
-
-                        case CommitUponReturnOrRollbackUponException =>
-                          ("rollback", () => { connection.rollback() })
-                      }
-
-        try {
-          thunk()
-        }
-        catch {
-          case e2 => {
-            logger.warn("Trying to " +
-                        operation +
-                        " the connection after catching " +
-                        e1 +
-                        " threw:",
-                        e2)
-          }
-        }
-
-        throw e1
-      }
-    }
-    finally {
       try {
-        connection.close()
+        val result = f(c)
+
+        commit_behavior match {
+          case AutoCommit =>
+          case CommitUponReturnOrException => c.commit()
+          case CommitUponReturnOrRollbackUponException => c.commit()
+        }
+
+        result
       }
       catch {
-        case e => logger.warn("Error in closing connection:", e)
+        case e1 => {
+          val (operation,
+               thunk) = commit_behavior match {
+                          case AutoCommit =>
+                            ("", () => ())
+
+                          case CommitUponReturnOrException =>
+                            ("commit", () => { c.commit() })
+
+                          case CommitUponReturnOrRollbackUponException =>
+                            ("rollback", () => { c.rollback() })
+                        }
+
+          try {
+            thunk()
+          }
+          catch {
+            case e2 => {
+              logger.warn("Trying to " +
+                          operation +
+                          " the connection after catching " +
+                          e1 +
+                          " threw:",
+                          e2)
+            }
+          }
+
+          throw e1
+        }
       }
     }
   }
