@@ -196,19 +196,15 @@ abstract class Migration
     adapter.addingForeignKeyConstraintCreatesIndex
   }
 
+  /**
+   * Execute the given SQL string using the migration's connection.
+   *
+   * @param sql the SQL to execute
+   */
   final
   def execute(sql: String) {
-    val statement = connection.createStatement
-    try {
-      statement.execute(sql)
-    }
-    finally {
-      try {
-        statement.close()
-      }
-      catch {
-        case e => logger.warn("Error in closing statement:", e)
-      }
+    With.statement(connection.createStatement) { s =>
+      s.execute(sql)
     }
   }
 
