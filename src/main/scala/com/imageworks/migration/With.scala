@@ -240,11 +240,12 @@ object With
    * result.
    *
    * @param resultSet a SQL result set
-   * @param f a Function1[ResultSet,R] that operates on the result set
+   * @param f a Function1[RS <: ResultSet,R] that operates on the
+   *        result set
    * @return the result of f
    */
-  def autoClosingResultSet[R](resultSet: ResultSet)
-                             (f: ResultSet => R): R =
+  def autoClosingResultSet[RS <: ResultSet,R](resultSet: RS)
+                                             (f: RS => R): R =
   {
     resource(resultSet, "closing result set")(_.close())(f)
   }
