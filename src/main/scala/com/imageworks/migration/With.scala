@@ -80,7 +80,7 @@ object With
       body(resource)
     }
     catch {
-      case e => {
+      case e: Throwable => {
         primaryException = e
         throw e
       }
@@ -94,7 +94,7 @@ object With
           closer(resource)
         }
         catch {
-          case e =>
+          case e: Throwable =>
             logger.warn("Suppressing exception when " +
                         closerDescription +
                         ':',
@@ -195,12 +195,12 @@ object With
               f(connection)
             }
             catch {
-              case e1 => {
+              case e1: Throwable => {
                 try {
                   connection.rollback()
                 }
                 catch {
-                  case e2 =>
+                  case e2: Throwable =>
                     logger.warn("Suppressing exception when rolling back" +
                                 "transaction:", e2)
                 }

@@ -285,7 +285,7 @@ object PrivilegeWithColumns
 /**
  * A base class for all privileges that take a list of columns to affect.
  */
-abstract class PrivilegeWithColumns
+sealed abstract class PrivilegeWithColumns
   extends GrantPrivilegeType
 {
   val columns: Seq[String]

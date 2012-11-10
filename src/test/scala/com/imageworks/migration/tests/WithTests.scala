@@ -81,7 +81,7 @@ class WithTests
                        will(Expectations.throwException(e2))
                      })
 
-    var caughtExceptionOpt: Option[Throwable] = None
+    var caughtExceptionOpt: Option[Exception] = None
     var rs1: ResultSet = null
 
     try {
@@ -91,7 +91,7 @@ class WithTests
       }
     }
     catch {
-      case e => caughtExceptionOpt = Some(e)
+      case e: Exception => caughtExceptionOpt = Some(e)
     }
 
     assertSame(mock_rs, rs1)
@@ -112,7 +112,7 @@ class WithTests
                        will(Expectations.throwException(e1))
                      })
 
-    var caughtExceptionOpt: Option[Throwable] = None
+    var caughtExceptionOpt: Option[Exception] = None
     var rs1: ResultSet = null
 
     try {
@@ -121,7 +121,7 @@ class WithTests
       }
     }
     catch {
-      case e => caughtExceptionOpt = Some(e)
+      case e: Exception => caughtExceptionOpt = Some(e)
     }
 
     assertSame(mock_rs, rs1)
