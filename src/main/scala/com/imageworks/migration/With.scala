@@ -111,12 +111,12 @@ object With
    * result.
    *
    * @param connection a SQL connection
-   * @param f a Function1[Connection,R] that operates on the
+   * @param f a Function1[C <: Connection,R] that operates on the
    *        connection
    * @return the result of f
    */
-  def autoClosingConnection[R](connection: Connection)
-                              (f: Connection => R): R =
+  def autoClosingConnection[C <: Connection,R](connection: C)
+                                              (f: C => R): R =
   {
     resource(connection, "closing connection")(_.close())(f)
   }
@@ -138,13 +138,13 @@ object With
    * @param connection a SQL connection
    * @param mode the auto-commit mode the connection's state should be
    *        put in
-   * @param f a Function1[Connection,R] that operates on the
+   * @param f a Function1[C <: Connection,R] that operates on the
    *        connection
    * @return the result of f
    */
-  def autoRestoringConnection[R](connection: Connection,
-                                 mode: Boolean)
-                                (f: Connection => R): R =
+  def autoRestoringConnection[C <: Connection,R](connection: C,
+                                                 mode: Boolean)
+                                                (f: C => R): R =
   {
     val current_mode = connection.getAutoCommit
     With.resource(connection, "restoring connection auto-commit")(_.setAutoCommit(current_mode)) { c =>
@@ -164,13 +164,13 @@ object With
    * @param commit_behavior the operation to implement on the
    *        connection after f returns normally or via throwing an
    *        exception
-   * @param f a Function1[Connection,R] that operates on the
+   * @param f a Function1[C <: Connection,R] that operates on the
    *        connection
    * @return the result of f
    */
-  def autoCommittingConnection[R](connection: Connection,
-                                  commit_behavior: CommitBehavior)
-                                 (f: Connection => R): R =
+  def autoCommittingConnection[C <: Connection,R](connection: C,
+                                                  commit_behavior: CommitBehavior)
+                                                 (f: C=> R): R =
   {
     val new_auto_commit =
       commit_behavior match {
