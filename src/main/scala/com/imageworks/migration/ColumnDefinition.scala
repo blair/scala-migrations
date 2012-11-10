@@ -406,16 +406,14 @@ class ColumnDefinition
     }
 
     // Warn about illegal combinations in some databases.
-    if (isPrimaryKey &&
-        notNullOpt.isDefined &&
-        notNullOpt.get == false) {
+    if (isPrimaryKey && notNullOpt.isDefined && !notNullOpt.get) {
       logger.warn("Specifying PrimaryKey and Nullable in a column is not " +
                   "supported in all databases.")
     }
 
     // Warn when different options are used that specify the same
     // behavior so one can be removed.
-    if (isPrimaryKey && notNullOpt.isDefined && notNullOpt.get == true) {
+    if (isPrimaryKey && notNullOpt.isDefined && notNullOpt.get) {
       logger.warn("Specifying PrimaryKey and NotNull is redundant.")
     }
     if (isPrimaryKey && isUnique) {
