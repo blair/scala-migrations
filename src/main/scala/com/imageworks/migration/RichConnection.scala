@@ -58,6 +58,6 @@ class RichConnection(self: Connection)
   def withPreparedStatement[T](sql: String)
                               (f: PreparedStatement => T): T =
   {
-    With.statement(self.prepareStatement(sql))(f)
+    With.autoClosingStatement(self.prepareStatement(sql))(f)
   }
 }

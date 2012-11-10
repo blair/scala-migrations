@@ -118,62 +118,8 @@ class ConnectionBuilder private (either: Either[DataSource,String],
           DriverManager.getConnection(url)
       }
 
-    try {
-      val auto_commit = commit_behavior match {
-                          case AutoCommit => true
-                          case CommitUponReturnOrException => false
-                          case CommitUponReturnOrRollbackUponException => false
-                        }
-      connection.setAutoCommit(auto_commit)
-
-      val result = f(connection)
-
-      commit_behavior match {
-        case AutoCommit =>
-        case CommitUponReturnOrException => connection.commit()
-        case CommitUponReturnOrRollbackUponException => connection.commit()
-      }
-
-      result
-    }
-    catch {
-      case e1 => {
-        val (operation,
-             thunk) = commit_behavior match {
-                        case AutoCommit =>
-                          ("", () => ())
-
-                        case CommitUponReturnOrException =>
-                          ("commit", () => { connection.commit() })
-
-                        case CommitUponReturnOrRollbackUponException =>
-                          ("rollback", () => { connection.rollback() })
-                      }
-
-        try {
-          thunk()
-        }
-        catch {
-          case e2 => {
-            logger.warn("Trying to " +
-                        operation +
-                        " the connection after catching " +
-                        e1 +
-                        " threw:",
-                        e2)
-          }
-        }
-
-        throw e1
-      }
-    }
-    finally {
-      try {
-        connection.close()
-      }
-      catch {
-        case e => logger.warn("Error in closing connection:", e)
-      }
+    With.autoClosingConnection(connection) { c =>
+      With.autoCommittingConnection(c, commit_behavior)(f)
     }
   }
 }

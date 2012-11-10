@@ -203,7 +203,7 @@ abstract class Migration
    */
   final
   def execute(sql: String) {
-    With.statement(connection.createStatement) { s =>
+    With.autoClosingStatement(connection.createStatement) { s =>
       s.execute(sql)
     }
   }
@@ -226,41 +226,9 @@ abstract class Migration
   final
   def withPreparedStatement(sql: String)
                            (f: PreparedStatement => Unit) {
-    val c = connection
-    val auto_commit = c.getAutoCommit
-    try {
-      c.setAutoCommit(false)
-      val statement = c.prepareStatement(sql)
-      try {
-        f(statement)
-        c.commit()
-      }
-      catch {
-        case e1 => {
-          try {
-            c.rollback()
-          }
-          catch {
-            case e2 =>
-              logger.warn("Trying to rollback a transaction due to " +
-                          e1 +
-                          " failed and threw:",
-                          e2)
-          }
-          throw e1
-        }
-      }
-      finally {
-        try {
-          statement.close()
-        }
-        catch {
-          case e3 => logger.warn("Error in closing prepared statement:", e3)
-        }
-      }
-    }
-    finally {
-      c.setAutoCommit(auto_commit)
+    With.autoCommittingConnection(connection,
+                                  CommitUponReturnOrRollbackUponException) { c =>
+      With.autoClosingStatement(c.prepareStatement(sql))(f)
     }
   }
 
@@ -279,7 +247,7 @@ abstract class Migration
   def withResultSet[R](rs: ResultSet)
                       (f: ResultSet => R): R =
   {
-    With.resultSet(rs)(f)
+    With.autoClosingResultSet(rs)(f)
   }
 
   final

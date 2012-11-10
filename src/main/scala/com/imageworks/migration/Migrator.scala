@@ -544,10 +544,10 @@ class Migrator(connection_builder: ConnectionBuilder,
                              case None => null
                            }
       val metadata = connection.getMetaData
-      With.resultSet(metadata.getTables(null,
-                                        schema_pattern,
-                                        null,
-                                        Array("TABLE"))) { rs =>
+      With.autoClosingResultSet(metadata.getTables(null,
+                                                   schema_pattern,
+                                                   null,
+                                                   Array("TABLE"))) { rs =>
         val names = new mutable.HashSet[String]
         while (rs.next()) {
           names += rs.getString(3)
@@ -648,7 +648,7 @@ class Migrator(connection_builder: ConnectionBuilder,
     val sql = "SELECT version FROM " +
               adapter.quoteTableName(schemaMigrationsTableName)
     connection.withPreparedStatement(sql) { statement =>
-      With.resultSet(statement.executeQuery()) { rs =>
+      With.autoClosingResultSet(statement.executeQuery()) { rs =>
         var versions = new immutable.TreeSet[Long]
         while (rs.next()) {
           val version_str = rs.getString(1)

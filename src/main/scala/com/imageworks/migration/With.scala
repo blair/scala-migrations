@@ -53,28 +53,165 @@ object With
   val logger = LoggerFactory.getLogger(this.getClass)
 
   /**
+   * Given a resource and two functions, the first, a closer function
+   * that closes or releases the resource, and the second, a body
+   * function that uses the resource, invoke the body function on the
+   * resource and then ensure that the closer function closes the
+   * resource, regardless if the body function returns normally or
+   * throws an exception.
+   *
+   * @param resource a resource to use and then close
+   * @param closerDescription a textual description of what the closer
+   *        does; used to log any exception thrown by closer when the
+   *        body also throws an exception since in that case the
+   *        closer's exception will be suppressed and not thrown to
+   *        the caller
+   * @param closer the function that closes the resource
+   * @param body the function that uses the resource
+   * @return the result of invoking body on the resource
+   * @throws any exception that invoking body on the resource throws
+   */
+  def resource[A,B](resource: A, closerDescription: String)
+                   (closer: A => Unit)
+                   (body: A => B): B =
+  {
+    var primaryException: Throwable = null
+    try {
+      body(resource)
+    }
+    catch {
+      case e => {
+        primaryException = e
+        throw e
+      }
+    }
+    finally {
+      if (primaryException eq null) {
+        closer(resource)
+      }
+      else {
+        try {
+          closer(resource)
+        }
+        catch {
+          case e =>
+            logger.warn("Suppressing exception when " +
+                        closerDescription +
+                        ':',
+                        e)
+        }
+      }
+    }
+  }
+
+  /**
    * Take a SQL connection, pass it to a closure and ensure that the
    * connection is closed after the closure returns, either normally
    * or by an exception.  If the closure returns normally, return its
    * result.
    *
-   * @param c a SQL connection
-   * @param f a Function1[Connection,R] that operates on the
+   * @param connection a SQL connection
+   * @param f a Function1[C <: Connection,R] that operates on the
    *        connection
    * @return the result of f
    */
-  def connection[R](c: Connection)
-                   (f: Connection => R): R =
+  def autoClosingConnection[C <: Connection,R](connection: C)
+                                              (f: C => R): R =
   {
-    try {
+    resource(connection, "closing connection")(_.close())(f)
+  }
+
+
+  /**
+   * Take a SQL connection, save its current auto-commit mode, put the
+   * connection into the requested auto-commit mode, pass the
+   * connection to a closure and ensure that the connection's
+   * auto-commit mode is restored after the closure returns, either
+   * normally or by an exception.  If the closure returns normally,
+   * return its result.
+   *
+   * The connection's auto-commit mode is always set, even if it is
+   * the same as the requested mode.  This is done to ensure any work
+   * the database would normally do when setting the auto-commit mode
+   * is always done.
+   *
+   * @param connection a SQL connection
+   * @param mode the auto-commit mode the connection's state should be
+   *        put in
+   * @param f a Function1[C <: Connection,R] that operates on the
+   *        connection
+   * @return the result of f
+   */
+  def autoRestoringConnection[C <: Connection,R](connection: C,
+                                                 mode: Boolean)
+                                                (f: C => R): R =
+  {
+    val current_mode = connection.getAutoCommit
+    With.resource(connection, "restoring connection auto-commit")(_.setAutoCommit(current_mode)) { c =>
+      c.setAutoCommit(mode)
       f(c)
     }
-    finally {
-      try {
-        c.close()
+  }
+
+  /**
+   * Take a SQL connection, pass it to a closure and ensure that any
+   * work done on the connection after the closure returns is either
+   * left alone, committed or rolled back depending upon the given
+   * setting.  If the closure returns normally, return its result.
+   * The connection's auto-commit mode will be set and restored.
+   *
+   * @param connection a SQL connection
+   * @param commit_behavior the operation to implement on the
+   *        connection after f returns normally or via throwing an
+   *        exception
+   * @param f a Function1[C <: Connection,R] that operates on the
+   *        connection
+   * @return the result of f
+   */
+  def autoCommittingConnection[C <: Connection,R](connection: C,
+                                                  commit_behavior: CommitBehavior)
+                                                 (f: C=> R): R =
+  {
+    val new_auto_commit =
+      commit_behavior match {
+        case AutoCommit => true
+        case CommitUponReturnOrException => false
+        case CommitUponReturnOrRollbackUponException => false
       }
-      catch {
-        case e => logger.warn("Error in closing connection:", e)
+
+    With.autoRestoringConnection(connection, new_auto_commit) { c =>
+      commit_behavior match {
+        case AutoCommit => {
+          f(connection)
+        }
+
+        case CommitUponReturnOrException => {
+          With.resource(connection, "committing transaction")(_.commit())(f)
+        }
+
+        case CommitUponReturnOrRollbackUponException => {
+          val result =
+            try {
+              f(connection)
+            }
+            catch {
+              case e1 => {
+                try {
+                  connection.rollback()
+                }
+                catch {
+                  case e2 =>
+                    logger.warn("Suppressing exception when rolling back" +
+                                "transaction:", e2)
+                }
+                throw e1
+              }
+            }
+
+          connection.commit()
+
+          result
+        }
       }
     }
   }
@@ -85,24 +222,15 @@ object With
    * by an exception.  If the closure returns normally, return its
    * result.
    *
-   * @param s a SQL statement
-   * @param f a Function1[Statement,R] that operates on the statement
+   * @param statement a SQL statement
+   * @param f a Function1[S <: Statement,R] that operates on the
+   *        statement
    * @return the result of f
    */
-  def statement[S <: Statement,R](s: S)
-                                 (f: S => R): R =
+  def autoClosingStatement[S <: Statement,R](statement: S)
+                                            (f: S => R): R =
   {
-    try {
-      f(s)
-    }
-    finally {
-      try {
-        s.close()
-      }
-      catch {
-        case e => logger.warn("Error in closing statement:", e)
-      }
-    }
+    resource(statement, "closing statement")(_.close())(f)
   }
 
   /**
@@ -111,24 +239,15 @@ object With
    * or by an exception.  If the closure returns normally, return its
    * result.
    *
-   * @param rs a SQL result set
-   * @param f a Function1[ResultSet,R] that operates on the result set
+   * @param resultSet a SQL result set
+   * @param f a Function1[RS <: ResultSet,R] that operates on the
+   *        result set
    * @return the result of f
    */
-  def resultSet[R](rs: ResultSet)
-                  (f: ResultSet => R): R =
+  def autoClosingResultSet[RS <: ResultSet,R](resultSet: RS)
+                                             (f: RS => R): R =
   {
-    try {
-      f(rs)
-    }
-    finally {
-      try {
-        rs.close()
-      }
-      catch {
-        case e => logger.warn("Error in closing result set:", e)
-      }
-    }
+    resource(resultSet, "closing result set")(_.close())(f)
   }
 
   /**
@@ -145,16 +264,6 @@ object With
   def jarFile[J <: JarFile,R](jarFile: J)
                              (f: J => R): R =
   {
-    try {
-      f(jarFile)
-    }
-    finally {
-      try {
-        jarFile.close()
-      }
-      catch {
-        case e => logger.warn("Error in closing jar file:", e)
-      }
-    }
+    resource(jarFile, "closing jar file")(_.close())(f)
   }
 }
