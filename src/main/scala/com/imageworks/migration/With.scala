@@ -223,7 +223,8 @@ object With
    * result.
    *
    * @param statement a SQL statement
-   * @param f a Function1[Statement,R] that operates on the statement
+   * @param f a Function1[S <: Statement,R] that operates on the
+   *        statement
    * @return the result of f
    */
   def autoClosingStatement[S <: Statement,R](statement: S)
