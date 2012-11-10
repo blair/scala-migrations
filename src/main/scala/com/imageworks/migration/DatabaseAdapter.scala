@@ -88,6 +88,11 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   val vendor: Vendor
 
   /**
+   * The character that is used to quote identifiers.
+   */
+  val quoteCharacter: Char
+
+  /**
    * To properly quote table names the database adapter needs to know
    * how the database treats unquoted names.
    */
@@ -187,9 +192,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    */
   def quoteSchemaName(schema_name: String): String =
   {
-    '"' +
-    unquotedNameConverter(schema_name) +
-    '"'
+    quoteCharacter + unquotedNameConverter(schema_name) + quoteCharacter
   }
 
   /**
@@ -214,9 +217,9 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
       case None =>
     }
 
-    sb.append('"')
+    sb.append(quoteCharacter)
       .append(unquotedNameConverter(table_name))
-      .append('"')
+      .append(quoteCharacter)
       .toString
   }
 
@@ -255,9 +258,9 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
       case None =>
     }
 
-    sb.append('"')
+    sb.append(quoteCharacter)
       .append(unquotedNameConverter(index_name))
-      .append('"')
+      .append(quoteCharacter)
       .toString
   }
 
@@ -269,9 +272,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    */
   def quoteColumnName(column_name: String): String =
   {
-    '"' +
-    unquotedNameConverter(column_name) +
-    '"'
+    quoteCharacter + unquotedNameConverter(column_name) + quoteCharacter
   }
 
   /**

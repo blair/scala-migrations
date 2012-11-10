@@ -47,6 +47,9 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
   val vendor = Postgresql
 
   override
+  val quoteCharacter = '"'
+
+  override
   val unquotedNameConverter = LowercaseUnquotedNameConverter
 
   override
