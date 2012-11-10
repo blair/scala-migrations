@@ -38,7 +38,8 @@ import com.imageworks.migration.{AutoCommit,
                                  DerbyDatabaseAdapter,
                                  With}
 
-import java.sql.DriverManager
+import java.sql.{DriverManager,
+                 SQLException}
 
 /**
  * Sealed trait abstracting the database to use for testing.
@@ -175,7 +176,7 @@ object DerbyTestDatabase
     // java.sql.SQLNonTransientConnectionException is thrown, but this
     // exception class does not exist in JDK 1.5, so catch a
     // java.sql.SQLException instead.
-    case _: java.sql.SQLException =>
+    case _: SQLException =>
   }
 
   override

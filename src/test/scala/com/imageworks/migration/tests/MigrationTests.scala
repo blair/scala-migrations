@@ -51,7 +51,8 @@ import org.junit.{Before,
                   Test}
 
 import java.sql.{DriverManager,
-                 ResultSet}
+                 ResultSet,
+                 SQLException}
 
 class MigrationTests
 {
@@ -309,7 +310,7 @@ class MigrationTests
           fail("Expected a truncation error from the database.")
         }
         catch {
-          case _: java.sql.SQLException =>
+          case _: SQLException =>
         }
       }
     }
@@ -368,7 +369,7 @@ class MigrationTests
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
       // could be caught here, but for 1.5 compatibility, only a
       // java.sql.SQLException is caught.
-      case _: java.sql.SQLException => // expected
+      case _: SQLException => // expected
     }
 
     // perform grants
@@ -384,7 +385,7 @@ class MigrationTests
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
       // could be caught here, but for 1.5 compatibility, only a
       // java.sql.SQLException is caught.
-      case e: java.sql.SQLException =>
+      case e: SQLException =>
         // failure if got here
         fail("SELECT permission failure unexpected: " + e)
     }
@@ -418,7 +419,7 @@ class MigrationTests
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
       // could be caught here, but for 1.5 compatibility, only a
       // java.sql.SQLException is caught.
-      case _: java.sql.SQLException => // expected
+      case _: SQLException => // expected
     }
   }
 
