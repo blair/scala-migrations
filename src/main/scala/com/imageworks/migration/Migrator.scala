@@ -43,6 +43,7 @@ import scala.collection.{immutable,
 import java.net.{URL,
                  URLDecoder}
 import java.sql.Connection
+import java.util.jar.JarFile
 import javax.sql.DataSource
 
 /**
@@ -102,9 +103,7 @@ object Migrator
     val pn = package_name.replace('.', '/') + '/'
 
     val class_names = new mutable.HashSet[String]
-    var jar: java.util.jar.JarFile = null
-    try {
-      jar = new java.util.jar.JarFile(path, false)
+    With.jarFile(new JarFile(path, false)) { jar =>
       val entries = jar.entries
       while (entries.hasMoreElements) {
         val name = entries.nextElement.getName
@@ -120,11 +119,6 @@ object Migrator
         }
       }
       class_names
-    }
-    finally {
-      if (jar ne null) {
-        jar.close()
-      }
     }
   }
 
