@@ -170,7 +170,7 @@ class ColumnDefinition
   private
   def checkForDefault() {
     for (option @ Default(value) <- options) {
-      options = options.filter(_ != option)
+      options = options filter { _ ne option }
 
       if (default.isDefined && default.get != value) {
         logger.warn("Redefining the default value for the '{}' column " +
@@ -201,7 +201,7 @@ class ColumnDefinition
   private
   def checkForLimit() {
     for (option @ Limit(length) <- options) {
-      options = options.filter(_ != option)
+      options = options filter { _ ne option }
 
       if (limit_.isDefined && limit_.get != length) {
         logger.warn("Redefining the limit for the '{}' column " +
@@ -228,7 +228,7 @@ class ColumnDefinition
                  case _ => None
                }
       if (n2.isDefined) {
-        options = options.filter(_ != option)
+        options = options filter { _ ne option }
 
         if (n1.isDefined && n1 != n2) {
           logger.warn("Redefining the '{}' column's nullability " +
@@ -254,7 +254,7 @@ class ColumnDefinition
     var is_primary = false
 
     for (option @ PrimaryKey <- options) {
-      options = options.filter(_ != option)
+      options = options filter { _ ne option }
       is_primary = true
     }
 
@@ -279,7 +279,7 @@ class ColumnDefinition
   private
   def checkForPrecision() {
     for (option @ Precision(value) <- options) {
-      options = options.filter(_ != option)
+      options = options filter { _ ne option }
 
       if (precision_.isDefined && precision_.get != value) {
         logger.warn("Redefining the precision for the '{}' column " +
@@ -310,7 +310,7 @@ class ColumnDefinition
   private
   def checkForScale() {
     for (option @ Scale(value) <- options) {
-      options = options.filter(_ != option)
+      options = options filter { _ ne option }
 
       if (scale_.isDefined && scale_.get != value) {
         logger.warn("Redefining the scale for the '{}' column " +
@@ -333,7 +333,7 @@ class ColumnDefinition
     var unique = false
 
     for (option @ Unique <- options) {
-      options = options.filter(_ != option)
+      options = options filter { _ ne option }
       unique = true
     }
 
@@ -372,7 +372,7 @@ class ColumnDefinition
     for (option <- options) {
       def appendCheckSql(name: String,
                          expr: String) {
-        options = options.filter(_ != option)
+        options = options filter { _ ne option }
 
         sb.append(" CONSTRAINT ")
           .append(name)
