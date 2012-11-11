@@ -338,7 +338,7 @@ abstract class Migration
     var index_name_opt: Option[String] = None
 
     for (opt @ Name(name) <- opts) {
-      opts = opts.filter(_ != opt)
+      opts = opts filter { _ ne opt }
       if (index_name_opt.isDefined && index_name_opt.get != name) {
         logger.warn("Redefining the index name from '{}' to '{}'.",
                     index_name_opt.get +
@@ -381,7 +381,7 @@ abstract class Migration
 
     var unique = false
     for (opt @ Unique <- opts) {
-      opts = opts.filter(_ != opt)
+      opts = opts filter { _ ne opt }
       unique = true
     }
 
@@ -488,7 +488,7 @@ abstract class Migration
     var fk_name_opt: Option[String] = None
 
     for (opt @ Name(name) <- opts) {
-      opts = opts.filter(_ != opt)
+      opts = opts filter { _ ne opt }
       if (fk_name_opt.isDefined && fk_name_opt.get != name) {
         logger.warn("Redefining the foreign key name from '{}'' to '{}'.",
                     Array[AnyRef](fk_name_opt.get, name): _*)
@@ -554,7 +554,7 @@ abstract class Migration
         logger.warn("Overriding the ON DELETE action from '{}' to '{}'.",
                     Array[AnyRef](on_delete_opt.get.action, action): _*)
       }
-      opts = opts.filter(_ != opt)
+      opts = opts filter { _ ne opt }
       on_delete_opt = Some(opt)
     }
 
@@ -565,7 +565,7 @@ abstract class Migration
         logger.warn("Overriding the ON UPDATE action from '{}' to '{}'.",
                     Array[AnyRef](on_update_opt.get.action, action): _*)
       }
-      opts = opts.filter(_ != opt)
+      opts = opts filter { _ ne opt }
       on_update_opt = Some(opt)
     }
 
