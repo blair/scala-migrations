@@ -341,8 +341,7 @@ abstract class Migration
       opts = opts filter { _ ne opt }
       if (index_name_opt.isDefined && index_name_opt.get != name) {
         logger.warn("Redefining the index name from '{}' to '{}'.",
-                    index_name_opt.get +
-                    name)
+                    Array[AnyRef](index_name_opt.get, name): _*)
       }
       index_name_opt = Some(name)
     }
@@ -490,7 +489,7 @@ abstract class Migration
     for (opt @ Name(name) <- opts) {
       opts = opts filter { _ ne opt }
       if (fk_name_opt.isDefined && fk_name_opt.get != name) {
-        logger.warn("Redefining the foreign key name from '{}'' to '{}'.",
+        logger.warn("Redefining the foreign key name from '{}' to '{}'.",
                     Array[AnyRef](fk_name_opt.get, name): _*)
       }
       fk_name_opt = Some(name)

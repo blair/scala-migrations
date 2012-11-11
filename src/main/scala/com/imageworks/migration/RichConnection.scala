@@ -32,8 +32,6 @@
  */
 package com.imageworks.migration
 
-import org.slf4j.LoggerFactory
-
 import java.sql.{Connection,
                  PreparedStatement}
 
@@ -52,9 +50,6 @@ object RichConnection
  */
 class RichConnection(self: Connection)
 {
-  private final
-  val logger = LoggerFactory.getLogger(this.getClass)
-
   def withPreparedStatement[T](sql: String)
                               (f: PreparedStatement => T): T =
   {
