@@ -99,6 +99,20 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   val unquotedNameConverter: UnquotedNameConverter
 
   /**
+   * The SQL keyword(s) or "phrase" used to drop a foreign key
+   * constraint.  For example, Derby, Oracle and PostgreSQL use
+   *
+   *   ALTER TABLE child DROP CONSTRAINT idx_child_pk_parent;
+   *                          ^^^^^^^^^^
+   *
+   * while MySQL uses
+   *
+   *   ALTER TABLE child DROP FOREIGN KEY idx_child_pk_parent;
+   *                          ^^^^^^^^^^^
+   */
+  val alterTableDropForeignKeyConstraintPhrase: String
+
+  /**
    * This value is true if the database implicitly adds an index on
    * the column that has a foreign key constraint added to it.
    *

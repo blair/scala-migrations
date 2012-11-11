@@ -53,6 +53,9 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
   val unquotedNameConverter = LowercaseUnquotedNameConverter
 
   override
+  val alterTableDropForeignKeyConstraintPhrase = "CONSTRAINT"
+
+  override
   val addingForeignKeyConstraintCreatesIndex = false
 
   override

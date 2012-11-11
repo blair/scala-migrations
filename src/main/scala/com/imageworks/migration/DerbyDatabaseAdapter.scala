@@ -67,6 +67,9 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
   val unquotedNameConverter = UppercaseUnquotedNameConverter
 
   override
+  val alterTableDropForeignKeyConstraintPhrase = "CONSTRAINT"
+
+  override
   val addingForeignKeyConstraintCreatesIndex = true
 
   override

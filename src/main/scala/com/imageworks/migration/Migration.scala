@@ -643,7 +643,9 @@ abstract class Migration
 
     execute("ALTER TABLE " +
             adapter.quoteTableName(on.tableName) +
-            " DROP CONSTRAINT " +
+            " DROP " +
+            adapter.alterTableDropForeignKeyConstraintPhrase +
+            ' ' +
             name)
   }
 

@@ -177,6 +177,9 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
   val unquotedNameConverter = UppercaseUnquotedNameConverter
 
   override
+  val alterTableDropForeignKeyConstraintPhrase = "CONSTRAINT"
+
+  override
   val addingForeignKeyConstraintCreatesIndex = false
 
   override
