@@ -84,12 +84,13 @@ class Migrate_20081118201742_CreatePeopleTable
                   references("scala_migrations_location" ->
                                "pk_scala_migrations_location"),
                   OnDelete(Cascade),
-                  OnUpdate(Restrict))
+                  OnUpdate(Restrict),
+                  Name("fk_smp_pk_sml_sml_pk_sml"))
 
     if (! addingForeignKeyConstraintCreatesIndex) {
       addIndex(tableName,
                "pk_scala_migrations_location",
-               Name("idx_sm_people_pk_sm_location"))
+               Name("idx_smp_pk_sml"))
     }
 
     addColumn(tableName, "secret_key", VarbinaryType, Limit(16))
@@ -102,11 +103,12 @@ class Migrate_20081118201742_CreatePeopleTable
     removeForeignKey(on(tableName ->
                           "pk_scala_migrations_location"),
                      references("scala_migrations_location" ->
-                                  "pk_scala_migrations_location"))
+                                  "pk_scala_migrations_location"),
+                     Name("fk_smp_pk_sml_sml_pk_sml"))
     if (! addingForeignKeyConstraintCreatesIndex) {
       removeIndex(tableName,
                   "pk_scala_migrations_location",
-                  Name("idx_sm_people_pk_sm_location"))
+                  Name("idx_smp_pk_sml"))
     }
 
     removeIndex(tableName, "ssn")
