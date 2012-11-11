@@ -73,6 +73,9 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
   val addingForeignKeyConstraintCreatesIndex = true
 
   override
+  val supportsCheckConstraints = true
+
+  override
   def columnDefinitionFactory
     (column_type: SqlType,
      character_set_opt: Option[CharacterSet]): ColumnDefinition =

@@ -369,33 +369,35 @@ class ColumnDefinition
       case _ =>
     }
 
-    for (option <- options) {
-      def appendCheckSql(name: String,
-                         expr: String) {
-        options = options filter { _ ne option }
+    if (getAdapter.supportsCheckConstraints) {
+      for (option <- options) {
+        def appendCheckSql(name: String,
+                           expr: String) {
+          options = options filter { _ ne option }
 
-        sb.append(" CONSTRAINT ")
-          .append(name)
-          .append(" CHECK (")
-          .append(expr)
-          .append(")")
-      }
-
-      option match {
-        case NamedCheck(name, expr) => {
-          appendCheckSql(name, expr)
+          sb.append(" CONSTRAINT ")
+            .append(name)
+            .append(" CHECK (")
+            .append(expr)
+            .append(")")
         }
 
-        case Check(expr) => {
-          val tbd = new TableColumnDefinition(getTableName,
-                                              Array(getColumnName))
-          val on = new On(tbd)
-          val (name, _) = getAdapter.generateCheckConstraintName(on)
+        option match {
+          case NamedCheck(name, expr) => {
+            appendCheckSql(name, expr)
+          }
 
-          appendCheckSql(name, expr)
+          case Check(expr) => {
+            val tbd = new TableColumnDefinition(getTableName,
+                                                Array(getColumnName))
+            val on = new On(tbd)
+            val (name, _) = getAdapter.generateCheckConstraintName(on)
+
+            appendCheckSql(name, expr)
+          }
+
+          case _ =>
         }
-
-        case _ =>
       }
     }
 

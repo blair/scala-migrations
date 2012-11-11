@@ -130,6 +130,11 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   val addingForeignKeyConstraintCreatesIndex: Boolean
 
   /**
+   * If the database supports table and column check constraints.
+   */
+  val supportsCheckConstraints: Boolean
+
+  /**
    * Given a table name, column name and column data type, return a
    * newly constructed and fully initialized ColumnDefinition.  The
    * class of the returned ColumnDefinition only depends upon the

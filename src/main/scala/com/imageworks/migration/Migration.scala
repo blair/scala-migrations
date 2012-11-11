@@ -782,7 +782,12 @@ abstract class Migration
                .append(")")
                .toString
 
-    execute(sql)
+    if (adapter.supportsCheckConstraints)
+      execute(sql)
+    else
+      logger.warn("Database does not support CHECK constraints; ignoring " +
+                  "request to add a CHECK constraint: {}",
+                  sql)
   }
 
   /**
@@ -806,9 +811,18 @@ abstract class Migration
 
     val (name, _) = adapter.generateCheckConstraintName(on, options: _*)
 
-    execute("ALTER TABLE " +
-            adapter.quoteTableName(on.tableName) +
-            " DROP CONSTRAINT " +
-            name)
+    val sql = new java.lang.StringBuilder(64)
+                .append("ALTER TABLE ")
+                .append(adapter.quoteTableName(on.tableName))
+                .append(" DROP CONSTRAINT ")
+                .append(name)
+                .toString
+
+    if (adapter.supportsCheckConstraints)
+      execute(sql)
+    else
+      logger.warn("Database does not support CHECK constraints; ignoring " +
+                  "request to remove a CHECK constraint: {}",
+                  sql)
   }
 }

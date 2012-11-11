@@ -183,6 +183,9 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
   val addingForeignKeyConstraintCreatesIndex = false
 
   override
+  val supportsCheckConstraints = true
+
+  override
   def columnDefinitionFactory
     (column_type: SqlType,
      character_set_opt: Option[CharacterSet]): ColumnDefinition =
