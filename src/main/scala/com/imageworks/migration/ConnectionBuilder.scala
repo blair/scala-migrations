@@ -32,8 +32,6 @@
  */
 package com.imageworks.migration
 
-import org.slf4j.LoggerFactory
-
 import java.sql.{Connection,
                  DriverManager}
 import javax.sql.DataSource
@@ -45,9 +43,6 @@ import javax.sql.DataSource
 class ConnectionBuilder private (either: Either[DataSource,String],
                                  login_opt: Option[(String,String)])
 {
-  private final
-  val logger = LoggerFactory.getLogger(this.getClass)
-
   /**
    * Construct a connection builder for a database that does not need
    * a username and password.
