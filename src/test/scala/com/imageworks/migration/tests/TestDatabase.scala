@@ -112,7 +112,7 @@ object DerbyTestDatabase
   private
   val url =
   {
-    "jdbc:derby:" + System.currentTimeMillis.toString
+    "jdbc:derby:memory:" + System.currentTimeMillis.toString
   }
 
   // Set the Derby system home directory to "target/test-databases" so
