@@ -195,14 +195,26 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   /**
    * Quote an index name.
    *
+   * @param schema_name_opt an optional schema name
    * @param index_name the name of the index to quote
    * @return a properly quoted index name
    */
-  def quoteIndexName(index_name: String): String =
+  def quoteIndexName(schema_name_opt: Option[String],
+                     index_name: String): String =
   {
-    '"' +
-    unquotedNameConverter(index_name) +
-    '"'
+    val sb = new java.lang.StringBuilder(128)
+
+    schema_name_opt match {
+      case Some(schema_name) =>
+        sb.append(quoteSchemaName(schema_name))
+          .append('.')
+      case None =>
+    }
+
+    sb.append('"')
+      .append(unquotedNameConverter(index_name))
+      .append('"')
+      .toString
   }
 
   /**
