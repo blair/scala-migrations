@@ -180,44 +180,6 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
      character_set_opt: Option[CharacterSet]): ColumnDefinition
 
   /**
-   * Quote a column name.
-   *
-   * @param column_name the name of the column to quote
-   * @return a properly quoted column name
-   */
-  def quoteColumnName(column_name: String): String =
-  {
-    '"' +
-    unquotedNameConverter(column_name) +
-    '"'
-  }
-
-  /**
-   * Quote an index name.
-   *
-   * @param schema_name_opt an optional schema name
-   * @param index_name the name of the index to quote
-   * @return a properly quoted index name
-   */
-  def quoteIndexName(schema_name_opt: Option[String],
-                     index_name: String): String =
-  {
-    val sb = new java.lang.StringBuilder(128)
-
-    schema_name_opt match {
-      case Some(schema_name) =>
-        sb.append(quoteSchemaName(schema_name))
-          .append('.')
-      case None =>
-    }
-
-    sb.append('"')
-      .append(unquotedNameConverter(index_name))
-      .append('"')
-      .toString
-  }
-
-  /**
    * Quote a schema name.
    *
    * @param schema_name the name of the schema to quote
@@ -272,6 +234,44 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   {
     // use the default schema_name_opt defined in the adapter
     quoteTableName(schemaNameOpt, table_name)
+  }
+
+  /**
+   * Quote an index name.
+   *
+   * @param schema_name_opt an optional schema name
+   * @param index_name the name of the index to quote
+   * @return a properly quoted index name
+   */
+  def quoteIndexName(schema_name_opt: Option[String],
+                     index_name: String): String =
+  {
+    val sb = new java.lang.StringBuilder(128)
+
+    schema_name_opt match {
+      case Some(schema_name) =>
+        sb.append(quoteSchemaName(schema_name))
+          .append('.')
+      case None =>
+    }
+
+    sb.append('"')
+      .append(unquotedNameConverter(index_name))
+      .append('"')
+      .toString
+  }
+
+  /**
+   * Quote a column name.
+   *
+   * @param column_name the name of the column to quote
+   * @return a properly quoted column name
+   */
+  def quoteColumnName(column_name: String): String =
+  {
+    '"' +
+    unquotedNameConverter(column_name) +
+    '"'
   }
 
   /**
