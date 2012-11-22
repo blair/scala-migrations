@@ -243,17 +243,19 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   def quoteTableName(schema_name_opt: Option[String],
                      table_name: String): String =
   {
+    val sb = new java.lang.StringBuilder(128)
+
     schema_name_opt match {
-      case Some(schema_name) => {
-        quoteSchemaName(schema_name) +
-        ".\"" +
-        unquotedNameConverter(table_name) +
-        '"'
-      }
-      case None => {
-        '"' + unquotedNameConverter(table_name) + '"'
-      }
+      case Some(schema_name) =>
+        sb.append(quoteSchemaName(schema_name))
+          .append('.')
+      case None =>
     }
+
+    sb.append('"')
+      .append(unquotedNameConverter(table_name))
+      .append('"')
+      .toString
   }
 
   /**
