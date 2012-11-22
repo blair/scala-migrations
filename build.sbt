@@ -18,7 +18,12 @@ version := "1.0.4-SNAPSHOT"
 
 scalaVersion := "2.9.2"
 
-crossScalaVersions := Seq("2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2")
+// For a single major Scala release, e.g. 2.x.y, include at most one
+// Scala release candidate in crossScalaVersions, e.g. "2.x.y-RC3".
+// When the Scala final release has been published, then replace the
+// release candidate with the Scala final release.
+crossScalaVersions := Seq("2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2",
+                          "2.10.0-RC3")
 
 // Append -deprecation to the options passed to the Scala compiler.
 scalacOptions += "-deprecation"
