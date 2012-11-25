@@ -212,18 +212,19 @@ object DerbyTestDatabase
 object TestDatabase
   extends TestDatabase
 {
+  val vendorProperty = "scala-migrations.db.vendor"
+
   private
   val db: TestDatabase =
   {
-    System.getProperty("scala-migrations.db.vendor", "derby") match {
-      case "derby" => {
+    System.getProperty(vendorProperty, "derby") match {
+      case "derby" =>
         DerbyTestDatabase
-      }
-      case v => {
-        val m = "Unexpected value for scala-migrations.db.vendor property: " +
-                v
-        throw new RuntimeException(m)
-      }
+      case v =>
+        throw new RuntimeException("Unexpected value for \"" +
+                                   vendorProperty +
+                                   "\" property: " +
+                                   v)
     }
   }
 
