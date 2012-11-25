@@ -40,11 +40,10 @@ import com.imageworks.migration.{IrreversibleMigrationException,
 class Migrate_20110214060042_AlterColumn
   extends Migration
 {
+  val tableName = "scala_migrations_altering"
+
   def up() {
-    alterColumn("scala_migrations_altering",
-                "name",
-                VarcharType,
-                Limit(255))
+    alterColumn(tableName, "name", VarcharType, Limit(255))
   }
 
   def down() {

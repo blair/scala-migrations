@@ -40,8 +40,10 @@ import com.imageworks.migration.{Limit,
 class Migrate_20081212213908_CreateTypetestTable
   extends Migration
 {
+  val tableName = "scala_migrations_types_test"
+
   def up() {
-    createTable("scala_migrations_types_test") { t =>
+    createTable(tableName) { t =>
       // The binary column is not tested because its representation is
       // database dependent.
 
@@ -57,6 +59,6 @@ class Migrate_20081212213908_CreateTypetestTable
   }
 
   def down() {
-    dropTable("scala_migrations_types_test")
+    dropTable(tableName)
   }
 }

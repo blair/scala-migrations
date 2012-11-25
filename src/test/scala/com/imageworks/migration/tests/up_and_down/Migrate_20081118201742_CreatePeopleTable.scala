@@ -55,9 +55,11 @@ import com.imageworks.migration.{Cascade,
 class Migrate_20081118201742_CreatePeopleTable
   extends Migration
 {
+  val tableName = "scala_migrations_people"
+
   def up() {
-    createTable("scala_migrations_people") { t =>
-      t.varbinary("pk_scala_migrations_people", PrimaryKey, Limit(16))
+    createTable(tableName) { t =>
+      t.varbinary("pk_" + tableName, PrimaryKey, Limit(16))
       t.varbinary("pk_scala_migrations_location", Limit(16), NotNull)
       t.integer("employee_id", Unique)
       t.integer("ssn", NotNull)
@@ -74,9 +76,9 @@ class Migrate_20081118201742_CreatePeopleTable
       t.blob("image")
     }
 
-    addIndex("scala_migrations_people", "ssn", Unique)
+    addIndex(tableName, "ssn", Unique)
 
-    addForeignKey(on("scala_migrations_people" ->
+    addForeignKey(on(tableName ->
                        "pk_scala_migrations_location"),
                   references("scala_migrations_location" ->
                                "pk_scala_migrations_location"),
@@ -84,34 +86,30 @@ class Migrate_20081118201742_CreatePeopleTable
                   OnUpdate(Restrict))
 
     if (! addingForeignKeyConstraintCreatesIndex) {
-      addIndex("scala_migrations_people",
+      addIndex(tableName,
                "pk_scala_migrations_location",
                Name("idx_sm_people_pk_sm_location"))
     }
 
-    addColumn("scala_migrations_people",
-              "secret_key",
-              VarbinaryType,
-              Limit(16))
+    addColumn(tableName, "secret_key", VarbinaryType, Limit(16))
 
-    addCheck(on("scala_migrations_people" -> "vacation_days"),
-             "vacation_days >= 0")
+    addCheck(on(tableName -> "vacation_days"), "vacation_days >= 0")
   }
 
   def down() {
-    removeCheck(on("scala_migrations_people" -> "vacation_days"))
-    removeForeignKey(on("scala_migrations_people" ->
+    removeCheck(on(tableName -> "vacation_days"))
+    removeForeignKey(on(tableName ->
                           "pk_scala_migrations_location"),
                      references("scala_migrations_location" ->
                                   "pk_scala_migrations_location"))
     if (! addingForeignKeyConstraintCreatesIndex) {
-      removeIndex("scala_migrations_people",
+      removeIndex(tableName,
                   "pk_scala_migrations_location",
                   Name("idx_sm_people_pk_sm_location"))
     }
 
-    removeIndex("scala_migrations_people", "ssn")
-    removeColumn("scala_migrations_people", "secret_key")
-    dropTable("scala_migrations_people")
+    removeIndex(tableName, "ssn")
+    removeColumn(tableName, "secret_key")
+    dropTable(tableName)
   }
 }

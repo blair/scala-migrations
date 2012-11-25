@@ -40,13 +40,15 @@ import com.imageworks.migration.{Limit,
 class Migrate_20110214054347_CreateTable
   extends Migration
 {
+  val tableName = "scala_migrations_altering"
+
   def up() {
-    createTable("scala_migrations_altering") { t =>
+    createTable(tableName) { t =>
       t.varchar("name", Unique, Limit(127), NotNull)
     }
   }
 
   def down() {
-    dropTable("scala_migrations_altering")
+    dropTable(tableName)
   }
 }
