@@ -37,8 +37,6 @@ import com.imageworks.migration.{Derby,
                                  Oracle,
                                  Postgresql}
 
-import org.junit.Assert._
-
 class Migrate_20121104011043_CheckVendor
   extends Migration
 {
