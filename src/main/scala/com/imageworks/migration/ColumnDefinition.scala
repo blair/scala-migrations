@@ -431,6 +431,7 @@ class ColumnDefinition
    * @return the column type name with the limit syntax if a limit was
    *         given
    */
+  protected
   def sqlForColumnType(column_type_name: String,
                        limit_opt: Option[String]): String =
   {
@@ -448,6 +449,7 @@ class ColumnDefinition
    * @return the column type name with the limit syntax if the column
    *         definition specifies a limit
    */
+  protected
   def sqlForColumnType(column_type_name: String): String =
   {
     sqlForColumnType(column_type_name, limit)
