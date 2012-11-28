@@ -556,6 +556,15 @@ class DefaultTimestampColumnDefinition
   def sql = sqlForColumnType("TIMESTAMP")
 }
 
+class DefaultVarbinaryColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsLimit
+  with ColumnSupportsDefault
+{
+  override
+  def sql = sqlForColumnType("VARBINARY")
+}
+
 class DefaultVarcharColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsLimit

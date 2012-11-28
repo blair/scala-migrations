@@ -52,9 +52,7 @@ class DerbyTimestampColumnDefinition
 }
 
 class DerbyVarbinaryColumnDefinition
-  extends ColumnDefinition
-  with ColumnSupportsDefault
-  with ColumnSupportsLimit
+  extends DefaultVarbinaryColumnDefinition
 {
   override
   def sql = sqlForColumnType("VARCHAR") + " FOR BIT DATA"

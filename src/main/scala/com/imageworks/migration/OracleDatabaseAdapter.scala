@@ -149,9 +149,7 @@ class OracleSmallintColumnDefinition
 }
 
 class OracleVarbinaryColumnDefinition
-  extends ColumnDefinition
-  with ColumnSupportsDefault
-  with ColumnSupportsLimit
+  extends DefaultVarbinaryColumnDefinition
 {
   override
   def sql =
