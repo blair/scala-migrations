@@ -35,6 +35,15 @@ package com.imageworks.migration
 import org.slf4j.LoggerFactory
 
 /**
+ * Marker trait for a ColumnDefinition sublcass that the column type
+ * supports having a default value provided by a sequence.
+ */
+trait ColumnSupportsAutoIncrement
+{
+  this: ColumnDefinition =>
+}
+
+/**
  * Marker trait for a ColumnDefinition subclass that the column type
  * supports a default value.
  */
@@ -136,6 +145,12 @@ class ColumnDefinition
   protected[migration] var options: List[ColumnOption] = _
 
   /**
+   * If AutoIncrement is specified for the column.
+   */
+  protected
+  var isAutoIncrement: Boolean = false
+
+  /**
    * If a default is specified for the column.
    */
   private
@@ -145,6 +160,17 @@ class ColumnDefinition
    * Called after the above properties have been wired.
    */
   def initialize() {
+    // Because AutoIncrement adds specific behavior the application
+    // depends upon, always check if AutoIncrement is specified and
+    // throw an exception if the column does not support it.
+    checkForAutoIncrement()
+    if (isAutoIncrement && !this.isInstanceOf[ColumnSupportsAutoIncrement]) {
+      val message = "AutoIncrement cannot be used on column '" +
+                    getColumnName +
+                    "' because its data type does not support auto-increment."
+      throw new UnsupportedOperationException(message)
+    }
+
     if (this.isInstanceOf[ColumnSupportsLimit]) {
       checkForLimit()
     }
@@ -159,6 +185,24 @@ class ColumnDefinition
 
     if (this.isInstanceOf[ColumnSupportsScale]) {
       checkForScale()
+    }
+  }
+
+  /**
+   * Search for and remove all AutoIncrement case objects from the
+   * option list, setting isAutoIncrement if AutoIncrement was found
+   * and warning if two or more AutoIncrement case objects are given.
+   */
+  private
+  def checkForAutoIncrement() {
+    for (option @ AutoIncrement <- options) {
+      options = options filter { _ ne option }
+
+      if (isAutoIncrement) {
+        logger.warn("Redundant AutoIncrement specified for the '{}' column.",
+                    getColumnName)
+      }
+      isAutoIncrement = true
     }
   }
 

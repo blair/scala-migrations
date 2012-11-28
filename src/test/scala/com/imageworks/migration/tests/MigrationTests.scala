@@ -33,12 +33,16 @@
 package com.imageworks.migration.tests
 
 import com.imageworks.migration.{AutoCommit,
+                                 Derby,
                                  DuplicateMigrationDescriptionException,
                                  DuplicateMigrationVersionException,
                                  InstallAllMigrations,
                                  MigrateToVersion,
                                  Migration,
                                  Migrator,
+                                 Mysql,
+                                 Oracle,
+                                 Postgresql,
                                  RemoveAllMigrations,
                                  RollbackMigration,
                                  With}
@@ -275,6 +279,114 @@ class MigrationTests
 
     // Running whyNotMigrated() should not have created any tables.
     assertEquals(0, migrator.getTableNames.size)
+  }
+
+  @Test
+  def auto_increment {
+    // In a brand new database there should be no tables.
+    assertEquals(0, migrator.getTableNames.size)
+
+    // Create a table with two columns, the first column as a
+    // auto-incrementing integer primary key and the second as a
+    // VarcharType column.
+    migrator.migrate(InstallAllMigrations,
+                     "com.imageworks.migration.tests.auto_increment",
+                     false)
+
+    assertEquals(2, migrator.getTableNames.size)
+
+    val connection_builder = TestDatabase.getAdminConnectionBuilder
+
+    connection_builder.withConnection(AutoCommit) { c =>
+      val value_sql =
+        """INSERT INTO
+             scala_migrations_auto_incr (pk_scala_migrations_auto_incr, name)
+           VALUES
+             (?, ?)"""
+      val default_sql =
+        """INSERT INTO
+             scala_migrations_auto_incr (name)
+           VALUES
+             (?)"""
+
+      // For the explicitly set primary key values, use values that
+      // are not numerically increasing in order to ensure that the
+      // unit test code handles this case.
+      val pk_opt_and_name_tuples = (None, "foo") ::
+                                   (Some(123), "bar") ::
+                                   (Some(789), "foobar") ::
+                                   (None, "baz") ::
+                                   (Some(456), "foobaz") ::
+                                   (None, "bazfoo") ::
+                                   Nil
+
+      for ((pk_opt, name) <- pk_opt_and_name_tuples) {
+        pk_opt match {
+          case Some(pk) =>
+            With.autoClosingStatement(c.prepareStatement(value_sql)) { s =>
+              s.setInt(1, pk)
+              s.setString(2, name)
+              s.execute()
+            }
+          case None => {
+            With.autoClosingStatement(c.prepareStatement(default_sql)) { s =>
+              s.setString(1, name)
+              s.execute()
+            }
+          }
+        }
+      }
+
+      val select_sql = """SELECT
+                            pk_scala_migrations_auto_incr
+                          FROM
+                            scala_migrations_auto_incr
+                          WHERE
+                            name = ?"""
+
+
+      // Some databases will set the auto-increment sequence value to
+      // one larger than the inserted value if the inserted value is
+      // larger than the current auto-increment sequence value.
+      val auto_pk_sets_to_max_value_plus_one =
+        TestDatabase.getDatabaseAdapter.vendor match {
+          case Derby => false
+          case Mysql => true
+          case Oracle => false
+          case Postgresql => false
+        }
+      var auto_pk = 1
+
+      for ((pk_opt, name) <- pk_opt_and_name_tuples) {
+        With.autoClosingStatement(c.prepareStatement(select_sql)) { s =>
+          s.setString(1, name)
+          With.autoClosingResultSet(s.executeQuery()) { rs =>
+            var pks: List[Int] = Nil
+            while (rs.next()) {
+              pks = rs.getInt(1) :: pks
+            }
+
+            assertEquals(1, pks.size)
+
+            val expected_pk =
+              pk_opt match {
+                case Some(pk) => {
+                  if (auto_pk_sets_to_max_value_plus_one)
+                    auto_pk = scala.math.max(auto_pk, pk + 1)
+                  pk
+                }
+                case None => {
+                  val pk = auto_pk
+                  auto_pk += 1
+                  pk
+                }
+              }
+
+            assertEquals(expected_pk, pks.head)
+          }
+        }
+      }
+    }
   }
 
   @Test

@@ -86,6 +86,22 @@ trait MysqlAppendCharacterSetToColumnDefinitionMixin
   }
 }
 
+trait MysqlAutoIncrementingColumnDefinitionMixin
+  extends ColumnDefinition
+  with ColumnSupportsAutoIncrement
+{
+  override protected abstract
+  def sql: String =
+  {
+    if (isAutoIncrement) super.sql + " AUTO_INCREMENT"
+    else super.sql
+  }
+}
+
+class MysqlBigintColumnDefinition
+  extends DefaultBigintColumnDefinition
+  with MysqlAutoIncrementingColumnDefinitionMixin
+
 /**
  * Map BlobType to MySQL's LONGBLOB data type.
  *
@@ -119,6 +135,14 @@ class MysqlCharColumnDefinition(character_set_opt: Option[CharacterSet])
   override protected
   def sql: String = sql(super.sql, character_set_opt)
 }
+
+class MysqlIntegerColumnDefinition
+  extends DefaultIntegerColumnDefinition
+  with MysqlAutoIncrementingColumnDefinitionMixin
+
+class MysqlSmallintColumnDefinition
+  extends DefaultSmallintColumnDefinition
+  with MysqlAutoIncrementingColumnDefinitionMixin
 
 // MySQL does not support size specifiers for the TIMESTAMP data type.
 class MysqlTimestampColumnDefinition
@@ -213,7 +237,7 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
   {
     column_type match {
       case BigintType =>
-        new DefaultBigintColumnDefinition
+        new MysqlBigintColumnDefinition
       case BlobType =>
         new MysqlBlobColumnDefinition
       case BooleanType =>
@@ -223,9 +247,9 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
       case DecimalType =>
         new DefaultDecimalColumnDefinition
       case IntegerType =>
-        new DefaultIntegerColumnDefinition
+        new MysqlIntegerColumnDefinition
       case SmallintType =>
-        new DefaultSmallintColumnDefinition
+        new MysqlSmallintColumnDefinition
       case TimestampType =>
         new MysqlTimestampColumnDefinition
       case VarbinaryType =>

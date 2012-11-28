@@ -32,12 +32,48 @@
  */
 package com.imageworks.migration
 
+class PostgresqlBigintColumnDefinition
+  extends DefaultBigintColumnDefinition
+  with ColumnSupportsAutoIncrement
+{
+  override protected
+  def sql: String =
+  {
+    if (isAutoIncrement) "BIGSERIAL"
+    else super.sql
+  }
+}
+
 class PostgresqlByteaColumnDefinition
   extends DefaultBlobColumnDefinition
   with ColumnSupportsDefault
 {
   override protected
   def sql = "BYTEA"
+}
+
+class PostgresqlIntegerColumnDefinition
+  extends DefaultIntegerColumnDefinition
+  with ColumnSupportsAutoIncrement
+{
+  override protected
+  def sql: String =
+  {
+    if (isAutoIncrement) "SERIAL"
+    else super.sql
+  }
+}
+
+class PostgresqlSmallintColumnDefinition
+  extends DefaultSmallintColumnDefinition
+  with ColumnSupportsAutoIncrement
+{
+  override protected
+  def sql: String =
+  {
+    if (isAutoIncrement) "SMALLSERIAL"
+    else super.sql
+  }
 }
 
 class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
@@ -79,7 +115,7 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
 
     column_type match {
       case BigintType =>
-        new DefaultBigintColumnDefinition
+        new PostgresqlBigintColumnDefinition
       case BlobType =>
         new PostgresqlByteaColumnDefinition
       case BooleanType =>
@@ -89,9 +125,9 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
       case DecimalType =>
         new DefaultDecimalColumnDefinition
       case IntegerType =>
-        new DefaultIntegerColumnDefinition
+        new PostgresqlIntegerColumnDefinition
       case SmallintType =>
-        new DefaultSmallintColumnDefinition
+        new PostgresqlSmallintColumnDefinition
       case TimestampType =>
         new DefaultTimestampColumnDefinition
       case VarbinaryType =>
