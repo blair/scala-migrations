@@ -58,17 +58,14 @@ package com.imageworks.migration
  * DecimalType column.
  */
 class OracleBigintColumnDefinition
-  extends ColumnDefinition
-  with ColumnSupportsDefault
+  extends DefaultBigintColumnDefinition
 {
   override
   val sql = "NUMBER(19, 0)"
 }
 
 class OracleCharColumnDefinition(use_nchar_type: Boolean)
-  extends ColumnDefinition
-  with ColumnSupportsDefault
-  with ColumnSupportsLimit
+  extends DefaultCharColumnDefinition
 {
   override
   def sql = optionallyAddLimitToDataType(if (use_nchar_type) "NCHAR"
@@ -107,8 +104,7 @@ class OracleDecimalColumnDefinition
  * DecimalType column.
  */
 class OracleIntegerColumnDefinition
-  extends ColumnDefinition
-  with ColumnSupportsDefault
+  extends DefaultIntegerColumnDefinition
 {
   override
   val sql = "NUMBER(10, 0)"
@@ -139,8 +135,7 @@ class OracleIntegerColumnDefinition
  * DecimalType column.
  */
 class OracleSmallintColumnDefinition
-  extends ColumnDefinition
-  with ColumnSupportsDefault
+  extends DefaultSmallintColumnDefinition
 {
   override
   val sql = "NUMBER(5, 0)"
@@ -162,9 +157,7 @@ class OracleVarbinaryColumnDefinition
 }
 
 class OracleVarcharColumnDefinition(use_nchar_type: Boolean)
-  extends ColumnDefinition
-  with ColumnSupportsDefault
-  with ColumnSupportsLimit
+  extends DefaultVarcharColumnDefinition
 {
   override
   def sql = optionallyAddLimitToDataType(if (use_nchar_type) "NVARCHAR2"

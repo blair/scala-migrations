@@ -35,12 +35,8 @@ package com.imageworks.migration
 // Derby 10.2 and greater support an optional limit on the BLOB's
 // size.
 class DerbyBlobColumnDefinition
-  extends ColumnDefinition
+  extends DefaultBlobColumnDefinition
   with ColumnSupportsLimit
-{
-  override
-  val sql = "BLOB"
-}
 
 class DerbyTimestampColumnDefinition
   extends ColumnDefinition
