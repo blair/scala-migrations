@@ -424,7 +424,9 @@ class ColumnDefinition
   }
 
   /**
-   * Format a column definition respecting the given limit.
+   * Given the SQL for a column data type, return it with the LIMIT
+   * syntax appended if a limit is given, otherwise return SQL
+   * unmodified.
    *
    * @param column_type_name the column type name
    * @param limit_opt optional column limit
@@ -432,8 +434,8 @@ class ColumnDefinition
    *         given
    */
   protected
-  def sqlForColumnType(column_type_name: String,
-                       limit_opt: Option[String]): String =
+  def optionallyAddLimitToDataType(column_type_name: String,
+                                   limit_opt: Option[String]): String =
   {
     limit_opt match {
       case Some(l) => column_type_name + "(" + l + ")"
@@ -442,17 +444,18 @@ class ColumnDefinition
   }
 
   /**
-   * Format a column definition respecting the limit on the column
-   * definition.
+   * Given the SQL for a column data type, return it with the LIMIT
+   * syntax appended if a limit is specified on the column definition
+   * instance, otherwise return SQL unmodified.
    *
    * @param column_type_name the column type name
    * @return the column type name with the limit syntax if the column
    *         definition specifies a limit
    */
   protected
-  def sqlForColumnType(column_type_name: String): String =
+  def optionallyAddLimitToDataType(column_type_name: String): String =
   {
-    sqlForColumnType(column_type_name, limit)
+    optionallyAddLimitToDataType(column_type_name, limit)
   }
 }
 
@@ -523,7 +526,7 @@ class DefaultCharColumnDefinition
   with ColumnSupportsDefault
 {
   override
-  def sql = sqlForColumnType("CHAR")
+  def sql = optionallyAddLimitToDataType("CHAR")
 }
 
 class DefaultDecimalColumnDefinition
@@ -555,7 +558,7 @@ class DefaultTimestampColumnDefinition
   with ColumnSupportsDefault
 {
   override
-  def sql = sqlForColumnType("TIMESTAMP")
+  def sql = optionallyAddLimitToDataType("TIMESTAMP")
 }
 
 class DefaultVarbinaryColumnDefinition
@@ -564,7 +567,7 @@ class DefaultVarbinaryColumnDefinition
   with ColumnSupportsDefault
 {
   override
-  def sql = sqlForColumnType("VARBINARY")
+  def sql = optionallyAddLimitToDataType("VARBINARY")
 }
 
 class DefaultVarcharColumnDefinition
@@ -573,5 +576,5 @@ class DefaultVarcharColumnDefinition
   with ColumnSupportsDefault
 {
   override
-  def sql = sqlForColumnType("VARCHAR")
+  def sql = optionallyAddLimitToDataType("VARCHAR")
 }

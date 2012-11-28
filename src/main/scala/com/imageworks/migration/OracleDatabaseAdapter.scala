@@ -71,8 +71,8 @@ class OracleCharColumnDefinition(use_nchar_type: Boolean)
   with ColumnSupportsLimit
 {
   override
-  def sql = sqlForColumnType(if (use_nchar_type) "NCHAR"
-                             else "CHAR")
+  def sql = optionallyAddLimitToDataType(if (use_nchar_type) "NCHAR"
+                                         else "CHAR")
 }
 
 class OracleDecimalColumnDefinition
@@ -157,7 +157,7 @@ class OracleVarbinaryColumnDefinition
       throw new IllegalArgumentException(message)
     }
 
-    sqlForColumnType("RAW")
+    optionallyAddLimitToDataType("RAW")
   }
 }
 
@@ -167,8 +167,8 @@ class OracleVarcharColumnDefinition(use_nchar_type: Boolean)
   with ColumnSupportsLimit
 {
   override
-  def sql = sqlForColumnType(if (use_nchar_type) "NVARCHAR2"
-                             else "VARCHAR2")
+  def sql = optionallyAddLimitToDataType(if (use_nchar_type) "NVARCHAR2"
+                                         else "VARCHAR2")
 }
 
 class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])

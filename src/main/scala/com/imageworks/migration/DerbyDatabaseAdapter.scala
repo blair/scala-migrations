@@ -48,14 +48,14 @@ class DerbyTimestampColumnDefinition
 {
   // Derby does not take a size specifier for TIMESTAMP types.
   override
-  def sql = sqlForColumnType("TIMESTAMP")
+  def sql = optionallyAddLimitToDataType("TIMESTAMP")
 }
 
 class DerbyVarbinaryColumnDefinition
   extends DefaultVarbinaryColumnDefinition
 {
   override
-  def sql = sqlForColumnType("VARCHAR") + " FOR BIT DATA"
+  def sql = optionallyAddLimitToDataType("VARCHAR") + " FOR BIT DATA"
 }
 
 class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
