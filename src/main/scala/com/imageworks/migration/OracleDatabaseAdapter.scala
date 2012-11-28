@@ -71,10 +71,8 @@ class OracleCharColumnDefinition(use_nchar_type: Boolean)
   with ColumnSupportsLimit
 {
   override
-  def sql = if (use_nchar_type)
-              sqlForColumnType("NCHAR")
-            else
-              sqlForColumnType("CHAR")
+  def sql = sqlForColumnType(if (use_nchar_type) "NCHAR"
+                             else "CHAR")
 }
 
 class OracleDecimalColumnDefinition
@@ -169,10 +167,8 @@ class OracleVarcharColumnDefinition(use_nchar_type: Boolean)
   with ColumnSupportsLimit
 {
   override
-  def sql = if (use_nchar_type)
-              sqlForColumnType("NVARCHAR2")
-            else
-              sqlForColumnType("VARCHAR2")
+  def sql = sqlForColumnType(if (use_nchar_type) "NVARCHAR2"
+                             else "VARCHAR2")
 }
 
 class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
