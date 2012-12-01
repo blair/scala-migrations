@@ -61,7 +61,7 @@ class OracleBigintColumnDefinition
   extends DefaultBigintColumnDefinition
 {
   override
-  val sql = "NUMBER(19, 0)"
+  def sql = "NUMBER(19, 0)"
 }
 
 class OracleCharColumnDefinition(use_nchar_type: Boolean)
@@ -107,7 +107,7 @@ class OracleIntegerColumnDefinition
   extends DefaultIntegerColumnDefinition
 {
   override
-  val sql = "NUMBER(10, 0)"
+  def sql = "NUMBER(10, 0)"
 }
 
 /**
@@ -138,7 +138,7 @@ class OracleSmallintColumnDefinition
   extends DefaultSmallintColumnDefinition
 {
   override
-  val sql = "NUMBER(5, 0)"
+  def sql = "NUMBER(5, 0)"
 }
 
 class OracleVarbinaryColumnDefinition

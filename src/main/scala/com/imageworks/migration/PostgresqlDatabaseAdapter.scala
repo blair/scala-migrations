@@ -37,7 +37,7 @@ class PostgresqlByteaColumnDefinition
   with ColumnSupportsDefault
 {
   override
-  val sql = "BYTEA"
+  def sql = "BYTEA"
 }
 
 class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
