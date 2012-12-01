@@ -778,8 +778,9 @@ abstract class Migration
                .append(" CHECK (")
                .append(expr)
                .append(")")
+               .toString
 
-    execute(sql.toString)
+    execute(sql)
   }
 
   /**
