@@ -797,8 +797,9 @@ abstract class Migration
                   options: Name*) {
     if (on.columnNames.isEmpty) {
       throw new IllegalArgumentException("Removing a check constraint " +
-                                         "requires at least one column name " +
-                                         "in the table adding the constraint.")
+                                         "requires at least one column " +
+                                         "name in the table removing " +
+                                         "the constraint.")
     }
 
     val (name, _) = adapter.generateCheckConstraintName(on, options: _*)
