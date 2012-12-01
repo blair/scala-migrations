@@ -568,7 +568,7 @@ abstract class Migration
       on_update_opt = Some(opt)
     }
 
-    val sql = new java.lang.StringBuilder(512)
+    val sb = new java.lang.StringBuilder(512)
                .append("ALTER TABLE ")
                .append(a.quoteTableName(on.tableName))
                .append(" ADD CONSTRAINT ")
@@ -583,17 +583,17 @@ abstract class Migration
 
     val on_delete_sql = a.onDeleteSql(on_delete_opt)
     if (! on_delete_sql.isEmpty) {
-      sql.append(' ')
-         .append(on_delete_sql)
+      sb.append(' ')
+        .append(on_delete_sql)
     }
 
     val on_update_sql = a.onUpdateSql(on_update_opt)
     if (! on_update_sql.isEmpty) {
-      sql.append(' ')
-         .append(on_update_sql)
+      sb.append(' ')
+        .append(on_update_sql)
     }
 
-    execute(sql.toString)
+    execute(sb.toString)
   }
 
   /**

@@ -462,22 +462,22 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
                         privileges: GrantPrivilegeType*): String =
   {
     // The GRANT and REVOKE syntax is basically the same
-    val sql = new java.lang.StringBuilder(256)
+    val sb = new java.lang.StringBuilder(256)
                .append(action)
                .append(' ')
 
-    sql.append(privileges map { privilegeToString(_) } mkString (", "))
+    sb.append(privileges map { privilegeToString(_) } mkString (", "))
 
     val quoted_grantees = for (g <- grantees)
                             yield '"' + unquotedNameConverter(g) + '"'
 
-    sql.append(" ON ")
-       .append(quoteTableName(schema_name_opt, table_name))
-       .append(' ')
-       .append(preposition)
-       .append(' ')
-       .append(quoted_grantees.mkString(", "))
-       .toString
+    sb.append(" ON ")
+      .append(quoteTableName(schema_name_opt, table_name))
+      .append(' ')
+      .append(preposition)
+      .append(' ')
+      .append(quoted_grantees.mkString(", "))
+      .toString
   }
 
   /**
