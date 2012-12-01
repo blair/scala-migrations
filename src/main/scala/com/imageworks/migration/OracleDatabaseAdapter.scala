@@ -177,6 +177,9 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
   val unquotedNameConverter = UppercaseUnquotedNameConverter
 
   override
+  val userFactory = PlainUserFactory
+
+  override
   val alterTableDropForeignKeyConstraintPhrase = "CONSTRAINT"
 
   override
@@ -267,7 +270,7 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
   override
   def grantSql(schema_name_opt: Option[String],
                table_name: String,
-               grantees: Array[String],
+               grantees: Array[User],
                privileges: GrantPrivilegeType*): String =
   {
     // Check that no columns are defined for any SELECT privs
@@ -286,7 +289,7 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
   override
   def revokeSql(schema_name_opt: Option[String],
                 table_name: String,
-                grantees: Array[String],
+                grantees: Array[User],
                 privileges: GrantPrivilegeType*): String =
   {
     // Check that no columns are defined for any privs with columns

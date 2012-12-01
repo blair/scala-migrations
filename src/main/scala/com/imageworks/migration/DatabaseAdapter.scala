@@ -99,6 +99,11 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
   val unquotedNameConverter: UnquotedNameConverter
 
   /**
+   * A factory for creating User instances from a bare user name.
+   */
+  val userFactory: UserFactory[_ <: User]
+
+  /**
    * The SQL keyword(s) or "phrase" used to drop a foreign key
    * constraint.  For example, Derby, Oracle and PostgreSQL use
    *
@@ -478,7 +483,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
                         preposition: String,
                         schema_name_opt: Option[String],
                         table_name: String,
-                        grantees: Array[String],
+                        grantees: Array[User],
                         privileges: GrantPrivilegeType*): String =
   {
     // The GRANT and REVOKE syntax is basically the same
@@ -489,7 +494,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
     sb.append(privileges map { privilegeToString(_) } mkString (", "))
 
     val quoted_grantees = for (g <- grantees)
-                            yield '"' + unquotedNameConverter(g) + '"'
+                            yield g.quoted(unquotedNameConverter)
 
     sb.append(" ON ")
       .append(quoteTableName(schema_name_opt, table_name))
@@ -513,7 +518,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    */
   def grantSql(schema_name_opt: Option[String],
                table_name: String,
-               grantees: Array[String],
+               grantees: Array[User],
                privileges: GrantPrivilegeType*): String =
   {
     grantRevokeCommon("GRANT",
@@ -535,7 +540,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * @return the SQL to grant privileges
    */
   def grantSql(table_name: String,
-               grantees: Array[String],
+               grantees: Array[User],
                privileges: GrantPrivilegeType*): String =
   {
     grantSql(schemaNameOpt, table_name, grantees, privileges: _*)
@@ -554,7 +559,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    */
   def revokeSql(schema_name_opt: Option[String],
                 table_name: String,
-                grantees: Array[String],
+                grantees: Array[User],
                 privileges: GrantPrivilegeType*): String =
   {
     grantRevokeCommon("REVOKE",
@@ -576,7 +581,7 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
    * @return the SQL to revoke privileges
    */
   def revokeSql(table_name: String,
-                grantees: Array[String],
+                grantees: Array[User],
                 privileges: GrantPrivilegeType*): String =
   {
     revokeSql(schemaNameOpt, table_name, grantees, privileges: _*)

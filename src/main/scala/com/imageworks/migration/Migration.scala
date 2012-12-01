@@ -676,7 +676,7 @@ abstract class Migration
    */
   final
   def grant(table_name: String,
-            grantees: Array[String],
+            grantees: Array[User],
             privileges: GrantPrivilegeType*) {
     if (grantees.isEmpty) {
       throw new IllegalArgumentException("Granting privileges requires " +
@@ -694,6 +694,38 @@ abstract class Migration
   }
 
   /**
+   * Add a grant on a table to one or more grantees.
+   *
+   * @param table_name the table name to add the grants to
+   * @param grantees a non-empty array of grantees
+   * @param privileges a non-empty array of privileges to grant to the
+   *        grantees
+   */
+  final
+  def grant(table_name: String,
+            grantees: Array[String],
+            privileges: GrantPrivilegeType*) {
+    grant(table_name,
+          grantees map { adapter.userFactory.nameToUser(_) },
+          privileges: _*)
+  }
+
+  /**
+   * Add a grant on a table to a grantee.
+   *
+   * @param table_name the table name to add the grants to
+   * @param grantee the grantee to grant the privileges to
+   * @param privileges a non-empty array of privileges to grant to the
+   *        grantee
+   */
+  final
+  def grant(table_name: String,
+            grantee: User,
+            privileges: GrantPrivilegeType*) {
+    grant(table_name, Array(grantee), privileges: _*)
+  }
+
+  /**
    * Add a grant on a table to a grantee.
    *
    * @param table_name the table name to add the grants to
@@ -705,7 +737,9 @@ abstract class Migration
   def grant(table_name: String,
             grantee: String,
             privileges: GrantPrivilegeType*) {
-    grant(table_name, Array(grantee), privileges: _*)
+    grant(table_name,
+          Array[User](adapter.userFactory.nameToUser(grantee)),
+          privileges: _*)
   }
 
   /**
@@ -718,7 +752,7 @@ abstract class Migration
    */
   final
   def revoke(table_name: String,
-             grantees: Array[String],
+             grantees: Array[User],
              privileges: GrantPrivilegeType*) {
     if (grantees.isEmpty) {
       throw new IllegalArgumentException("Revoking privileges requires " +
@@ -736,6 +770,38 @@ abstract class Migration
   }
 
   /**
+   * Remove privileges on a table from one or more grantees.
+   *
+   * @param table_name the table name to remove the grants from
+   * @param grantees a non-empty array of grantees
+   * @param privileges a non-empty array of privileges to remove from
+   *        the grantees
+   */
+  final
+  def revoke(table_name: String,
+             grantees: Array[String],
+             privileges: GrantPrivilegeType*) {
+    revoke(table_name,
+           grantees map { adapter.userFactory.nameToUser(_) },
+           privileges: _*)
+  }
+
+  /**
+   * Remove privileges on a table from a grantee.
+   *
+   * @param table_name the table name to remove the grants from
+   * @param grantee the grantee to revoke privileges from
+   * @param privileges a non-empty array of privileges to remove from
+   *        the grantee
+   */
+  final
+  def revoke(table_name: String,
+             grantee: User,
+             privileges: GrantPrivilegeType*) {
+    revoke(table_name, Array(grantee), privileges: _*)
+  }
+
+  /**
    * Remove privileges on a table from a grantee.
    *
    * @param table_name the table name to remove the grants from
@@ -747,7 +813,9 @@ abstract class Migration
   def revoke(table_name: String,
              grantee: String,
              privileges: GrantPrivilegeType*) {
-    revoke(table_name, Array(grantee), privileges: _*)
+    revoke(table_name,
+           Array[User](adapter.userFactory.nameToUser(grantee)),
+           privileges: _*)
   }
 
   /**
