@@ -38,13 +38,13 @@ class DerbyBlobColumnDefinition
   extends DefaultBlobColumnDefinition
   with ColumnSupportsLimit
 
+// Derby does not support size specifiers for the TIMESTAMP data type.
 class DerbyTimestampColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
 {
-  // Derby does not take a size specifier for TIMESTAMP types.
   override
-  def sql = optionallyAddLimitToDataType("TIMESTAMP")
+  def sql = "TIMESTAMP"
 }
 
 class DerbyVarbinaryColumnDefinition
