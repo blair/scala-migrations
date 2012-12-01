@@ -502,14 +502,14 @@ class DefaultBigintColumnDefinition
   with ColumnSupportsDefault
 {
   override
-  val sql = "BIGINT"
+  def sql = "BIGINT"
 }
 
 class DefaultBlobColumnDefinition
   extends ColumnDefinition
 {
   override
-  val sql = "BLOB"
+  def sql = "BLOB"
 }
 
 class DefaultBooleanColumnDefinition
@@ -517,7 +517,7 @@ class DefaultBooleanColumnDefinition
   with ColumnSupportsDefault
 {
   override
-  val sql = "BOOLEAN"
+  def sql = "BOOLEAN"
 }
 
 class DefaultCharColumnDefinition
@@ -541,7 +541,7 @@ class DefaultIntegerColumnDefinition
   with ColumnSupportsDefault
 {
   override
-  val sql = "INTEGER"
+  def sql = "INTEGER"
 }
 
 class DefaultSmallintColumnDefinition
@@ -549,7 +549,7 @@ class DefaultSmallintColumnDefinition
   with ColumnSupportsDefault
 {
   override
-  val sql = "SMALLINT"
+  def sql = "SMALLINT"
 }
 
 class DefaultTimestampColumnDefinition
