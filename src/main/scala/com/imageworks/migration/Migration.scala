@@ -667,7 +667,7 @@ abstract class Migration
   /**
    * Add a grant on a table to one or more grantees.
    *
-   * @param table_name the table name to add the grantees to
+   * @param table_name the table name to add the grants to
    * @param grantees a non-empty array of grantees
    * @param privileges a non-empty array of privileges to grant to the
    *        grantees
@@ -694,7 +694,7 @@ abstract class Migration
   /**
    * Add a grant on a table to a grantee.
    *
-   * @param table_name the table name to add the grantees to
+   * @param table_name the table name to add the grants to
    * @param grantee the grantee to grant the privileges to
    * @param privileges a non-empty array of privileges to grant to the
    *        grantee
