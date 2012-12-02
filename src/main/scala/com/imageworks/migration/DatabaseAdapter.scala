@@ -134,9 +134,9 @@ class DatabaseAdapter(val schemaNameOpt: Option[String])
 
     for (opt @ CharacterSet(name) <- opts) {
       opts = opts filter { _ ne opt }
-      if (character_set_opt.isDefined && character_set_opt.get != name) {
+      if (character_set_opt.isDefined && character_set_opt.get != opt) {
         logger.warn("Redefining the character set from '{}' to '{}'.",
-                    Array[AnyRef](character_set_opt.get, name): _*)
+                    Array[AnyRef](character_set_opt.get, opt): _*)
       }
       character_set_opt = Some(opt)
     }
