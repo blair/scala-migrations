@@ -63,7 +63,8 @@ class Migrate_20081118201742_CreatePeopleTable
       t.varbinary("pk_scala_migrations_location", Limit(16), NotNull)
       t.integer("employee_id", Unique)
       t.integer("ssn", NotNull)
-      t.varchar("first_name", Limit(255), NotNull, CharacterSet(Unicode))
+      t.varchar("first_name", Limit(255), NotNull,
+                CharacterSet(Unicode, "utf8_unicode_ci"))
       t.char("middle_initial", Limit(1), Nullable)
       t.varchar("last_name", Limit(255), NotNull, CharacterSet(Unicode))
       t.timestamp("birthdate", Limit(0), NotNull)

@@ -74,11 +74,73 @@ sealed trait CheckOption
  */
 sealed trait TableOption
 
+object CharacterSet
+{
+  /**
+   * Construct a CharacterSet with the given character set name and
+   * collation name.
+   *
+   * @param name the name of the character set
+   * @param collation the name of the collation
+   */
+  def apply(name: CharacterSetName,
+            collation: String): CharacterSet =
+  {
+    new CharacterSet(name, collation)
+  }
+
+  /**
+   * Construct a CharacterSet with the given character set name and
+   * leave the collation unspecified, thereby letting the database
+   * choose the collation.
+   *
+   * @param name the name of the character set
+   */
+  def apply(name: CharacterSetName): CharacterSet =
+  {
+    new CharacterSet(name)
+  }
+}
+
 /**
- * The base trait for all character set definitions.
+ * A character set consists of a character set name and an optional
+ * collation.  A collation is a set of rules to compare characters in
+ * a character set [1].  If the collation is unspecified then the
+ * database will choose a default collation, which depending upon the
+ * database vendor, can vary upon the given character set.
+ *
+ * [1] http://dev.mysql.com/doc/refman/5.5/en/charset-general.html
+ *
+ * @param name the name of the character set
+ * @param collationOpt an optional collation for the character set
  */
-case class CharacterSet(name: CharacterSetName)
+case class CharacterSet(name: CharacterSetName,
+                        collationOpt: Option[String])
   extends ColumnOption
+{
+  /**
+   * Construct a CharacterSet with the given character set name and
+   * collation name.
+   *
+   * @param name the name of the character set
+   * @param collation the name of the collation
+   */
+  def this(name: CharacterSetName,
+           collation: String)
+  {
+    this(name, Some(collation))
+  }
+
+  /**
+   * Construct a CharacterSet with no specified collation.
+   *
+   * @param name the name of the character set
+   */
+  def this(name: CharacterSetName)
+  {
+    this(name, None)
+  }
+}
 
 /**
  * A default value for a column.

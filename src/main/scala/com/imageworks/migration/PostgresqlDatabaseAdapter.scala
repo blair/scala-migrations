@@ -71,11 +71,10 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
   {
     character_set_opt match {
       case None =>
-      case Some(charset @ CharacterSet(_)) => {
+      case Some(charset @ CharacterSet(_, _)) =>
         logger.warn("Ignoring '{}' as the character set encoding can only " +
                     "be specified in PostgreSQL when the database is created.",
                     charset)
-      }
     }
 
     column_type match {

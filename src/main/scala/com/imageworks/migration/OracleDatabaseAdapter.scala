@@ -198,10 +198,17 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
         case None => {
           false
         }
-        case Some(CharacterSet(Unicode)) => {
+        case Some(CharacterSet(Unicode, None)) => {
           true
         }
-        case Some(charset @ CharacterSet(name)) => {
+        case Some(charset @ CharacterSet(Unicode, Some(collation))) => {
+          logger.warn("Ignoring collation '{}' in '{}' as Oracle only " +
+                      "supports setting the collation using the NLS_SORT " +
+                      "session parameter.",
+                      Array[AnyRef](collation, charset): _*)
+          true
+        }
+        case Some(charset @ CharacterSet(_, _)) => {
           logger.warn("Ignoring '{}' as Oracle only supports specifying no " +
                       "explicit character set encoding, which defaults the " +
                       "column to use the database's character set, or " +

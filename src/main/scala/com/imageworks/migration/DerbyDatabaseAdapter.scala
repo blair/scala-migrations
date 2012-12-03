@@ -85,12 +85,16 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
   {
     character_set_opt match {
       case None =>
-      case Some(CharacterSet(Unicode)) =>
-      case Some(charset @ CharacterSet(_)) => {
+      case Some(CharacterSet(Unicode, None)) =>
+      case Some(charset @ CharacterSet(Unicode, Some(collation))) =>
+        logger.warn("Ignoring collation '{}' in '{}' as Derby only " +
+                    "supports setting the collation when the database " +
+                    "is created.",
+                    Array[AnyRef](collation, charset): _*)
+      case Some(charset @ CharacterSet(_, _)) =>
         logger.warn("Ignoring '{}' as Derby uses Unicode sequences to " +
                     "represent character data types.",
                     charset)
-      }
     }
 
     column_type match {
