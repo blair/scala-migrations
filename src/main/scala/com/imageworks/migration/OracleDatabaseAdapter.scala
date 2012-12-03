@@ -189,12 +189,12 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
         case Some(CharacterSet(Unicode)) => {
           true
         }
-        case Some(set @ CharacterSet(name)) => {
+        case Some(charset @ CharacterSet(name)) => {
           logger.warn("Ignoring '{}' as Oracle only supports specifying no " +
                       "explicit character set encoding, which defaults the " +
                       "column to use the database's character set, or " +
                       "Unicode.",
-                      set)
+                      charset)
           false
         }
       }

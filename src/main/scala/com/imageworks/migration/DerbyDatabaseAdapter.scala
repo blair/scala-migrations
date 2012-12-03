@@ -74,10 +74,10 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
     character_set_opt match {
       case None =>
       case Some(CharacterSet(Unicode)) =>
-      case Some(set @ CharacterSet(_)) => {
+      case Some(charset @ CharacterSet(_)) => {
         logger.warn("Ignoring '{}' as Derby uses Unicode sequences to " +
                     "represent character data types.",
-                    set)
+                    charset)
       }
     }
 
