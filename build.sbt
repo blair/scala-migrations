@@ -23,7 +23,7 @@ scalaVersion := "2.9.2"
 // When the Scala final release has been published, then replace the
 // release candidate with the Scala final release.
 crossScalaVersions := Seq("2.9.0", "2.9.0-1", "2.9.1", "2.9.1-1", "2.9.2",
-                          "2.10.0-RC5")
+                          "2.10.0")
 
 // Append -deprecation to the options passed to the Scala compiler.
 scalacOptions += "-deprecation"
