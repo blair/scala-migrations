@@ -60,14 +60,14 @@ package com.imageworks.migration
 class OracleBigintColumnDefinition
   extends DefaultBigintColumnDefinition
 {
-  override
+  override protected
   def sql = "NUMBER(19, 0)"
 }
 
 class OracleCharColumnDefinition(use_nchar_type: Boolean)
   extends DefaultCharColumnDefinition
 {
-  override
+  override protected
   def sql = optionallyAddLimitToDataType(if (use_nchar_type) "NCHAR"
                                          else "CHAR")
 }
@@ -106,7 +106,7 @@ class OracleDecimalColumnDefinition
 class OracleIntegerColumnDefinition
   extends DefaultIntegerColumnDefinition
 {
-  override
+  override protected
   def sql = "NUMBER(10, 0)"
 }
 
@@ -137,14 +137,14 @@ class OracleIntegerColumnDefinition
 class OracleSmallintColumnDefinition
   extends DefaultSmallintColumnDefinition
 {
-  override
+  override protected
   def sql = "NUMBER(5, 0)"
 }
 
 class OracleVarbinaryColumnDefinition
   extends DefaultVarbinaryColumnDefinition
 {
-  override
+  override protected
   def sql =
   {
     if (! limit.isDefined) {
@@ -159,7 +159,7 @@ class OracleVarbinaryColumnDefinition
 class OracleVarcharColumnDefinition(use_nchar_type: Boolean)
   extends DefaultVarcharColumnDefinition
 {
-  override
+  override protected
   def sql = optionallyAddLimitToDataType(if (use_nchar_type) "NVARCHAR2"
                                          else "VARCHAR2")
 }

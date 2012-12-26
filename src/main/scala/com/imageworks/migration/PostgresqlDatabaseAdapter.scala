@@ -36,7 +36,7 @@ class PostgresqlByteaColumnDefinition
   extends DefaultBlobColumnDefinition
   with ColumnSupportsDefault
 {
-  override
+  override protected
   def sql = "BYTEA"
 }
 

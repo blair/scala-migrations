@@ -116,7 +116,7 @@ class MysqlCharColumnDefinition(character_set_opt: Option[CharacterSet])
   extends DefaultCharColumnDefinition
   with MysqlAppendCharacterSetToColumnDefinitionMixin
 {
-  override
+  override protected
   def sql: String = sql(super.sql, character_set_opt)
 }
 
@@ -133,7 +133,7 @@ class MysqlVarcharColumnDefinition(character_set_opt: Option[CharacterSet])
   extends DefaultVarcharColumnDefinition
   with MysqlAppendCharacterSetToColumnDefinitionMixin
 {
-  override
+  override protected
   def sql: String = sql(super.sql, character_set_opt)
 }
 

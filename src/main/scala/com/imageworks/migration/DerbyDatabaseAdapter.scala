@@ -43,14 +43,14 @@ class DerbyTimestampColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
 {
-  override
+  override protected
   def sql = "TIMESTAMP"
 }
 
 class DerbyVarbinaryColumnDefinition
   extends DefaultVarbinaryColumnDefinition
 {
-  override
+  override protected
   def sql = optionallyAddLimitToDataType("VARCHAR") + " FOR BIT DATA"
 }
 

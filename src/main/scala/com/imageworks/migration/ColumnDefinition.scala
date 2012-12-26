@@ -477,7 +477,7 @@ abstract class AbstractDecimalColumnDefinition
    */
   val decimalSqlName: String
 
-  override
+  override protected
   def sql: String =
   {
     (precision, scale) match {
@@ -503,14 +503,14 @@ class DefaultBigintColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
 {
-  override
+  override protected
   def sql = "BIGINT"
 }
 
 class DefaultBlobColumnDefinition
   extends ColumnDefinition
 {
-  override
+  override protected
   def sql = "BLOB"
 }
 
@@ -518,7 +518,7 @@ class DefaultBooleanColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
 {
-  override
+  override protected
   def sql = "BOOLEAN"
 }
 
@@ -527,7 +527,7 @@ class DefaultCharColumnDefinition
   with ColumnSupportsLimit
   with ColumnSupportsDefault
 {
-  override
+  override protected
   def sql = optionallyAddLimitToDataType("CHAR")
 }
 
@@ -542,7 +542,7 @@ class DefaultIntegerColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
 {
-  override
+  override protected
   def sql = "INTEGER"
 }
 
@@ -550,7 +550,7 @@ class DefaultSmallintColumnDefinition
   extends ColumnDefinition
   with ColumnSupportsDefault
 {
-  override
+  override protected
   def sql = "SMALLINT"
 }
 
@@ -559,7 +559,7 @@ class DefaultTimestampColumnDefinition
   with ColumnSupportsLimit
   with ColumnSupportsDefault
 {
-  override
+  override protected
   def sql = optionallyAddLimitToDataType("TIMESTAMP")
 }
 
@@ -568,7 +568,7 @@ class DefaultVarbinaryColumnDefinition
   with ColumnSupportsLimit
   with ColumnSupportsDefault
 {
-  override
+  override protected
   def sql = optionallyAddLimitToDataType("VARBINARY")
 }
 
@@ -577,6 +577,6 @@ class DefaultVarcharColumnDefinition
   with ColumnSupportsLimit
   with ColumnSupportsDefault
 {
-  override
+  override protected
   def sql = optionallyAddLimitToDataType("VARCHAR")
 }
