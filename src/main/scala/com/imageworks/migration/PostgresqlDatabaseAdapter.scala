@@ -90,10 +90,10 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
         new DefaultDecimalColumnDefinition
       case IntegerType =>
         new DefaultIntegerColumnDefinition
-      case TimestampType =>
-        new DefaultTimestampColumnDefinition
       case SmallintType =>
         new DefaultSmallintColumnDefinition
+      case TimestampType =>
+        new DefaultTimestampColumnDefinition
       case VarbinaryType =>
         new PostgresqlByteaColumnDefinition
       case VarcharType =>

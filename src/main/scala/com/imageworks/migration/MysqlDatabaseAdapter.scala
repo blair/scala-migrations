@@ -224,10 +224,10 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
         new DefaultDecimalColumnDefinition
       case IntegerType =>
         new DefaultIntegerColumnDefinition
-      case TimestampType =>
-        new MysqlTimestampColumnDefinition
       case SmallintType =>
         new DefaultSmallintColumnDefinition
+      case TimestampType =>
+        new MysqlTimestampColumnDefinition
       case VarbinaryType =>
         new DefaultVarbinaryColumnDefinition
       case VarcharType =>
