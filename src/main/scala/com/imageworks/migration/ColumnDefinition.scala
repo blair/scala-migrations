@@ -163,9 +163,9 @@ class ColumnDefinition
   }
 
   /**
-   * If a column can have a default value, then the derived class
-   * should call this method to check for a specified default.  This
-   * will remove the default option from the option list.
+   * Search for and remove all default values specified in the option
+   * list, saving the last one and warning if two or more default
+   * values are given.
    */
   private
   def checkForDefault() {
@@ -194,9 +194,8 @@ class ColumnDefinition
   def limit = limit_
 
   /**
-   * If a column can have a limit, then the derived class should call
-   * this method to check for the limit.  This will remove the limit
-   * option from the option list.
+   * Search for and remove all limits specified in the option list,
+   * saving the last one and warning if two or more limits are given.
    */
   private
   def checkForLimit() {
