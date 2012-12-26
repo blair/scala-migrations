@@ -432,7 +432,7 @@ class MigrationTests
     val varbinary_array = (1 to 4).map(_.toByte).toArray
     val now = System.currentTimeMillis
 
-    migrator.withLoggingConnection(AutoCommit) { connection =>
+    migrator.withLoggingConnection(AutoCommit) { c =>
       for ((n, v) <- Array(("bigint_column", java.lang.Long.MIN_VALUE),
                            ("bigint_column", java.lang.Long.MAX_VALUE),
                            ("char_column", "ABCD"),
@@ -446,7 +446,7 @@ class MigrationTests
                               scala_migrations_types_test (""" + n + """)
                             VALUES
                               (?)""".replaceAll("\\s+", " ")
-        val insert_statement = connection.prepareStatement(insert_sql)
+        val insert_statement = c.prepareStatement(insert_sql)
         insert_statement.setObject(1, v)
         insert_statement.executeUpdate
         insert_statement.close()
@@ -458,16 +458,17 @@ class MigrationTests
                               scala_migrations_types_test
                             WHERE
                               """ + n + """ = ?""".replaceAll("\\s+", " ")
-        val select_statement = connection.prepareStatement(select_sql)
-        select_statement.setObject(1, v)
-        With.autoClosingResultSet(select_statement.executeQuery()) { rs =>
-          var counts: List[Int] = Nil
-          while (rs.next()) {
-            counts = rs.getInt(1) :: counts
-          }
+        With.autoClosingStatement(c.prepareStatement(select_sql)) { s =>
+          s.setObject(1, v)
+          With.autoClosingResultSet(s.executeQuery()) { rs =>
+            var counts: List[Int] = Nil
+            while (rs.next()) {
+              counts = rs.getInt(1) :: counts
+            }
 
-          assertEquals(1, counts.size)
-          assertEquals(1, counts.head)
+            assertEquals(1, counts.size)
+            assertEquals(1, counts.head)
+          }
         }
       }
     }
