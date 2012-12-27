@@ -321,8 +321,8 @@ identically.
 
      The docs use NUMERIC more and list DECIMAL as an alias.
 
-     http://www.postgresql.org/docs/8.3/interactive/datatype-numeric.html
-     http://www.postgresql.org/docs/8.3/interactive/datatype.html#DATATYPE-TABLE
+     http://www.postgresql.org/docs/9.2/interactive/datatype-numeric.html
+     http://www.postgresql.org/docs/9.2/interactive/datatype.html#DATATYPE-TABLE
 
 CHARACTER SET ENCODING
 ----------------------
