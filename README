@@ -304,7 +304,7 @@ identically.
 
      "NUMERIC implemented as DECIMAL."
 
-     http://dev.mysql.com/doc/refman/5.1/en/numeric-types.html
+     http://dev.mysql.com/doc/refman/5.5/en/numeric-types.html
 
   *) Oracle
 
