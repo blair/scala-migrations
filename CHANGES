@@ -6,6 +6,7 @@ Version 1.0.3 - September 21st, 2012
     not have to download log4jdbc themselves:
       http://code.google.com/p/log4jdbc/wiki/FAQ
       http://code.google.com/p/log4jdbc/issues/detail?id=19
+
   * For Scala 2.8.0 and greater, switch from ant/ivy to sbt to build
     the project.  In addition to reducing the number of files checked
     into source control to build the project, it also supports easy
@@ -16,6 +17,7 @@ Version 1.0.2 - November 8th, 2011
     #getResource() in case there are multiple resources with the same
     package name.  Now all resources providing the package name are
     searched.
+
   * Issue #23: fix a bug by URL decoding resource URLs so that
     resources in directories containing one or more space characters
     can be found.
@@ -23,18 +25,23 @@ Version 1.0.2 - November 8th, 2011
 Version 1.0.1 - February 14th, 2010
   * New method Migration#alterColumn() which allows column definitions
     to be altered.
+
   * Initial support for building with Maven.  It only builds jars for
     JDBC 4/JDK 1.6, not for JDBC 3/JDK 1.5.  Build with ant to build
     JDBC 3/JDK 1.5 jars.
+
   * Usernames for Migration#grant() and #revoke() are now converted
     into the database's canonical case, e.g. lowercase or uppercase,
     and then quoted.
+
   * Refactor the unit tests to allow for testing with databases other
     than Derby.
+
   * The table names in the unit tests have been renamed to all start
     with "scala_migrations_".  This makes it easier to unit test the
     project in an existing schema.  The only table that doesn't start
     with "scala_migrations_" is "schema_migrations".
+
   * Lots of internal refactoring and code cleanup.
 
 Version 1.0.0 - February 11th, 2010
@@ -42,19 +49,25 @@ Version 1.0.0 - February 11th, 2010
     under both Scala 2.7.x and 2.8.x were applied to the default
     (2.7.x) branch and merged to the scala-2.8 branch to minimize the
     differences between the branches.
+
   * Fix a bug in dropping indices in Oracle.
+
   * Index names are now quoted and potentially case converted in the
     same manner as column names.
+
   * Provide a addingForeignKeyConstraintCreatesIndex method in
     Migration and DatabaseAdaper that returns true if the database
     implicitly adds an index on the column that has a foreign key
     constraint added to it.  This can be used to dynamically add an
     index for those databases that don't implicitly add an index on
     foreign key columns.
+
   * Switch to using scaladoc instead of vscaladoc when compiling with
     Scala 2.7.x to be consistent with compilation with Scala 2.8.x.
+
   * Update the test suite to run against Derby 10.5.3 instead of
     10.5.1.1.
+
   * Switch code style to be more compliant with standard Scala code,
     specifically, remove the space before a : in type annotations.
 
