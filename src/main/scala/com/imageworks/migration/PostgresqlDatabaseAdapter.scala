@@ -33,84 +33,62 @@
 package com.imageworks.migration
 
 class PostgresqlBigintColumnDefinition
-  extends DefaultBigintColumnDefinition
-  with ColumnSupportsAutoIncrement
-{
-  override protected
-  def sql: String =
-  {
+    extends DefaultBigintColumnDefinition
+    with ColumnSupportsAutoIncrement {
+  override protected def sql: String = {
     if (isAutoIncrement) "BIGSERIAL"
     else super.sql
   }
 }
 
 class PostgresqlByteaColumnDefinition
-  extends DefaultBlobColumnDefinition
-  with ColumnSupportsDefault
-{
-  override protected
-  def sql = "BYTEA"
+    extends DefaultBlobColumnDefinition
+    with ColumnSupportsDefault {
+  override protected def sql = "BYTEA"
 }
 
 class PostgresqlIntegerColumnDefinition
-  extends DefaultIntegerColumnDefinition
-  with ColumnSupportsAutoIncrement
-{
-  override protected
-  def sql: String =
-  {
+    extends DefaultIntegerColumnDefinition
+    with ColumnSupportsAutoIncrement {
+  override protected def sql: String = {
     if (isAutoIncrement) "SERIAL"
     else super.sql
   }
 }
 
 class PostgresqlSmallintColumnDefinition
-  extends DefaultSmallintColumnDefinition
-  with ColumnSupportsAutoIncrement
-{
-  override protected
-  def sql: String =
-  {
+    extends DefaultSmallintColumnDefinition
+    with ColumnSupportsAutoIncrement {
+  override protected def sql: String = {
     if (isAutoIncrement) "SMALLSERIAL"
     else super.sql
   }
 }
 
 class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
-  extends DatabaseAdapter(schemaNameOpt)
-{
-  override
-  val vendor = Postgresql
+    extends DatabaseAdapter(schemaNameOpt) {
+  override val vendor = Postgresql
 
-  override
-  val quoteCharacter = '"'
+  override val quoteCharacter = '"'
 
-  override
-  val unquotedNameConverter = LowercaseUnquotedNameConverter
+  override val unquotedNameConverter = LowercaseUnquotedNameConverter
 
-  override
-  val userFactory = PlainUserFactory
+  override val userFactory = PlainUserFactory
 
-  override
-  val alterTableDropForeignKeyConstraintPhrase = "CONSTRAINT"
+  override val alterTableDropForeignKeyConstraintPhrase = "CONSTRAINT"
 
-  override
-  val addingForeignKeyConstraintCreatesIndex = false
+  override val addingForeignKeyConstraintCreatesIndex = false
 
-  override
-  val supportsCheckConstraints = true
+  override val supportsCheckConstraints = true
 
-  override
-  def columnDefinitionFactory
-    (column_type: SqlType,
-     character_set_opt: Option[CharacterSet]): ColumnDefinition =
-  {
+  override def columnDefinitionFactory(column_type: SqlType,
+                                       character_set_opt: Option[CharacterSet]): ColumnDefinition = {
     character_set_opt match {
       case None =>
       case Some(charset @ CharacterSet(_, _)) =>
         logger.warn("Ignoring '{}' as the character set encoding can only " +
-                    "be specified in PostgreSQL when the database is created.",
-                    charset)
+          "be specified in PostgreSQL when the database is created.",
+          charset)
     }
 
     column_type match {
@@ -137,10 +115,8 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
     }
   }
 
-  override protected
-  def alterColumnSql(schema_name_opt: Option[String],
-                     column_definition: ColumnDefinition): String =
-  {
+  override protected def alterColumnSql(schema_name_opt: Option[String],
+                                        column_definition: ColumnDefinition): String = {
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
       .append(quoteTableName(schema_name_opt, column_definition.getTableName))

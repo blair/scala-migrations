@@ -66,11 +66,10 @@ case class MigrateToVersion(version: Long)
  * removes migrations from the database.
  */
 case class RollbackMigration(count: Int)
-  extends MigratorOperation
-{
+    extends MigratorOperation {
   if (count < 1) {
     val message = "The number of migrations to rollback must be greater " +
-                  "than zero."
+      "than zero."
     throw new IllegalArgumentException(message)
   }
 }

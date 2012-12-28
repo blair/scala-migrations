@@ -32,14 +32,15 @@
  */
 package com.imageworks.migration.tests.alter_column
 
-import com.imageworks.migration.{IrreversibleMigrationException,
-                                 Limit,
-                                 Migration,
-                                 VarcharType}
+import com.imageworks.migration.{
+  IrreversibleMigrationException,
+  Limit,
+  Migration,
+  VarcharType
+}
 
 class Migrate_20110214060042_AlterColumn
-  extends Migration
-{
+    extends Migration {
   val tableName = "scala_migrations_altering"
 
   def up() {

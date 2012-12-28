@@ -32,21 +32,24 @@
  */
 package com.imageworks.migration.tests
 
-import com.imageworks.migration.{AutoCommit,
-                                 ConnectionBuilder,
-                                 DatabaseAdapter,
-                                 DerbyDatabaseAdapter,
-                                 MysqlDatabaseAdapter,
-                                 With}
+import com.imageworks.migration.{
+  AutoCommit,
+  ConnectionBuilder,
+  DatabaseAdapter,
+  DerbyDatabaseAdapter,
+  MysqlDatabaseAdapter,
+  With
+}
 
-import java.sql.{DriverManager,
-                 SQLException}
+import java.sql.{
+  DriverManager,
+  SQLException
+}
 
 /**
  * Sealed trait abstracting the database to use for testing.
  */
-sealed trait TestDatabase
-{
+sealed trait TestDatabase {
   /**
    * Get the schema name the tests are being run in.
    */
@@ -84,42 +87,33 @@ sealed trait TestDatabase
  * Derby test database implementation.
  */
 object DerbyTestDatabase
-  extends TestDatabase
-{
+    extends TestDatabase {
   // Username of the admin account, which will be the owner of the
   // database.
-  private
-  val admin_username = "admin"
+  private val admin_username = "admin"
 
-  override
-  def getAdminAccountName = admin_username
+  override def getAdminAccountName = admin_username
 
   // Password for the admin account.
-  private
-  val admin_password = "foobar"
+  private val admin_password = "foobar"
 
   // Username of the user account.
-  private
-  val user_username = "user"
+  private val user_username = "user"
 
-  override
-  def getUserAccountName = user_username
+  override def getUserAccountName = user_username
 
   // Password for the user account.
-  private
-  val user_password = "baz"
+  private val user_password = "baz"
 
   // The base JDBC URL.
-  private
-  val url =
-  {
+  private val url = {
     "jdbc:derby:memory:" + System.currentTimeMillis.toString
   }
 
   // Set the Derby system home directory to "target/test-databases" so
   // the derby.log file and all databases will be placed in there.
   System.getProperties.setProperty("derby.system.home",
-                                   "target/test-databases")
+    "target/test-databases")
 
   // Load the Derby database driver.
   Class.forName("org.apache.derby.jdbc.EmbeddedDriver")
@@ -130,9 +124,9 @@ object DerbyTestDatabase
 
   // Create the database.
   With.autoClosingConnection(DriverManager.getConnection(
-                               url + ";create=true",
-                               admin_username,
-                               admin_password)) { c =>
+    url + ";create=true",
+    admin_username,
+    admin_password)) { c =>
     TestDatabase.execute(
       getAdminConnectionBuilder,
       """CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
@@ -157,16 +151,16 @@ object DerbyTestDatabase
 
     TestDatabase.execute(
       getAdminConnectionBuilder,
-        """CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
+      """CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
              'derby.user.""" + user_username + """', '""" + user_password + """')""")
   }
 
   // Shutdown Derby.
   try {
     With.autoClosingConnection(DriverManager.getConnection(
-                                 url + ";shutdown=true",
-                                 admin_username,
-                                 admin_password)) { _ =>
+      url + ";shutdown=true",
+      admin_username,
+      admin_password)) { _ =>
     }
   }
   catch {
@@ -180,27 +174,19 @@ object DerbyTestDatabase
     case _: SQLException =>
   }
 
-  override
-  def getSchemaName: String =
-  {
+  override def getSchemaName: String = {
     admin_username
   }
 
-  override
-  def getAdminConnectionBuilder: ConnectionBuilder =
-  {
+  override def getAdminConnectionBuilder: ConnectionBuilder = {
     new ConnectionBuilder(url, admin_username, admin_password)
   }
 
-  override
-  def getUserConnectionBuilder: ConnectionBuilder =
-  {
+  override def getUserConnectionBuilder: ConnectionBuilder = {
     new ConnectionBuilder(url, user_username, user_password)
   }
 
-  override
-  def getDatabaseAdapter: DatabaseAdapter =
-  {
+  override def getDatabaseAdapter: DatabaseAdapter = {
     new DerbyDatabaseAdapter(Some(getSchemaName))
   }
 }
@@ -227,74 +213,53 @@ object DerbyTestDatabase
  *   "scala-migrations.db.user.passwd": plain user password ("test-user")
  */
 object MysqlTestDatabase
-  extends TestDatabase
-{
+    extends TestDatabase {
   // Username of the admin account, which will be the owner of the
   // database.
-  private
-  val admin_username =
-  {
+  private val admin_username = {
     System.getProperty(TestDatabase.adminUserNameProperty, "test-admin")
   }
 
-  override
-  def getAdminAccountName = admin_username
+  override def getAdminAccountName = admin_username
 
   // Password for the admin account.
-  private
-  val admin_password =
-  {
+  private val admin_password = {
     System.getProperty(TestDatabase.adminUserPasswordProperty, "test-admin")
   }
 
   // Username of the user account.
-  private
-  val user_username =
-  {
+  private val user_username = {
     System.getProperty(TestDatabase.userUserNameProperty, "test-user")
   }
 
-  override
-  def getUserAccountName = user_username
+  override def getUserAccountName = user_username
 
   // Password for the user account.
-  private
-  val user_password =
-  {
+  private val user_password = {
     System.getProperty(TestDatabase.userUserPasswordProperty, "test-user")
   }
 
-  override
-  def getSchemaName: String =
-  {
+  override def getSchemaName: String = {
     System.getProperty(TestDatabase.schemaProperty, "test")
   }
 
   // The base JDBC URL.
-  private
-  val url =
-  {
+  private val url = {
     "jdbc:mysql://localhost/" + getSchemaName
   }
 
   // Load the MySQL database driver.
   Class.forName("com.mysql.jdbc.Driver")
 
-  override
-  def getAdminConnectionBuilder: ConnectionBuilder =
-  {
+  override def getAdminConnectionBuilder: ConnectionBuilder = {
     new ConnectionBuilder(url, admin_username, admin_password)
   }
 
-  override
-  def getUserConnectionBuilder: ConnectionBuilder =
-  {
+  override def getUserConnectionBuilder: ConnectionBuilder = {
     new ConnectionBuilder(url, user_username, user_password)
   }
 
-  override
-  def getDatabaseAdapter: DatabaseAdapter =
-  {
+  override def getDatabaseAdapter: DatabaseAdapter = {
     new MysqlDatabaseAdapter(Some(getSchemaName))
   }
 }
@@ -305,8 +270,7 @@ object MysqlTestDatabase
  * the property is not set.
  */
 object TestDatabase
-  extends TestDatabase
-{
+    extends TestDatabase {
   val adminUserNameProperty = "scala-migrations.db.admin.name"
   val adminUserPasswordProperty = "scala-migrations.db.admin.passwd"
   val schemaProperty = "scala-migrations.db.schema"
@@ -314,9 +278,7 @@ object TestDatabase
   val userUserPasswordProperty = "scala-migrations.db.user.passwd"
   val vendorProperty = "scala-migrations.db.vendor"
 
-  private
-  val db: TestDatabase =
-  {
+  private val db: TestDatabase = {
     System.getProperty(vendorProperty, "derby") match {
       case "derby" =>
         DerbyTestDatabase
@@ -324,9 +286,9 @@ object TestDatabase
         MysqlTestDatabase
       case v =>
         throw new RuntimeException("Unexpected value for \"" +
-                                   vendorProperty +
-                                   "\" property: " +
-                                   v)
+          vendorProperty +
+          "\" property: " +
+          v)
     }
   }
 
@@ -343,8 +305,7 @@ object TestDatabase
   override def getDatabaseAdapter = db.getDatabaseAdapter
 
   def execute(connection_builder: ConnectionBuilder,
-              sql: String): Boolean =
-  {
+              sql: String): Boolean = {
     connection_builder.withConnection(AutoCommit) { c =>
       With.autoClosingStatement(c.prepareStatement(sql)) { s =>
         s.execute()

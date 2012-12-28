@@ -32,14 +32,15 @@
  */
 package com.imageworks.migration.tests.alter_column
 
-import com.imageworks.migration.{Limit,
-                                 Migration,
-                                 NotNull,
-                                 Unique}
+import com.imageworks.migration.{
+  Limit,
+  Migration,
+  NotNull,
+  Unique
+}
 
 class Migrate_20110214054347_CreateTable
-  extends Migration
-{
+    extends Migration {
   val tableName = "scala_migrations_altering"
 
   def up() {

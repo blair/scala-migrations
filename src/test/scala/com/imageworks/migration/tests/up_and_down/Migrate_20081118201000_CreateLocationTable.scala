@@ -32,15 +32,16 @@
  */
 package com.imageworks.migration.tests.up_and_down
 
-import com.imageworks.migration.{Limit,
-                                 Migration,
-                                 NotNull,
-                                 PrimaryKey,
-                                 Unique}
+import com.imageworks.migration.{
+  Limit,
+  Migration,
+  NotNull,
+  PrimaryKey,
+  Unique
+}
 
 class Migrate_20081118201000_CreateLocationTable
-  extends Migration
-{
+    extends Migration {
   val tableName = "scala_migrations_location"
 
   def up() {

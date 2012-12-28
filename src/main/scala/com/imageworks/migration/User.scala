@@ -37,8 +37,7 @@ package com.imageworks.migration
  * method that returns the user properly quoted for inclusion in a SQL
  * statement.
  */
-sealed abstract class User
-{
+sealed abstract class User {
   /**
    * The user quoted for a SQL statement.
    *
@@ -56,11 +55,8 @@ sealed abstract class User
  * @param name the user name
  */
 class PlainUser(userName: String)
-  extends User
-{
-  override
-  def quoted(unquotedNameConverter: UnquotedNameConverter): String =
-  {
+    extends User {
+  override def quoted(unquotedNameConverter: UnquotedNameConverter): String = {
     '"' + unquotedNameConverter(userName) + '"'
   }
 }
@@ -69,8 +65,7 @@ class PlainUser(userName: String)
  * Object to create PlainUser instances with a user name with a nice
  * syntax, e.g. User('foobar').
  */
-object User
-{
+object User {
   /**
    * Given a user name, return a PlainUser instance.
    *
@@ -80,8 +75,7 @@ object User
   def apply(userName: String): PlainUser = new PlainUser(userName)
 }
 
-object MysqlUser
-{
+object MysqlUser {
   /**
    * Given a user name and a host name return a User appropriate for a
    * MySQL database, see
@@ -91,8 +85,7 @@ object MysqlUser
    * @param hostName a host name
    */
   def apply(userName: String,
-            hostName: String): MysqlUser =
-  {
+            hostName: String): MysqlUser = {
     new MysqlUser(userName, hostName)
   }
 }
@@ -107,11 +100,8 @@ object MysqlUser
  */
 class MysqlUser(userName: String,
                 hostName: String)
-  extends User
-{
-  override
-  def quoted(unquotedNameConverter: UnquotedNameConverter): String =
-  {
+    extends User {
+  override def quoted(unquotedNameConverter: UnquotedNameConverter): String = {
     val sb = new java.lang.StringBuilder(64)
     sb.append('\'')
       .append(unquotedNameConverter(userName))
@@ -125,8 +115,7 @@ class MysqlUser(userName: String,
 /**
  * A factory for User instances that are built from a user name.
  */
-abstract class UserFactory[T <: User]
-{
+abstract class UserFactory[T <: User] {
   /**
    * Given a user name, return a User instance.
    *
@@ -140,10 +129,8 @@ abstract class UserFactory[T <: User]
  * Singleton UserFactory that creates PlainUser instances.
  */
 object PlainUserFactory
-  extends UserFactory[PlainUser]
-{
-  override
-  def nameToUser(userName: String) = User(userName)
+    extends UserFactory[PlainUser] {
+  override def nameToUser(userName: String) = User(userName)
 }
 
 /**
@@ -152,11 +139,8 @@ object PlainUserFactory
  * "localhost".
  */
 object MysqlUserFactory
-  extends UserFactory[MysqlUser]
-{
-  override
-  def nameToUser(userName: String): MysqlUser =
-  {
+    extends UserFactory[MysqlUser] {
+  override def nameToUser(userName: String): MysqlUser = {
     new MysqlUser(userName, "localhost")
   }
 }

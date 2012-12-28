@@ -33,12 +33,13 @@
 package com.imageworks.migration.tests.grant_and_revoke
 
 import com.imageworks.migration.tests.TestDatabase
-import com.imageworks.migration.{Migration,
-                                 SelectPrivilege}
+import com.imageworks.migration.{
+  Migration,
+  SelectPrivilege
+}
 
 class Migrate_200811261513_Grants
-  extends Migration
-{
+    extends Migration {
   val tableName = "scala_migrations_location"
 
   def up() {

@@ -58,25 +58,21 @@ package com.imageworks.migration
  * DecimalType column.
  */
 class OracleBigintColumnDefinition
-  extends DefaultBigintColumnDefinition
-{
-  override protected
-  def sql = "NUMBER(19, 0)"
+    extends DefaultBigintColumnDefinition {
+  override protected def sql = "NUMBER(19, 0)"
 }
 
 class OracleCharColumnDefinition(use_nchar_type: Boolean)
-  extends DefaultCharColumnDefinition
-{
-  override protected
-  def sql = optionallyAddLimitToDataType(if (use_nchar_type) "NCHAR"
-                                         else "CHAR")
+    extends DefaultCharColumnDefinition {
+  override protected def sql = {
+    optionallyAddLimitToDataType(if (use_nchar_type) "NCHAR"
+    else "CHAR")
+  }
 }
 
 class OracleDecimalColumnDefinition
-  extends AbstractDecimalColumnDefinition
-{
-  override
-  val decimalSqlName = "NUMBER"
+    extends AbstractDecimalColumnDefinition {
+  override val decimalSqlName = "NUMBER"
 }
 
 /**
@@ -104,10 +100,8 @@ class OracleDecimalColumnDefinition
  * DecimalType column.
  */
 class OracleIntegerColumnDefinition
-  extends DefaultIntegerColumnDefinition
-{
-  override protected
-  def sql = "NUMBER(10, 0)"
+    extends DefaultIntegerColumnDefinition {
+  override protected def sql = "NUMBER(10, 0)"
 }
 
 /**
@@ -135,19 +129,14 @@ class OracleIntegerColumnDefinition
  * DecimalType column.
  */
 class OracleSmallintColumnDefinition
-  extends DefaultSmallintColumnDefinition
-{
-  override protected
-  def sql = "NUMBER(5, 0)"
+    extends DefaultSmallintColumnDefinition {
+  override protected def sql = "NUMBER(5, 0)"
 }
 
 class OracleVarbinaryColumnDefinition
-  extends DefaultVarbinaryColumnDefinition
-{
-  override protected
-  def sql =
-  {
-    if (! limit.isDefined) {
+    extends DefaultVarbinaryColumnDefinition {
+  override protected def sql = {
+    if (!limit.isDefined) {
       val message = "In Oracle, a RAW column must always specify its size."
       throw new IllegalArgumentException(message)
     }
@@ -157,42 +146,31 @@ class OracleVarbinaryColumnDefinition
 }
 
 class OracleVarcharColumnDefinition(use_nchar_type: Boolean)
-  extends DefaultVarcharColumnDefinition
-{
-  override protected
-  def sql = optionallyAddLimitToDataType(if (use_nchar_type) "NVARCHAR2"
-                                         else "VARCHAR2")
+    extends DefaultVarcharColumnDefinition {
+  override protected def sql = {
+    optionallyAddLimitToDataType(if (use_nchar_type) "NVARCHAR2"
+    else "VARCHAR2")
+  }
 }
 
 class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
-  extends DatabaseAdapter(schemaNameOpt)
-{
-  override
-  val vendor = Oracle
+    extends DatabaseAdapter(schemaNameOpt) {
+  override val vendor = Oracle
 
-  override
-  val quoteCharacter = '"'
+  override val quoteCharacter = '"'
 
-  override
-  val unquotedNameConverter = UppercaseUnquotedNameConverter
+  override val unquotedNameConverter = UppercaseUnquotedNameConverter
 
-  override
-  val userFactory = PlainUserFactory
+  override val userFactory = PlainUserFactory
 
-  override
-  val alterTableDropForeignKeyConstraintPhrase = "CONSTRAINT"
+  override val alterTableDropForeignKeyConstraintPhrase = "CONSTRAINT"
 
-  override
-  val addingForeignKeyConstraintCreatesIndex = false
+  override val addingForeignKeyConstraintCreatesIndex = false
 
-  override
-  val supportsCheckConstraints = true
+  override val supportsCheckConstraints = true
 
-  override
-  def columnDefinitionFactory
-    (column_type: SqlType,
-     character_set_opt: Option[CharacterSet]): ColumnDefinition =
-  {
+  override def columnDefinitionFactory(column_type: SqlType,
+                                       character_set_opt: Option[CharacterSet]): ColumnDefinition = {
     val use_nchar_type =
       character_set_opt match {
         case None => {
@@ -203,17 +181,17 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
         }
         case Some(charset @ CharacterSet(Unicode, Some(collation))) => {
           logger.warn("Ignoring collation '{}' in '{}' as Oracle only " +
-                      "supports setting the collation using the NLS_SORT " +
-                      "session parameter.",
-                      Array[AnyRef](collation, charset): _*)
+            "supports setting the collation using the NLS_SORT " +
+            "session parameter.",
+            Array[AnyRef](collation, charset): _*)
           true
         }
         case Some(charset @ CharacterSet(_, _)) => {
           logger.warn("Ignoring '{}' as Oracle only supports specifying no " +
-                      "explicit character set encoding, which defaults the " +
-                      "column to use the database's character set, or " +
-                      "Unicode.",
-                      charset)
+            "explicit character set encoding, which defaults the " +
+            "column to use the database's character set, or " +
+            "Unicode.",
+            charset)
           false
         }
       }
@@ -225,7 +203,7 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
         new DefaultBlobColumnDefinition
       case BooleanType => {
         val message = "Oracle does not support a boolean type, you must " +
-                      "choose a mapping your self."
+          "choose a mapping your self."
         throw new UnsupportedColumnTypeException(message)
       }
       case CharType =>
@@ -245,10 +223,8 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
     }
   }
 
-  override protected
-  def alterColumnSql(schema_name_opt: Option[String],
-                     column_definition: ColumnDefinition): String =
-  {
+  override protected def alterColumnSql(schema_name_opt: Option[String],
+                                        column_definition: ColumnDefinition): String = {
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
       .append(quoteTableName(schema_name_opt, column_definition.getTableName))
@@ -260,11 +236,9 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
       .toString
   }
 
-  override
-  def removeColumnSql(schema_name_opt: Option[String],
-                      table_name: String,
-                      column_name: String): String =
-  {
+  override def removeColumnSql(schema_name_opt: Option[String],
+                               table_name: String,
+                               column_name: String): String = {
     // Oracle requires COLUMN keyword.
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
@@ -274,38 +248,34 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
       .toString
   }
 
-  override
-  def grantSql(schema_name_opt: Option[String],
-               table_name: String,
-               grantees: Array[User],
-               privileges: GrantPrivilegeType*): String =
-  {
+  override def grantSql(schema_name_opt: Option[String],
+                        table_name: String,
+                        grantees: Array[User],
+                        privileges: GrantPrivilegeType*): String = {
     // Check that no columns are defined for any SELECT privs
     for {
       SelectPrivilege(columns) <- privileges
       if !columns.isEmpty
     } {
       val message = "Oracle does not support granting select to " +
-                    "individual columns"
+        "individual columns"
       throw new IllegalArgumentException(message)
     }
 
     super.grantSql(schema_name_opt, table_name, grantees, privileges: _*)
   }
 
-  override
-  def revokeSql(schema_name_opt: Option[String],
-                table_name: String,
-                grantees: Array[User],
-                privileges: GrantPrivilegeType*): String =
-  {
+  override def revokeSql(schema_name_opt: Option[String],
+                         table_name: String,
+                         grantees: Array[User],
+                         privileges: GrantPrivilegeType*): String = {
     // Check that no columns are defined for any privs with columns
     for {
       PrivilegeWithColumns(columns) <- privileges
       if !columns.isEmpty
     } {
       val message = "Oracle does not support revoking permissions from " +
-                    "individual columns"
+        "individual columns"
       throw new IllegalArgumentException(message)
     }
 
@@ -326,9 +296,7 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
    * @return the SQL text to append to the SQL to create a foreign key
    *         relationship
    */
-  override
-  def onDeleteSql(on_delete_opt: Option[OnDelete]): String =
-  {
+  override def onDeleteSql(on_delete_opt: Option[OnDelete]): String = {
     on_delete_opt match {
       case Some(OnDelete(Restrict)) => ""
       case opt => super.onDeleteSql(opt)

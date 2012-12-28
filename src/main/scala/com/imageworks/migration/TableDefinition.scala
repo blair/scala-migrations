@@ -39,19 +39,15 @@ import scala.collection.mutable
  * column to the table's definition.
  */
 class TableDefinition(adapter: DatabaseAdapter,
-                      table_name: String)
-{
-  private
-  val column_definitions = new mutable.ListBuffer[ColumnDefinition]
+                      table_name: String) {
+  private val column_definitions = new mutable.ListBuffer[ColumnDefinition]
 
   /**
    * Generate a SQL string representation of the columns in the table.
    *
    * @return the SQL text that defines the columns in the table
    */
-  final
-  def toSql: String =
-  {
+  final def toSql: String = {
     val sb = new java.lang.StringBuilder(512)
     var first_column = true
     for (column_definition <- column_definitions) {
@@ -79,15 +75,13 @@ class TableDefinition(adapter: DatabaseAdapter,
    *        column
    * @return the same instance
    */
-  final
-  def column(name: String,
-             column_type: SqlType,
-             options: ColumnOption*): TableDefinition =
-  {
+  final def column(name: String,
+                   column_type: SqlType,
+                   options: ColumnOption*): TableDefinition = {
     val column_definition = adapter.newColumnDefinition(table_name,
-                                                        name,
-                                                        column_type,
-                                                        options: _*)
+      name,
+      column_type,
+      options: _*)
     column_definitions += column_definition
     this
   }
@@ -102,10 +96,8 @@ class TableDefinition(adapter: DatabaseAdapter,
    *        column
    * @return the same instance
    */
-  final
-  def bigint(name: String,
-             options: ColumnOption*): TableDefinition =
-  {
+  final def bigint(name: String,
+                   options: ColumnOption*): TableDefinition = {
     column(name, BigintType, options: _*)
   }
 
@@ -119,11 +111,9 @@ class TableDefinition(adapter: DatabaseAdapter,
    *        column
    * @return the same instance
    */
-  final
-  def blob(name: String,
-           options: ColumnOption*): TableDefinition =
-  {
-   column(name, BlobType, options: _*)
+  final def blob(name: String,
+                 options: ColumnOption*): TableDefinition = {
+    column(name, BlobType, options: _*)
   }
 
   /**
@@ -136,11 +126,9 @@ class TableDefinition(adapter: DatabaseAdapter,
    *        column
    * @return the same instance
    */
-  final
-  def boolean(name: String,
-              options: ColumnOption*): TableDefinition =
-  {
-   column(name, BooleanType, options: _*)
+  final def boolean(name: String,
+                    options: ColumnOption*): TableDefinition = {
+    column(name, BooleanType, options: _*)
   }
 
   /**
@@ -153,10 +141,8 @@ class TableDefinition(adapter: DatabaseAdapter,
    *        column
    * @return the same instance
    */
-  final
-  def char(name: String,
-           options: ColumnOption*): TableDefinition =
-  {
+  final def char(name: String,
+                 options: ColumnOption*): TableDefinition = {
     column(name, CharType, options: _*)
   }
 
@@ -170,10 +156,8 @@ class TableDefinition(adapter: DatabaseAdapter,
    *        column
    * @return the same instance
    */
-  final
-  def decimal(name: String,
-              options: ColumnOption*): TableDefinition =
-  {
+  final def decimal(name: String,
+                    options: ColumnOption*): TableDefinition = {
     column(name, DecimalType, options: _*)
   }
 
@@ -187,10 +171,8 @@ class TableDefinition(adapter: DatabaseAdapter,
    *        column
    * @return the same instance
    */
-  final
-  def integer(name: String,
-              options: ColumnOption*): TableDefinition =
-  {
+  final def integer(name: String,
+                    options: ColumnOption*): TableDefinition = {
     column(name, IntegerType, options: _*)
   }
 
@@ -204,10 +186,8 @@ class TableDefinition(adapter: DatabaseAdapter,
    *        column
    * @return the same instance
    */
-  final
-  def smallint(name: String,
-               options: ColumnOption*): TableDefinition =
-  {
+  final def smallint(name: String,
+                     options: ColumnOption*): TableDefinition = {
     column(name, SmallintType, options: _*)
   }
 
@@ -221,10 +201,8 @@ class TableDefinition(adapter: DatabaseAdapter,
    *        column
    * @return the same instance
    */
-  final
-  def timestamp(name: String,
-                options: ColumnOption*): TableDefinition =
-  {
+  final def timestamp(name: String,
+                      options: ColumnOption*): TableDefinition = {
     column(name, TimestampType, options: _*)
   }
 
@@ -238,10 +216,8 @@ class TableDefinition(adapter: DatabaseAdapter,
    *        column
    * @return the same instance
    */
-  final
-  def varbinary(name: String,
-                options: ColumnOption*): TableDefinition =
-  {
+  final def varbinary(name: String,
+                      options: ColumnOption*): TableDefinition = {
     column(name, VarbinaryType, options: _*)
   }
 
@@ -255,10 +231,8 @@ class TableDefinition(adapter: DatabaseAdapter,
    *        column
    * @return the same instance
    */
-  final
-  def varchar(name: String,
-              options: ColumnOption*): TableDefinition =
-  {
+  final def varchar(name: String,
+                    options: ColumnOption*): TableDefinition = {
     column(name, VarcharType, options: _*)
   }
 }

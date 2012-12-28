@@ -32,14 +32,15 @@
  */
 package com.imageworks.migration.tests.types
 
-import com.imageworks.migration.{Limit,
-                                 Migration,
-                                 Precision,
-                                 Scale}
+import com.imageworks.migration.{
+  Limit,
+  Migration,
+  Precision,
+  Scale
+}
 
 class Migrate_20081212213908_CreateTypetestTable
-  extends Migration
-{
+    extends Migration {
   val tableName = "scala_migrations_types_test"
 
   def up() {

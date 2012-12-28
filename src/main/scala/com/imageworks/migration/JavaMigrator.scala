@@ -38,8 +38,7 @@ package com.imageworks.migration
  * from a pure Java environment.  This class exposes a Java-style
  * interface and delegates to the Scala Migrator class.
  */
-class JavaMigrator private (migrator: Migrator)
-{
+class JavaMigrator private (migrator: Migrator) {
   /**
    * JavaMigrator constructor.
    *
@@ -80,7 +79,7 @@ class JavaMigrator private (migrator: Migrator)
            jdbc_password: String,
            adapter: DatabaseAdapter) {
     this(new ConnectionBuilder(jdbc_url, jdbc_username, jdbc_password),
-         adapter)
+      adapter)
   }
 
   /**
@@ -90,8 +89,7 @@ class JavaMigrator private (migrator: Migrator)
    * @return a set of table names; no modifications of the case of
    *         table names is done
    */
-  def getTableNames: java.util.Set[String] =
-  {
+  def getTableNames: java.util.Set[String] = {
     val table_names = migrator.getTableNames
 
     val set = new java.util.HashSet[String](table_names.size)
@@ -142,8 +140,8 @@ class JavaMigrator private (migrator: Migrator)
                 package_name: String,
                 search_sub_packages: Boolean) {
     migrator.migrate(MigrateToVersion(version),
-                     package_name,
-                     search_sub_packages)
+      package_name,
+      search_sub_packages)
   }
 
   /**
@@ -160,8 +158,8 @@ class JavaMigrator private (migrator: Migrator)
                package_name: String,
                search_sub_packages: Boolean) {
     migrator.migrate(RollbackMigration(count),
-                     package_name,
-                     search_sub_packages)
+      package_name,
+      search_sub_packages)
   }
 
   /**
@@ -185,8 +183,7 @@ class JavaMigrator private (migrator: Migrator)
    *         that do not have a matching Migration subclass
    */
   def whyNotMigrated(package_name: String,
-                     search_sub_packages: Boolean): String =
-  {
+                     search_sub_packages: Boolean): String = {
     migrator.whyNotMigrated(package_name, search_sub_packages) match {
       case Some(message) => message
       case None => null

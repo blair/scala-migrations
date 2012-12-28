@@ -32,15 +32,16 @@
  */
 package com.imageworks.migration.tests.vendor
 
-import com.imageworks.migration.{Derby,
-                                 Migration,
-                                 Mysql,
-                                 Oracle,
-                                 Postgresql}
+import com.imageworks.migration.{
+  Derby,
+  Migration,
+  Mysql,
+  Oracle,
+  Postgresql
+}
 
 class Migrate_20121104011043_CheckVendor
-  extends Migration
-{
+    extends Migration {
   def up() {
     databaseVendor match {
       case Derby =>
@@ -48,10 +49,10 @@ class Migrate_20121104011043_CheckVendor
       case Oracle =>
       case Postgresql =>
       case v => throw new AssertionError("Database vendor '" +
-                                         v +
-                                         "' not handled.")
+        v +
+        "' not handled.")
     }
   }
 
-  def down() { }
+  def down() {}
 }

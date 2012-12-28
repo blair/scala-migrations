@@ -32,37 +32,38 @@
  */
 package com.imageworks.migration.tests
 
-import com.imageworks.migration.{DatabaseAdapter,
-                                 Derby,
-                                 DerbyDatabaseAdapter,
-                                 Mysql,
-                                 MysqlDatabaseAdapter,
-                                 Oracle,
-                                 OracleDatabaseAdapter,
-                                 Postgresql,
-                                 PostgresqlDatabaseAdapter}
+import com.imageworks.migration.{
+  DatabaseAdapter,
+  Derby,
+  DerbyDatabaseAdapter,
+  Mysql,
+  MysqlDatabaseAdapter,
+  Oracle,
+  OracleDatabaseAdapter,
+  Postgresql,
+  PostgresqlDatabaseAdapter
+}
 
 import org.junit.Assert._
 import org.junit.Test
 
-class DatabaseAdapterTests
-{
+class DatabaseAdapterTests {
   @Test
   def forVendor {
     assertEquals(classOf[DerbyDatabaseAdapter],
-                 DatabaseAdapter.forVendor(Derby, None).getClass)
+      DatabaseAdapter.forVendor(Derby, None).getClass)
 
     assertEquals(classOf[MysqlDatabaseAdapter],
-                 DatabaseAdapter.forVendor(Mysql, None).getClass)
+      DatabaseAdapter.forVendor(Mysql, None).getClass)
 
     assertEquals(classOf[OracleDatabaseAdapter],
-                 DatabaseAdapter.forVendor(Oracle, None).getClass)
+      DatabaseAdapter.forVendor(Oracle, None).getClass)
 
     assertEquals(classOf[PostgresqlDatabaseAdapter],
-                 DatabaseAdapter.forVendor(Postgresql, None).getClass)
+      DatabaseAdapter.forVendor(Postgresql, None).getClass)
   }
 
-  @Test(expected=classOf[IllegalArgumentException])
+  @Test(expected = classOf[IllegalArgumentException])
   def for_null_existent_driver_class {
     DatabaseAdapter.forVendor(null, None)
   }

@@ -32,16 +32,17 @@
  */
 package com.imageworks.migration.tests.auto_increment
 
-import com.imageworks.migration.{AutoIncrement,
-                                 Limit,
-                                 Migration,
-                                 NotNull,
-                                 PrimaryKey,
-                                 Unique}
+import com.imageworks.migration.{
+  AutoIncrement,
+  Limit,
+  Migration,
+  NotNull,
+  PrimaryKey,
+  Unique
+}
 
 class Migrate_20121226170550_CreateTableWithAutoIncrementingColumn
-  extends Migration
-{
+    extends Migration {
   val tableName = "scala_migrations_auto_incr"
 
   def up() {

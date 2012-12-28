@@ -36,14 +36,13 @@ import com.imageworks.migration.Limit
 
 import org.junit.Test
 
-class OptionsTests
-{
-  @Test(expected=classOf[IllegalArgumentException])
+class OptionsTests {
+  @Test(expected = classOf[IllegalArgumentException])
   def limitNegativeOneIntThrows {
     Limit(-1)
   }
 
-  @Test(expected=classOf[IllegalArgumentException])
+  @Test(expected = classOf[IllegalArgumentException])
   def limitNegativeOneStringThrows {
     Limit("-1")
   }

@@ -34,9 +34,11 @@ package com.imageworks.migration
 
 import org.slf4j.LoggerFactory
 
-import java.sql.{Connection,
-                 ResultSet,
-                 Statement}
+import java.sql.{
+  Connection,
+  ResultSet,
+  Statement
+}
 import java.util.jar.JarFile
 
 /**
@@ -47,10 +49,8 @@ import java.util.jar.JarFile
  * has completed, either normally via a return or by throwing an
  * exception, the resource is released.
  */
-object With
-{
-  private final
-  val logger = LoggerFactory.getLogger(this.getClass)
+object With {
+  private final val logger = LoggerFactory.getLogger(this.getClass)
 
   /**
    * Given a resource and two functions, the first, a closer function
@@ -71,10 +71,7 @@ object With
    * @return the result of invoking body on the resource
    * @throws any exception that invoking body on the resource throws
    */
-  def resource[A,B](resource: A, closerDescription: String)
-                   (closer: A => Unit)
-                   (body: A => B): B =
-  {
+  def resource[A, B](resource: A, closerDescription: String)(closer: A => Unit)(body: A => B): B = {
     var primaryException: Throwable = null
     try {
       body(resource)
@@ -96,9 +93,9 @@ object With
         catch {
           case e: Throwable =>
             logger.warn("Suppressing exception when " +
-                        closerDescription +
-                        ':',
-                        e)
+              closerDescription +
+              ':',
+              e)
         }
       }
     }
@@ -115,12 +112,9 @@ object With
    *        connection
    * @return the result of f
    */
-  def autoClosingConnection[C <: Connection,R](connection: C)
-                                              (f: C => R): R =
-  {
+  def autoClosingConnection[C <: Connection, R](connection: C)(f: C => R): R = {
     resource(connection, "closing connection")(_.close())(f)
   }
-
 
   /**
    * Take a SQL connection, save its current auto-commit mode, put the
@@ -142,10 +136,8 @@ object With
    *        connection
    * @return the result of f
    */
-  def autoRestoringConnection[C <: Connection,R](connection: C,
-                                                 mode: Boolean)
-                                                (f: C => R): R =
-  {
+  def autoRestoringConnection[C <: Connection, R](connection: C,
+                                                  mode: Boolean)(f: C => R): R = {
     val current_mode = connection.getAutoCommit
     With.resource(connection, "restoring connection auto-commit")(_.setAutoCommit(current_mode)) { c =>
       c.setAutoCommit(mode)
@@ -168,10 +160,8 @@ object With
    *        connection
    * @return the result of f
    */
-  def autoCommittingConnection[C <: Connection,R](connection: C,
-                                                  commit_behavior: CommitBehavior)
-                                                 (f: C=> R): R =
-  {
+  def autoCommittingConnection[C <: Connection, R](connection: C,
+                                                   commit_behavior: CommitBehavior)(f: C => R): R = {
     val new_auto_commit =
       commit_behavior match {
         case AutoCommit => true
@@ -202,7 +192,7 @@ object With
                 catch {
                   case e2: Throwable =>
                     logger.warn("Suppressing exception when rolling back" +
-                                "transaction:", e2)
+                      "transaction:", e2)
                 }
                 throw e1
               }
@@ -227,9 +217,7 @@ object With
    *        statement
    * @return the result of f
    */
-  def autoClosingStatement[S <: Statement,R](statement: S)
-                                            (f: S => R): R =
-  {
+  def autoClosingStatement[S <: Statement, R](statement: S)(f: S => R): R = {
     resource(statement, "closing statement")(_.close())(f)
   }
 
@@ -244,9 +232,7 @@ object With
    *        result set
    * @return the result of f
    */
-  def autoClosingResultSet[RS <: ResultSet,R](resultSet: RS)
-                                             (f: RS => R): R =
-  {
+  def autoClosingResultSet[RS <: ResultSet, R](resultSet: RS)(f: RS => R): R = {
     resource(resultSet, "closing result set")(_.close())(f)
   }
 
@@ -261,9 +247,7 @@ object With
    *        file
    * @return the result of f
    */
-  def jarFile[J <: JarFile,R](jarFile: J)
-                             (f: J => R): R =
-  {
+  def jarFile[J <: JarFile, R](jarFile: J)(f: J => R): R = {
     resource(jarFile, "closing jar file")(_.close())(f)
   }
 }

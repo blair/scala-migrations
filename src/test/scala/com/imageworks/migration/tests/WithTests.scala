@@ -34,35 +34,39 @@ package com.imageworks.migration.tests
 
 import com.imageworks.migration.With
 
-import org.jmock.{Expectations,
-                  Mockery}
+import org.jmock.{
+  Expectations,
+  Mockery
+}
 
 import org.junit.Assert._
-import org.junit.{Before,
-                  Test}
+import org.junit.{
+  Before,
+  Test
+}
 
-import java.sql.{ResultSet,
-                 SQLException}
+import java.sql.{
+  ResultSet,
+  SQLException
+}
 
-class WithTests
-{
-  private
-  val context = new Mockery
+class WithTests {
+  private val context = new Mockery
 
   @Test
   def with_result_set_closes_on_normal_return {
     val mock_rs = context.mock(classOf[ResultSet])
 
     context.checking(new Expectations {
-                       oneOf (mock_rs).close()
-                     })
+      oneOf(mock_rs).close()
+    })
 
     var rs1: ResultSet = null
 
     val result = With.autoClosingResultSet(mock_rs) { rs2 =>
-                   rs1 = rs2
-                   "foobar"
-                 }
+      rs1 = rs2
+      "foobar"
+    }
 
     assertSame(mock_rs, rs1)
     assertEquals("foobar", result)
@@ -77,9 +81,9 @@ class WithTests
     val e2 = new SQLException
 
     context.checking(new Expectations {
-                       oneOf (mock_rs).close()
-                       will(Expectations.throwException(e2))
-                     })
+      oneOf(mock_rs).close()
+      will(Expectations.throwException(e2))
+    })
 
     var caughtExceptionOpt: Option[Exception] = None
     var rs1: ResultSet = null
@@ -97,7 +101,7 @@ class WithTests
     assertSame(mock_rs, rs1)
     assertTrue("Failed to catch exception.", caughtExceptionOpt.isDefined)
     assertSame("Failed to catch expected exception.",
-               e1, caughtExceptionOpt.get)
+      e1, caughtExceptionOpt.get)
     context.assertIsSatisfied()
   }
 
@@ -108,9 +112,9 @@ class WithTests
     val e1 = new SQLException
 
     context.checking(new Expectations {
-                       oneOf (mock_rs).close()
-                       will(Expectations.throwException(e1))
-                     })
+      oneOf(mock_rs).close()
+      will(Expectations.throwException(e1))
+    })
 
     var caughtExceptionOpt: Option[Exception] = None
     var rs1: ResultSet = null
@@ -127,7 +131,7 @@ class WithTests
     assertSame(mock_rs, rs1)
     assertTrue("Failed to catch exception.", caughtExceptionOpt.isDefined)
     assertSame("Failed to catch expected exception.",
-               e1, caughtExceptionOpt.get)
+      e1, caughtExceptionOpt.get)
     context.assertIsSatisfied()
   }
 }

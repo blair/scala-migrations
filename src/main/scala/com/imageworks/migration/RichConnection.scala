@@ -32,14 +32,13 @@
  */
 package com.imageworks.migration
 
-import java.sql.{Connection,
-                 PreparedStatement}
+import java.sql.{
+  Connection,
+  PreparedStatement
+}
 
-object RichConnection
-{
-  implicit
-  def connectionToRichConnection(c: Connection): RichConnection =
-  {
+object RichConnection {
+  implicit def connectionToRichConnection(c: Connection): RichConnection = {
     new RichConnection(c)
   }
 }
@@ -48,11 +47,8 @@ object RichConnection
  * A rich Connection class that provides a withPreparedStatement()
  * method.
  */
-class RichConnection(self: Connection)
-{
-  def withPreparedStatement[T](sql: String)
-                              (f: PreparedStatement => T): T =
-  {
+class RichConnection(self: Connection) {
+  def withPreparedStatement[T](sql: String)(f: PreparedStatement => T): T = {
     With.autoClosingStatement(self.prepareStatement(sql))(f)
   }
 }

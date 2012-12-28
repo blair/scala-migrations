@@ -40,8 +40,7 @@ package com.imageworks.migration
  * http://dev.mysql.com/doc/refman/5.5/en/charset-charsets.html for
  * more information.
  */
-trait MysqlAppendCharacterSetToColumnDefinitionMixin
-{
+trait MysqlAppendCharacterSetToColumnDefinitionMixin {
   /**
    * If a character set is specified, then append MySQL specific SQL
    * to the column definition.
@@ -54,10 +53,8 @@ trait MysqlAppendCharacterSetToColumnDefinitionMixin
    * @param data_type_sql the SQL for the data type
    * @param character_set_opt an optional character set
    */
-  protected
-  def sql(data_type_sql: String,
-          character_set_opt: Option[CharacterSet]): String =
-  {
+  protected def sql(data_type_sql: String,
+                    character_set_opt: Option[CharacterSet]): String = {
     character_set_opt match {
       case Some(charset) => {
         val sb = new java.lang.StringBuilder(64)
@@ -87,12 +84,9 @@ trait MysqlAppendCharacterSetToColumnDefinitionMixin
 }
 
 trait MysqlAutoIncrementingColumnDefinitionMixin
-  extends ColumnDefinition
-  with ColumnSupportsAutoIncrement
-{
-  override protected abstract
-  def sql: String =
-  {
+    extends ColumnDefinition
+    with ColumnSupportsAutoIncrement {
+  override protected abstract def sql: String = {
     if (isAutoIncrement) super.sql + " AUTO_INCREMENT"
     else super.sql
   }
@@ -122,18 +116,14 @@ class MysqlBigintColumnDefinition
  * bytes, LONGBLOB is used.
  */
 class MysqlBlobColumnDefinition
-  extends DefaultBlobColumnDefinition
-{
-  override
-  val sql = "LONGBLOB"
+    extends DefaultBlobColumnDefinition {
+  override val sql = "LONGBLOB"
 }
 
 class MysqlCharColumnDefinition(character_set_opt: Option[CharacterSet])
-  extends DefaultCharColumnDefinition
-  with MysqlAppendCharacterSetToColumnDefinitionMixin
-{
-  override protected
-  def sql: String = sql(super.sql, character_set_opt)
+    extends DefaultCharColumnDefinition
+    with MysqlAppendCharacterSetToColumnDefinitionMixin {
+  override protected def sql: String = sql(super.sql, character_set_opt)
 }
 
 class MysqlIntegerColumnDefinition
@@ -146,30 +136,23 @@ class MysqlSmallintColumnDefinition
 
 // MySQL does not support size specifiers for the TIMESTAMP data type.
 class MysqlTimestampColumnDefinition
-  extends ColumnDefinition
-  with ColumnSupportsDefault
-{
-  override
-  val sql = "TIMESTAMP"
+    extends ColumnDefinition
+    with ColumnSupportsDefault {
+  override val sql = "TIMESTAMP"
 }
 
 class MysqlVarcharColumnDefinition(character_set_opt: Option[CharacterSet])
-  extends DefaultVarcharColumnDefinition
-  with MysqlAppendCharacterSetToColumnDefinitionMixin
-{
-  override protected
-  def sql: String = sql(super.sql, character_set_opt)
+    extends DefaultVarcharColumnDefinition
+    with MysqlAppendCharacterSetToColumnDefinitionMixin {
+  override protected def sql: String = sql(super.sql, character_set_opt)
 }
 
 class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
-  extends DatabaseAdapter(schemaNameOpt)
-{
-  override
-  val vendor = Mysql
+    extends DatabaseAdapter(schemaNameOpt) {
+  override val vendor = Mysql
 
   // https://dev.mysql.com/doc/refman/5.5/en/identifiers.html
-  override
-  val quoteCharacter = '`'
+  override val quoteCharacter = '`'
 
   // mysql> create table PaReNt (pk INT PRIMARY KEY);
   // Query OK, 0 rows affected (0.14 sec)
@@ -188,15 +171,12 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
   // ERROR 1146 (42S02): Table 'test.PARENT' doesn't exist
   // mysql> select * from PaReNt;
   // Empty set (0.00 sec)
-  override
-  val unquotedNameConverter = CasePreservingUnquotedNameConverter
+  override val unquotedNameConverter = CasePreservingUnquotedNameConverter
 
-  override
-  val userFactory = MysqlUserFactory
+  override val userFactory = MysqlUserFactory
 
   // https://dev.mysql.com/doc/refman/5.5/en/alter-table.html
-  override
-  val alterTableDropForeignKeyConstraintPhrase = "FOREIGN KEY"
+  override val alterTableDropForeignKeyConstraintPhrase = "FOREIGN KEY"
 
   // mysql> CREATE TABLE parent (pk INT PRIMARY KEY);
   // Query OK, 0 rows affected (0.13 sec)
@@ -223,18 +203,13 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
   //
   // mysql> CREATE INDEX idx_child_pk_parent ON child (pk_parent);
   // ERROR 1280 (42000): Incorrect index name 'idx_child_pk_parent'
-  override
-  val addingForeignKeyConstraintCreatesIndex = true
+  override val addingForeignKeyConstraintCreatesIndex = true
 
   // https://dev.mysql.com/doc/refman/5.5/en/alter-table.html
-  override
-  val supportsCheckConstraints = false
+  override val supportsCheckConstraints = false
 
-  override
-  def columnDefinitionFactory
-    (column_type: SqlType,
-     character_set_opt: Option[CharacterSet]): ColumnDefinition =
-  {
+  override def columnDefinitionFactory(column_type: SqlType,
+                                       character_set_opt: Option[CharacterSet]): ColumnDefinition = {
     column_type match {
       case BigintType =>
         new MysqlBigintColumnDefinition
@@ -259,10 +234,8 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
     }
   }
 
-  override
-  def lockTableSql(schema_name_opt: Option[String],
-                   table_name: String): String =
-  {
+  override def lockTableSql(schema_name_opt: Option[String],
+                            table_name: String): String = {
     val sb = new java.lang.StringBuilder(64)
     sb.append("LOCK TABLES ")
       .append(quoteTableName(schema_name_opt, table_name))
@@ -270,10 +243,8 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
       .toString
   }
 
-  override protected
-  def alterColumnSql(schema_name_opt: Option[String],
-                     column_definition: ColumnDefinition): String =
-  {
+  override protected def alterColumnSql(schema_name_opt: Option[String],
+                                        column_definition: ColumnDefinition): String = {
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
       .append(quoteTableName(schema_name_opt, column_definition.getTableName))
@@ -283,11 +254,9 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
       .toString
   }
 
-  override
-  def removeIndexSql(schema_name_opt: Option[String],
-                     table_name: String,
-                     index_name: String): String =
-  {
+  override def removeIndexSql(schema_name_opt: Option[String],
+                              table_name: String,
+                              index_name: String): String = {
     new java.lang.StringBuilder(128)
       .append("ALTER TABLE ")
       .append(quoteTableName(schema_name_opt, table_name))

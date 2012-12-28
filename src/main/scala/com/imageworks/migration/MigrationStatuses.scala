@@ -46,7 +46,6 @@ package com.imageworks.migration
  *        migration version numbers that are currently installed in
  *        the database but do not have a matching a Migration subclass
  */
-case class MigrationStatuses
-  (not_installed: scala.collection.SortedMap[Long,Class[_ <: Migration]],
-   installed_with_available_implementation: scala.collection.SortedMap[Long,Class[_ <: Migration]],
-   installed_without_available_implementation: scala.collection.SortedSet[Long])
+case class MigrationStatuses(not_installed: scala.collection.SortedMap[Long, Class[_ <: Migration]],
+                             installed_with_available_implementation: scala.collection.SortedMap[Long, Class[_ <: Migration]],
+                             installed_without_available_implementation: scala.collection.SortedSet[Long])

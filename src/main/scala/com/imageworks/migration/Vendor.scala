@@ -47,8 +47,7 @@ case object Oracle
 case object Postgresql
   extends Vendor
 
-object Vendor
-{
+object Vendor {
   /**
    * Return the database vendor for the given database driver class
    * name.
@@ -59,8 +58,7 @@ object Vendor
    * @throws IllegalArgumentException if the argument is null,
    *         scala.MatchError if an appropriate vendor cannot be found
    */
-  def forDriver(driver_class_name: String): Vendor =
-  {
+  def forDriver(driver_class_name: String): Vendor = {
     driver_class_name match {
       case "com.mysql.jdbc.Driver" =>
         Mysql
@@ -82,14 +80,14 @@ object Vendor
 
       case null =>
         throw new IllegalArgumentException("Must pass a non-null JDBC " +
-                                           "driver class name to this " +
-                                           "function.")
+          "driver class name to this " +
+          "function.")
 
       case _ =>
         throw new scala.MatchError("No vendor can be found for the JDBC " +
-                                   "driver class '" +
-                                   driver_class_name +
-                                   "'.'")
+          "driver class '" +
+          driver_class_name +
+          "'.'")
     }
   }
 
@@ -101,8 +99,7 @@ object Vendor
    * @throws IllegalArgumentException if the argument is null,
    *         scala.MatchError if an appropriate vendor cannot be found
    */
-  def forDriver(driver_class: Class[_]): Vendor =
-  {
+  def forDriver(driver_class: Class[_]): Vendor = {
     if (driver_class eq null) {
       val message = "Must pass a non-null JDBC driver class to this function."
       throw new IllegalArgumentException(message)

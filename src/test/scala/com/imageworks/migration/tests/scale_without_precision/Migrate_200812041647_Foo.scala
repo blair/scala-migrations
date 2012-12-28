@@ -32,17 +32,18 @@
  */
 package com.imageworks.migration.tests.scale_without_precision
 
-import com.imageworks.migration.{Migration,
-                                 Scale}
+import com.imageworks.migration.{
+  Migration,
+  Scale
+}
 
 class Migrate_200812041647_Foo
-  extends Migration
-{
+    extends Migration {
   def up() {
     createTable("foo") { t =>
       t.decimal("bar", Scale(3))
     }
   }
 
-  def down() { }
+  def down() {}
 }

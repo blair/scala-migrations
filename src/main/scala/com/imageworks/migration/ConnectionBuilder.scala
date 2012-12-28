@@ -32,17 +32,18 @@
  */
 package com.imageworks.migration
 
-import java.sql.{Connection,
-                 DriverManager}
+import java.sql.{
+  Connection,
+  DriverManager
+}
 import javax.sql.DataSource
 
 /**
  * Adapter class for getting a Connection from either the
  * DriverManager or a DataSource.
  */
-class ConnectionBuilder private (either: Either[DataSource,String],
-                                 login_opt: Option[(String,String)])
-{
+class ConnectionBuilder private (either: Either[DataSource, String],
+                                 login_opt: Option[(String, String)]) {
   /**
    * Construct a connection builder for a database that does not need
    * a username and password.
@@ -94,9 +95,7 @@ class ConnectionBuilder private (either: Either[DataSource,String],
     this(Left(datasource), Some((username, password)))
   }
 
-  def withConnection[R](commit_behavior: CommitBehavior)
-                       (f: Function[Connection,R]): R =
-  {
+  def withConnection[R](commit_behavior: CommitBehavior)(f: Function[Connection, R]): R = {
     val connection =
       (either, login_opt) match {
         case (Left(datasource), Some((username, password))) =>

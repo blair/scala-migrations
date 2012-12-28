@@ -32,55 +32,58 @@
  */
 package com.imageworks.migration.tests
 
-import com.imageworks.migration.{Derby,
-                                 Mysql,
-                                 Oracle,
-                                 Postgresql,
-                                 Vendor}
+import com.imageworks.migration.{
+  Derby,
+  Mysql,
+  Oracle,
+  Postgresql,
+  Vendor
+}
 
 import org.junit.Assert._
-import org.junit.{Before,
-                  Test}
+import org.junit.{
+  Before,
+  Test
+}
 
-class VendorTests
-{
+class VendorTests {
   @Test
   def forDriver {
     assertSame(Derby,
-               Vendor.forDriver("org.apache.derby.jdbc.EmbeddedDriver"))
+      Vendor.forDriver("org.apache.derby.jdbc.EmbeddedDriver"))
 
     assertSame(Derby,
-               Vendor.forDriver(classOf[org.apache.derby.jdbc.EmbeddedDriver]))
+      Vendor.forDriver(classOf[org.apache.derby.jdbc.EmbeddedDriver]))
 
     assertSame(Derby,
-               Vendor.forDriver("org.apache.derby.jdbc.ClientDriver"))
+      Vendor.forDriver("org.apache.derby.jdbc.ClientDriver"))
 
     assertSame(Mysql,
-               Vendor.forDriver("com.mysql.jdbc.Driver"))
+      Vendor.forDriver("com.mysql.jdbc.Driver"))
 
     assertSame(Oracle,
-               Vendor.forDriver("oracle.jdbc.OracleDriver"))
+      Vendor.forDriver("oracle.jdbc.OracleDriver"))
 
     assertSame(Postgresql,
-               Vendor.forDriver("org.postgresql.Driver"))
+      Vendor.forDriver("org.postgresql.Driver"))
   }
 
-  @Test(expected=classOf[scala.MatchError])
+  @Test(expected = classOf[scala.MatchError])
   def for_non_existent_driver {
     Vendor.forDriver("no.such.driver")
   }
 
-  @Test(expected=classOf[scala.MatchError])
+  @Test(expected = classOf[scala.MatchError])
   def for_non_driver_class {
     Vendor.forDriver(classOf[String])
   }
 
-  @Test(expected=classOf[IllegalArgumentException])
+  @Test(expected = classOf[IllegalArgumentException])
   def for_null_existent_driver_class {
     Vendor.forDriver(null: Class[_])
   }
 
-  @Test(expected=classOf[IllegalArgumentException])
+  @Test(expected = classOf[IllegalArgumentException])
   def for_null_existent_driver_class_name {
     Vendor.forDriver(null: String)
   }

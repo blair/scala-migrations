@@ -42,8 +42,7 @@ class TableColumnDefinition(val tableName: String,
  * A container class for storing the table and column names a foreign
  * key reference is on.
  */
-class On(definition: TableColumnDefinition)
-{
+class On(definition: TableColumnDefinition) {
   val tableName = definition.tableName
   val columnNames = definition.columnNames
 }
@@ -52,8 +51,7 @@ class On(definition: TableColumnDefinition)
  * A container class for storing the table and column names a foreign
  * key reference references.
  */
-class References(definition: TableColumnDefinition)
-{
+class References(definition: TableColumnDefinition) {
   val tableName = definition.tableName
   val columnNames = definition.columnNames
 }

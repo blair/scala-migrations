@@ -36,8 +36,7 @@ import com.imageworks.migration.tests.TestDatabase
 import com.imageworks.migration.Migration
 
 class Migrate_20121013072344_EmptyPrivilegeList
-  extends Migration
-{
+    extends Migration {
   val tableName = "scala_migrations_location"
 
   def up() {

@@ -35,8 +35,7 @@ package com.imageworks.migration
 /**
  * The base trait for all foreign key actions upon delete or update.
  */
-sealed trait ForeignKeyConstraintAction
-{
+sealed trait ForeignKeyConstraintAction {
   val sql: String
 }
 
@@ -46,10 +45,8 @@ sealed trait ForeignKeyConstraintAction
  * in the referenced row if it was updated.
  */
 case object Cascade
-  extends ForeignKeyConstraintAction
-{
-  override
-  val sql = "CASCADE"
+    extends ForeignKeyConstraintAction {
+  override val sql = "CASCADE"
 }
 
 /**
@@ -58,10 +55,8 @@ case object Cascade
  * implies a deferred check, after all deletes have been performed.
  */
 case object NoAction
-  extends ForeignKeyConstraintAction
-{
-  override
-  val sql = "NO ACTION"
+    extends ForeignKeyConstraintAction {
+  override val sql = "NO ACTION"
 }
 
 /**
@@ -70,10 +65,8 @@ case object NoAction
  * except that any checks are not deferred.
  */
 case object Restrict
-  extends ForeignKeyConstraintAction
-{
-  override
-  val sql = "RESTRICT"
+    extends ForeignKeyConstraintAction {
+  override val sql = "RESTRICT"
 }
 
 /**
@@ -82,10 +75,8 @@ case object Restrict
  * support SET DEFAULT for ON UPDATE.
  */
 case object SetDefault
-  extends ForeignKeyConstraintAction
-{
-  override
-  val sql = "SET DEFAULT"
+    extends ForeignKeyConstraintAction {
+  override val sql = "SET DEFAULT"
 }
 
 /**
@@ -94,8 +85,6 @@ case object SetDefault
  * for ON UPDATE.
  */
 case object SetNull
-  extends ForeignKeyConstraintAction
-{
-  override
-  val sql = "SET NULL"
+    extends ForeignKeyConstraintAction {
+  override val sql = "SET NULL"
 }
