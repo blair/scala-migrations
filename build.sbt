@@ -1,3 +1,5 @@
+import scalariform.formatter.preferences._
+
 name := "scala-migrations"
 
 description := "Database migrations written in Scala."
@@ -42,6 +44,13 @@ libraryDependencies ++= Seq(
 parallelExecution in Test := false
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-v")
+
+scalariformSettings
+
+ScalariformKeys.preferences := FormattingPreferences().
+  setPreference(AlignParameters, true).
+  setPreference(CompactControlReadability, true).
+  setPreference(DoubleIndentClassDeclaration, true)
 
 publishMavenStyle := true
 
