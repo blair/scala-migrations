@@ -419,8 +419,7 @@ class Migrator(connection_builder: ConnectionBuilder,
    *        to handle database specific features
    */
   def this(jdbc_url: String,
-           adapter: DatabaseAdapter) =
-  {
+           adapter: DatabaseAdapter) {
     this(new ConnectionBuilder(jdbc_url), adapter)
   }
 
@@ -437,8 +436,7 @@ class Migrator(connection_builder: ConnectionBuilder,
   def this(jdbc_url: String,
            jdbc_username: String,
            jdbc_password: String,
-           adapter: DatabaseAdapter) =
-  {
+           adapter: DatabaseAdapter) {
     this(new ConnectionBuilder(jdbc_url, jdbc_username, jdbc_password),
          adapter)
   }
@@ -451,8 +449,7 @@ class Migrator(connection_builder: ConnectionBuilder,
    *        to handle database specific features
    */
   def this(jdbc_datasource: DataSource,
-           adapter: DatabaseAdapter) =
-  {
+           adapter: DatabaseAdapter) {
     this(new ConnectionBuilder(jdbc_datasource), adapter)
   }
 
@@ -470,8 +467,7 @@ class Migrator(connection_builder: ConnectionBuilder,
   def this(jdbc_datasource: DataSource,
            jdbc_username: String,
            jdbc_password: String,
-           adapter: DatabaseAdapter) =
-  {
+           adapter: DatabaseAdapter) {
     this(new ConnectionBuilder(jdbc_datasource, jdbc_username, jdbc_password),
          adapter)
   }

@@ -49,8 +49,7 @@ class ConnectionBuilder private (either: Either[DataSource,String],
    *
    * @param url the JDBC URL to connect to the database
    */
-  def this(url: String) =
-  {
+  def this(url: String) {
     this(Right(url), None)
   }
 
@@ -65,8 +64,7 @@ class ConnectionBuilder private (either: Either[DataSource,String],
    */
   def this(url: String,
            username: String,
-           password: String) =
-  {
+           password: String) {
     this(Right(url), Some((username, password)))
   }
 
@@ -77,8 +75,7 @@ class ConnectionBuilder private (either: Either[DataSource,String],
    * @param datasource the JDBC DataSource to connect to the
    *        database
    */
-  def this(datasource: DataSource) =
-  {
+  def this(datasource: DataSource) {
     this(Left(datasource), None)
   }
 
@@ -93,8 +90,7 @@ class ConnectionBuilder private (either: Either[DataSource,String],
    */
   def this(datasource: DataSource,
            username: String,
-           password: String) =
-  {
+           password: String) {
     this(Left(datasource), Some((username, password)))
   }
 

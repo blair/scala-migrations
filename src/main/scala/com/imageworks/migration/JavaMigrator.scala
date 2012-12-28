@@ -49,8 +49,7 @@ class JavaMigrator private (migrator: Migrator)
    *        to handle database specific features
    */
   def this(connection_builder: ConnectionBuilder,
-           adapter: DatabaseAdapter) =
-  {
+           adapter: DatabaseAdapter) {
     this(new Migrator(connection_builder, adapter))
   }
 
@@ -62,8 +61,7 @@ class JavaMigrator private (migrator: Migrator)
    *        to handle database specific features
    */
   def this(jdbc_url: String,
-           adapter: DatabaseAdapter) =
-  {
+           adapter: DatabaseAdapter) {
     this(new ConnectionBuilder(jdbc_url), adapter)
   }
 
@@ -80,8 +78,7 @@ class JavaMigrator private (migrator: Migrator)
   def this(jdbc_url: String,
            jdbc_username: String,
            jdbc_password: String,
-           adapter: DatabaseAdapter) =
-  {
+           adapter: DatabaseAdapter) {
     this(new ConnectionBuilder(jdbc_url, jdbc_username, jdbc_password),
          adapter)
   }
