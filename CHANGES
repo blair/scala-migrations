@@ -80,6 +80,20 @@ Version 1.1.0 - December 28th, 2012
     - Default values on the BLOB and VARBINARY data types are now
       reflected in the generated SQL passed to PostgreSQL.
 
+  * To support PostgreSQL's ability to grant and revoke privileges on
+    schemas and its USAGE privilege, the following was done:
+
+    - Add a new sealed base Privilege trait that is the super-trait to
+      all privileges.
+    - Add a new sealed SchemaPrivilege trait that extends Privilege.
+    - Add a new UsagePrivilege case object that extends SchemaPrivilege.
+    - The existing GrantPrivilegeType trait now also extends Privilege.
+    - The existing AllPrivileges case object now also extends SchemaPrivilege.
+    - Migration adds #grantSchemaPrivilege() and #revokeSchemaPrivilege()
+      to add or remove privileges from a schema.
+
+    Patches by alan{dot}lamielle{at}gmail{dot}com.
+
   * The With.*() methods properly handle the closure argument and/or
     close() throwing exceptions; functionality inspired by Java 7's
     try-with-resources where an exception thrown by closer is not
