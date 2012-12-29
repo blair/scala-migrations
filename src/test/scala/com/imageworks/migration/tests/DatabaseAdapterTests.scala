@@ -64,7 +64,7 @@ class DatabaseAdapterTests {
   }
 
   @Test(expected = classOf[IllegalArgumentException])
-  def for_null_existent_driver_class {
+  def for_null_driver_class_throws {
     DatabaseAdapter.forVendor(null, None)
   }
 

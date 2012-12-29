@@ -90,14 +90,14 @@ class MigrationTests {
   }
 
   @Test(expected = classOf[DuplicateMigrationDescriptionException])
-  def duplicate_descriptions_throw_exception {
+  def duplicate_descriptions_throws {
     migrator.migrate(InstallAllMigrations,
       "com.imageworks.migration.tests.duplicate_descriptions",
       false)
   }
 
   @Test(expected = classOf[DuplicateMigrationVersionException])
-  def duplicate_versions_throw_exception {
+  def duplicate_versions_throws {
     migrator.migrate(InstallAllMigrations,
       "com.imageworks.migration.tests.duplicate_versions",
       false)
@@ -111,7 +111,7 @@ class MigrationTests {
   }
 
   @Test(expected = classOf[IllegalArgumentException])
-  def scale_without_precision {
+  def scale_without_precision_throws {
     migrator.migrate(InstallAllMigrations,
       "com.imageworks.migration.tests.scale_without_precision",
       false)
@@ -229,7 +229,7 @@ class MigrationTests {
   }
 
   @Test
-  def get_migration_statuses_does_not_create_schema_migrations {
+  def get_migration_statuses_does_not_create_schema_migrations_table {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -263,7 +263,7 @@ class MigrationTests {
   }
 
   @Test
-  def why_not_migrated_does_not_create_schema_migrations {
+  def why_not_migrated_does_not_create_schema_migrations_table {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 

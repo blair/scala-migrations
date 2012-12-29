@@ -69,22 +69,22 @@ class VendorTests {
   }
 
   @Test(expected = classOf[scala.MatchError])
-  def for_non_existent_driver {
+  def for_non_existent_driver_throws {
     Vendor.forDriver("no.such.driver")
   }
 
   @Test(expected = classOf[scala.MatchError])
-  def for_non_driver_class {
+  def for_non_driver_class_throws {
     Vendor.forDriver(classOf[String])
   }
 
   @Test(expected = classOf[IllegalArgumentException])
-  def for_null_existent_driver_class {
+  def for_null_driver_class_throws {
     Vendor.forDriver(null: Class[_])
   }
 
   @Test(expected = classOf[IllegalArgumentException])
-  def for_null_existent_driver_class_name {
+  def for_null_driver_class_name_throws {
     Vendor.forDriver(null: String)
   }
 }

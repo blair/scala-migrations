@@ -73,13 +73,13 @@ class JavaMigratorTests {
   }
 
   @Test(expected = classOf[DuplicateMigrationDescriptionException])
-  def duplicate_descriptions_throw_exception {
+  def duplicate_descriptions_throws {
     java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_descriptions",
       false)
   }
 
   @Test(expected = classOf[DuplicateMigrationVersionException])
-  def duplicate_versions_throw_exception {
+  def duplicate_versions_throws {
     java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_versions",
       false)
   }
