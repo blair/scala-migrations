@@ -154,8 +154,7 @@ object Migrator {
           if (name.endsWith(".class")) {
             val className = pn +
               '.' +
-              name.substring(0,
-                name.length - ".class".length)
+              name.substring(0, name.length - ".class".length)
             classNames += className
           }
         }
