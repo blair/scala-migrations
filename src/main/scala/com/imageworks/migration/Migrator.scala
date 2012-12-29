@@ -710,19 +710,18 @@ class Migrator(connectionBuilder: ConnectionBuilder,
         logger.info("No migrations found, nothing to do.")
       }
 
-      case class InstallRemove(installVersions: Array[Long],
-                               removeVersions: Array[Long])
+      case class InstallAndRemove(installVersions: Array[Long],
+                                  removeVersions: Array[Long])
 
       // From the operation, determine the migrations to install and
       // the ones to uninstall.
       val installRemove =
         operation match {
           case InstallAllMigrations => {
-            new InstallRemove(availableVersions, new Array[Long](0))
+            new InstallAndRemove(availableVersions, new Array[Long](0))
           }
           case RemoveAllMigrations => {
-            new InstallRemove(new Array[Long](0),
-              installedVersions.reverse)
+            new InstallAndRemove(new Array[Long](0), installedVersions.reverse)
           }
           case MigrateToVersion(version) => {
             val index = availableVersions.indexWhere(_ == version)
@@ -732,7 +731,7 @@ class Migrator(connectionBuilder: ConnectionBuilder,
                 " does not exist as a migration."
               throw new RuntimeException(message)
             }
-            new InstallRemove(availableVersions.take(index + 1).toArray,
+            new InstallAndRemove(availableVersions.take(index + 1).toArray,
               installedVersions.filter(_ > version).reverse)
           }
           case RollbackMigration(count) => {
@@ -744,7 +743,7 @@ class Migrator(connectionBuilder: ConnectionBuilder,
                 " installed in it."
               throw new RuntimeException(message)
             }
-            new InstallRemove(new Array[Long](0),
+            new InstallAndRemove(new Array[Long](0),
               installedVersions.reverse.take(count))
           }
         }
