@@ -369,10 +369,8 @@ object PrivilegeWithColumns {
    */
   def unapply(a: Any): Option[Seq[String]] = {
     a match {
-      case p: PrivilegeWithColumns =>
-        Some(p.columns)
-      case _ =>
-        None
+      case p: PrivilegeWithColumns => Some(p.columns)
+      case _ => None
     }
   }
 }

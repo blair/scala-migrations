@@ -486,20 +486,15 @@ abstract class AbstractDecimalColumnDefinition
 
   override protected def sql: String = {
     (precision, scale) match {
-      case (None, None) => {
+      case (None, None) =>
         decimalSqlName
-      }
-      case (Some(p), None) => {
+      case (Some(p), None) =>
         decimalSqlName + "(" + p + ")"
-      }
-      case (Some(p), Some(s)) => {
+      case (Some(p), Some(s)) =>
         decimalSqlName + "(" + p + ", " + s + ")"
-      }
-      case (None, Some(_)) => {
-        val message = "Cannot specify a scale without also specifying a " +
-          "precision."
-        throw new IllegalArgumentException(message)
-      }
+      case (None, Some(_)) =>
+        throw new IllegalArgumentException("Cannot specify a scale without " +
+          "also specifying a precision.")
     }
   }
 }
