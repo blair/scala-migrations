@@ -238,7 +238,7 @@ class MigrationTests {
   }
 
   @Test
-  def getMigrationStatusesDoesNotCreateSchemaMigrationsTable() {
+  def methodGetMigrationStatusesDoesNotCreateSchemaMigrationsTable() {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 
