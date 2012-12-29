@@ -65,8 +65,7 @@ class OracleBigintColumnDefinition
 class OracleCharColumnDefinition(useNcharType: Boolean)
     extends DefaultCharColumnDefinition {
   override protected def sql = {
-    optionallyAddLimitToDataType(if (useNcharType) "NCHAR"
-    else "CHAR")
+    optionallyAddLimitToDataType(if (useNcharType) "NCHAR" else "CHAR")
   }
 }
 
@@ -148,8 +147,7 @@ class OracleVarbinaryColumnDefinition
 class OracleVarcharColumnDefinition(useNcharType: Boolean)
     extends DefaultVarcharColumnDefinition {
   override protected def sql = {
-    optionallyAddLimitToDataType(if (useNcharType) "NVARCHAR2"
-    else "VARCHAR2")
+    optionallyAddLimitToDataType(if (useNcharType) "NVARCHAR2" else "VARCHAR2")
   }
 }
 
