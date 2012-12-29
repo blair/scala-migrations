@@ -59,6 +59,25 @@ object JavaDatabaseAdapter {
   }
 
   /**
+   * Create a MySQL Database Adapter.
+   *
+   * @return newly constructed MysqlDatabaseAdapter
+   */
+  def getMysqlDatabaseAdapter: MysqlDatabaseAdapter = {
+    new MysqlDatabaseAdapter(None)
+  }
+
+  /**
+   * Create a MySQL Database Adapter.
+   *
+   * @param schema_name the default schema name in the adapter
+   * @return newly constructed MysqlDatabaseAdapter
+   */
+  def getMysqlDatabaseAdapter(schema_name: String): MysqlDatabaseAdapter = {
+    new MysqlDatabaseAdapter(Some(schema_name))
+  }
+
+  /**
    * Create an Oracle Database Adapter.
    *
    * @return newly constructed OracleDatabaseAdapter
