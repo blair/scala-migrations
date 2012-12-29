@@ -52,7 +52,7 @@ sealed abstract class User {
  * A user consisting only of a user name.  Uses double quotation marks
  * to quote the user name.
  *
- * @param name the user name
+ * @param userName the user name
  */
 class PlainUser(userName: String)
     extends User {

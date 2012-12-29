@@ -71,7 +71,7 @@ class TableDefinition(adapter: DatabaseAdapter,
    *
    * @param name the column's name
    * @param columnType the type of column being added
-   * @param a possibly empty array of column options to customize the
+   * @param options a possibly empty array of column options to customize the
    *        column
    * @return the same instance
    */
@@ -92,7 +92,7 @@ class TableDefinition(adapter: DatabaseAdapter,
    * different than the name of the columnType argument.
    *
    * @param name the column's name
-   * @param a possibly empty array of column options to customize the
+   * @param options a possibly empty array of column options to customize the
    *        column
    * @return the same instance
    */
@@ -107,7 +107,7 @@ class TableDefinition(adapter: DatabaseAdapter,
    * different than the name of the columnType argument.
    *
    * @param name the column's name
-   * @param a possibly empty array of column options to customize the
+   * @param options a possibly empty array of column options to customize the
    *        column
    * @return the same instance
    */
@@ -122,7 +122,7 @@ class TableDefinition(adapter: DatabaseAdapter,
    * different than the name of the columnType argument.
    *
    * @param name the column's name
-   * @param a possibly empty array of column options to customize the
+   * @param options a possibly empty array of column options to customize the
    *        column
    * @return the same instance
    */
@@ -137,7 +137,7 @@ class TableDefinition(adapter: DatabaseAdapter,
    * different than the name of the columnType argument.
    *
    * @param name the column's name
-   * @param a possibly empty array of column options to customize the
+   * @param options a possibly empty array of column options to customize the
    *        column
    * @return the same instance
    */
@@ -152,7 +152,7 @@ class TableDefinition(adapter: DatabaseAdapter,
    * different than the name of the columnType argument.
    *
    * @param name the column's name
-   * @param a possibly empty array of column options to customize the
+   * @param options a possibly empty array of column options to customize the
    *        column
    * @return the same instance
    */
@@ -167,7 +167,7 @@ class TableDefinition(adapter: DatabaseAdapter,
    * different than the name of the columnType argument.
    *
    * @param name the column's name
-   * @param a possibly empty array of column options to customize the
+   * @param options a possibly empty array of column options to customize the
    *        column
    * @return the same instance
    */
@@ -182,7 +182,7 @@ class TableDefinition(adapter: DatabaseAdapter,
    * may be different than the name of the columnType argument.
    *
    * @param name the column's name
-   * @param a possibly empty array of column options to customize the
+   * @param options a possibly empty array of column options to customize the
    *        column
    * @return the same instance
    */
@@ -197,7 +197,7 @@ class TableDefinition(adapter: DatabaseAdapter,
    * may be different than the name of the columnType argument.
    *
    * @param name the column's name
-   * @param a possibly empty array of column options to customize the
+   * @param options a possibly empty array of column options to customize the
    *        column
    * @return the same instance
    */
@@ -212,7 +212,7 @@ class TableDefinition(adapter: DatabaseAdapter,
    * may be different than the name of the columnType argument.
    *
    * @param name the column's name
-   * @param a possibly empty array of column options to customize the
+   * @param options a possibly empty array of column options to customize the
    *        column
    * @return the same instance
    */
@@ -227,7 +227,7 @@ class TableDefinition(adapter: DatabaseAdapter,
    * different than the name of the columnType argument.
    *
    * @param name the column's name
-   * @param a possibly empty array of column options to customize the
+   * @param options a possibly empty array of column options to customize the
    *        column
    * @return the same instance
    */
