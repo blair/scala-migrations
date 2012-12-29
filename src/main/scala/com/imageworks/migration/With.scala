@@ -138,8 +138,8 @@ object With {
    */
   def autoRestoringConnection[C <: Connection, R](connection: C,
                                                   mode: Boolean)(f: C => R): R = {
-    val current_mode = connection.getAutoCommit
-    With.resource(connection, "restoring connection auto-commit")(_.setAutoCommit(current_mode)) { c =>
+    val currentMode = connection.getAutoCommit
+    With.resource(connection, "restoring connection auto-commit")(_.setAutoCommit(currentMode)) { c =>
       c.setAutoCommit(mode)
       f(c)
     }
@@ -153,7 +153,7 @@ object With {
    * The connection's auto-commit mode will be set and restored.
    *
    * @param connection a SQL connection
-   * @param commit_behavior the operation to implement on the
+   * @param commitBehavior the operation to implement on the
    *        connection after f returns normally or via throwing an
    *        exception
    * @param f a Function1[C <: Connection,R] that operates on the
@@ -161,16 +161,16 @@ object With {
    * @return the result of f
    */
   def autoCommittingConnection[C <: Connection, R](connection: C,
-                                                   commit_behavior: CommitBehavior)(f: C => R): R = {
-    val new_auto_commit =
-      commit_behavior match {
+                                                   commitBehavior: CommitBehavior)(f: C => R): R = {
+    val newCommitBehavior =
+      commitBehavior match {
         case AutoCommit => true
         case CommitUponReturnOrException => false
         case CommitUponReturnOrRollbackUponException => false
       }
 
-    With.autoRestoringConnection(connection, new_auto_commit) { c =>
-      commit_behavior match {
+    With.autoRestoringConnection(connection, newCommitBehavior) { c =>
+      commitBehavior match {
         case AutoCommit => {
           f(connection)
         }

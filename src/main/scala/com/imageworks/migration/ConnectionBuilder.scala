@@ -43,7 +43,7 @@ import javax.sql.DataSource
  * DriverManager or a DataSource.
  */
 class ConnectionBuilder private (either: Either[DataSource, String],
-                                 login_opt: Option[(String, String)]) {
+                                 loginOpt: Option[(String, String)]) {
   /**
    * Construct a connection builder for a database that does not need
    * a username and password.
@@ -95,9 +95,9 @@ class ConnectionBuilder private (either: Either[DataSource, String],
     this(Left(datasource), Some((username, password)))
   }
 
-  def withConnection[R](commit_behavior: CommitBehavior)(f: Function[Connection, R]): R = {
+  def withConnection[R](commitBehavior: CommitBehavior)(f: Function[Connection, R]): R = {
     val connection =
-      (either, login_opt) match {
+      (either, loginOpt) match {
         case (Left(datasource), Some((username, password))) =>
           datasource.getConnection(username, password)
         case (Left(datasource), None) =>
@@ -109,7 +109,7 @@ class ConnectionBuilder private (either: Either[DataSource, String],
       }
 
     With.autoClosingConnection(connection) { c =>
-      With.autoCommittingConnection(c, commit_behavior)(f)
+      With.autoCommittingConnection(c, commitBehavior)(f)
     }
   }
 }

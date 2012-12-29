@@ -62,10 +62,10 @@ class OracleBigintColumnDefinition
   override protected def sql = "NUMBER(19, 0)"
 }
 
-class OracleCharColumnDefinition(use_nchar_type: Boolean)
+class OracleCharColumnDefinition(useNcharType: Boolean)
     extends DefaultCharColumnDefinition {
   override protected def sql = {
-    optionallyAddLimitToDataType(if (use_nchar_type) "NCHAR"
+    optionallyAddLimitToDataType(if (useNcharType) "NCHAR"
     else "CHAR")
   }
 }
@@ -145,10 +145,10 @@ class OracleVarbinaryColumnDefinition
   }
 }
 
-class OracleVarcharColumnDefinition(use_nchar_type: Boolean)
+class OracleVarcharColumnDefinition(useNcharType: Boolean)
     extends DefaultVarcharColumnDefinition {
   override protected def sql = {
-    optionallyAddLimitToDataType(if (use_nchar_type) "NVARCHAR2"
+    optionallyAddLimitToDataType(if (useNcharType) "NVARCHAR2"
     else "VARCHAR2")
   }
 }
@@ -169,10 +169,10 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
 
   override val supportsCheckConstraints = true
 
-  override def columnDefinitionFactory(column_type: SqlType,
-                                       character_set_opt: Option[CharacterSet]): ColumnDefinition = {
-    val use_nchar_type =
-      character_set_opt match {
+  override def columnDefinitionFactory(columnType: SqlType,
+                                       characterSetOpt: Option[CharacterSet]): ColumnDefinition = {
+    val useNcharType =
+      characterSetOpt match {
         case None => {
           false
         }
@@ -196,7 +196,7 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
         }
       }
 
-    column_type match {
+    columnType match {
       case BigintType =>
         new OracleBigintColumnDefinition
       case BlobType =>
@@ -207,7 +207,7 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
         throw new UnsupportedColumnTypeException(message)
       }
       case CharType =>
-        new OracleCharColumnDefinition(use_nchar_type)
+        new OracleCharColumnDefinition(useNcharType)
       case DecimalType =>
         new OracleDecimalColumnDefinition
       case IntegerType =>
@@ -219,37 +219,37 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
       case VarbinaryType =>
         new OracleVarbinaryColumnDefinition
       case VarcharType =>
-        new OracleVarcharColumnDefinition(use_nchar_type)
+        new OracleVarcharColumnDefinition(useNcharType)
     }
   }
 
-  override protected def alterColumnSql(schema_name_opt: Option[String],
-                                        column_definition: ColumnDefinition): String = {
+  override protected def alterColumnSql(schemaNameOpt: Option[String],
+                                        columnDefinition: ColumnDefinition): String = {
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
-      .append(quoteTableName(schema_name_opt, column_definition.getTableName))
+      .append(quoteTableName(schemaNameOpt, columnDefinition.getTableName))
       .append(" MODIFY (")
-      .append(quoteColumnName(column_definition.getColumnName))
+      .append(quoteColumnName(columnDefinition.getColumnName))
       .append(' ')
-      .append(column_definition.toSql)
+      .append(columnDefinition.toSql)
       .append(')')
       .toString
   }
 
-  override def removeColumnSql(schema_name_opt: Option[String],
-                               table_name: String,
-                               column_name: String): String = {
+  override def removeColumnSql(schemaNameOpt: Option[String],
+                               tableName: String,
+                               columnName: String): String = {
     // Oracle requires COLUMN keyword.
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
-      .append(quoteTableName(schema_name_opt, table_name))
+      .append(quoteTableName(schemaNameOpt, tableName))
       .append(" DROP COLUMN ")
-      .append(quoteColumnName(column_name))
+      .append(quoteColumnName(columnName))
       .toString
   }
 
-  override def grantOnTableSql(schema_name_opt: Option[String],
-                               table_name: String,
+  override def grantOnTableSql(schemaNameOpt: Option[String],
+                               tableName: String,
                                grantees: Array[User],
                                privileges: GrantPrivilegeType*): String = {
     // Check that no columns are defined for any SELECT privs
@@ -262,12 +262,11 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
       throw new IllegalArgumentException(message)
     }
 
-    super.grantOnTableSql(schema_name_opt, table_name, grantees,
-      privileges: _*)
+    super.grantOnTableSql(schemaNameOpt, tableName, grantees, privileges: _*)
   }
 
-  override def revokeOnTableSql(schema_name_opt: Option[String],
-                                table_name: String,
+  override def revokeOnTableSql(schemaNameOpt: Option[String],
+                                tableName: String,
                                 grantees: Array[User],
                                 privileges: GrantPrivilegeType*): String = {
     // Check that no columns are defined for any privs with columns
@@ -280,8 +279,7 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
       throw new IllegalArgumentException(message)
     }
 
-    super.revokeOnTableSql(schema_name_opt, table_name, grantees,
-      privileges: _*)
+    super.revokeOnTableSql(schemaNameOpt, tableName, grantees, privileges: _*)
   }
 
   /**
@@ -294,12 +292,12 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
    * options pass through, such as "ON DELETE NO ACTION", in case
    * Oracle ever does support that clause, which it does not in 10g.
    *
-   * @param on_delete_opt an Option[OnDelete]
+   * @param onDeleteOpt an Option[OnDelete]
    * @return the SQL text to append to the SQL to create a foreign key
    *         relationship
    */
-  override def onDeleteSql(on_delete_opt: Option[OnDelete]): String = {
-    on_delete_opt match {
+  override def onDeleteSql(onDeleteOpt: Option[OnDelete]): String = {
+    onDeleteOpt match {
       case Some(OnDelete(Restrict)) => ""
       case opt => super.onDeleteSql(opt)
     }

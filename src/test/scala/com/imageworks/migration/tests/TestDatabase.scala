@@ -90,20 +90,20 @@ object DerbyTestDatabase
     extends TestDatabase {
   // Username of the admin account, which will be the owner of the
   // database.
-  private val admin_username = "admin"
+  private val adminUsername = "admin"
 
-  override def getAdminAccountName = admin_username
+  override def getAdminAccountName = adminUsername
 
   // Password for the admin account.
-  private val admin_password = "foobar"
+  private val adminPassword = "foobar"
 
   // Username of the user account.
-  private val user_username = "user"
+  private val userUsername = "user"
 
-  override def getUserAccountName = user_username
+  override def getUserAccountName = userUsername
 
   // Password for the user account.
-  private val user_password = "baz"
+  private val userPassword = "baz"
 
   // The base JDBC URL.
   private val url = {
@@ -125,8 +125,8 @@ object DerbyTestDatabase
   // Create the database.
   With.autoClosingConnection(DriverManager.getConnection(
     url + ";create=true",
-    admin_username,
-    admin_password)) { c =>
+    adminUsername,
+    adminPassword)) { c =>
     TestDatabase.execute(
       getAdminConnectionBuilder,
       """CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
@@ -147,20 +147,20 @@ object DerbyTestDatabase
     TestDatabase.execute(
       getAdminConnectionBuilder,
       """CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
-           'derby.user.""" + admin_username + """', '""" + admin_password + """')""")
+           'derby.user.""" + adminUsername + """', '""" + adminPassword + """')""")
 
     TestDatabase.execute(
       getAdminConnectionBuilder,
       """CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY(
-             'derby.user.""" + user_username + """', '""" + user_password + """')""")
+             'derby.user.""" + userUsername + """', '""" + userPassword + """')""")
   }
 
   // Shutdown Derby.
   try {
     With.autoClosingConnection(DriverManager.getConnection(
       url + ";shutdown=true",
-      admin_username,
-      admin_password)) { _ =>
+      adminUsername,
+      adminPassword)) { _ =>
     }
   }
   catch {
@@ -175,15 +175,15 @@ object DerbyTestDatabase
   }
 
   override def getSchemaName: String = {
-    admin_username
+    adminUsername
   }
 
   override def getAdminConnectionBuilder: ConnectionBuilder = {
-    new ConnectionBuilder(url, admin_username, admin_password)
+    new ConnectionBuilder(url, adminUsername, adminPassword)
   }
 
   override def getUserConnectionBuilder: ConnectionBuilder = {
-    new ConnectionBuilder(url, user_username, user_password)
+    new ConnectionBuilder(url, userUsername, userPassword)
   }
 
   override def getDatabaseAdapter: DatabaseAdapter = {
@@ -216,26 +216,26 @@ object MysqlTestDatabase
     extends TestDatabase {
   // Username of the admin account, which will be the owner of the
   // database.
-  private val admin_username = {
+  private val adminUsername = {
     System.getProperty(TestDatabase.adminUserNameProperty, "test-admin")
   }
 
-  override def getAdminAccountName = admin_username
+  override def getAdminAccountName = adminUsername
 
   // Password for the admin account.
-  private val admin_password = {
+  private val adminPassword = {
     System.getProperty(TestDatabase.adminUserPasswordProperty, "test-admin")
   }
 
   // Username of the user account.
-  private val user_username = {
+  private val userUsername = {
     System.getProperty(TestDatabase.userUserNameProperty, "test-user")
   }
 
-  override def getUserAccountName = user_username
+  override def getUserAccountName = userUsername
 
   // Password for the user account.
-  private val user_password = {
+  private val userPassword = {
     System.getProperty(TestDatabase.userUserPasswordProperty, "test-user")
   }
 
@@ -252,11 +252,11 @@ object MysqlTestDatabase
   Class.forName("com.mysql.jdbc.Driver")
 
   override def getAdminConnectionBuilder: ConnectionBuilder = {
-    new ConnectionBuilder(url, admin_username, admin_password)
+    new ConnectionBuilder(url, adminUsername, adminPassword)
   }
 
   override def getUserConnectionBuilder: ConnectionBuilder = {
-    new ConnectionBuilder(url, user_username, user_password)
+    new ConnectionBuilder(url, userUsername, userPassword)
   }
 
   override def getDatabaseAdapter: DatabaseAdapter = {
@@ -304,9 +304,9 @@ object TestDatabase
 
   override def getDatabaseAdapter = db.getDatabaseAdapter
 
-  def execute(connection_builder: ConnectionBuilder,
+  def execute(connectionBuilder: ConnectionBuilder,
               sql: String): Boolean = {
-    connection_builder.withConnection(AutoCommit) { c =>
+    connectionBuilder.withConnection(AutoCommit) { c =>
       With.autoClosingStatement(c.prepareStatement(sql)) { s =>
         s.execute()
       }

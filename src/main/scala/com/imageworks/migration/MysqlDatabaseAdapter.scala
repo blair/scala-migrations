@@ -50,15 +50,15 @@ trait MysqlAppendCharacterSetToColumnDefinitionMixin {
    * default utf8 collation (at least for 5.5), and is faster, it is
    * also incorrect; see http://stackoverflow.com/questions/766809/ .
    *
-   * @param data_type_sql the SQL for the data type
-   * @param character_set_opt an optional character set
+   * @param dataTypeSql the SQL for the data type
+   * @param characterSetOpt an optional character set
    */
-  protected def sql(data_type_sql: String,
-                    character_set_opt: Option[CharacterSet]): String = {
-    character_set_opt match {
+  protected def sql(dataTypeSql: String,
+                    characterSetOpt: Option[CharacterSet]): String = {
+    characterSetOpt match {
       case Some(charset) => {
         val sb = new java.lang.StringBuilder(64)
-        sb.append(data_type_sql)
+        sb.append(dataTypeSql)
           .append(" CHARACTER SET ")
 
         charset.name match {
@@ -78,7 +78,7 @@ trait MysqlAppendCharacterSetToColumnDefinitionMixin {
         }
         sb.toString
       }
-      case None => data_type_sql
+      case None => dataTypeSql
     }
   }
 }
@@ -120,10 +120,10 @@ class MysqlBlobColumnDefinition
   override val sql = "LONGBLOB"
 }
 
-class MysqlCharColumnDefinition(character_set_opt: Option[CharacterSet])
+class MysqlCharColumnDefinition(characterSetOpt: Option[CharacterSet])
     extends DefaultCharColumnDefinition
     with MysqlAppendCharacterSetToColumnDefinitionMixin {
-  override protected def sql: String = sql(super.sql, character_set_opt)
+  override protected def sql: String = sql(super.sql, characterSetOpt)
 }
 
 class MysqlIntegerColumnDefinition
@@ -141,10 +141,10 @@ class MysqlTimestampColumnDefinition
   override val sql = "TIMESTAMP"
 }
 
-class MysqlVarcharColumnDefinition(character_set_opt: Option[CharacterSet])
+class MysqlVarcharColumnDefinition(characterSetOpt: Option[CharacterSet])
     extends DefaultVarcharColumnDefinition
     with MysqlAppendCharacterSetToColumnDefinitionMixin {
-  override protected def sql: String = sql(super.sql, character_set_opt)
+  override protected def sql: String = sql(super.sql, characterSetOpt)
 }
 
 class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
@@ -208,9 +208,9 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
   // https://dev.mysql.com/doc/refman/5.5/en/alter-table.html
   override val supportsCheckConstraints = false
 
-  override def columnDefinitionFactory(column_type: SqlType,
-                                       character_set_opt: Option[CharacterSet]): ColumnDefinition = {
-    column_type match {
+  override def columnDefinitionFactory(columnType: SqlType,
+                                       characterSetOpt: Option[CharacterSet]): ColumnDefinition = {
+    columnType match {
       case BigintType =>
         new MysqlBigintColumnDefinition
       case BlobType =>
@@ -218,7 +218,7 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
       case BooleanType =>
         new DefaultBooleanColumnDefinition
       case CharType =>
-        new MysqlCharColumnDefinition(character_set_opt)
+        new MysqlCharColumnDefinition(characterSetOpt)
       case DecimalType =>
         new DefaultDecimalColumnDefinition
       case IntegerType =>
@@ -230,38 +230,38 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
       case VarbinaryType =>
         new DefaultVarbinaryColumnDefinition
       case VarcharType =>
-        new MysqlVarcharColumnDefinition(character_set_opt)
+        new MysqlVarcharColumnDefinition(characterSetOpt)
     }
   }
 
-  override def lockTableSql(schema_name_opt: Option[String],
-                            table_name: String): String = {
+  override def lockTableSql(schemaNameOpt: Option[String],
+                            tableName: String): String = {
     val sb = new java.lang.StringBuilder(64)
     sb.append("LOCK TABLES ")
-      .append(quoteTableName(schema_name_opt, table_name))
+      .append(quoteTableName(schemaNameOpt, tableName))
       .append(" WRITE")
       .toString
   }
 
-  override protected def alterColumnSql(schema_name_opt: Option[String],
-                                        column_definition: ColumnDefinition): String = {
+  override protected def alterColumnSql(schemaNameOpt: Option[String],
+                                        columnDefinition: ColumnDefinition): String = {
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
-      .append(quoteTableName(schema_name_opt, column_definition.getTableName))
+      .append(quoteTableName(schemaNameOpt, columnDefinition.getTableName))
       .append(" MODIFY COLUMN ")
-      .append(quoteColumnName(column_definition.getColumnName))
-      .append(column_definition.toSql)
+      .append(quoteColumnName(columnDefinition.getColumnName))
+      .append(columnDefinition.toSql)
       .toString
   }
 
-  override def removeIndexSql(schema_name_opt: Option[String],
-                              table_name: String,
-                              index_name: String): String = {
+  override def removeIndexSql(schemaNameOpt: Option[String],
+                              tableName: String,
+                              indexName: String): String = {
     new java.lang.StringBuilder(128)
       .append("ALTER TABLE ")
-      .append(quoteTableName(schema_name_opt, table_name))
+      .append(quoteTableName(schemaNameOpt, tableName))
       .append(" DROP INDEX ")
-      .append(quoteIndexName(None, index_name))
+      .append(quoteIndexName(None, indexName))
       .toString
   }
 }

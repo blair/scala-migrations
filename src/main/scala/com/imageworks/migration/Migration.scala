@@ -237,34 +237,34 @@ abstract class Migration {
     With.autoClosingResultSet(rs)(f)
   }
 
-  final def createTable(table_name: String,
+  final def createTable(tableName: String,
                         options: TableOption*)(body: TableDefinition => Unit) {
-    val table_definition = new TableDefinition(adapter, table_name)
+    val tableDefinition = new TableDefinition(adapter, tableName)
 
-    body(table_definition)
+    body(tableDefinition)
 
     val sql = new java.lang.StringBuilder(512)
       .append("CREATE TABLE ")
-      .append(adapter.quoteTableName(table_name))
+      .append(adapter.quoteTableName(tableName))
       .append(" (")
-      .append(table_definition.toSql)
+      .append(tableDefinition.toSql)
       .append(')')
       .toString
     execute(sql)
   }
 
-  final def addColumn(table_name: String,
-                      column_name: String,
-                      column_type: SqlType,
+  final def addColumn(tableName: String,
+                      columnName: String,
+                      columnType: SqlType,
                       options: ColumnOption*) {
-    val table_definition = new TableDefinition(adapter, table_name)
+    val tableDefinition = new TableDefinition(adapter, tableName)
 
-    table_definition.column(column_name, column_type, options: _*)
+    tableDefinition.column(columnName, columnType, options: _*)
     val sql = new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
-      .append(adapter.quoteTableName(table_name))
+      .append(adapter.quoteTableName(tableName))
       .append(" ADD ")
-      .append(table_definition.toSql)
+      .append(tableDefinition.toSql)
       .toString
     execute(sql)
   }
@@ -280,56 +280,56 @@ abstract class Migration {
    * and #alterColumn() is not passed CharacterSet(Unicode), then the
    * column's data type will be change from NVARCHAR2 to VARCHAR2.
    *
-   * @param table_name the name of the table with the column
-   * @param column_name the name of the column
-   * @param column_type the type the column is being altered to
+   * @param tableName the name of the table with the column
+   * @param columnName the name of the column
+   * @param columnType the type the column is being altered to
    * @param options a possibly empty array of column options to
    *        customize the column
    */
-  final def alterColumn(table_name: String,
-                        column_name: String,
-                        column_type: SqlType,
+  final def alterColumn(tableName: String,
+                        columnName: String,
+                        columnType: SqlType,
                         options: ColumnOption*) {
-    execute(adapter.alterColumnSql(table_name,
-      column_name,
-      column_type,
+    execute(adapter.alterColumnSql(tableName,
+      columnName,
+      columnType,
       options: _*))
   }
 
-  final def removeColumn(table_name: String,
-                         column_name: String) {
-    execute(adapter.removeColumnSql(table_name, column_name))
+  final def removeColumn(tableName: String,
+                         columnName: String) {
+    execute(adapter.removeColumnSql(tableName, columnName))
   }
 
-  final def dropTable(table_name: String) {
+  final def dropTable(tableName: String) {
     val sql = new java.lang.StringBuilder(512)
       .append("DROP TABLE ")
-      .append(adapter.quoteTableName(table_name))
+      .append(adapter.quoteTableName(tableName))
       .toString
     execute(sql)
   }
 
-  private def indexNameFor(table_name: String,
-                           column_names: Array[String],
+  private def indexNameFor(tableName: String,
+                           columnNames: Array[String],
                            options: IndexOption*): (String, List[IndexOption]) = {
     var opts = options.toList
 
-    var index_name_opt: Option[String] = None
+    var indexNameOpt: Option[String] = None
 
     for (opt @ Name(name) <- opts) {
       opts = opts filter { _ ne opt }
-      if (index_name_opt.isDefined && index_name_opt.get != name) {
+      if (indexNameOpt.isDefined && indexNameOpt.get != name) {
         logger.warn("Redefining the index name from '{}' to '{}'.",
-          Array[AnyRef](index_name_opt.get, name): _*)
+          Array[AnyRef](indexNameOpt.get, name): _*)
       }
-      index_name_opt = Some(name)
+      indexNameOpt = Some(name)
     }
 
-    val name = index_name_opt.getOrElse {
+    val name = indexNameOpt.getOrElse {
       "idx_" +
-        table_name +
+        tableName +
         "_" +
-        column_names.mkString("_")
+        columnNames.mkString("_")
     }
 
     (name, opts)
@@ -340,21 +340,21 @@ abstract class Migration {
    * name of the index is automatically generated unless Name() is
    * given as an option.
    *
-   * @param table_name the table to add the index to
-   * @param column_names a list of one or more column names that the
+   * @param tableName the table to add the index to
+   * @param columnNames a list of one or more column names that the
    *        index will be on
    * @param options a possibly empty list of index options to
    *        customize the creation of the index
    */
-  final def addIndex(table_name: String,
-                     column_names: Array[String],
+  final def addIndex(tableName: String,
+                     columnNames: Array[String],
                      options: IndexOption*) {
-    if (column_names.isEmpty) {
+    if (columnNames.isEmpty) {
       throw new IllegalArgumentException("Adding an index requires at " +
         "least one column name.")
     }
 
-    var (name, opts) = indexNameFor(table_name, column_names, options: _*)
+    var (name, opts) = indexNameFor(tableName, columnNames, options: _*)
 
     var unique = false
     for (opt @ Unique <- opts) {
@@ -363,7 +363,7 @@ abstract class Migration {
     }
 
     val a = adapter
-    val quoted_column_names = column_names.map {
+    val quotedColumnNames = columnNames.map {
       a.quoteColumnName(_)
     }.mkString(", ")
 
@@ -373,9 +373,9 @@ abstract class Migration {
       .append("INDEX ")
       .append(a.quoteIndexName(None, name))
       .append(" ON ")
-      .append(a.quoteTableName(table_name))
+      .append(a.quoteTableName(tableName))
       .append(" (")
-      .append(quoted_column_names)
+      .append(quotedColumnNames)
       .append(")")
       .toString
 
@@ -386,16 +386,16 @@ abstract class Migration {
    * Add an index to a table on a column.  The name of the index is
    * automatically generated unless Name() is given as an option.
    *
-   * @param table_name the table to add the index to
-   * @param column_name the name of the column that the index will be
+   * @param tableName the table to add the index to
+   * @param columnName the name of the column that the index will be
    *        on
    * @param options a possibly empty list of index options to
    *        customize the creation of the index
    */
-  final def addIndex(table_name: String,
-                     column_name: String,
+  final def addIndex(tableName: String,
+                     columnName: String,
                      options: IndexOption*) {
-    addIndex(table_name, Array(column_name), options: _*)
+    addIndex(tableName, Array(columnName), options: _*)
   }
 
   /**
@@ -403,23 +403,23 @@ abstract class Migration {
    * of column names.  The name of the index to remove is
    * automatically generated unless Name() is given as an option.
    *
-   * @param table_name the table to remove the index from
-   * @param column_names a list of one or more column names that the
+   * @param tableName the table to remove the index from
+   * @param columnNames a list of one or more column names that the
    *        index is on
    * @param options a possibly empty list of index options to
    *        customize the removal of the index
    */
-  final def removeIndex(table_name: String,
-                        column_names: Array[String],
+  final def removeIndex(tableName: String,
+                        columnNames: Array[String],
                         options: Name*) {
-    if (column_names.isEmpty) {
+    if (columnNames.isEmpty) {
       throw new IllegalArgumentException("Removing an index requires at " +
         "least one column name.")
     }
 
-    val (name, _) = indexNameFor(table_name, column_names, options: _*)
+    val (name, _) = indexNameFor(tableName, columnNames, options: _*)
 
-    val sql = adapter.removeIndexSql(table_name, name)
+    val sql = adapter.removeIndexSql(tableName, name)
 
     execute(sql)
   }
@@ -429,15 +429,15 @@ abstract class Migration {
    * remove is automatically generated unless Name() is given as an
    * option.
    *
-   * @param table_name the table to remove the index from
-   * @param column_name the name of the column the index is on
+   * @param tableName the table to remove the index from
+   * @param columnName the name of the column the index is on
    * @param options a possibly empty list of index options to
    *        customize the removal of the index
    */
-  final def removeIndex(table_name: String,
-                        column_name: String,
+  final def removeIndex(tableName: String,
+                        columnName: String,
                         options: Name*) {
-    removeIndex(table_name, Array(column_name), options: _*)
+    removeIndex(tableName, Array(columnName), options: _*)
   }
 
   /**
@@ -456,18 +456,18 @@ abstract class Migration {
                                 options: ForeignKeyOption*): (String, List[ForeignKeyOption]) = {
     var opts = options.toList
 
-    var fk_name_opt: Option[String] = None
+    var fkNameOpt: Option[String] = None
 
     for (opt @ Name(name) <- opts) {
       opts = opts filter { _ ne opt }
-      if (fk_name_opt.isDefined && fk_name_opt.get != name) {
+      if (fkNameOpt.isDefined && fkNameOpt.get != name) {
         logger.warn("Redefining the foreign key name from '{}' to '{}'.",
-          Array[AnyRef](fk_name_opt.get, name): _*)
+          Array[AnyRef](fkNameOpt.get, name): _*)
       }
-      fk_name_opt = Some(name)
+      fkNameOpt = Some(name)
     }
 
-    val name = fk_name_opt.getOrElse {
+    val name = fkNameOpt.getOrElse {
       "fk_" +
         on.tableName +
         "_" +
@@ -510,34 +510,34 @@ abstract class Migration {
     var (name, opts) = foreignKeyNameFor(on, references, options: _*)
 
     val a = adapter
-    val quoted_on_column_names = on.columnNames.map {
+    val quotedOnColumnNames = on.columnNames.map {
       a.quoteColumnName(_)
     }.mkString(", ")
 
-    val quoted_references_column_names = references.columnNames.map {
+    val quotedReferencesColumnNames = references.columnNames.map {
       a.quoteColumnName(_)
     }.mkString(", ")
 
-    var on_delete_opt: Option[OnDelete] = None
+    var onDeleteOpt: Option[OnDelete] = None
 
     for (opt @ OnDelete(action) <- opts) {
-      if (on_delete_opt.isDefined && action != on_delete_opt.get.action) {
+      if (onDeleteOpt.isDefined && action != onDeleteOpt.get.action) {
         logger.warn("Overriding the ON DELETE action from '{}' to '{}'.",
-          Array[AnyRef](on_delete_opt.get.action, action): _*)
+          Array[AnyRef](onDeleteOpt.get.action, action): _*)
       }
       opts = opts filter { _ ne opt }
-      on_delete_opt = Some(opt)
+      onDeleteOpt = Some(opt)
     }
 
-    var on_update_opt: Option[OnUpdate] = None
+    var onUpdateOpt: Option[OnUpdate] = None
 
     for (opt @ OnUpdate(action) <- opts) {
-      if (on_update_opt.isDefined && action != on_update_opt.get.action) {
+      if (onUpdateOpt.isDefined && action != onUpdateOpt.get.action) {
         logger.warn("Overriding the ON UPDATE action from '{}' to '{}'.",
-          Array[AnyRef](on_update_opt.get.action, action): _*)
+          Array[AnyRef](onUpdateOpt.get.action, action): _*)
       }
       opts = opts filter { _ ne opt }
-      on_update_opt = Some(opt)
+      onUpdateOpt = Some(opt)
     }
 
     val sb = new java.lang.StringBuilder(512)
@@ -546,23 +546,23 @@ abstract class Migration {
       .append(" ADD CONSTRAINT ")
       .append(name)
       .append(" FOREIGN KEY (")
-      .append(quoted_on_column_names)
+      .append(quotedOnColumnNames)
       .append(") REFERENCES ")
       .append(a.quoteTableName(references.tableName))
       .append(" (")
-      .append(quoted_references_column_names)
+      .append(quotedReferencesColumnNames)
       .append(")")
 
-    val on_delete_sql = a.onDeleteSql(on_delete_opt)
-    if (!on_delete_sql.isEmpty) {
+    val onDeleteSql = a.onDeleteSql(onDeleteOpt)
+    if (!onDeleteSql.isEmpty) {
       sb.append(' ')
-        .append(on_delete_sql)
+        .append(onDeleteSql)
     }
 
-    val on_update_sql = a.onUpdateSql(on_update_opt)
-    if (!on_update_sql.isEmpty) {
+    val onUpdateSql = a.onUpdateSql(onUpdateOpt)
+    if (!onUpdateSql.isEmpty) {
       sb.append(' ')
-        .append(on_update_sql)
+        .append(onUpdateSql)
     }
 
     execute(sb.toString)
@@ -641,12 +641,12 @@ abstract class Migration {
   /**
    * Add a grant on a table to one or more grantees.
    *
-   * @param table_name the table name to add the grants to
+   * @param tableName the table name to add the grants to
    * @param grantees a non-empty array of grantees
    * @param privileges a non-empty array of privileges to grant to the
    *        grantees
    */
-  final def grant(table_name: String,
+  final def grant(tableName: String,
                   grantees: Array[User],
                   privileges: GrantPrivilegeType*) {
     if (grantees.isEmpty) {
@@ -659,7 +659,7 @@ abstract class Migration {
         "at least one privilege.")
     }
 
-    val sql = adapter.grantOnTableSql(table_name, grantees, privileges: _*)
+    val sql = adapter.grantOnTableSql(tableName, grantees, privileges: _*)
 
     execute(sql)
   }
@@ -667,15 +667,15 @@ abstract class Migration {
   /**
    * Add a grant on a table to one or more grantees.
    *
-   * @param table_name the table name to add the grants to
+   * @param tableName the table name to add the grants to
    * @param grantees a non-empty array of grantees
    * @param privileges a non-empty array of privileges to grant to the
    *        grantees
    */
-  final def grant(table_name: String,
+  final def grant(tableName: String,
                   grantees: Array[String],
                   privileges: GrantPrivilegeType*) {
-    grant(table_name,
+    grant(tableName,
       grantees map { adapter.userFactory.nameToUser(_) },
       privileges: _*)
   }
@@ -683,29 +683,29 @@ abstract class Migration {
   /**
    * Add a grant on a table to a grantee.
    *
-   * @param table_name the table name to add the grants to
+   * @param tableName the table name to add the grants to
    * @param grantee the grantee to grant the privileges to
    * @param privileges a non-empty array of privileges to grant to the
    *        grantee
    */
-  final def grant(table_name: String,
+  final def grant(tableName: String,
                   grantee: User,
                   privileges: GrantPrivilegeType*) {
-    grant(table_name, Array(grantee), privileges: _*)
+    grant(tableName, Array(grantee), privileges: _*)
   }
 
   /**
    * Add a grant on a table to a grantee.
    *
-   * @param table_name the table name to add the grants to
+   * @param tableName the table name to add the grants to
    * @param grantee the grantee to grant the privileges to
    * @param privileges a non-empty array of privileges to grant to the
    *        grantee
    */
-  final def grant(table_name: String,
+  final def grant(tableName: String,
                   grantee: String,
                   privileges: GrantPrivilegeType*) {
-    grant(table_name,
+    grant(tableName,
       Array[User](adapter.userFactory.nameToUser(grantee)),
       privileges: _*)
   }
@@ -713,12 +713,12 @@ abstract class Migration {
   /**
    * Remove privileges on a table from one or more grantees.
    *
-   * @param table_name the table name to remove the grants from
+   * @param tableName the table name to remove the grants from
    * @param grantees a non-empty array of grantees
    * @param privileges a non-empty array of privileges to remove from
    *        the grantees
    */
-  final def revoke(table_name: String,
+  final def revoke(tableName: String,
                    grantees: Array[User],
                    privileges: GrantPrivilegeType*) {
     if (grantees.isEmpty) {
@@ -731,7 +731,7 @@ abstract class Migration {
         "at least one privilege.")
     }
 
-    val sql = adapter.revokeOnTableSql(table_name, grantees, privileges: _*)
+    val sql = adapter.revokeOnTableSql(tableName, grantees, privileges: _*)
 
     execute(sql)
   }
@@ -739,15 +739,15 @@ abstract class Migration {
   /**
    * Remove privileges on a table from one or more grantees.
    *
-   * @param table_name the table name to remove the grants from
+   * @param tableName the table name to remove the grants from
    * @param grantees a non-empty array of grantees
    * @param privileges a non-empty array of privileges to remove from
    *        the grantees
    */
-  final def revoke(table_name: String,
+  final def revoke(tableName: String,
                    grantees: Array[String],
                    privileges: GrantPrivilegeType*) {
-    revoke(table_name,
+    revoke(tableName,
       grantees map { adapter.userFactory.nameToUser(_) },
       privileges: _*)
   }
@@ -755,29 +755,29 @@ abstract class Migration {
   /**
    * Remove privileges on a table from a grantee.
    *
-   * @param table_name the table name to remove the grants from
+   * @param tableName the table name to remove the grants from
    * @param grantee the grantee to revoke privileges from
    * @param privileges a non-empty array of privileges to remove from
    *        the grantee
    */
-  final def revoke(table_name: String,
+  final def revoke(tableName: String,
                    grantee: User,
                    privileges: GrantPrivilegeType*) {
-    revoke(table_name, Array(grantee), privileges: _*)
+    revoke(tableName, Array(grantee), privileges: _*)
   }
 
   /**
    * Remove privileges on a table from a grantee.
    *
-   * @param table_name the table name to remove the grants from
+   * @param tableName the table name to remove the grants from
    * @param grantee the grantee to revoke privileges from
    * @param privileges a non-empty array of privileges to remove from
    *        the grantee
    */
-  final def revoke(table_name: String,
+  final def revoke(tableName: String,
                    grantee: String,
                    privileges: GrantPrivilegeType*) {
-    revoke(table_name,
+    revoke(tableName,
       Array[User](adapter.userFactory.nameToUser(grantee)),
       privileges: _*)
   }

@@ -273,14 +273,14 @@ abstract class ColumnDefinition {
    * If the column is a primary key.
    */
   private lazy val isPrimaryKey: Boolean = {
-    var is_primary = false
+    var isPrimary = false
 
     for (option @ PrimaryKey <- options) {
       options = options filter { _ ne option }
-      is_primary = true
+      isPrimary = true
     }
 
-    is_primary
+    isPrimary
   }
 
   /**
@@ -442,16 +442,16 @@ abstract class ColumnDefinition {
    * syntax appended if a limit is given, otherwise return SQL
    * unmodified.
    *
-   * @param column_type_name the column type name
-   * @param limit_opt optional column limit
+   * @param columnTypeName the column type name
+   * @param limitOpt optional column limit
    * @return the column type name with the limit syntax if a limit was
    *         given
    */
-  protected def optionallyAddLimitToDataType(column_type_name: String,
-                                             limit_opt: Option[String]): String = {
-    limit_opt match {
-      case Some(l) => column_type_name + "(" + l + ")"
-      case None => column_type_name
+  protected def optionallyAddLimitToDataType(columnTypeName: String,
+                                             limitOpt: Option[String]): String = {
+    limitOpt match {
+      case Some(l) => columnTypeName + "(" + l + ")"
+      case None => columnTypeName
     }
   }
 
@@ -460,12 +460,12 @@ abstract class ColumnDefinition {
    * syntax appended if a limit is specified on the column definition
    * instance, otherwise return SQL unmodified.
    *
-   * @param column_type_name the column type name
+   * @param columnTypeName the column type name
    * @return the column type name with the limit syntax if the column
    *         definition specifies a limit
    */
-  protected def optionallyAddLimitToDataType(column_type_name: String): String = {
-    optionallyAddLimitToDataType(column_type_name, limit)
+  protected def optionallyAddLimitToDataType(columnTypeName: String): String = {
+    optionallyAddLimitToDataType(columnTypeName, limit)
   }
 }
 

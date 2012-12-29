@@ -39,8 +39,8 @@ import scala.collection.mutable
  * column to the table's definition.
  */
 class TableDefinition(adapter: DatabaseAdapter,
-                      table_name: String) {
-  private val column_definitions = new mutable.ListBuffer[ColumnDefinition]
+                      tableName: String) {
+  private val columnDefinitions = new mutable.ListBuffer[ColumnDefinition]
 
   /**
    * Generate a SQL string representation of the columns in the table.
@@ -49,17 +49,17 @@ class TableDefinition(adapter: DatabaseAdapter,
    */
   final def toSql: String = {
     val sb = new java.lang.StringBuilder(512)
-    var first_column = true
-    for (column_definition <- column_definitions) {
-      if (first_column) {
-        first_column = false
+    var firstColumn = true
+    for (columnDefinition <- columnDefinitions) {
+      if (firstColumn) {
+        firstColumn = false
       }
       else {
         sb.append(", ")
       }
-      sb.append(column_definition.getColumnName)
+      sb.append(columnDefinition.getColumnName)
         .append(' ')
-        .append(column_definition.toSql)
+        .append(columnDefinition.toSql)
     }
     sb.toString
   }
@@ -67,29 +67,29 @@ class TableDefinition(adapter: DatabaseAdapter,
   /**
    * Add any known column type to the table.  The actual SQL text used
    * to create the column is chosen by the database adapter and may be
-   * different than the name of the column_type argument.
+   * different than the name of the columnType argument.
    *
    * @param name the column's name
-   * @param column_type the type of column being added
+   * @param columnType the type of column being added
    * @param a possibly empty array of column options to customize the
    *        column
    * @return the same instance
    */
   final def column(name: String,
-                   column_type: SqlType,
+                   columnType: SqlType,
                    options: ColumnOption*): TableDefinition = {
-    val column_definition = adapter.newColumnDefinition(table_name,
+    val columnDefinition = adapter.newColumnDefinition(tableName,
       name,
-      column_type,
+      columnType,
       options: _*)
-    column_definitions += column_definition
+    columnDefinitions += columnDefinition
     this
   }
 
   /**
    * Add a BIGINT column type to the table.  The actual SQL text used
    * to create the column is chosen by the database adapter and may be
-   * different than the name of the column_type argument.
+   * different than the name of the columnType argument.
    *
    * @param name the column's name
    * @param a possibly empty array of column options to customize the
@@ -104,7 +104,7 @@ class TableDefinition(adapter: DatabaseAdapter,
   /**
    * Add a BLOB column type to the table.  The actual SQL text used to
    * create the column is chosen by the database adapter and may be
-   * different than the name of the column_type argument.
+   * different than the name of the columnType argument.
    *
    * @param name the column's name
    * @param a possibly empty array of column options to customize the
@@ -119,7 +119,7 @@ class TableDefinition(adapter: DatabaseAdapter,
   /**
    * Add a BOOLEAN column type to the table.  The actual SQL text used
    * to create the column is chosen by the database adapter and may be
-   * different than the name of the column_type argument.
+   * different than the name of the columnType argument.
    *
    * @param name the column's name
    * @param a possibly empty array of column options to customize the
@@ -134,7 +134,7 @@ class TableDefinition(adapter: DatabaseAdapter,
   /**
    * Add a CHAR column type to the table.  The actual SQL text used to
    * create the column is chosen by the database adapter and may be
-   * different than the name of the column_type argument.
+   * different than the name of the columnType argument.
    *
    * @param name the column's name
    * @param a possibly empty array of column options to customize the
@@ -149,7 +149,7 @@ class TableDefinition(adapter: DatabaseAdapter,
   /**
    * Add a DECIMAL column type to the table.  The actual SQL text used
    * to create the column is chosen by the database adapter and may be
-   * different than the name of the column_type argument.
+   * different than the name of the columnType argument.
    *
    * @param name the column's name
    * @param a possibly empty array of column options to customize the
@@ -164,7 +164,7 @@ class TableDefinition(adapter: DatabaseAdapter,
   /**
    * Add a INTEGER column type to the table.  The actual SQL text used
    * to create the column is chosen by the database adapter and may be
-   * different than the name of the column_type argument.
+   * different than the name of the columnType argument.
    *
    * @param name the column's name
    * @param a possibly empty array of column options to customize the
@@ -179,7 +179,7 @@ class TableDefinition(adapter: DatabaseAdapter,
   /**
    * Add a SMALLINT column type to the table.  The actual SQL text
    * used to create the column is chosen by the database adapter and
-   * may be different than the name of the column_type argument.
+   * may be different than the name of the columnType argument.
    *
    * @param name the column's name
    * @param a possibly empty array of column options to customize the
@@ -194,7 +194,7 @@ class TableDefinition(adapter: DatabaseAdapter,
   /**
    * Add a TIMESTAMP column type to the table.  The actual SQL text
    * used to create the column is chosen by the database adapter and
-   * may be different than the name of the column_type argument.
+   * may be different than the name of the columnType argument.
    *
    * @param name the column's name
    * @param a possibly empty array of column options to customize the
@@ -209,7 +209,7 @@ class TableDefinition(adapter: DatabaseAdapter,
   /**
    * Add a VARBINARY column type to the table.  The actual SQL text
    * used to create the column is chosen by the database adapter and
-   * may be different than the name of the column_type argument.
+   * may be different than the name of the columnType argument.
    *
    * @param name the column's name
    * @param a possibly empty array of column options to customize the
@@ -224,7 +224,7 @@ class TableDefinition(adapter: DatabaseAdapter,
   /**
    * Add a VARCHAR column type to the table.  The actual SQL text used
    * to create the column is chosen by the database adapter and may be
-   * different than the name of the column_type argument.
+   * different than the name of the columnType argument.
    *
    * @param name the column's name
    * @param a possibly empty array of column options to customize the

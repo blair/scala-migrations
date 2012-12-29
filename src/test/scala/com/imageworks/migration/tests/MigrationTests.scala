@@ -72,17 +72,17 @@ class MigrationTests {
   private var migrator: Migrator = _
 
   @Before
-  def set_up() {
-    val connection_builder = TestDatabase.getAdminConnectionBuilder
-    val database_adapter = TestDatabase.getDatabaseAdapter
+  def setUp() {
+    val connectionBuilder = TestDatabase.getAdminConnectionBuilder
+    val databaseAdapter = TestDatabase.getDatabaseAdapter
 
-    migrator = new Migrator(connection_builder, database_adapter)
+    migrator = new Migrator(connectionBuilder, databaseAdapter)
 
-    connection_builder.withConnection(AutoCommit) { c =>
-      for (table_name <- migrator.getTableNames) {
-        val tn = table_name.toLowerCase
+    connectionBuilder.withConnection(AutoCommit) { c =>
+      for (tableName <- migrator.getTableNames) {
+        val tn = tableName.toLowerCase
         if (tn == "schema_migrations" || tn.startsWith("scala_migrations_")) {
-          val sql = "DROP TABLE " + database_adapter.quoteTableName(tn)
+          val sql = "DROP TABLE " + databaseAdapter.quoteTableName(tn)
           With.autoClosingStatement(c.prepareStatement(sql)) { _.execute }
         }
       }
@@ -90,14 +90,14 @@ class MigrationTests {
   }
 
   @Test(expected = classOf[DuplicateMigrationDescriptionException])
-  def duplicate_descriptions_throws {
+  def duplicateDescriptionsThrows {
     migrator.migrate(InstallAllMigrations,
       "com.imageworks.migration.tests.duplicate_descriptions",
       false)
   }
 
   @Test(expected = classOf[DuplicateMigrationVersionException])
-  def duplicate_versions_throws {
+  def duplicateVersionsThrows {
     migrator.migrate(InstallAllMigrations,
       "com.imageworks.migration.tests.duplicate_versions",
       false)
@@ -111,14 +111,14 @@ class MigrationTests {
   }
 
   @Test(expected = classOf[IllegalArgumentException])
-  def scale_without_precision_throws {
+  def scaleSithoutPrecisionThrows {
     migrator.migrate(InstallAllMigrations,
       "com.imageworks.migration.tests.scale_without_precision",
       false)
   }
 
   @Test
-  def migrate_up_and_down {
+  def migrateUpAndDown {
     // There should be no tables in the schema initially.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -140,11 +140,11 @@ class MigrationTests {
       migrator.getMigrationStatuses("com.imageworks.migration.tests.up_and_down",
         false)
 
-    assertEquals(2, statuses1.not_installed.size)
-    assertTrue(statuses1.not_installed.contains(20081118201000L))
-    assertTrue(statuses1.not_installed.contains(20081118201742L))
-    assertEquals(0, statuses1.installed_with_available_implementation.size)
-    assertEquals(0, statuses1.installed_without_available_implementation.size)
+    assertEquals(2, statuses1.notInstalled.size)
+    assertTrue(statuses1.notInstalled.contains(20081118201000L))
+    assertTrue(statuses1.notInstalled.contains(20081118201742L))
+    assertEquals(0, statuses1.installedWithAvailableImplementation.size)
+    assertEquals(0, statuses1.installedWithoutAvailableImplementation.size)
 
     // Apply all the migrations.
     migrator.migrate(InstallAllMigrations,
@@ -168,11 +168,11 @@ class MigrationTests {
       migrator.getMigrationStatuses("com.imageworks.migration.tests.up_and_down",
         false)
 
-    assertEquals(0, statuses2.not_installed.size)
-    assertEquals(2, statuses2.installed_with_available_implementation.size)
-    assertTrue(statuses2.installed_with_available_implementation.contains(20081118201000L))
-    assertTrue(statuses2.installed_with_available_implementation.contains(20081118201742L))
-    assertEquals(0, statuses2.installed_without_available_implementation.size)
+    assertEquals(0, statuses2.notInstalled.size)
+    assertEquals(2, statuses2.installedWithAvailableImplementation.size)
+    assertTrue(statuses2.installedWithAvailableImplementation.contains(20081118201000L))
+    assertTrue(statuses2.installedWithAvailableImplementation.contains(20081118201742L))
+    assertEquals(0, statuses2.installedWithoutAvailableImplementation.size)
 
     // Rollback a single migration.
     migrator.migrate(RollbackMigration(1),
@@ -198,11 +198,11 @@ class MigrationTests {
       migrator.getMigrationStatuses("com.imageworks.migration.tests.up_and_down",
         false)
 
-    assertEquals(1, statuses3.not_installed.size)
-    assertTrue(statuses3.not_installed.contains(20081118201742L))
-    assertEquals(1, statuses3.installed_with_available_implementation.size)
-    assertTrue(statuses3.installed_with_available_implementation.contains(20081118201000L))
-    assertEquals(0, statuses3.installed_without_available_implementation.size)
+    assertEquals(1, statuses3.notInstalled.size)
+    assertTrue(statuses3.notInstalled.contains(20081118201742L))
+    assertEquals(1, statuses3.installedWithAvailableImplementation.size)
+    assertTrue(statuses3.installedWithAvailableImplementation.contains(20081118201000L))
+    assertEquals(0, statuses3.installedWithoutAvailableImplementation.size)
 
     // Migrate down the whole way.
     migrator.migrate(RemoveAllMigrations,
@@ -221,15 +221,15 @@ class MigrationTests {
       migrator.getMigrationStatuses("com.imageworks.migration.tests.up_and_down",
         false)
 
-    assertEquals(2, statuses4.not_installed.size)
-    assertTrue(statuses4.not_installed.contains(20081118201000L))
-    assertTrue(statuses4.not_installed.contains(20081118201742L))
-    assertEquals(0, statuses4.installed_with_available_implementation.size)
-    assertEquals(0, statuses4.installed_without_available_implementation.size)
+    assertEquals(2, statuses4.notInstalled.size)
+    assertTrue(statuses4.notInstalled.contains(20081118201000L))
+    assertTrue(statuses4.notInstalled.contains(20081118201742L))
+    assertEquals(0, statuses4.installedWithAvailableImplementation.size)
+    assertEquals(0, statuses4.installedWithoutAvailableImplementation.size)
   }
 
   @Test
-  def get_migration_statuses_does_not_create_schema_migrations_table {
+  def getMigrationStatusesDoesNotCreateSchemaMigrationsTable {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -241,9 +241,9 @@ class MigrationTests {
     // tables.
     assertEquals(0, migrator.getTableNames.size)
 
-    assertEquals(0, statuses1.not_installed.size)
-    assertEquals(0, statuses1.installed_with_available_implementation.size)
-    assertEquals(0, statuses1.installed_without_available_implementation.size)
+    assertEquals(0, statuses1.notInstalled.size)
+    assertEquals(0, statuses1.installedWithAvailableImplementation.size)
+    assertEquals(0, statuses1.installedWithoutAvailableImplementation.size)
 
     // In a brand new database with available migrations, the database
     // should not be migrated.
@@ -251,11 +251,11 @@ class MigrationTests {
       migrator.getMigrationStatuses("com.imageworks.migration.tests.up_and_down",
         false)
 
-    assertEquals(2, statuses2.not_installed.size)
-    assertTrue(statuses2.not_installed.contains(20081118201000L))
-    assertTrue(statuses2.not_installed.contains(20081118201742L))
-    assertEquals(0, statuses2.installed_with_available_implementation.size)
-    assertEquals(0, statuses2.installed_without_available_implementation.size)
+    assertEquals(2, statuses2.notInstalled.size)
+    assertTrue(statuses2.notInstalled.contains(20081118201000L))
+    assertTrue(statuses2.notInstalled.contains(20081118201742L))
+    assertEquals(0, statuses2.installedWithAvailableImplementation.size)
+    assertEquals(0, statuses2.installedWithoutAvailableImplementation.size)
 
     // Calling getMigrationStatuses() should not have created any
     // tables.
@@ -263,7 +263,7 @@ class MigrationTests {
   }
 
   @Test
-  def why_not_migrated_does_not_create_schema_migrations_table {
+  def whyNotMigratedDoesNotCreateSchemaMigrationsTable {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -287,7 +287,7 @@ class MigrationTests {
   }
 
   @Test
-  def auto_increment {
+  def autoIncrement {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -300,15 +300,15 @@ class MigrationTests {
 
     assertEquals(2, migrator.getTableNames.size)
 
-    val connection_builder = TestDatabase.getAdminConnectionBuilder
+    val connectionBuilder = TestDatabase.getAdminConnectionBuilder
 
-    connection_builder.withConnection(AutoCommit) { c =>
-      val value_sql =
+    connectionBuilder.withConnection(AutoCommit) { c =>
+      val valueSql =
         """INSERT INTO
              scala_migrations_auto_incr (pk_scala_migrations_auto_incr, name)
            VALUES
              (?, ?)"""
-      val default_sql =
+      val defaultSql =
         """INSERT INTO
              scala_migrations_auto_incr (name)
            VALUES
@@ -317,7 +317,7 @@ class MigrationTests {
       // For the explicitly set primary key values, use values that
       // are not numerically increasing in order to ensure that the
       // unit test code handles this case.
-      val pk_opt_and_name_tuples = (None, "foo") ::
+      val pkOptAndNameTuples = (None, "foo") ::
         (Some(123), "bar") ::
         (Some(789), "foobar") ::
         (None, "baz") ::
@@ -325,16 +325,16 @@ class MigrationTests {
         (None, "bazfoo") ::
         Nil
 
-      for ((pk_opt, name) <- pk_opt_and_name_tuples) {
-        pk_opt match {
+      for ((pkOpt, name) <- pkOptAndNameTuples) {
+        pkOpt match {
           case Some(pk) =>
-            With.autoClosingStatement(c.prepareStatement(value_sql)) { s =>
+            With.autoClosingStatement(c.prepareStatement(valueSql)) { s =>
               s.setInt(1, pk)
               s.setString(2, name)
               s.execute()
             }
           case None => {
-            With.autoClosingStatement(c.prepareStatement(default_sql)) { s =>
+            With.autoClosingStatement(c.prepareStatement(defaultSql)) { s =>
               s.setString(1, name)
               s.execute()
             }
@@ -342,27 +342,27 @@ class MigrationTests {
         }
       }
 
-      val select_sql = """SELECT
-                            pk_scala_migrations_auto_incr
-                          FROM
-                            scala_migrations_auto_incr
-                          WHERE
-                            name = ?"""
+      val selectSql = """SELECT
+                           pk_scala_migrations_auto_incr
+                         FROM
+                           scala_migrations_auto_incr
+                         WHERE
+                           name = ?"""
 
       // Some databases will set the auto-increment sequence value to
       // one larger than the inserted value if the inserted value is
       // larger than the current auto-increment sequence value.
-      val auto_pk_sets_to_max_value_plus_one =
+      val autoIncrSetsToMaxValuePlusOne =
         TestDatabase.getDatabaseAdapter.vendor match {
           case Derby => false
           case Mysql => true
           case Oracle => false
           case Postgresql => false
         }
-      var auto_pk = 1
+      var autoPk = 1
 
-      for ((pk_opt, name) <- pk_opt_and_name_tuples) {
-        With.autoClosingStatement(c.prepareStatement(select_sql)) { s =>
+      for ((pkOpt, name) <- pkOptAndNameTuples) {
+        With.autoClosingStatement(c.prepareStatement(selectSql)) { s =>
           s.setString(1, name)
           With.autoClosingResultSet(s.executeQuery()) { rs =>
             var pks: List[Int] = Nil
@@ -372,21 +372,21 @@ class MigrationTests {
 
             assertEquals(1, pks.size)
 
-            val expected_pk =
-              pk_opt match {
+            val expectedPk =
+              pkOpt match {
                 case Some(pk) => {
-                  if (auto_pk_sets_to_max_value_plus_one)
-                    auto_pk = scala.math.max(auto_pk, pk + 1)
+                  if (autoIncrSetsToMaxValuePlusOne)
+                    autoPk = scala.math.max(autoPk, pk + 1)
                   pk
                 }
                 case None => {
-                  val pk = auto_pk
-                  auto_pk += 1
+                  val pk = autoPk
+                  autoPk += 1
                   pk
                 }
               }
 
-            assertEquals(expected_pk, pks.head)
+            assertEquals(expectedPk, pks.head)
           }
         }
       }
@@ -394,7 +394,7 @@ class MigrationTests {
   }
 
   @Test
-  def alter_column {
+  def alterColumn {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -408,19 +408,19 @@ class MigrationTests {
     // Assert that an INSERT with a short Varchar value works while a
     // long one fails.
     val name = "x" * 100
-    val sql_start = "INSERT INTO scala_migrations_altering VALUES ('"
-    val sql_end = "')"
-    val short_name_sql = sql_start + name + sql_end
-    val long_name_sql = sql_start + name + name + sql_end
+    val sqlStart = "INSERT INTO scala_migrations_altering VALUES ('"
+    val sqlEnd = "')"
+    val shortNameSql = sqlStart + name + sqlEnd
+    val longNameSql = sqlStart + name + name + sqlEnd
 
-    val connection_builder = TestDatabase.getAdminConnectionBuilder
+    val connectionBuilder = TestDatabase.getAdminConnectionBuilder
 
-    connection_builder.withConnection(AutoCommit) { c =>
-      With.autoClosingStatement(c.prepareStatement(short_name_sql)) { s =>
+    connectionBuilder.withConnection(AutoCommit) { c =>
+      With.autoClosingStatement(c.prepareStatement(shortNameSql)) { s =>
         s.execute()
       }
 
-      With.autoClosingStatement(c.prepareStatement(long_name_sql)) { s =>
+      With.autoClosingStatement(c.prepareStatement(longNameSql)) { s =>
         try {
           s.execute()
           fail("Expected a truncation error from the database.")
@@ -437,21 +437,21 @@ class MigrationTests {
       "com.imageworks.migration.tests.alter_column",
       false)
 
-    connection_builder.withConnection(AutoCommit) { c =>
-      With.autoClosingStatement(c.prepareStatement(long_name_sql)) { s =>
+    connectionBuilder.withConnection(AutoCommit) { c =>
+      With.autoClosingStatement(c.prepareStatement(longNameSql)) { s =>
         s.execute()
       }
     }
 
     // Do not rollback all the migrations because the last migration
-    // is irreversible.  Let set_up() for the next unit test clean up
+    // is irreversible.  Let setUp() for the next unit test clean up
     // the left over tables.
   }
 
   @Test
-  def grant_and_revoke {
-    val connection_builder = TestDatabase.getUserConnectionBuilder
-    val database_adapter = TestDatabase.getDatabaseAdapter
+  def grantAndRevoke {
+    val connectionBuilder = TestDatabase.getUserConnectionBuilder
+    val databaseAdapter = TestDatabase.getDatabaseAdapter
 
     // Make a table, migrate with admin account.
     migrator.migrate(MigrateToVersion(200811241940L),
@@ -459,16 +459,16 @@ class MigrationTests {
       false)
 
     // New connection with user account.
-    val test_migrator = new Migrator(connection_builder, database_adapter)
+    val testMigrator = new Migrator(connectionBuilder, databaseAdapter)
 
-    val select_sql =
+    val selectSql =
       "SELECT name FROM " +
-        database_adapter.quoteTableName("scala_migrations_location")
+        databaseAdapter.quoteTableName("scala_migrations_location")
 
-    def run_select {
-      test_migrator.withLoggingConnection(AutoCommit) { connection =>
+    def runSelect {
+      testMigrator.withLoggingConnection(AutoCommit) { connection =>
         With.autoClosingStatement(connection.prepareStatement(
-          select_sql)) { statement =>
+          selectSql)) { statement =>
           With.autoClosingResultSet(statement.executeQuery()) { rs => }
         }
       }
@@ -476,7 +476,7 @@ class MigrationTests {
 
     // try to select table, should give a permissions error
     try {
-      run_select
+      runSelect
 
       // failure if got here
       fail("SELECT permission failure expected")
@@ -495,7 +495,7 @@ class MigrationTests {
 
     // try to select table, should succeed now that grant has been given
     try {
-      run_select
+      runSelect
     }
     catch {
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
@@ -526,7 +526,7 @@ class MigrationTests {
 
     // try to select table, should give a permissions error again
     try {
-      run_select
+      runSelect
 
       // failure if got here
       fail("SELECT permission failure expected")
@@ -540,12 +540,12 @@ class MigrationTests {
   }
 
   @Test
-  def columns_can_hold_types {
+  def columnsCanHoldTypes {
     migrator.migrate(InstallAllMigrations,
       "com.imageworks.migration.tests.types",
       false)
 
-    val varbinary_array = (1 to 4).map(_.toByte).toArray
+    val varbinaryArray = (1 to 4).map(_.toByte).toArray
     val now = System.currentTimeMillis
 
     migrator.withLoggingConnection(AutoCommit) { c =>
@@ -557,26 +557,26 @@ class MigrationTests {
           ("integer_column", java.lang.Integer.MIN_VALUE),
           ("integer_column", java.lang.Integer.MAX_VALUE),
           ("timestamp_column", new java.sql.Date(now)),
-          ("varbinary_column", varbinary_array),
+          ("varbinary_column", varbinaryArray),
           ("varchar_column", "ABCD"))
       ) {
-        val insert_sql = """INSERT INTO
-                              scala_migrations_types_test (""" + n + """)
-                            VALUES
-                              (?)""".replaceAll("\\s+", " ")
-        val insert_statement = c.prepareStatement(insert_sql)
-        insert_statement.setObject(1, v)
-        insert_statement.executeUpdate
-        insert_statement.close()
+        val insertSql = """INSERT INTO
+                             scala_migrations_types_test (""" + n + """)
+                           VALUES
+                             (?)""".replaceAll("\\s+", " ")
+        val insertStatement = c.prepareStatement(insertSql)
+        insertStatement.setObject(1, v)
+        insertStatement.executeUpdate
+        insertStatement.close()
 
         // Make sure that the value exists.
-        val select_sql = """SELECT
-                              COUNT(1)
-                            FROM
-                              scala_migrations_types_test
-                            WHERE
-                              """ + n + """ = ?""".replaceAll("\\s+", " ")
-        With.autoClosingStatement(c.prepareStatement(select_sql)) { s =>
+        val selectSql = """SELECT
+                             COUNT(1)
+                           FROM
+                             scala_migrations_types_test
+                           WHERE
+                             """ + n + """ = ?""".replaceAll("\\s+", " ")
+        With.autoClosingStatement(c.prepareStatement(selectSql)) { s =>
           s.setObject(1, v)
           With.autoClosingResultSet(s.executeQuery()) { rs =>
             var counts: List[Int] = Nil
@@ -593,18 +593,18 @@ class MigrationTests {
   }
 
   @Test
-  def with_result_set_closes_on_normal_return {
-    val mock_rs = context.mock(classOf[ResultSet])
+  def withResultSetClosesOnNormalReturn {
+    val mockResultSet = context.mock(classOf[ResultSet])
 
     context.checking(new Expectations {
-      oneOf(mock_rs).close()
+      oneOf(mockResultSet).close()
     })
 
     var rs1: ResultSet = null
 
     val m = new Migration {
       override def up() {
-        withResultSet(mock_rs) { rs2 =>
+        withResultSet(mockResultSet) { rs2 =>
           rs1 = rs2
         }
       }
@@ -616,15 +616,15 @@ class MigrationTests {
 
     context.assertIsSatisfied()
 
-    assertSame(mock_rs, rs1)
+    assertSame(mockResultSet, rs1)
   }
 
   @Test
-  def with_result_set_closes_on_throw {
-    val mock_rs = context.mock(classOf[ResultSet])
+  def withResultSetClosesOnThrow {
+    val mockResultSet = context.mock(classOf[ResultSet])
 
     context.checking(new Expectations {
-      oneOf(mock_rs).close()
+      oneOf(mockResultSet).close()
     })
 
     var rs1: ResultSet = null
@@ -634,7 +634,7 @@ class MigrationTests {
 
     val m = new Migration {
       override def up() {
-        withResultSet(mock_rs) { rs2 =>
+        withResultSet(mockResultSet) { rs2 =>
           rs1 = rs2
           throw new ThisSpecialException
         }
@@ -652,6 +652,6 @@ class MigrationTests {
 
     context.assertIsSatisfied()
 
-    assertSame(mock_rs, rs1)
+    assertSame(mockResultSet, rs1)
   }
 }

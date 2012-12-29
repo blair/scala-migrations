@@ -54,34 +54,34 @@ class WithTests {
   private val context = new Mockery
 
   @Test
-  def with_result_set_closes_on_normal_return {
-    val mock_rs = context.mock(classOf[ResultSet])
+  def withResultSetClosesOnNormalReturn {
+    val mockResultSet = context.mock(classOf[ResultSet])
 
     context.checking(new Expectations {
-      oneOf(mock_rs).close()
+      oneOf(mockResultSet).close()
     })
 
     var rs1: ResultSet = null
 
-    val result = With.autoClosingResultSet(mock_rs) { rs2 =>
+    val result = With.autoClosingResultSet(mockResultSet) { rs2 =>
       rs1 = rs2
       "foobar"
     }
 
-    assertSame(mock_rs, rs1)
+    assertSame(mockResultSet, rs1)
     assertEquals("foobar", result)
     context.assertIsSatisfied()
   }
 
   @Test
-  def with_result_set_closes_on_throw {
-    val mock_rs = context.mock(classOf[ResultSet])
+  def withResultSetClosesOnThrow {
+    val mockResultSet = context.mock(classOf[ResultSet])
 
     val e1 = new RuntimeException
     val e2 = new SQLException
 
     context.checking(new Expectations {
-      oneOf(mock_rs).close()
+      oneOf(mockResultSet).close()
       will(Expectations.throwException(e2))
     })
 
@@ -89,7 +89,7 @@ class WithTests {
     var rs1: ResultSet = null
 
     try {
-      With.autoClosingResultSet(mock_rs) { rs2 =>
+      With.autoClosingResultSet(mockResultSet) { rs2 =>
         rs1 = rs2
         throw e1
       }
@@ -98,7 +98,7 @@ class WithTests {
       case e: Exception => caughtExceptionOpt = Some(e)
     }
 
-    assertSame(mock_rs, rs1)
+    assertSame(mockResultSet, rs1)
     assertTrue("Failed to catch exception.", caughtExceptionOpt.isDefined)
     assertSame("Failed to catch expected exception.",
       e1, caughtExceptionOpt.get)
@@ -106,13 +106,13 @@ class WithTests {
   }
 
   @Test
-  def close_exception_is_not_suppressed_if_closure_returns_normally {
-    val mock_rs = context.mock(classOf[ResultSet])
+  def closeExceptionIsNotSuppressedIfClosureReturnsNormally {
+    val mockResultSet = context.mock(classOf[ResultSet])
 
     val e1 = new SQLException
 
     context.checking(new Expectations {
-      oneOf(mock_rs).close()
+      oneOf(mockResultSet).close()
       will(Expectations.throwException(e1))
     })
 
@@ -120,7 +120,7 @@ class WithTests {
     var rs1: ResultSet = null
 
     try {
-      With.autoClosingResultSet(mock_rs) { rs2 =>
+      With.autoClosingResultSet(mockResultSet) { rs2 =>
         rs1 = rs2
       }
     }
@@ -128,7 +128,7 @@ class WithTests {
       case e: Exception => caughtExceptionOpt = Some(e)
     }
 
-    assertSame(mock_rs, rs1)
+    assertSame(mockResultSet, rs1)
     assertTrue("Failed to catch exception.", caughtExceptionOpt.isDefined)
     assertSame("Failed to catch expected exception.",
       e1, caughtExceptionOpt.get)

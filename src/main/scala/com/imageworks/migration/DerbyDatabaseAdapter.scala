@@ -89,9 +89,9 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
 
   override val supportsCheckConstraints = true
 
-  override def columnDefinitionFactory(column_type: SqlType,
-                                       character_set_opt: Option[CharacterSet]): ColumnDefinition = {
-    character_set_opt match {
+  override def columnDefinitionFactory(columnType: SqlType,
+                                       characterSetOpt: Option[CharacterSet]): ColumnDefinition = {
+    characterSetOpt match {
       case None =>
       case Some(CharacterSet(Unicode, None)) =>
       case Some(charset @ CharacterSet(Unicode, Some(collation))) =>
@@ -105,7 +105,7 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
           charset)
     }
 
-    column_type match {
+    columnType match {
       case BigintType =>
         new DerbyBigintColumnDefinition
       case BlobType =>
@@ -132,15 +132,15 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
     }
   }
 
-  override protected def alterColumnSql(schema_name_opt: Option[String],
-                                        column_definition: ColumnDefinition): String = {
+  override protected def alterColumnSql(schemaNameOpt: Option[String],
+                                        columnDefinition: ColumnDefinition): String = {
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
-      .append(quoteTableName(schema_name_opt, column_definition.getTableName))
+      .append(quoteTableName(schemaNameOpt, columnDefinition.getTableName))
       .append(" ALTER ")
-      .append(quoteColumnName(column_definition.getColumnName))
+      .append(quoteColumnName(columnDefinition.getColumnName))
       .append(" SET DATA TYPE ")
-      .append(column_definition.toSql)
+      .append(columnDefinition.toSql)
       .toString
   }
 }

@@ -42,43 +42,43 @@ class JavaMigrator private (migrator: Migrator) {
   /**
    * JavaMigrator constructor.
    *
-   * @param connection_builder a builder of connections to the
+   * @param connectionBuilder a builder of connections to the
    *        database
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
    */
-  def this(connection_builder: ConnectionBuilder,
+  def this(connectionBuilder: ConnectionBuilder,
            adapter: DatabaseAdapter) {
-    this(new Migrator(connection_builder, adapter))
+    this(new Migrator(connectionBuilder, adapter))
   }
 
   /**
    * JavaMigrator constructor.
    *
-   * @param jdbc_url the JDBC URL to connect to the database
+   * @param jdbcUrl the JDBC URL to connect to the database
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
    */
-  def this(jdbc_url: String,
+  def this(jdbcUrl: String,
            adapter: DatabaseAdapter) {
-    this(new ConnectionBuilder(jdbc_url), adapter)
+    this(new ConnectionBuilder(jdbcUrl), adapter)
   }
 
   /**
    * JavaMigrator constructor.
    *
-   * @param jdbc_url the JDBC URL to connect to the database
-   * @param jdbc_username the username to log into the database
-   * @param jdbc_password the password associated with the database
+   * @param jdbcUrl the JDBC URL to connect to the database
+   * @param jdbcUsername the username to log into the database
+   * @param jdbcPassword the password associated with the database
    *        username
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
    */
-  def this(jdbc_url: String,
-           jdbc_username: String,
-           jdbc_password: String,
+  def this(jdbcUrl: String,
+           jdbcUsername: String,
+           jdbcPassword: String,
            adapter: DatabaseAdapter) {
-    this(new ConnectionBuilder(jdbc_url, jdbc_username, jdbc_password),
+    this(new ConnectionBuilder(jdbcUrl, jdbcUsername, jdbcPassword),
       adapter)
   }
 
@@ -90,12 +90,12 @@ class JavaMigrator private (migrator: Migrator) {
    *         table names is done
    */
   def getTableNames: java.util.Set[String] = {
-    val table_names = migrator.getTableNames
+    val tableNames = migrator.getTableNames
 
-    val set = new java.util.HashSet[String](table_names.size)
+    val set = new java.util.HashSet[String](tableNames.size)
 
-    for (table_name <- table_names)
-      set.add(table_name)
+    for (tableName <- tableNames)
+      set.add(tableName)
 
     set
   }
@@ -103,27 +103,27 @@ class JavaMigrator private (migrator: Migrator) {
   /**
    * Install all available migrations into the database.
    *
-   * @param package_name the package name that the Migration
-   *        subclasses should be searched for
-   * @param search_sub_packages true if sub-packages of package_name
+   * @param packageName the package name that the Migration subclasses
+   *        should be searched for
+   * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    */
-  def installAllMigrations(package_name: String,
-                           search_sub_packages: Boolean) {
-    migrator.migrate(InstallAllMigrations, package_name, search_sub_packages)
+  def installAllMigrations(packageName: String,
+                           searchSubPackages: Boolean) {
+    migrator.migrate(InstallAllMigrations, packageName, searchSubPackages)
   }
 
   /**
    * Remove all installed migrations from the database.
    *
-   * @param package_name the package name that the Migration
-   *        subclasses should be searched for
-   * @param search_sub_packages true if sub-packages of package_name
+   * @param packageName the package name that the Migration subclasses
+   *        should be searched for
+   * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    */
-  def removeAllMigrations(package_name: String,
-                          search_sub_packages: Boolean) {
-    migrator.migrate(RemoveAllMigrations, package_name, search_sub_packages)
+  def removeAllMigrations(packageName: String,
+                          searchSubPackages: Boolean) {
+    migrator.migrate(RemoveAllMigrations, packageName, searchSubPackages)
   }
 
   /**
@@ -131,17 +131,15 @@ class JavaMigrator private (migrator: Migrator) {
    *
    * @param version the version number the database should be migrated
    *        to
-   * @param package_name the package name that the Migration
-   *        subclasses should be searched for
-   * @param search_sub_packages true if sub-packages of package_name
+   * @param packageName the package name that the Migration subclasses
+   *        should be searched for
+   * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    */
   def migrateTo(version: Long,
-                package_name: String,
-                search_sub_packages: Boolean) {
-    migrator.migrate(MigrateToVersion(version),
-      package_name,
-      search_sub_packages)
+                packageName: String,
+                searchSubPackages: Boolean) {
+    migrator.migrate(MigrateToVersion(version), packageName, searchSubPackages)
   }
 
   /**
@@ -149,17 +147,17 @@ class JavaMigrator private (migrator: Migrator) {
    *
    * @param count the number of migrations to rollback
    *        to
-   * @param package_name the package name that the Migration
-   *        subclasses should be searched for
-   * @param search_sub_packages true if sub-packages of package_name
+   * @param packageName the package name that the Migration subclasses
+   *        should be searched for
+   * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    */
   def rollback(count: Int,
-               package_name: String,
-               search_sub_packages: Boolean) {
+               packageName: String,
+               searchSubPackages: Boolean) {
     migrator.migrate(RollbackMigration(count),
-      package_name,
-      search_sub_packages)
+      packageName,
+      searchSubPackages)
   }
 
   /**
@@ -172,9 +170,9 @@ class JavaMigrator private (migrator: Migrator) {
    * Running this method does not modify the database in any way.  The
    * schema migrations table is not created.
    *
-   * @param package_name the Java package name to search for Migration
+   * @param packageName the Java package name to search for Migration
    *        subclasses
-   * @param search_sub_packages true if sub-packages of package_name
+   * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    * @return null if all available migrations are installed and all
    *         installed migrations have a corresponding Migration
@@ -182,9 +180,9 @@ class JavaMigrator private (migrator: Migrator) {
    *         the not-installed migrations and the installed migrations
    *         that do not have a matching Migration subclass
    */
-  def whyNotMigrated(package_name: String,
-                     search_sub_packages: Boolean): String = {
-    migrator.whyNotMigrated(package_name, search_sub_packages) match {
+  def whyNotMigrated(packageName: String,
+                     searchSubPackages: Boolean): String = {
+    migrator.whyNotMigrated(packageName, searchSubPackages) match {
       case Some(message) => message
       case None => null
     }

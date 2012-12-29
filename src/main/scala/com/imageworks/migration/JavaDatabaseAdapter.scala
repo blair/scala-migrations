@@ -51,11 +51,11 @@ object JavaDatabaseAdapter {
   /**
    * Create a Derby Database Adapter.
    *
-   * @param schema_name the default schema name in the adapter
+   * @param schemaName the default schema name in the adapter
    * @return newly constructed DerbyDatabaseAdapter
    */
-  def getDerbyDatabaseAdapter(schema_name: String): DerbyDatabaseAdapter = {
-    new DerbyDatabaseAdapter(Some(schema_name))
+  def getDerbyDatabaseAdapter(schemaName: String): DerbyDatabaseAdapter = {
+    new DerbyDatabaseAdapter(Some(schemaName))
   }
 
   /**
@@ -70,11 +70,11 @@ object JavaDatabaseAdapter {
   /**
    * Create a MySQL Database Adapter.
    *
-   * @param schema_name the default schema name in the adapter
+   * @param schemaName the default schema name in the adapter
    * @return newly constructed MysqlDatabaseAdapter
    */
-  def getMysqlDatabaseAdapter(schema_name: String): MysqlDatabaseAdapter = {
-    new MysqlDatabaseAdapter(Some(schema_name))
+  def getMysqlDatabaseAdapter(schemaName: String): MysqlDatabaseAdapter = {
+    new MysqlDatabaseAdapter(Some(schemaName))
   }
 
   /**
@@ -89,11 +89,11 @@ object JavaDatabaseAdapter {
   /**
    * Create an Oracle Database Adapter.
    *
-   * @param schema_name the default schema name in the adapter
+   * @param schemaName the default schema name in the adapter
    * @return newly constructed OracleDatabaseAdapter
    */
-  def getOracleDatabaseAdapter(schema_name: String): OracleDatabaseAdapter = {
-    new OracleDatabaseAdapter(Some(schema_name))
+  def getOracleDatabaseAdapter(schemaName: String): OracleDatabaseAdapter = {
+    new OracleDatabaseAdapter(Some(schemaName))
   }
 
   /**
@@ -108,10 +108,10 @@ object JavaDatabaseAdapter {
   /**
    * Create a PostgreSQL Database Adapter.
    *
-   * @param schema_name the default schema name in the adapter
+   * @param schemaName the default schema name in the adapter
    * @return newly constructed PostgresqlDatabaseAdapter
    */
-  def getPostgresqlDatabaseAdapter(schema_name: String): PostgresqlDatabaseAdapter = {
-    new PostgresqlDatabaseAdapter(Some(schema_name))
+  def getPostgresqlDatabaseAdapter(schemaName: String): PostgresqlDatabaseAdapter = {
+    new PostgresqlDatabaseAdapter(Some(schemaName))
   }
 }

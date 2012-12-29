@@ -81,9 +81,9 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
 
   override val supportsCheckConstraints = true
 
-  override def columnDefinitionFactory(column_type: SqlType,
-                                       character_set_opt: Option[CharacterSet]): ColumnDefinition = {
-    character_set_opt match {
+  override def columnDefinitionFactory(columnType: SqlType,
+                                       characterSetOpt: Option[CharacterSet]): ColumnDefinition = {
+    characterSetOpt match {
       case None =>
       case Some(charset @ CharacterSet(_, _)) =>
         logger.warn("Ignoring '{}' as the character set encoding can only " +
@@ -91,7 +91,7 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
           charset)
     }
 
-    column_type match {
+    columnType match {
       case BigintType =>
         new PostgresqlBigintColumnDefinition
       case BlobType =>
@@ -115,15 +115,15 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
     }
   }
 
-  override protected def alterColumnSql(schema_name_opt: Option[String],
-                                        column_definition: ColumnDefinition): String = {
+  override protected def alterColumnSql(schemaNameOpt: Option[String],
+                                        columnDefinition: ColumnDefinition): String = {
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
-      .append(quoteTableName(schema_name_opt, column_definition.getTableName))
+      .append(quoteTableName(schemaNameOpt, columnDefinition.getTableName))
       .append(" ALTER COLUMN ")
-      .append(quoteColumnName(column_definition.getColumnName))
+      .append(quoteColumnName(columnDefinition.getColumnName))
       .append(" TYPE ")
-      .append(column_definition.toSql)
+      .append(columnDefinition.toSql)
       .toString
   }
 }

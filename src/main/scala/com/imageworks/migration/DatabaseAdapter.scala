@@ -40,26 +40,26 @@ object DatabaseAdapter {
    * vendor.
    *
    * @param vendor the database vendor
-   * @param schema_name_opt an optional schema name used to qualify
-   *        all table names in the generated SQL; if Some(), then all
+   * @param schemaNameOpt an optional schema name used to qualify all
+   *        table names in the generated SQL; if Some(), then all
    *        table names are qualified with the name, otherwise, table
    *        names are unqualified
    * @return a DatabaseAdapter suitable to use for the database
    */
   def forVendor(vendor: Vendor,
-                schema_name_opt: Option[String]): DatabaseAdapter = {
+                schemaNameOpt: Option[String]): DatabaseAdapter = {
     vendor match {
       case Derby =>
-        new DerbyDatabaseAdapter(schema_name_opt)
+        new DerbyDatabaseAdapter(schemaNameOpt)
 
       case Mysql =>
-        new MysqlDatabaseAdapter(schema_name_opt)
+        new MysqlDatabaseAdapter(schemaNameOpt)
 
       case Oracle =>
-        new OracleDatabaseAdapter(schema_name_opt)
+        new OracleDatabaseAdapter(schemaNameOpt)
 
       case Postgresql =>
-        new PostgresqlDatabaseAdapter(schema_name_opt)
+        new PostgresqlDatabaseAdapter(schemaNameOpt)
 
       case null =>
         throw new IllegalArgumentException("Must pass a non-null vendor to " +
@@ -143,46 +143,46 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
    * class of the returned ColumnDefinition only depends upon the
    * input column data type.
    *
-   * @param table_name the name of the table the column is in
-   * @param column_name the column's name
-   * @param column_type the data type of the column
+   * @param tableName the name of the table the column is in
+   * @param columnName the column's name
+   * @param columnType the data type of the column
    * @param options a list of column options customizing the column
    * @return a new ColumnDefinition
    */
-  def newColumnDefinition(table_name: String,
-                          column_name: String,
-                          column_type: SqlType,
+  def newColumnDefinition(tableName: String,
+                          columnName: String,
+                          columnType: SqlType,
                           options: ColumnOption*): ColumnDefinition = {
     var opts = options.toList
 
     // Search for a CharacterSet option.
-    var character_set_opt: Option[CharacterSet] = None
+    var characterSetOpt: Option[CharacterSet] = None
 
     for (opt @ CharacterSet(_, _) <- opts) {
       opts = opts filter { _ ne opt }
-      if (character_set_opt.isDefined && character_set_opt.get != opt) {
+      if (characterSetOpt.isDefined && characterSetOpt.get != opt) {
         logger.warn("Redefining the character set from '{}' to '{}'.",
-          Array[AnyRef](character_set_opt.get, opt): _*)
+          Array[AnyRef](characterSetOpt.get, opt): _*)
       }
-      character_set_opt = Some(opt)
+      characterSetOpt = Some(opt)
     }
 
     // Warn if a CharacterSet is being used for a non-character type
     // column.
-    if (character_set_opt.isDefined)
-      column_type match {
+    if (characterSetOpt.isDefined)
+      columnType match {
         case CharType =>
         case VarcharType =>
         case _ =>
           logger.warn("The '{}' option cannot be used for a '{}' column type.",
-            Array[AnyRef](character_set_opt.get, column_type): _*)
+            Array[AnyRef](characterSetOpt.get, columnType): _*)
       }
 
-    val d = columnDefinitionFactory(column_type, character_set_opt)
+    val d = columnDefinitionFactory(columnType, characterSetOpt)
 
     d.adapterOpt = Some(this)
-    d.tableNameOpt = Some(table_name)
-    d.columnNameOpt = Some(column_name)
+    d.tableNameOpt = Some(tableName)
+    d.columnNameOpt = Some(columnName)
     d.options = opts
 
     d.initialize()
@@ -195,47 +195,47 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
    * constructed, but uninitialized, concrete ColumnDefinition
    * subclass for the given SQL data type and optional CharacterSet.
    *
-   * @param column_type the column's data type
-   * @param character_set_opt an optional CharacterSet
+   * @param columnType the column's data type
+   * @param characterSetOpt an optional CharacterSet
    * @return a newly constructed but uninitialized ColumnDefinition
-   *         for the column_type
+   *         for the columnType
    */
-  protected def columnDefinitionFactory(column_type: SqlType,
-                                        character_set_opt: Option[CharacterSet]): ColumnDefinition
+  protected def columnDefinitionFactory(columnType: SqlType,
+                                        characterSetOpt: Option[CharacterSet]): ColumnDefinition
 
   /**
    * Quote a schema name.
    *
-   * @param schema_name the name of the schema to quote
+   * @param schemaName the name of the schema to quote
    * @return a properly quoted schema name
    */
-  def quoteSchemaName(schema_name: String): String = {
-    quoteCharacter + unquotedNameConverter(schema_name) + quoteCharacter
+  def quoteSchemaName(schemaName: String): String = {
+    quoteCharacter + unquotedNameConverter(schemaName) + quoteCharacter
   }
 
   /**
    * Quote a table name, prepending the quoted schema name to the
    * quoted table name along with a '.' if a schema name is provided.
    *
-   * @param schema_name_opt an optional schema name
-   * @param table_name the name of the table to quote
+   * @param schemaNameOpt an optional schema name
+   * @param tableName the name of the table to quote
    * @return the table name properly quoted for the database,
    *         prepended with the quoted schema name and a '.' if a
    *         schema name is provided
    */
-  def quoteTableName(schema_name_opt: Option[String],
-                     table_name: String): String = {
+  def quoteTableName(schemaNameOpt: Option[String],
+                     tableName: String): String = {
     val sb = new java.lang.StringBuilder(128)
 
-    schema_name_opt match {
-      case Some(schema_name) =>
-        sb.append(quoteSchemaName(schema_name))
+    schemaNameOpt match {
+      case Some(schemaName) =>
+        sb.append(quoteSchemaName(schemaName))
           .append('.')
       case None =>
     }
 
     sb.append(quoteCharacter)
-      .append(unquotedNameConverter(table_name))
+      .append(unquotedNameConverter(tableName))
       .append(quoteCharacter)
       .toString
   }
@@ -245,36 +245,36 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
    * default schema name, then the quoted table name is prepended with
    * the quoted schema name along with a '.'.
    *
-   * @param table_name the name of the table to quote
+   * @param tableName the name of the table to quote
    * @return the table name properly quoted for the database,
    *         prepended with the quoted schema name and a '.' if the
    *         database adapter was provided with a default schema name
    */
-  def quoteTableName(table_name: String): String = {
-    // use the default schema_name_opt defined in the adapter
-    quoteTableName(schemaNameOpt, table_name)
+  def quoteTableName(tableName: String): String = {
+    // use the default schemaNameOpt defined in the adapter
+    quoteTableName(schemaNameOpt, tableName)
   }
 
   /**
    * Quote an index name.
    *
-   * @param schema_name_opt an optional schema name
-   * @param index_name the name of the index to quote
+   * @param schemaNameOpt an optional schema name
+   * @param indexName the name of the index to quote
    * @return a properly quoted index name
    */
-  def quoteIndexName(schema_name_opt: Option[String],
-                     index_name: String): String = {
+  def quoteIndexName(schemaNameOpt: Option[String],
+                     indexName: String): String = {
     val sb = new java.lang.StringBuilder(128)
 
-    schema_name_opt match {
-      case Some(schema_name) =>
-        sb.append(quoteSchemaName(schema_name))
+    schemaNameOpt match {
+      case Some(schemaName) =>
+        sb.append(quoteSchemaName(schemaName))
           .append('.')
       case None =>
     }
 
     sb.append(quoteCharacter)
-      .append(unquotedNameConverter(index_name))
+      .append(unquotedNameConverter(indexName))
       .append(quoteCharacter)
       .toString
   }
@@ -282,148 +282,145 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
   /**
    * Quote a column name.
    *
-   * @param column_name the name of the column to quote
+   * @param columnName the name of the column to quote
    * @return a properly quoted column name
    */
-  def quoteColumnName(column_name: String): String = {
-    quoteCharacter + unquotedNameConverter(column_name) + quoteCharacter
+  def quoteColumnName(columnName: String): String = {
+    quoteCharacter + unquotedNameConverter(columnName) + quoteCharacter
   }
 
   /**
    * Different databases require different SQL to lock a table.
    *
-   * @param schema_name_opt the optional schema name to qualify the
+   * @param schemaNameOpt the optional schema name to qualify the
    *        table name
-   * @param table_name the name of the table to lock
+   * @param tableName the name of the table to lock
    * @return the SQL to lock the table
    */
-  def lockTableSql(schema_name_opt: Option[String],
-                   table_name: String): String = {
+  def lockTableSql(schemaNameOpt: Option[String],
+                   tableName: String): String = {
     "LOCK TABLE " +
-      quoteTableName(schema_name_opt, table_name) +
+      quoteTableName(schemaNameOpt, tableName) +
       " IN EXCLUSIVE MODE"
   }
 
   /**
    * Different databases require different SQL to lock a table.
    *
-   * @param table_name the name of the table to lock
+   * @param tableName the name of the table to lock
    * @return the SQL to lock the table
    */
-  def lockTableSql(table_name: String): String = {
-    lockTableSql(schemaNameOpt, table_name)
+  def lockTableSql(tableName: String): String = {
+    lockTableSql(schemaNameOpt, tableName)
   }
 
-  protected def alterColumnSql(schema_name_opt: Option[String],
-                               column_definition: ColumnDefinition): String
+  protected def alterColumnSql(schemaNameOpt: Option[String],
+                               columnDefinition: ColumnDefinition): String
 
   /**
    * Different databases require different SQL to alter a column's
    * definition.
    *
-   * @param schema_name_opt the optional schema name to qualify the
+   * @param schemaNameOpt the optional schema name to qualify the
    *        table name
-   * @param table_name the name of the table with the column
-   * @param column_name the name of the column
-   * @param column_type the type the column is being altered to
+   * @param tableName the name of the table with the column
+   * @param columnName the name of the column
+   * @param columnType the type the column is being altered to
    * @param options a possibly empty array of column options to
    *        customize the column
    * @return the SQL to alter the column
    */
-  def alterColumnSql(schema_name_opt: Option[String],
-                     table_name: String,
-                     column_name: String,
-                     column_type: SqlType,
+  def alterColumnSql(schemaNameOpt: Option[String],
+                     tableName: String,
+                     columnName: String,
+                     columnType: SqlType,
                      options: ColumnOption*): String = {
-    alterColumnSql(schema_name_opt,
-      newColumnDefinition(table_name,
-        column_name,
-        column_type,
-        options: _*))
+    alterColumnSql(schemaNameOpt,
+      newColumnDefinition(tableName, columnName, columnType, options: _*))
   }
 
   /**
    * Different databases require different SQL to alter a column's
-   * definition.  Uses the schema_name_opt defined in the adapter.
+   * definition.  Uses the schemaNameOpt defined in the adapter.
    *
-   * @param table_name the name of the table with the column
-   * @param column_name the name of the column
-   * @param column_type the type the column is being altered to
+   * @param tableName the name of the table with the column
+   * @param columnName the name of the column
+   * @param columnType the type the column is being altered to
    * @param options a possibly empty array of column options to
    *        customize the column
    * @return the SQL to alter the column
    */
-  def alterColumnSql(table_name: String,
-                     column_name: String,
-                     column_type: SqlType,
+  def alterColumnSql(tableName: String,
+                     columnName: String,
+                     columnType: SqlType,
                      options: ColumnOption*): String = {
     alterColumnSql(schemaNameOpt,
-      table_name,
-      column_name,
-      column_type,
+      tableName,
+      columnName,
+      columnType,
       options: _*)
   }
 
   /**
    * Different databases require different SQL to drop a column.
    *
-   * @param schema_name_opt the optional schema name to qualify the
+   * @param schemaNameOpt the optional schema name to qualify the
    *        table name
-   * @param table_name the name of the table with the column
-   * @param column_name the name of the column
+   * @param tableName the name of the table with the column
+   * @param columnName the name of the column
    * @return the SQL to drop the column
    */
-  def removeColumnSql(schema_name_opt: Option[String],
-                      table_name: String,
-                      column_name: String): String = {
+  def removeColumnSql(schemaNameOpt: Option[String],
+                      tableName: String,
+                      columnName: String): String = {
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
-      .append(quoteTableName(schema_name_opt, table_name))
+      .append(quoteTableName(schemaNameOpt, tableName))
       .append(" DROP ")
-      .append(quoteColumnName(column_name))
+      .append(quoteColumnName(columnName))
       .toString
   }
 
   /**
    * Different databases require different SQL to drop a column.
-   * Uses the schema_name_opt defined in the adapter.
+   * Uses the schemaNameOpt defined in the adapter.
    *
-   * @param table_name the name of the table with the column
-   * @param column_name the name of the column
+   * @param tableName the name of the table with the column
+   * @param columnName the name of the column
    * @return the SQL to drop the column
    */
-  def removeColumnSql(table_name: String,
-                      column_name: String): String = {
-    removeColumnSql(schemaNameOpt, table_name, column_name)
+  def removeColumnSql(tableName: String,
+                      columnName: String): String = {
+    removeColumnSql(schemaNameOpt, tableName, columnName)
   }
 
   /**
    * Different databases require different SQL to drop an index.
    *
-   * @param schema_name_opt the optional schema name to qualify the
+   * @param schemaNameOpt the optional schema name to qualify the
    *        table name
-   * @param table_name the name of the table with the index
-   * @param index_name the name of the index
+   * @param tableName the name of the table with the index
+   * @param indexName the name of the index
    * @return the SQL to drop the index
    */
-  def removeIndexSql(schema_name_opt: Option[String],
-                     table_name: String,
-                     index_name: String): String = {
+  def removeIndexSql(schemaNameOpt: Option[String],
+                     tableName: String,
+                     indexName: String): String = {
     "DROP INDEX " +
-      quoteTableName(schema_name_opt, index_name)
+      quoteTableName(schemaNameOpt, indexName)
   }
 
   /**
    * Different databases require different SQL to drop an index.
-   * Uses the schema_name_opt defined in the adapter.
+   * Uses the schemaNameOpt defined in the adapter.
    *
-   * @param table_name the name of the table with the index
-   * @param index_name the name of the index
+   * @param tableName the name of the table with the index
+   * @param indexName the name of the index
    * @return the SQL to drop the index
    */
-  def removeIndexSql(table_name: String,
-                     index_name: String): String = {
-    removeIndexSql(schemaNameOpt, table_name, index_name)
+  def removeIndexSql(tableName: String,
+                     indexName: String): String = {
+    removeIndexSql(schemaNameOpt, tableName, indexName)
   }
 
   private def privilegeToString(privilege: Privilege): String = {
@@ -467,8 +464,8 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
 
   private def grantRevokeCommon(action: String,
                                 preposition: String,
-                                schema_name_opt: Option[String],
-                                privilege_target: PrivilegeTarget,
+                                schemaNameOpt: Option[String],
+                                privilegeTarget: PrivilegeTarget,
                                 grantees: Array[User],
                                 privileges: Privilege*): String = {
     // The GRANT and REVOKE syntax is basically the same
@@ -478,120 +475,120 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
 
     sb.append(privileges map { privilegeToString(_) } mkString (", "))
 
-    val quoted_grantees = for (g <- grantees)
+    val quotedGrantees = for (g <- grantees)
       yield g.quoted(unquotedNameConverter)
 
     sb.append(" ON ")
 
-    privilege_target match {
+    privilegeTarget match {
       case SchemaPrivilegeTarget =>
         sb.append("SCHEMA ")
-          .append(quoteSchemaName(schema_name_opt.get))
+          .append(quoteSchemaName(schemaNameOpt.get))
       case TablePrivilegeTarget(tableName) =>
-        sb.append(quoteTableName(schema_name_opt, tableName))
+        sb.append(quoteTableName(schemaNameOpt, tableName))
     }
 
     sb.append(' ')
       .append(preposition)
       .append(' ')
-      .append(quoted_grantees.mkString(", "))
+      .append(quotedGrantees.mkString(", "))
       .toString
   }
 
   /**
    * Different databases have different limitations on the GRANT statement.
    *
-   * @param schema_name_opt the optional schema name to qualify the
+   * @param schemaNameOpt the optional schema name to qualify the
    *        table name
-   * @param table_name the name of the table with the index
+   * @param tableName the name of the table with the index
    * @param grantees one or more objects to grant the new privileges to
    * @param privileges one or more GrantPrivilegeType objects describing the
    *        types of privileges to grant
    * @return the SQL to grant privileges
    */
-  def grantOnTableSql(schema_name_opt: Option[String],
-                      table_name: String,
+  def grantOnTableSql(schemaNameOpt: Option[String],
+                      tableName: String,
                       grantees: Array[User],
                       privileges: GrantPrivilegeType*): String = {
     grantRevokeCommon("GRANT",
       "TO",
-      schema_name_opt,
-      TablePrivilegeTarget(table_name),
+      schemaNameOpt,
+      TablePrivilegeTarget(tableName),
       grantees,
       privileges: _*)
   }
 
   /**
    * Different databases have different limitations on the GRANT statement.
-   * Uses the schema_name_opt defined in the adapter.
+   * Uses the schemaNameOpt defined in the adapter.
    *
-   * @param table_name the name of the table with the index
+   * @param tableName the name of the table with the index
    * @param grantees one or more objects to grant the new privileges to
    * @param privileges one or more GrantPrivilegeType objects describing the
    *        types of privileges to grant
    * @return the SQL to grant privileges
    */
-  def grantOnTableSql(table_name: String,
+  def grantOnTableSql(tableName: String,
                       grantees: Array[User],
                       privileges: GrantPrivilegeType*): String = {
-    grantOnTableSql(schemaNameOpt, table_name, grantees, privileges: _*)
+    grantOnTableSql(schemaNameOpt, tableName, grantees, privileges: _*)
   }
 
   /**
    * Different databases have different limitations on the REVOKE statement.
    *
-   * @param schema_name_opt the optional schema name to qualify the
+   * @param schemaNameOpt the optional schema name to qualify the
    *        table name
-   * @param table_name the name of the table with the index
+   * @param tableName the name of the table with the index
    * @param grantees one or more objects to revoke the privileges from
    * @param privileges one or more GrantPrivilegeType objects describing the
    *        types of privileges to revoke
    * @return the SQL to revoke privileges
    */
-  def revokeOnTableSql(schema_name_opt: Option[String],
-                       table_name: String,
+  def revokeOnTableSql(schemaNameOpt: Option[String],
+                       tableName: String,
                        grantees: Array[User],
                        privileges: GrantPrivilegeType*): String = {
     grantRevokeCommon("REVOKE",
       "FROM",
-      schema_name_opt,
-      TablePrivilegeTarget(table_name),
+      schemaNameOpt,
+      TablePrivilegeTarget(tableName),
       grantees,
       privileges: _*)
   }
 
   /**
    * Different databases have different limitations on the REVOKE statement.
-   * Uses the schema_name_opt defined in the adapter.
+   * Uses the schemaNameOpt defined in the adapter.
    *
-   * @param table_name the name of the table with the index
+   * @param tableName the name of the table with the index
    * @param grantees one or more objects to revoke the privileges from
    * @param privileges one or more GrantPrivilegeType objects describing the
    *        types of privileges to revoke
    * @return the SQL to revoke privileges
    */
-  def revokeOnTableSql(table_name: String,
+  def revokeOnTableSql(tableName: String,
                        grantees: Array[User],
                        privileges: GrantPrivilegeType*): String = {
-    revokeOnTableSql(schemaNameOpt, table_name, grantees, privileges: _*)
+    revokeOnTableSql(schemaNameOpt, tableName, grantees, privileges: _*)
   }
 
   /**
    * Grant one or more privileges to a schema.
    *
-   * @param schema_name the name of the schema to grant privileges on
+   * @param schemaName the name of the schema to grant privileges on
    * @param grantees one or more objects to grant the new privileges
    *        to
    * @param privileges one or more SchemaPrivilege objects describing
    *        the types of privileges to grant
    * @return the SQL to grant privileges
    */
-  def grantOnSchemaSql(schema_name: String,
+  def grantOnSchemaSql(schemaName: String,
                        grantees: Array[User],
                        privileges: SchemaPrivilege*): String = {
     grantRevokeCommon("GRANT",
       "TO",
-      Some(schema_name),
+      Some(schemaName),
       SchemaPrivilegeTarget,
       grantees,
       privileges: _*)
@@ -614,19 +611,19 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
   /**
    * Revoke one or more privileges from a schema.
    *
-   * @param schema_name the name of the schema to revoke privileges
+   * @param schemaName the name of the schema to revoke privileges
    *        from
    * @param grantees one or more objects to revoke the privileges from
    * @param privileges one or more SchemaPrivilege objects describing
    *        the types of privileges to revoke
    * @return the SQL to revoke privileges
    */
-  def revokeOnSchemaSql(schema_name: String,
+  def revokeOnSchemaSql(schemaName: String,
                         grantees: Array[User],
                         privileges: SchemaPrivilege*): String = {
     grantRevokeCommon("REVOKE",
       "FROM",
-      Some(schema_name),
+      Some(schemaName),
       SchemaPrivilegeTarget,
       grantees,
       privileges: _*)
@@ -658,18 +655,18 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
                                   options: CheckOption*): (String, List[CheckOption]) = {
     var opts = options.toList
 
-    var chk_name_opt: Option[String] = None
+    var chkNameOpt: Option[String] = None
 
     for (opt @ Name(name) <- opts) {
       opts = opts filter { _ ne opt }
-      if (chk_name_opt.isDefined && chk_name_opt.get != name) {
+      if (chkNameOpt.isDefined && chkNameOpt.get != name) {
         logger.warn("Redefining the check constraint name from '{}' to '{}'.",
-          Array[AnyRef](chk_name_opt.get, name): _*)
+          Array[AnyRef](chkNameOpt.get, name): _*)
       }
-      chk_name_opt = Some(name)
+      chkNameOpt = Some(name)
     }
 
-    val name = chk_name_opt.getOrElse {
+    val name = chkNameOpt.getOrElse {
       "chk_" +
         on.tableName +
         "_" +
@@ -683,13 +680,13 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
    * Return the SQL text in a foreign key relationship for an optional
    * ON DELETE clause.
    *
-   * @param on_delete_opt an Option[OnDelete]
+   * @param onDeleteOpt an Option[OnDelete]
    * @return the SQL text to append to the SQL to create a foreign
    *         key relationship
    */
-  def onDeleteSql(on_delete_opt: Option[OnDelete]): String = {
-    on_delete_opt match {
-      case Some(on_delete) => "ON DELETE " + on_delete.action.sql
+  def onDeleteSql(onDeleteOpt: Option[OnDelete]): String = {
+    onDeleteOpt match {
+      case Some(onDelete) => "ON DELETE " + onDelete.action.sql
       case None => ""
     }
   }
@@ -698,13 +695,13 @@ abstract class DatabaseAdapter(val schemaNameOpt: Option[String]) {
    * Return the SQL text in a foreign key relationship for an optional
    * ON UPDATE clause.
    *
-   * @param on_update_opt an Option[OnUpdate]
+   * @param onUpdateOpt an Option[OnUpdate]
    * @return the SQL text to append to the SQL to create a foreign
    *         key relationship
    */
-  def onUpdateSql(on_update_opt: Option[OnUpdate]): String = {
-    on_update_opt match {
-      case Some(on_update) => "ON UPDATE " + on_update.action.sql
+  def onUpdateSql(onUpdateOpt: Option[OnUpdate]): String = {
+    onUpdateOpt match {
+      case Some(onUpdate) => "ON UPDATE " + onUpdate.action.sql
       case None => ""
     }
   }

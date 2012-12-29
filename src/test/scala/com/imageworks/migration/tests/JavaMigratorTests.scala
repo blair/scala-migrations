@@ -49,23 +49,23 @@ import org.junit.{
 import java.sql.DriverManager
 
 class JavaMigratorTests {
-  private var java_migrator: JavaMigrator = _
+  private var javaMigrator: JavaMigrator = _
 
   @Before
-  def set_up() {
-    val connection_builder = TestDatabase.getAdminConnectionBuilder
-    val database_adapter = TestDatabase.getDatabaseAdapter
+  def setUp() {
+    val connectionBuilder = TestDatabase.getAdminConnectionBuilder
+    val databaseAdapter = TestDatabase.getDatabaseAdapter
 
-    java_migrator = new JavaMigrator(connection_builder, database_adapter)
+    javaMigrator = new JavaMigrator(connectionBuilder, databaseAdapter)
 
-    connection_builder.withConnection(AutoCommit) { c =>
-      val table_names = java_migrator.getTableNames
-      val iter = table_names.iterator
+    connectionBuilder.withConnection(AutoCommit) { c =>
+      val tableNames = javaMigrator.getTableNames
+      val iter = tableNames.iterator
       while (iter.hasNext) {
-        val table_name = iter.next()
-        val tn = table_name.toLowerCase
+        val tableName = iter.next()
+        val tn = tableName.toLowerCase
         if (tn == "schema_migrations" || tn.startsWith("scala_migrations_")) {
-          val sql = "DROP TABLE " + database_adapter.quoteTableName(tn)
+          val sql = "DROP TABLE " + databaseAdapter.quoteTableName(tn)
           With.autoClosingStatement(c.prepareStatement(sql)) { _.execute }
         }
       }
@@ -73,28 +73,28 @@ class JavaMigratorTests {
   }
 
   @Test(expected = classOf[DuplicateMigrationDescriptionException])
-  def duplicate_descriptions_throws {
-    java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_descriptions",
+  def duplicateDescriptionsThrows {
+    javaMigrator.installAllMigrations("com.imageworks.migration.tests.duplicate_descriptions",
       false)
   }
 
   @Test(expected = classOf[DuplicateMigrationVersionException])
-  def duplicate_versions_throws {
-    java_migrator.installAllMigrations("com.imageworks.migration.tests.duplicate_versions",
+  def duplicateVersionsThrows {
+    javaMigrator.installAllMigrations("com.imageworks.migration.tests.duplicate_versions",
       false)
   }
 
   @Test
-  def migrate_up_and_down {
+  def migrateUpAndDown {
     // There should be no tables in the schema initially.
-    assertEquals(0, java_migrator.getTableNames.size)
+    assertEquals(0, javaMigrator.getTableNames.size)
 
     // Migrate down the whole way.
-    java_migrator.removeAllMigrations("com.imageworks.migration.tests.up_and_down",
+    javaMigrator.removeAllMigrations("com.imageworks.migration.tests.up_and_down",
       false)
 
     // The database should not be completely migrated.
-    assertNotNull(java_migrator.whyNotMigrated("com.imageworks.migration.tests.up_and_down",
+    assertNotNull(javaMigrator.whyNotMigrated("com.imageworks.migration.tests.up_and_down",
       false))
 
     // An empty array of Strings so that getTableNames.toArray returns
@@ -102,26 +102,26 @@ class JavaMigratorTests {
     val ea = new Array[String](0)
 
     // There should only be the schema_migrations table now.
-    assertEquals(1, java_migrator.getTableNames.size)
-    assertFalse(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "scala_migrations_people").isDefined)
+    assertEquals(1, javaMigrator.getTableNames.size)
+    assertFalse(javaMigrator.getTableNames.toArray(ea).find(_.toLowerCase == "scala_migrations_people").isDefined)
 
     // Apply all the migrations.
-    java_migrator.installAllMigrations("com.imageworks.migration.tests.up_and_down",
+    javaMigrator.installAllMigrations("com.imageworks.migration.tests.up_and_down",
       false)
 
-    assertEquals(3, java_migrator.getTableNames.size)
-    assertTrue(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "scala_migrations_people").isDefined)
+    assertEquals(3, javaMigrator.getTableNames.size)
+    assertTrue(javaMigrator.getTableNames.toArray(ea).find(_.toLowerCase == "scala_migrations_people").isDefined)
 
     // The database should be completely migrated.
-    assertNull(java_migrator.whyNotMigrated("com.imageworks.migration.tests.up_and_down",
+    assertNull(javaMigrator.whyNotMigrated("com.imageworks.migration.tests.up_and_down",
       false))
 
     // Migrate down the whole way.
-    java_migrator.removeAllMigrations("com.imageworks.migration.tests.up_and_down",
+    javaMigrator.removeAllMigrations("com.imageworks.migration.tests.up_and_down",
       false)
 
     // There should only be the schema_migrations table now.
-    assertEquals(1, java_migrator.getTableNames.size)
-    assertFalse(java_migrator.getTableNames.toArray(ea).find(_.toLowerCase == "scala_migrations_people").isDefined)
+    assertEquals(1, javaMigrator.getTableNames.size)
+    assertFalse(javaMigrator.getTableNames.toArray(ea).find(_.toLowerCase == "scala_migrations_people").isDefined)
   }
 }
