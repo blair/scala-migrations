@@ -488,7 +488,7 @@ class MigrationTests {
 
     // try to select table, should give a permissions error
     try {
-      runSelect
+      runSelect()
 
       // failure if got here
       fail("SELECT permission failure expected")
@@ -507,7 +507,7 @@ class MigrationTests {
 
     // try to select table, should succeed now that grant has been given
     try {
-      runSelect
+      runSelect()
     }
     catch {
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
@@ -538,7 +538,7 @@ class MigrationTests {
 
     // try to select table, should give a permissions error again
     try {
-      runSelect
+      runSelect()
 
       // failure if got here
       fail("SELECT permission failure expected")
