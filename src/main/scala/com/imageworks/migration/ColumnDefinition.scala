@@ -216,12 +216,12 @@ abstract class ColumnDefinition {
   /**
    * If a limit is specified for the column.
    */
-  private var limit_ : Option[String] = None
+  private var _limitOpt: Option[String] = None
 
   /**
    * Get the limit for the column.
    */
-  protected def limit = limit_
+  protected def limit = _limitOpt
 
   /**
    * Search for and remove all limits specified in the option list,
@@ -231,12 +231,12 @@ abstract class ColumnDefinition {
     for (option @ Limit(length) <- options) {
       options = options filter { _ ne option }
 
-      if (limit_.isDefined && limit_.get != length) {
+      if (_limitOpt.isDefined && _limitOpt.get != length) {
         logger.warn("Redefining the limit for the '{}' column " +
           "from '{}' to '{}'.",
-          Array[AnyRef](getColumnName, limit_.get, length): _*)
+          Array[AnyRef](getColumnName, _limitOpt.get, length): _*)
       }
-      limit_ = Some(length)
+      _limitOpt = Some(length)
     }
   }
 
@@ -287,12 +287,12 @@ abstract class ColumnDefinition {
    * The precision for the column, used for DECIMAL and NUMERIC column
    * types.
    */
-  private var precision_ : Option[Int] = None
+  private var _precisionOpt: Option[Int] = None
 
   /**
    * Get the precision for the column.
    */
-  def precision = precision_
+  def precision = _precisionOpt
 
   /**
    * Look for a Precision column option.
@@ -301,14 +301,14 @@ abstract class ColumnDefinition {
     for (option @ Precision(value) <- options) {
       options = options filter { _ ne option }
 
-      if (precision_.isDefined && precision_.get != value) {
+      if (_precisionOpt.isDefined && _precisionOpt.get != value) {
         logger.warn("Redefining the precision for the '{}' column " +
           "from '{}' to '{}'.",
           Array[AnyRef](getColumnName,
-            java.lang.Integer.valueOf(precision_.get),
+            java.lang.Integer.valueOf(_precisionOpt.get),
             java.lang.Integer.valueOf(value)): _*)
       }
-      precision_ = Some(value)
+      _precisionOpt = Some(value)
     }
   }
 
@@ -316,12 +316,12 @@ abstract class ColumnDefinition {
    * The scale for the column, used for DECIMAL and NUMERIC column
    * types.
    */
-  private var scale_ : Option[Int] = None
+  private var _scaleOpt: Option[Int] = None
 
   /**
    * Get the scale for the column.
    */
-  def scale = scale_
+  def scale = _scaleOpt
 
   /**
    * Look for a Scale column option.
@@ -330,14 +330,14 @@ abstract class ColumnDefinition {
     for (option @ Scale(value) <- options) {
       options = options filter { _ ne option }
 
-      if (scale_.isDefined && scale_.get != value) {
+      if (_scaleOpt.isDefined && _scaleOpt.get != value) {
         logger.warn("Redefining the scale for the '{}' column " +
           "from '{}' to '{}'.",
           Array[AnyRef](getColumnName,
-            java.lang.Integer.valueOf(scale_.get),
+            java.lang.Integer.valueOf(_scaleOpt.get),
             java.lang.Integer.valueOf(value)): _*)
       }
-      scale_ = Some(value)
+      _scaleOpt = Some(value)
     }
   }
 
