@@ -327,8 +327,8 @@ case object AutoIncrement
  * Maps to GRANT ALL PRIVILEGES.
  *
  * Since PostgreSQL supports ALL PRIVILEGES on all object types [1],
- * AllPrivileges extends all sealed traits that represent priveleges
- * on database object types, e.g. tables and shemas.
+ * AllPrivileges extends all sealed traits that represent privileges
+ * on database object types, e.g. tables and schemas.
  *
  * [1] http://www.postgresql.org/docs/9.1/static/sql-grant.html .
  */
