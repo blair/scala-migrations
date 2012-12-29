@@ -61,7 +61,6 @@ import org.junit.{
 }
 
 import java.sql.{
-  DriverManager,
   ResultSet,
   SQLException
 }

@@ -46,8 +46,6 @@ import org.junit.{
   Test
 }
 
-import java.sql.DriverManager
-
 class JavaMigratorTests {
   private var javaMigrator: JavaMigrator = _
 
