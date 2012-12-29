@@ -49,7 +49,7 @@ import org.junit.Test
 
 class DatabaseAdapterTests {
   @Test
-  def forVendor {
+  def forVendor() {
     assertEquals(classOf[DerbyDatabaseAdapter],
       DatabaseAdapter.forVendor(Derby, None).getClass)
 
@@ -64,12 +64,12 @@ class DatabaseAdapterTests {
   }
 
   @Test(expected = classOf[IllegalArgumentException])
-  def forNullDriverClassThrows {
+  def forNullDriverClassThrows() {
     DatabaseAdapter.forVendor(null, None)
   }
 
   @Test
-  def roundTrip {
+  def roundTrip() {
     for (vendor <- List(Derby, Mysql, Postgresql, Oracle)) {
       val adapter = DatabaseAdapter.forVendor(vendor, None)
       assertSame(vendor, adapter.vendor)

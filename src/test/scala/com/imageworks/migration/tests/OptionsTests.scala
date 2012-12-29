@@ -38,32 +38,32 @@ import org.junit.Test
 
 class OptionsTests {
   @Test(expected = classOf[IllegalArgumentException])
-  def limitNegativeOneIntThrows {
+  def limitNegativeOneIntThrows() {
     Limit(-1)
   }
 
   @Test(expected = classOf[IllegalArgumentException])
-  def limitNegativeOneStringThrows {
+  def limitNegativeOneStringThrows() {
     Limit("-1")
   }
 
   @Test
-  def limitZeroIntOk {
+  def limitZeroIntOk() {
     Limit(0)
   }
 
   @Test
-  def limitZeroStringOk {
+  def limitZeroStringOk() {
     Limit("0")
   }
 
   @Test
-  def limitOneIntOk {
+  def limitOneIntOk() {
     Limit(1)
   }
 
   @Test
-  def limitOneStringOk {
+  def limitOneStringOk() {
     Limit("1")
   }
 }

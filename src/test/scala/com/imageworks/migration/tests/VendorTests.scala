@@ -48,7 +48,7 @@ import org.junit.{
 
 class VendorTests {
   @Test
-  def forDriver {
+  def forDriver() {
     assertSame(Derby,
       Vendor.forDriver("org.apache.derby.jdbc.EmbeddedDriver"))
 
@@ -69,22 +69,22 @@ class VendorTests {
   }
 
   @Test(expected = classOf[scala.MatchError])
-  def forNonExistentDriverThrows {
+  def forNonExistentDriverThrows() {
     Vendor.forDriver("no.such.driver")
   }
 
   @Test(expected = classOf[scala.MatchError])
-  def forNonDriverClassThrows {
+  def forNonDriverClassThrows() {
     Vendor.forDriver(classOf[String])
   }
 
   @Test(expected = classOf[IllegalArgumentException])
-  def forNullDriverClassThrows {
+  def forNullDriverClassThrows() {
     Vendor.forDriver(null: Class[_])
   }
 
   @Test(expected = classOf[IllegalArgumentException])
-  def forNullDriverClassNameThrows {
+  def forNullDriverClassNameThrows() {
     Vendor.forDriver(null: String)
   }
 }

@@ -71,21 +71,21 @@ class JavaMigratorTests {
   }
 
   @Test(expected = classOf[DuplicateMigrationDescriptionException])
-  def duplicateDescriptionsThrows {
+  def duplicateDescriptionsThrows() {
     javaMigrator.installAllMigrations(
       "com.imageworks.migration.tests.duplicate_descriptions",
       false)
   }
 
   @Test(expected = classOf[DuplicateMigrationVersionException])
-  def duplicateVersionsThrows {
+  def duplicateVersionsThrows() {
     javaMigrator.installAllMigrations(
       "com.imageworks.migration.tests.duplicate_versions",
       false)
   }
 
   @Test
-  def migrateUpAndDown {
+  def migrateUpAndDown() {
     // There should be no tables in the schema initially.
     assertEquals(0, javaMigrator.getTableNames.size)
 

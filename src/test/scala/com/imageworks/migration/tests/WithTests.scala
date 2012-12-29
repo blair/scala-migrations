@@ -54,7 +54,7 @@ class WithTests {
   private val context = new Mockery
 
   @Test
-  def withResultSetClosesOnNormalReturn {
+  def withResultSetClosesOnNormalReturn() {
     val mockResultSet = context.mock(classOf[ResultSet])
 
     context.checking(new Expectations {
@@ -74,7 +74,7 @@ class WithTests {
   }
 
   @Test
-  def withResultSetClosesOnThrow {
+  def withResultSetClosesOnThrow() {
     val mockResultSet = context.mock(classOf[ResultSet])
 
     val e1 = new RuntimeException
@@ -106,7 +106,7 @@ class WithTests {
   }
 
   @Test
-  def closeExceptionIsNotSuppressedIfClosureReturnsNormally {
+  def closeExceptionIsNotSuppressedIfClosureReturnsNormally() {
     val mockResultSet = context.mock(classOf[ResultSet])
 
     val e1 = new SQLException

@@ -89,35 +89,35 @@ class MigrationTests {
   }
 
   @Test(expected = classOf[DuplicateMigrationDescriptionException])
-  def duplicateDescriptionsThrows {
+  def duplicateDescriptionsThrows() {
     migrator.migrate(InstallAllMigrations,
       "com.imageworks.migration.tests.duplicate_descriptions",
       false)
   }
 
   @Test(expected = classOf[DuplicateMigrationVersionException])
-  def duplicateVersionsThrows {
+  def duplicateVersionsThrows() {
     migrator.migrate(InstallAllMigrations,
       "com.imageworks.migration.tests.duplicate_versions",
       false)
   }
 
   @Test
-  def vendor {
+  def vendor() {
     migrator.migrate(InstallAllMigrations,
       "com.imageworks.migration.tests.vendor",
       false)
   }
 
   @Test(expected = classOf[IllegalArgumentException])
-  def scaleSithoutPrecisionThrows {
+  def scaleWithoutPrecisionThrows() {
     migrator.migrate(InstallAllMigrations,
       "com.imageworks.migration.tests.scale_without_precision",
       false)
   }
 
   @Test
-  def migrateUpAndDown {
+  def migrateUpAndDown() {
     // There should be no tables in the schema initially.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -238,7 +238,7 @@ class MigrationTests {
   }
 
   @Test
-  def getMigrationStatusesDoesNotCreateSchemaMigrationsTable {
+  def getMigrationStatusesDoesNotCreateSchemaMigrationsTable() {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -274,7 +274,7 @@ class MigrationTests {
   }
 
   @Test
-  def whyNotMigratedDoesNotCreateSchemaMigrationsTable {
+  def whyNotMigratedDoesNotCreateSchemaMigrationsTable() {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -300,7 +300,7 @@ class MigrationTests {
   }
 
   @Test
-  def autoIncrement {
+  def autoIncrement() {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -407,7 +407,7 @@ class MigrationTests {
   }
 
   @Test
-  def alterColumn {
+  def alterColumn() {
     // In a brand new database there should be no tables.
     assertEquals(0, migrator.getTableNames.size)
 
@@ -462,7 +462,7 @@ class MigrationTests {
   }
 
   @Test
-  def grantAndRevoke {
+  def grantAndRevoke() {
     val connectionBuilder = TestDatabase.getUserConnectionBuilder
     val databaseAdapter = TestDatabase.getDatabaseAdapter
 
@@ -478,7 +478,7 @@ class MigrationTests {
       "SELECT name FROM " +
         databaseAdapter.quoteTableName("scala_migrations_location")
 
-    def runSelect {
+    def runSelect() {
       testMigrator.withLoggingConnection(AutoCommit) { connection =>
         With.autoClosingStatement(connection.prepareStatement(
           selectSql)) { statement =>
@@ -553,7 +553,7 @@ class MigrationTests {
   }
 
   @Test
-  def columnsCanHoldTypes {
+  def columnsCanHoldTypes() {
     migrator.migrate(InstallAllMigrations,
       "com.imageworks.migration.tests.types",
       false)
@@ -606,7 +606,7 @@ class MigrationTests {
   }
 
   @Test
-  def withResultSetClosesOnNormalReturn {
+  def withResultSetClosesOnNormalReturn() {
     val mockResultSet = context.mock(classOf[ResultSet])
 
     context.checking(new Expectations {
@@ -633,7 +633,7 @@ class MigrationTests {
   }
 
   @Test
-  def withResultSetClosesOnThrow {
+  def withResultSetClosesOnThrow() {
     val mockResultSet = context.mock(classOf[ResultSet])
 
     context.checking(new Expectations {
