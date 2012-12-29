@@ -92,7 +92,7 @@ Version 1.1.0 - December 28th, 2012
     - Migration adds #grantSchemaPrivilege() and #revokeSchemaPrivilege()
       to add or remove privileges from a schema.
 
-    Patches by alan{dot}lamielle{at}gmail{dot}com.
+    Patches by Alan LaMielle.
 
   * The With.*() methods properly handle the closure argument and/or
     close() throwing exceptions; functionality inspired by Java 7's
