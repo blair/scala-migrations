@@ -82,7 +82,7 @@ class MigrationTests {
         val tn = tableName.toLowerCase
         if (tn == "schema_migrations" || tn.startsWith("scala_migrations_")) {
           val sql = "DROP TABLE " + databaseAdapter.quoteTableName(tn)
-          With.autoClosingStatement(c.prepareStatement(sql)) { _.execute }
+          With.autoClosingStatement(c.prepareStatement(sql)) { _.execute() }
         }
       }
     }
@@ -578,7 +578,7 @@ class MigrationTests {
                              (?)""".replaceAll("\\s+", " ")
         val insertStatement = c.prepareStatement(insertSql)
         insertStatement.setObject(1, v)
-        insertStatement.executeUpdate
+        insertStatement.executeUpdate()
         insertStatement.close()
 
         // Make sure that the value exists.

@@ -64,7 +64,7 @@ class JavaMigratorTests {
         val tn = tableName.toLowerCase
         if (tn == "schema_migrations" || tn.startsWith("scala_migrations_")) {
           val sql = "DROP TABLE " + databaseAdapter.quoteTableName(tn)
-          With.autoClosingStatement(c.prepareStatement(sql)) { _.execute }
+          With.autoClosingStatement(c.prepareStatement(sql)) { _.execute() }
         }
       }
     }
