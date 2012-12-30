@@ -479,10 +479,9 @@ class MigrationTests {
         databaseAdapter.quoteTableName("scala_migrations_location")
 
     def runSelect() {
-      testMigrator.withLoggingConnection(AutoCommit) { connection =>
-        With.autoClosingStatement(connection.prepareStatement(
-          selectSql)) { statement =>
-          With.autoClosingResultSet(statement.executeQuery()) { rs => }
+      testMigrator.withLoggingConnection(AutoCommit) { c =>
+        With.autoClosingStatement(c.prepareStatement(selectSql)) { s =>
+          With.autoClosingResultSet(s.executeQuery()) { rs => }
         }
       }
     }
