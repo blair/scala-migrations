@@ -35,7 +35,9 @@ package com.imageworks.migration.tests.grant_and_revoke
 import com.imageworks.migration.tests.TestDatabase
 import com.imageworks.migration.{
   Migration,
-  SelectPrivilege
+  Postgresql,
+  SelectPrivilege,
+  UsagePrivilege
 }
 
 class Migrate_200811261513_Grants
@@ -43,10 +45,20 @@ class Migrate_200811261513_Grants
   val tableName = "scala_migrations_location"
 
   def up() {
+    databaseVendor match {
+      case Postgresql =>
+        grantSchemaPrivilege(TestDatabase.getUserAccountName, UsagePrivilege)
+      case _ =>
+    }
     grant(tableName, TestDatabase.getUserAccountName, SelectPrivilege)
   }
 
   def down() {
     revoke(tableName, TestDatabase.getUserAccountName, SelectPrivilege)
+    databaseVendor match {
+      case Postgresql =>
+        revokeSchemaPrivilege(TestDatabase.getUserAccountName, UsagePrivilege)
+      case _ =>
+    }
   }
 }
