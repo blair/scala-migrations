@@ -38,6 +38,7 @@ import com.imageworks.migration.{
   DatabaseAdapter,
   DerbyDatabaseAdapter,
   MysqlDatabaseAdapter,
+  PostgresqlDatabaseAdapter,
   With
 }
 
@@ -265,6 +266,79 @@ object MysqlTestDatabase
 }
 
 /**
+ * PostgreSQL test database implementation.  Enabled when the Java
+ * "scala-migrations.db.vendor" property is set to "postgresql".
+ *
+ * Assumes the following setup:
+ *
+ * 1) A user named "test-admin" with password "test-admin" exists.
+ * 2) The "test-admin" user owns a database named "test".
+ * 3) The "test-admin" user has rights to grant other rights in the
+ *    "test" database.
+ * 4) A user named "test-user" with password "test-user" exists.
+ * 5) The "test-user" has no rights to the "test" database.
+ *
+ * To override the defaults, set any of the following Java properties:
+ *
+ *   "scala-migrations.db.schema": database name to test with ("test")
+ *   "scala-migrations.db.admin.name": admin user username ("test-admin")
+ *   "scala-migrations.db.admin.passwd": admin user password ("test-admin")
+ *   "scala-migrations.db.user.name": plain user username ("test-user")
+ *   "scala-migrations.db.user.passwd": plain user password ("test-user")
+ */
+object PostgresqlTestDatabase
+    extends TestDatabase {
+  // Username of the admin account, which will be the owner of the
+  // database.
+  private val adminUsername = {
+    System.getProperty(TestDatabase.adminUserNameProperty, "test-admin")
+  }
+
+  override def getAdminAccountName = adminUsername
+
+  // Password for the admin account.
+  private val adminPassword = {
+    System.getProperty(TestDatabase.adminUserPasswordProperty, "test-admin")
+  }
+
+  // Username of the user account.
+  private val userUsername = {
+    System.getProperty(TestDatabase.userUserNameProperty, "test-user")
+  }
+
+  override def getUserAccountName = userUsername
+
+  // Password for the user account.
+  private val userPassword = {
+    System.getProperty(TestDatabase.userUserPasswordProperty, "test-user")
+  }
+
+  override def getSchemaName: String = {
+    System.getProperty(TestDatabase.schemaProperty, "test")
+  }
+
+  // The base JDBC URL.
+  private val url = {
+    "jdbc:postgresql://localhost/" + getSchemaName
+  }
+
+  // Load the PostgreSQL database driver.
+  Class.forName("org.postgresql.Driver")
+
+  override def getAdminConnectionBuilder: ConnectionBuilder = {
+    new ConnectionBuilder(url, adminUsername, adminPassword)
+  }
+
+  override def getUserConnectionBuilder: ConnectionBuilder = {
+    new ConnectionBuilder(url, userUsername, userPassword)
+  }
+
+  override def getDatabaseAdapter: DatabaseAdapter = {
+    new PostgresqlDatabaseAdapter(Some(getSchemaName))
+  }
+}
+
+/**
  * Object which builds the correct TestDatabase according to the
  * system property "scala-migrations.db.vendor", defaulting to Derby if
  * the property is not set.
@@ -284,6 +358,8 @@ object TestDatabase
         DerbyTestDatabase
       case "mysql" =>
         MysqlTestDatabase
+      case "postgresql" =>
+        PostgresqlTestDatabase
       case v =>
         throw new RuntimeException("Unexpected value for \"" +
           vendorProperty +
