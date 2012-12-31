@@ -161,7 +161,7 @@ page.
 Add the following to your `build.sbt`:
 
 {{{
-libraryDependencies ++= Seq("com.imageworks.scala-migrations" %% "scala-migrations" % "1.0.3")
+libraryDependencies ++= Seq("com.imageworks.scala-migrations" %% "scala-migrations" % "1.1.0")
 }}}
 
 ==== Ivy ====
@@ -170,7 +170,7 @@ Add the following to the dependencies section of the `ivy.xml` file,
 replacing `X.Y.Z` with your Scala version.
 
 {{{
-<dependency org="com.imageworks.scala-migrations" name="-migrations_X.Y.Z" rev="1.0.3" />
+<dependency org="com.imageworks.scala-migrations" name="-migrations_X.Y.Z" rev="1.1.0" />
 }}}
 
 ==== Maven ====
@@ -182,7 +182,7 @@ project's `pom.xml` file, replacing `X.Y.Z` with your Scala version.
 <dependency>
     <groupId>com.imageworks.scala-migrations</groupId>
     <artifactId>scala-migrations_X.Y.Z</artifactId>
-    <version>1.0.3</version>
+    <version>1.1.0</version>
 </dependency>
 }}}
 
