@@ -277,6 +277,7 @@ object MysqlTestDatabase
  *    "test" database.
  * 4) A user named "test-user" with password "test-user" exists.
  * 5) The "test-user" has no rights to the "test" database.
+ * 6) The unit tests are performed in the "public" schema.
  *
  * The above can be set up with the following commands, which are
  * known to work on PostgreSQL 9.1:
@@ -288,7 +289,8 @@ object MysqlTestDatabase
  *
  * To override the defaults, set any of the following Java properties:
  *
- *   "scala-migrations.db.schema": database name to test with ("test")
+ *   "scala-migrations.db.db": database name to test with ("test")
+ *   "scala-migrations.db.schema": schema name to test with ("public")
  *   "scala-migrations.db.admin.name": admin user username ("test-admin")
  *   "scala-migrations.db.admin.passwd": admin user password ("test-admin")
  *   "scala-migrations.db.user.name": plain user username ("test-user")
@@ -322,12 +324,13 @@ object PostgresqlTestDatabase
   }
 
   override def getSchemaName: String = {
-    System.getProperty(TestDatabase.schemaNameProperty, "test")
+    System.getProperty(TestDatabase.schemaNameProperty, "public")
   }
 
   // The base JDBC URL.
   private val url = {
-    "jdbc:postgresql://localhost/" + getSchemaName
+    "jdbc:postgresql://localhost/" +
+      System.getProperty(TestDatabase.databaseNameProperty, "test")
   }
 
   // Load the PostgreSQL database driver.
@@ -355,6 +358,7 @@ object TestDatabase
     extends TestDatabase {
   val adminUserNameProperty = "scala-migrations.db.admin.name"
   val adminUserPasswordProperty = "scala-migrations.db.admin.passwd"
+  val databaseNameProperty = "scala-migrations.db.db"
   val schemaNameProperty = "scala-migrations.db.schema"
   val userUserNameProperty = "scala-migrations.db.user.name"
   val userUserPasswordProperty = "scala-migrations.db.user.passwd"
