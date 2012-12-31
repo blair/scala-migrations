@@ -241,7 +241,7 @@ object MysqlTestDatabase
   }
 
   override def getSchemaName: String = {
-    System.getProperty(TestDatabase.schemaProperty, "test")
+    System.getProperty(TestDatabase.schemaNameProperty, "test")
   }
 
   // The base JDBC URL.
@@ -314,7 +314,7 @@ object PostgresqlTestDatabase
   }
 
   override def getSchemaName: String = {
-    System.getProperty(TestDatabase.schemaProperty, "test")
+    System.getProperty(TestDatabase.schemaNameProperty, "test")
   }
 
   // The base JDBC URL.
@@ -347,13 +347,13 @@ object TestDatabase
     extends TestDatabase {
   val adminUserNameProperty = "scala-migrations.db.admin.name"
   val adminUserPasswordProperty = "scala-migrations.db.admin.passwd"
-  val schemaProperty = "scala-migrations.db.schema"
+  val schemaNameProperty = "scala-migrations.db.schema"
   val userUserNameProperty = "scala-migrations.db.user.name"
   val userUserPasswordProperty = "scala-migrations.db.user.passwd"
-  val vendorProperty = "scala-migrations.db.vendor"
+  val vendorNameProperty = "scala-migrations.db.vendor"
 
   private val db: TestDatabase = {
-    System.getProperty(vendorProperty, "derby") match {
+    System.getProperty(vendorNameProperty, "derby") match {
       case "derby" =>
         DerbyTestDatabase
       case "mysql" =>
@@ -362,7 +362,7 @@ object TestDatabase
         PostgresqlTestDatabase
       case v =>
         throw new RuntimeException("Unexpected value for \"" +
-          vendorProperty +
+          vendorNameProperty +
           "\" property: " +
           v)
     }
