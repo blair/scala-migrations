@@ -278,6 +278,14 @@ object MysqlTestDatabase
  * 4) A user named "test-user" with password "test-user" exists.
  * 5) The "test-user" has no rights to the "test" database.
  *
+ * The above can be set up with the following commands, which are
+ * known to work on PostgreSQL 9.1:
+ *
+ *   $ su - postgres
+ *   $ createuser -e -D -E -P -R -S test-admin
+ *   $ createdb -e -E UTF-8 -O test-admin test
+ *   $ createuser -e -D -E -P -R -S test-user
+ *
  * To override the defaults, set any of the following Java properties:
  *
  *   "scala-migrations.db.schema": database name to test with ("test")
