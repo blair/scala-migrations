@@ -207,7 +207,7 @@ object DerbyTestDatabase
  *
  * To override the defaults, set any of the following Java properties:
  *
- *   "scala-migrations.db.schema": database name to test with ("test")
+ *   "scala-migrations.db.db": database name to test with ("test")
  *   "scala-migrations.db.admin.name": admin user username ("test-admin")
  *   "scala-migrations.db.admin.passwd": admin user password ("test-admin")
  *   "scala-migrations.db.user.name": plain user username ("test-user")
@@ -240,8 +240,11 @@ object MysqlTestDatabase
     System.getProperty(TestDatabase.userUserPasswordProperty, "test-user")
   }
 
+  // MySQL doesn't have a separate concept for schemas, in MySQL a
+  // schema is a database, so use the database name property value for
+  // the schema name.
   override def getSchemaName: String = {
-    System.getProperty(TestDatabase.schemaNameProperty, "test")
+    System.getProperty(TestDatabase.databaseNameProperty, "test")
   }
 
   // The base JDBC URL.
