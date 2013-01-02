@@ -1,3 +1,16 @@
+Version 1.1.1 - January 1st, 2013
+
+  * Use slf4j-api as a library dependency and slf4j-log4j12 as a unit
+    testing dependency.  Using slf4j-log4j12 as a library dependency
+    required that dependent libraries and applications load
+    slf4j-log4j12 which defeats the purpose of SLF4J.  Closes
+    https://github.com/blair/scala-migrations/issues/1 .
+
+  * Enable unit testing on PostgreSQL when the Java
+    "scala-migrations.db.vendor" property is set to "postgresql".
+
+    Patches by Alan LaMielle.
+
 Version 1.1.0 - December 28th, 2012
   * Migration adds #databaseVendor to get the database vendor which
     can be used for pattern matching for database specific code.
