@@ -194,9 +194,41 @@ Scala Migrations depends upon:
 
     http://www.slf4j.org/
 
-    You will need to choose logging framework that SLF4J will log to.
-    See the SLF4J website for more information on how to set up and
-    use SLF4J.
+    The Simple Logging Facade for Java or (SLF4J) serves as a simple
+    facade or abstraction for various logging frameworks, e.g. log4j
+    and java.util.logging, allowing the end user to plug in the
+    desired logging framework at deployment time.
+
+    Scala Migrations has a library dependency upon SLF4J's slf4j-api
+    jar, which only provides an interface to a logging API.  The
+    application must chose a concrete logging implementation by
+    ensuring that one of the following jars is available in the
+    classpath.  If no implementation jar is provided, the the
+    no-operation logging implementation is used.
+
+      - slf4j-log4j12
+        Binding for log4j version 1.2, a widely used logging
+        framework.  You also need to place log4j.jar on your
+        classpath.
+
+      - slf4j-jcl
+        Binding for Jakarta Commons Logging.  This binding will
+        delegate all SLF4J logging to JCL.
+
+      - slf4j-jdk14
+        Binding for java.util.logging, also referred to as JDK 1.4
+        logging.
+
+      - slf4j-nop
+        Binding for NOP, silently discarding all logging.
+
+      - slf4j-simple
+        Binding for Simple implementation, which outputs all events to
+        System.err.  Only messages of level INFO and higher are
+        printed.  This binding may be useful in the context of small
+        applications.
+
+    See http://www.slf4j.org/manual.html for more information.
 
   * The log4jdbc logging JDBC wrapper that logs all JDBC operations.
 

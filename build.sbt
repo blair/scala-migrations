@@ -36,7 +36,8 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "[5.1.0,5.2)" % "test",
   "org.apache.derby" % "derby" % "[10.5.3.0,11.0)" % "test",
   "org.jmock" % "jmock-junit4" % "[2.5.1,3.0)" % "test",
-  "org.slf4j" % "slf4j-log4j12" % "[1.5.8,2.0)",
+  "org.slf4j" % "slf4j-api" % "[1.5.8,2.0)",
+  "org.slf4j" % "slf4j-log4j12" % "[1.5.8,2.0)" % "test",
   "postgresql" % "postgresql" % "9.1-901.jdbc4" % "test")
 
 // Run unit tests serially otherwise races can occur between two
