@@ -55,6 +55,7 @@ libraryDependencies ++= Seq(
   "log4jdbc" % "log4jdbc" % "1.1" from "http://log4jdbc.googlecode.com/files/log4jdbc4-1.1.jar",
   "mysql" % "mysql-connector-java" % "[5.1.0,5.2)" % "test",
   "org.apache.derby" % "derby" % "[10.5.3.0,11.0)" % "test",
+  "org.hamcrest" % "hamcrest-core" % "1.3" % "test",
   "org.jmock" % "jmock-junit4" % "[2.5.1,3.0)" % "test",
   "org.slf4j" % "slf4j-api" % "[1.5.8,2.0)",
   "org.slf4j" % "slf4j-log4j12" % "[1.5.8,2.0)" % "test",
