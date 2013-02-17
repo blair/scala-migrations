@@ -41,10 +41,7 @@ import com.imageworks.migration.{
 }
 
 import org.junit.Assert._
-import org.junit.{
-  Before,
-  Test
-}
+import org.junit.Test
 
 class VendorTests {
   @Test
