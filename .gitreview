@@ -3,3 +3,4 @@ host=gerrit.orcaware.com
 port=29418
 project=scala-migrations.git
 defaultbranch=master
+defaultremote=origin
