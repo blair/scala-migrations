@@ -112,6 +112,8 @@ class PostgresqlDatabaseAdapter(override val schemaNameOpt: Option[String])
         new PostgresqlByteaColumnDefinition
       case VarcharType =>
         new DefaultVarcharColumnDefinition
+      case UuidType =>
+        new DefaultUuidColumnDefinition
     }
   }
 

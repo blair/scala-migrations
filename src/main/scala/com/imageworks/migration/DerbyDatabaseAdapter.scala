@@ -115,6 +115,10 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
           "legal data type, you must choose a mapping yourself."
         throw new UnsupportedColumnTypeException(message)
       }
+      case UuidType => {
+        val message = "Derby does not support UUID as a legal data type"
+        throw new UnsupportedColumnTypeException(message)
+      }
       case CharType =>
         new DefaultCharColumnDefinition
       case DecimalType =>

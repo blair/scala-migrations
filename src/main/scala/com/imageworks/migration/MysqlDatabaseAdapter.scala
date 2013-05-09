@@ -231,6 +231,10 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
         new DefaultVarbinaryColumnDefinition
       case VarcharType =>
         new MysqlVarcharColumnDefinition(characterSetOpt)
+      case UuidType => {
+        val message = "MySQL does not support UUID as a legal data type"
+        throw new UnsupportedColumnTypeException(message)
+      }
     }
   }
 

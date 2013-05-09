@@ -560,3 +560,9 @@ class DefaultVarcharColumnDefinition
     with ColumnSupportsDefault {
   override protected def sql = optionallyAddLimitToDataType("VARCHAR")
 }
+
+class DefaultUuidColumnDefinition
+    extends ColumnDefinition {
+  override protected def sql = "UUID"
+}
+

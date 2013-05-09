@@ -204,6 +204,10 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
           "choose a mapping your self."
         throw new UnsupportedColumnTypeException(message)
       }
+      case UuidType => {
+        val message = "Oracle does not support UUID as a legal data type"
+        throw new UnsupportedColumnTypeException(message)
+      }
       case CharType =>
         new OracleCharColumnDefinition(useNcharType)
       case DecimalType =>
