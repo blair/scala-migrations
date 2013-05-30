@@ -286,37 +286,54 @@ object Migrator {
       val matcher = re.matcher(baseName)
       if (matcher.matches) {
         val versionStr = matcher.group(1)
-        val description = matcher.group(2)
-        try {
-          val version = java.lang.Long.parseLong(versionStr)
-          seenVersions.get(version) match {
-            case Some(cn) => {
-              val message = "The '" +
-                className +
-                "' migration defines a duplicate version number " +
-                "with '" +
-                cn +
-                "'."
-              throw new DuplicateMigrationVersionException(message)
-            }
-            case None => {
-              seenVersions = seenVersions.insert(version, className)
+        val versionOpt =
+          try {
+            Some(java.lang.Long.parseLong(versionStr))
+          }
+          catch {
+            case e: NumberFormatException => {
+              skipNames += className
+              logger.debug(
+                "Skipping '{}' because the version string '{}' could not " +
+                  "be parsed as a long integer.",
+                Array[AnyRef](className, versionStr): _*)
+              None
             }
           }
 
-          seenDescriptions.get(description) match {
-            case Some(cn) => {
-              val message = "The '" +
-                className +
-                "' defines a duplicate description with '" +
-                cn +
-                "'."
-              throw new DuplicateMigrationDescriptionException(message)
+        versionOpt match {
+          case Some(version) => {
+            seenVersions.get(version) match {
+              case Some(cn) => {
+                val message = "The '" +
+                  className +
+                  "' migration defines a duplicate version number " +
+                  "with '" +
+                  cn +
+                  "'."
+                throw new DuplicateMigrationVersionException(message)
+              }
+              case None => {
+                seenVersions = seenVersions.insert(version, className)
+              }
             }
-            case None => {
-              seenDescriptions.put(description, className)
+
+            val description = matcher.group(2)
+            seenDescriptions.get(description) match {
+              case Some(cn) => {
+                val message = "The '" +
+                  className +
+                  "' defines a duplicate description with '" +
+                  cn +
+                  "'."
+                throw new DuplicateMigrationDescriptionException(message)
+              }
+              case None => {
+                seenDescriptions.put(description, className)
+              }
             }
           }
+          case None =>
         }
       }
       else {
