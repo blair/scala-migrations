@@ -125,7 +125,7 @@ object JavaDatabaseAdapter {
   }
 
   /**
-   * Create a PostgreSQL Database Adapter.
+   * Create a H2 Database Adapter.
    *
    * @param schemaName the default schema name in the adapter
    * @return newly constructed H2DatabaseAdapter
