@@ -33,7 +33,6 @@
  */
 package com.imageworks.migration
 
-
 trait H2AutoIncrementingColumnDefinitionMixin
     extends ColumnDefinition
     with ColumnSupportsAutoIncrement {
@@ -46,7 +45,6 @@ trait H2AutoIncrementingColumnDefinitionMixin
 class H2BigintColumnDefinition
   extends DefaultBigintColumnDefinition
   with H2AutoIncrementingColumnDefinitionMixin
-
 
 class H2IntegerColumnDefinition
   extends DefaultIntegerColumnDefinition
@@ -62,7 +60,6 @@ class H2TimestampColumnDefinition
     with ColumnSupportsDefault {
   override val sql = "TIMESTAMP"
 }
-
 
 class H2DatabaseAdapter(override val schemaNameOpt: Option[String])
     extends DatabaseAdapter(schemaNameOpt) {
