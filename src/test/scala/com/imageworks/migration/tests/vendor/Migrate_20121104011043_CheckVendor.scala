@@ -32,13 +32,7 @@
  */
 package com.imageworks.migration.tests.vendor
 
-import com.imageworks.migration.{
-  Derby,
-  Migration,
-  Mysql,
-  Oracle,
-  Postgresql
-}
+import com.imageworks.migration._
 
 class Migrate_20121104011043_CheckVendor
     extends Migration {
@@ -48,6 +42,7 @@ class Migrate_20121104011043_CheckVendor
       case Mysql =>
       case Oracle =>
       case Postgresql =>
+      case H2 =>
       case v => throw new AssertionError("Database vendor '" +
         v +
         "' not handled.")

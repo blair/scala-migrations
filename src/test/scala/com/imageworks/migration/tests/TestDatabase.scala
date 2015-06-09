@@ -32,15 +32,7 @@
  */
 package com.imageworks.migration.tests
 
-import com.imageworks.migration.{
-  AutoCommit,
-  ConnectionBuilder,
-  DatabaseAdapter,
-  DerbyDatabaseAdapter,
-  MysqlDatabaseAdapter,
-  PostgresqlDatabaseAdapter,
-  With
-}
+import com.imageworks.migration._
 
 import java.sql.{
   DriverManager,
@@ -351,6 +343,69 @@ object PostgresqlTestDatabase
     new PostgresqlDatabaseAdapter(Some(getSchemaName))
   }
 }
+object H2TestDatabase
+  extends TestDatabase {
+  // Username of the admin account, which will be the owner of the
+  // database.
+  private val adminUsername = {
+    System.getProperty(TestDatabase.adminUserNameProperty, "admin")
+  }
+
+  override def getAdminAccountName = adminUsername
+
+  // Password for the admin account.
+  private val adminPassword = {
+    System.getProperty(TestDatabase.adminUserPasswordProperty, "admin")
+  }
+
+  // Username of the user account.
+  private val userUsername = {
+    System.getProperty(TestDatabase.userUserNameProperty, "user")
+  }
+
+  override def getUserAccountName = userUsername
+
+  // Password for the user account.
+  private val userPassword = {
+    System.getProperty(TestDatabase.userUserPasswordProperty, "user")
+  }
+
+  // h2 use default public schema
+  override def getSchemaName: String = {
+    System.getProperty(TestDatabase.databaseNameProperty, "PUBLIC")
+  }
+
+  // The base JDBC URL.
+  private val url = {
+    //"jdbc:h2:mem:" + getSchemaName
+    "jdbc:h2:mem:mytest"
+  }
+  //admin JDBC url
+  private val adminUrl = url +";DB_CLOSE_DELAY=-1"
+
+  // Load the h2 database driver.
+  Class.forName("org.h2.Driver")
+
+  //create user account
+  With.autoClosingConnection(DriverManager.getConnection(
+    adminUrl,
+    adminUsername,
+    adminPassword)) { c =>
+    TestDatabase.execute(getAdminConnectionBuilder,"CREATE USER "+getUserAccountName+" PASSWORD '"+userPassword+"'")
+  }
+
+  override def getAdminConnectionBuilder: ConnectionBuilder = {
+    new ConnectionBuilder(adminUrl, adminUsername, adminPassword)
+  }
+
+  override def getUserConnectionBuilder: ConnectionBuilder = {
+    new ConnectionBuilder(url, userUsername, userPassword)
+  }
+
+  override def getDatabaseAdapter: DatabaseAdapter = {
+    new H2DatabaseAdapter(None)
+  }
+}
 
 /**
  * Object which builds the correct TestDatabase according to the
@@ -375,6 +430,8 @@ object TestDatabase
         MysqlTestDatabase
       case "postgresql" =>
         PostgresqlTestDatabase
+      case "h2" =>
+        H2TestDatabase
       case v =>
         throw new RuntimeException("Unexpected value for \"" +
           vendorNameProperty +

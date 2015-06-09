@@ -61,6 +61,9 @@ object DatabaseAdapter {
       case Postgresql =>
         new PostgresqlDatabaseAdapter(schemaNameOpt)
 
+      case H2 =>
+        new H2DatabaseAdapter(schemaNameOpt)
+
       case null =>
         throw new IllegalArgumentException("Must pass a non-null vendor to " +
           "this function.")
