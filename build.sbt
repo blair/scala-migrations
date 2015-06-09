@@ -62,7 +62,9 @@ libraryDependencies ++= Seq(
   "org.jmock" % "jmock-junit4" % "[2.5.1,3.0)" % "test",
   "org.slf4j" % "slf4j-api" % "[1.5.8,2.0)",
   "org.slf4j" % "slf4j-log4j12" % "[1.5.8,2.0)" % "test",
+  "com.h2database" % "h2" % "1.3.176" % "test",
   "postgresql" % "postgresql" % "9.1-901.jdbc4" % "test")
+
 
 // Run unit tests serially otherwise races can occur between two
 // threads checking if the 'schema_migrations' table exists and
