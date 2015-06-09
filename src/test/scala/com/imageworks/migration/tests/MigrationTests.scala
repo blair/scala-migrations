@@ -32,22 +32,7 @@
  */
 package com.imageworks.migration.tests
 
-import com.imageworks.migration.{
-  AutoCommit,
-  Derby,
-  DuplicateMigrationDescriptionException,
-  DuplicateMigrationVersionException,
-  InstallAllMigrations,
-  MigrateToVersion,
-  Migration,
-  Migrator,
-  Mysql,
-  Oracle,
-  Postgresql,
-  RemoveAllMigrations,
-  RollbackMigration,
-  With
-}
+import com.imageworks.migration._
 
 import org.jmock.{
   Expectations,
@@ -371,6 +356,7 @@ class MigrationTests {
           case Mysql => true
           case Oracle => false
           case Postgresql => false
+          case H2 => true
         }
       var autoPk = 1
 
@@ -497,7 +483,7 @@ class MigrationTests {
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
       // could be caught here, but for 1.5 compatibility, only a
       // java.sql.SQLException is caught.
-      case _: SQLException => // expected
+      case e: SQLException => // expected
     }
 
     // perform grants
