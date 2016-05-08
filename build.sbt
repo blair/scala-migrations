@@ -125,7 +125,7 @@ pomPostProcess := { (node: scala.xml.Node) =>
 }
 
 publishTo <<= version { (v: String) =>
-  val nexus = "https://mvnrepository.tvevt.com/repository/maven-tvevt/"
+  val nexus = "https://mvnrepository.tvevt.com/"
   if (v.trim.endsWith("SNAPSHOT"))
     Some("snapshots" at nexus + "repository/maven-tvevt")
   else
