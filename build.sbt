@@ -17,7 +17,7 @@ organizationHomepage := Some(url("http://www.imageworks.com/"))
 
 licenses += "New BSD License" -> url("http://opensource.org/licenses/BSD-3-Clause")
 
-version := "1.1.2-SNAPSHOT"
+version := "1.2.0-SNAPSHOT"
 
 scalaVersion := "2.11.7"
 

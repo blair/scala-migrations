@@ -42,6 +42,8 @@ case object Derby
   extends Vendor
 case object Mysql
   extends Vendor
+case object Mariadb
+  extends Vendor
 case object Oracle
   extends Vendor
 case object Postgresql
@@ -61,6 +63,9 @@ object Vendor {
     driverClassName match {
       case "com.mysql.jdbc.Driver" =>
         Mysql
+
+      case "org.mariadb.jdbc.Driver" =>
+        Mariadb
 
       case "oracle.jdbc.driver.OracleDriver" =>
         Oracle

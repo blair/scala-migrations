@@ -55,6 +55,9 @@ object DatabaseAdapter {
       case Mysql =>
         new MysqlDatabaseAdapter(schemaNameOpt)
 
+      case Mariadb =>
+        new MariadbDatabaseAdapter(schemaNameOpt)
+
       case Oracle =>
         new OracleDatabaseAdapter(schemaNameOpt)
 
