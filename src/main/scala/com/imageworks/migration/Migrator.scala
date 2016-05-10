@@ -46,7 +46,8 @@ import scala.collection.{
 
 import java.net.{
   URL,
-  URLDecoder
+  URLDecoder,
+  URLClassLoader
 }
 import java.sql.Connection
 import java.util.jar.JarFile
@@ -242,8 +243,9 @@ object Migrator {
     // accessible via the local filesystem or remotely accessible jar
     // files.  Only the first two are handled.
     val pn = packageName.replace('.', '/')
+    var currentClassLoader = this.getClass.getClassLoader
 
-    val urls = this.getClass.getClassLoader.getResources(pn)
+    val urls = currentClassLoader.getResources(pn)
     if (!urls.hasMoreElements) {
       throw new RuntimeException("Cannot find a resource for package '" +
         packageName +
@@ -251,6 +253,7 @@ object Migrator {
     }
 
     val classNames = new mutable.HashSet[String]
+    val depUrls = mutable.ArrayBuffer[URL]()
     while (urls.hasMoreElements) {
       val url = urls.nextElement
       logger.debug("For package '{}' found resource at '{}'.",
@@ -259,6 +262,9 @@ object Migrator {
       classNames ++= classNamesInResource(url,
         packageName,
         searchSubPackages)
+
+      val depUri = url.toURI.toString
+      depUrls += new URL(depUri.substring(0, depUri.lastIndexOf(pn)))
     }
 
     // Search through the class names for ones that are concrete
@@ -351,7 +357,8 @@ object Migrator {
     for ((version, className) <- seenVersions) {
       var c: Class[_] = null
       try {
-        c = Class.forName(className)
+        val classLoader = new URLClassLoader(depUrls.toArray, currentClassLoader)
+        c = classLoader.loadClass(className)
         if (classOf[Migration].isAssignableFrom(c) &&
           !c.isInterface &&
           !java.lang.reflect.Modifier.isAbstract(c.getModifiers)) {
