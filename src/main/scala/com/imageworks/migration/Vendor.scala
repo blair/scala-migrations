@@ -48,6 +48,8 @@ case object Oracle
   extends Vendor
 case object Postgresql
   extends Vendor
+case object H2
+  extends Vendor
 
 object Vendor {
   /**
@@ -81,6 +83,9 @@ object Vendor {
 
       case "org.postgresql.Driver" =>
         Postgresql
+
+      case "org.h2.Driver" =>
+        H2
 
       case null =>
         throw new IllegalArgumentException("Must pass a non-null JDBC " +
