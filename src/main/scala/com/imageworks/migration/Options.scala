@@ -323,6 +323,9 @@ case object Unique
 case object AutoIncrement
   extends ColumnOption
 
+/**
+  * Specify that the column is unsigned.
+  */
 case object Unsigned
   extends ColumnOption
 

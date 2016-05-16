@@ -92,9 +92,19 @@ trait MysqlAutoIncrementingColumnDefinitionMixin
   }
 }
 
+trait MysqlUnsignedColumnDefinitionMixin
+  extends ColumnDefinition
+  with ColumnSupportsUnsigned {
+  override protected abstract def sql: String = {
+    if (isUnsigned) super.sql + " UNSIGNED"
+    else super.sql
+  }
+}
+
 class MysqlBigintColumnDefinition
   extends DefaultBigintColumnDefinition
   with MysqlAutoIncrementingColumnDefinitionMixin
+  with MysqlUnsignedColumnDefinitionMixin
 
 /**
  * Map BlobType to MySQL's LONGBLOB data type.
@@ -129,10 +139,12 @@ class MysqlCharColumnDefinition(characterSetOpt: Option[CharacterSet])
 class MysqlIntegerColumnDefinition
   extends DefaultIntegerColumnDefinition
   with MysqlAutoIncrementingColumnDefinitionMixin
+  with MysqlUnsignedColumnDefinitionMixin
 
 class MysqlSmallintColumnDefinition
   extends DefaultSmallintColumnDefinition
   with MysqlAutoIncrementingColumnDefinitionMixin
+  with MysqlUnsignedColumnDefinitionMixin
 
 // MySQL does not support size specifiers for the TIMESTAMP data type.
 class MysqlTimestampColumnDefinition

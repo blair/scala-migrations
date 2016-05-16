@@ -1,4 +1,6 @@
 package com.imageworks.migration
 
 class MariadbDatabaseAdapter(override val schemaNameOpt: Option[String])
-  extends MysqlDatabaseAdapter(schemaNameOpt)
+  extends MysqlDatabaseAdapter(schemaNameOpt) {
+  override val vendor = Mariadb
+}

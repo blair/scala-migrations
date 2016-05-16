@@ -62,7 +62,7 @@ class DatabaseAdapterTests {
 
   @Test
   def roundTrip() {
-    for (vendor <- List(Derby, Mysql, Postgresql, Oracle)) {
+    for (vendor <- List(Derby, Mysql, Mariadb, Postgresql, H2, Oracle)) {
       val adapter = DatabaseAdapter.forVendor(vendor, None)
       assertSame(vendor, adapter.vendor)
     }
