@@ -323,6 +323,9 @@ case object Unique
 case object AutoIncrement
   extends ColumnOption
 
+case object Unsigned
+  extends ColumnOption
+
 /**
  * Maps to GRANT ALL PRIVILEGES.
  *

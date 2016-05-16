@@ -43,6 +43,14 @@ trait ColumnSupportsAutoIncrement {
 }
 
 /**
+  * Marker trait for a ColumnDefinition sublcass that the column type
+  * supports having unsigned value.
+  */
+trait ColumnSupportsUnsigned {
+  this: ColumnDefinition =>
+}
+
+/**
  * Marker trait for a ColumnDefinition subclass that the column type
  * supports a default value.
  */
@@ -142,6 +150,11 @@ abstract class ColumnDefinition {
   protected var isAutoIncrement: Boolean = false
 
   /**
+    * If Unsigned is specified for the column.
+    */
+  protected var isUnsigned: Boolean = false
+
+  /**
    * If a default is specified for the column.
    */
   private var default: Option[String] = None
@@ -159,6 +172,10 @@ abstract class ColumnDefinition {
         getColumnName +
         "' because its data type does not support auto-increment."
       throw new UnsupportedOperationException(message)
+    }
+
+    if (this.isInstanceOf[ColumnSupportsUnsigned]) {
+      checkForUnsigned()
     }
 
     if (this.isInstanceOf[ColumnSupportsLimit]) {
@@ -192,6 +209,23 @@ abstract class ColumnDefinition {
           getColumnName)
       }
       isAutoIncrement = true
+    }
+  }
+
+  /**
+    * Search for and remove all Unsigned case objects from the
+    * option list, setting isUnsigned if Unsigned was found
+    * and warning if two or more Unsigned case objects are given.
+    */
+  private def checkForUnsigned() {
+    for (option @ Unsigned <- options) {
+      options = options filter { _ ne option }
+
+      if (isUnsigned) {
+        logger.warn("Redundant Unsigned specified for the '{}' column.",
+          getColumnName)
+      }
+      isUnsigned = true
     }
   }
 
