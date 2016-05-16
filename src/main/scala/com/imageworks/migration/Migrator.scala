@@ -575,7 +575,7 @@ class Migrator(connectionBuilder: ConnectionBuilder,
       Array[AnyRef](direction.str, migrationClass.getName): _*)
 
     val migration = migrationClass.getConstructor().newInstance()
-    withConnections(AutoCommit) { connections =>
+    withConnections(CommitUponReturnOrRollbackUponException) { connections =>
       migration.adapterOpt = Some(adapter)
       migration.rawConnectionOpt = Some(connections.raw)
       migration.connectionOpt = Some(connections.logging)
