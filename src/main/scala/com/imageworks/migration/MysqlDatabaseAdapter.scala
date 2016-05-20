@@ -103,8 +103,8 @@ trait MysqlUnsignedColumnDefinitionMixin
 
 class MysqlBigintColumnDefinition
   extends DefaultBigintColumnDefinition
-  with MysqlAutoIncrementingColumnDefinitionMixin
   with MysqlUnsignedColumnDefinitionMixin
+  with MysqlAutoIncrementingColumnDefinitionMixin
 
 /**
  * Map BlobType to MySQL's LONGBLOB data type.
@@ -138,13 +138,13 @@ class MysqlCharColumnDefinition(characterSetOpt: Option[CharacterSet])
 
 class MysqlIntegerColumnDefinition
   extends DefaultIntegerColumnDefinition
-  with MysqlAutoIncrementingColumnDefinitionMixin
   with MysqlUnsignedColumnDefinitionMixin
+  with MysqlAutoIncrementingColumnDefinitionMixin
 
 class MysqlSmallintColumnDefinition
   extends DefaultSmallintColumnDefinition
-  with MysqlAutoIncrementingColumnDefinitionMixin
   with MysqlUnsignedColumnDefinitionMixin
+  with MysqlAutoIncrementingColumnDefinitionMixin
 
 // MySQL does not support size specifiers for the TIMESTAMP data type.
 class MysqlTimestampColumnDefinition
