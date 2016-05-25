@@ -100,6 +100,8 @@ class H2DatabaseAdapter(override val schemaNameOpt: Option[String])
         new DefaultVarbinaryColumnDefinition
       case VarcharType =>
         new DefaultVarcharColumnDefinition
+      case FloatType =>
+        new DefaultFloatColumnDefinition
     }
   }
 

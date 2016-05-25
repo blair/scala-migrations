@@ -129,6 +129,8 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
         new DerbyVarbinaryColumnDefinition
       case VarcharType =>
         new DefaultVarcharColumnDefinition
+      case FloatType =>
+        new DefaultFloatColumnDefinition
     }
   }
 

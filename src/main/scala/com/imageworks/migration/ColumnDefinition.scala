@@ -277,7 +277,7 @@ abstract class ColumnDefinition {
   /**
    * If the column can or cannot be null.
    */
-  private lazy val notNullOpt: Option[Boolean] = {
+  protected lazy val notNullOpt: Option[Boolean] = {
     var n1: Option[Boolean] = None
 
     for (option <- options) {
@@ -593,4 +593,10 @@ class DefaultVarcharColumnDefinition
     with ColumnSupportsLimit
     with ColumnSupportsDefault {
   override protected def sql = optionallyAddLimitToDataType("VARCHAR")
+}
+
+class DefaultFloatColumnDefinition
+  extends ColumnDefinition
+  with ColumnSupportsDefault {
+  override protected def sql = "REAL"
 }
