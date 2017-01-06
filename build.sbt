@@ -126,11 +126,11 @@ pomPostProcess := { (node: scala.xml.Node) =>
 }
 
 publishTo <<= version { (v: String) =>
-  val nexus = "https://mvnrepository.tvevt.com/"
+  val nexus = "https://oss.sonatype.org/"
   if (v.trim.endsWith("SNAPSHOT"))
-    Some("snapshots" at nexus + "repository/maven-tvevt")
+    Some("snapshots" at nexus + "content/repositories/snapshots")
   else
-    Some("releases"  at nexus + "repository/maven-tvevt")
+    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 
 useGpg := true
