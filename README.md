@@ -105,20 +105,20 @@ object Test
 
     // Now apply all migrations that are in the
     // com.imageworks.vnp.dao.migrations package.
-    migrator.migrate(InstallAllMigrations, "com.imageworks.vnp.dao.migrations", false)
+    migrator.migrate(InstallAllMigrations, Seq("com.imageworks.vnp.dao.migrations"), false)
   }
 ```
 
 To rollback a database to its pristine state:
 
 ```scala
-  migrator.migrate(RemoveAllMigrations, "com.imageworks.vnp.dao.migrations", false)
+  migrator.migrate(RemoveAllMigrations, Seq("com.imageworks.vnp.dao.migrations"), false)
 ```
 
 To rollback two migrations:
 
 ```scala
-  migrator.migrate(RollbackMigration(2), "com.imageworks.vnp.dao.migrations", false)
+  migrator.migrate(RollbackMigration(2), Seq("com.imageworks.vnp.dao.migrations"), false)
 ```
 
 And to migrate to a specific migration, rollbacking back migrations
@@ -126,7 +126,7 @@ that are newer than the requested migration version and installing
 migrations older than the requested version.
 
 ```scala
-  migrator.migrate(MigrateToVersion(20090731), "com.imageworks.vnp.dao.migrations", false)
+  migrator.migrate(MigrateToVersion(20090731), Seq("com.imageworks.vnp.dao.migrations"), false)
 ```
 
 ### Supported Databases
@@ -135,8 +135,13 @@ Scala Migrations currently supports
 
 * Derby
 * MySQL
+* MariaDB
 * Oracle
 * PostgreSQL
+* H2
+
+The behavior of the MariaDB adapter is currently completely identical to MySQL adapter.
+So all things described for MySQL also true for MariaDB.
 
 Patches for other databases are welcome; however, you will need to
 submit a [Contributor License Agreement](http://opensource.imageworks.com/cla/).
@@ -334,6 +339,10 @@ More information on the mappings is below.
   * Default: `DECIMAL`
   * Oracle: `NUMBER`
 
+* Float
+  * Default: `REAL`
+  * MySQL: `FLOAT`
+
 * Integer
   * Default: `INTEGER`
   * Oracle: `NUMBER(10, 0)`
@@ -387,6 +396,8 @@ Each database treats BLOB and VARBINARY differently.
 |            | Varbinary               | `RAW`                   | 2,000                    | Required          | ??                 | | |
 | PostgreSQL | Blob                    | `BYTEA`                 | 1,073,741,823            | No                | Yes                | [7](http://www.postgresql.org/docs/9.1/static/storage-toast.html)| |
 |            | Varbinary               | `BYTEA`                 | 1,073,741,823            | No                | Yes                || || ||
+| H2         | Blob                    | `BLOB`                  | 2,147,483,647            | No                | No                 | [8](http://www.h2database.com/html/datatypes.html#blob_type) | |
+|            | Varbinary               | `VARBINARY`             | 2,147,483,647            | Required          | Yes                | [9](http://www.h2database.com/html/datatypes.html#binary_type) | |
 
 ### Oracle and SMALLINT, INTEGER and BIGINT
 
