@@ -32,22 +32,7 @@
  */
 package com.imageworks.migration.tests
 
-import com.imageworks.migration.{
-  AutoCommit,
-  Derby,
-  DuplicateMigrationDescriptionException,
-  DuplicateMigrationVersionException,
-  InstallAllMigrations,
-  MigrateToVersion,
-  Migration,
-  Migrator,
-  Mysql,
-  Oracle,
-  Postgresql,
-  RemoveAllMigrations,
-  RollbackMigration,
-  With
-}
+import com.imageworks.migration._
 
 import org.jmock.{
   Expectations,
@@ -91,28 +76,28 @@ class MigrationTests {
   @Test(expected = classOf[DuplicateMigrationDescriptionException])
   def duplicateDescriptionsThrows() {
     migrator.migrate(InstallAllMigrations,
-      "com.imageworks.migration.tests.duplicate_descriptions",
+      Seq("com.imageworks.migration.tests.duplicate_descriptions"),
       false)
   }
 
   @Test(expected = classOf[DuplicateMigrationVersionException])
   def duplicateVersionsThrows() {
     migrator.migrate(InstallAllMigrations,
-      "com.imageworks.migration.tests.duplicate_versions",
+      Seq("com.imageworks.migration.tests.duplicate_versions"),
       false)
   }
 
   @Test
   def vendor() {
     migrator.migrate(InstallAllMigrations,
-      "com.imageworks.migration.tests.vendor",
+      Seq("com.imageworks.migration.tests.vendor"),
       false)
   }
 
   @Test(expected = classOf[IllegalArgumentException])
   def scaleWithoutPrecisionThrows() {
     migrator.migrate(InstallAllMigrations,
-      "com.imageworks.migration.tests.scale_without_precision",
+      Seq("com.imageworks.migration.tests.scale_without_precision"),
       false)
   }
 
@@ -123,7 +108,7 @@ class MigrationTests {
 
     // Migrate down the whole way.
     migrator.migrate(RemoveAllMigrations,
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false)
 
     // There should only be the schema_migrations table now.
@@ -133,12 +118,12 @@ class MigrationTests {
 
     // The database should not be completely migrated.
     assertTrue(migrator.whyNotMigrated(
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false).isDefined)
 
     val statuses1 =
       migrator.getMigrationStatuses(
-        "com.imageworks.migration.tests.up_and_down",
+        Seq("com.imageworks.migration.tests.up_and_down"),
         false)
 
     assertEquals(2, statuses1.notInstalled.size)
@@ -149,7 +134,7 @@ class MigrationTests {
 
     // Apply all the migrations.
     migrator.migrate(InstallAllMigrations,
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false)
 
     assertEquals(3, migrator.getTableNames.size)
@@ -158,18 +143,18 @@ class MigrationTests {
 
     // The database should be completely migrated.
     assertFalse(migrator.whyNotMigrated(
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false).isDefined)
 
     // With a empty set of migrations the database should not be
     // completely migrated.
     assertTrue(migrator.whyNotMigrated(
-      "com.imageworks.migration.tests.no_migrations",
+      Seq("com.imageworks.migration.tests.no_migrations"),
       true).isDefined)
 
     val statuses2 =
       migrator.getMigrationStatuses(
-        "com.imageworks.migration.tests.up_and_down",
+        Seq("com.imageworks.migration.tests.up_and_down"),
         false)
 
     assertEquals(0, statuses2.notInstalled.size)
@@ -180,7 +165,7 @@ class MigrationTests {
 
     // Rollback a single migration.
     migrator.migrate(RollbackMigration(1),
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false)
 
     // There should only be the schema_migrations and
@@ -191,18 +176,18 @@ class MigrationTests {
 
     // The database should not be completely migrated.
     assertTrue(migrator.whyNotMigrated(
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false).isDefined)
 
     // With a empty set of migrations the database should not be
     // completely migrated.
     assertTrue(migrator.whyNotMigrated(
-      "com.imageworks.migration.tests.no_migrations",
+      Seq("com.imageworks.migration.tests.no_migrations"),
       true).isDefined)
 
     val statuses3 =
       migrator.getMigrationStatuses(
-        "com.imageworks.migration.tests.up_and_down",
+        Seq("com.imageworks.migration.tests.up_and_down"),
         false)
 
     assertEquals(1, statuses3.notInstalled.size)
@@ -213,7 +198,7 @@ class MigrationTests {
 
     // Migrate down the whole way.
     migrator.migrate(RemoveAllMigrations,
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false)
 
     // There should only be the schema_migrations table now.
@@ -222,12 +207,12 @@ class MigrationTests {
 
     // The database should not be completely migrated.
     assertTrue(migrator.whyNotMigrated(
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false).isDefined)
 
     val statuses4 =
       migrator.getMigrationStatuses(
-        "com.imageworks.migration.tests.up_and_down",
+        Seq("com.imageworks.migration.tests.up_and_down"),
         false)
 
     assertEquals(2, statuses4.notInstalled.size)
@@ -244,7 +229,7 @@ class MigrationTests {
 
     val statuses1 =
       migrator.getMigrationStatuses(
-        "com.imageworks.migration.tests.no_migrations",
+        Seq("com.imageworks.migration.tests.no_migrations"),
         false)
 
     // Calling getMigrationStatuses() should not have created any
@@ -259,7 +244,7 @@ class MigrationTests {
     // should not be migrated.
     val statuses2 =
       migrator.getMigrationStatuses(
-        "com.imageworks.migration.tests.up_and_down",
+        Seq("com.imageworks.migration.tests.up_and_down"),
         false)
 
     assertEquals(2, statuses2.notInstalled.size)
@@ -283,7 +268,7 @@ class MigrationTests {
     // com.imageworks.migration.tests.no_migrations package contains
     // no concrete Migration subclasses.
     assertFalse(migrator.whyNotMigrated(
-      "com.imageworks.migration.tests.no_migrations",
+      Seq("com.imageworks.migration.tests.no_migrations"),
       false).isDefined)
 
     // Running whyNotMigrated() should not have created any tables.
@@ -292,7 +277,7 @@ class MigrationTests {
     // In a brand new database with available migrations, the database
     // should not be migrated.
     assertTrue(migrator.whyNotMigrated(
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false).isDefined)
 
     // Running whyNotMigrated() should not have created any tables.
@@ -308,7 +293,7 @@ class MigrationTests {
     // auto-incrementing integer primary key and the second as a
     // VarcharType column.
     migrator.migrate(InstallAllMigrations,
-      "com.imageworks.migration.tests.auto_increment",
+      Seq("com.imageworks.migration.tests.auto_increment"),
       false)
 
     assertEquals(2, migrator.getTableNames.size)
@@ -371,6 +356,7 @@ class MigrationTests {
           case Mysql => true
           case Oracle => false
           case Postgresql => false
+          case H2 => true
         }
       var autoPk = 1
 
@@ -413,7 +399,7 @@ class MigrationTests {
 
     // Create the table with a short VarcharType column.
     migrator.migrate(MigrateToVersion(20110214054347L),
-      "com.imageworks.migration.tests.alter_column",
+      Seq("com.imageworks.migration.tests.alter_column"),
       false)
 
     assertEquals(2, migrator.getTableNames.size)
@@ -447,7 +433,7 @@ class MigrationTests {
     // Apply the migration that extends the length of the column then
     // assert that the same INSERT that failed now works.
     migrator.migrate(MigrateToVersion(20110214060042L),
-      "com.imageworks.migration.tests.alter_column",
+      Seq("com.imageworks.migration.tests.alter_column"),
       false)
 
     connectionBuilder.withConnection(AutoCommit) { c =>
@@ -468,7 +454,7 @@ class MigrationTests {
 
     // Make a table, migrate with admin account.
     migrator.migrate(MigrateToVersion(200811241940L),
-      "com.imageworks.migration.tests.grant_and_revoke",
+      Seq("com.imageworks.migration.tests.grant_and_revoke"),
       false)
 
     // New connection with user account.
@@ -497,12 +483,12 @@ class MigrationTests {
       // With JDK 1.6 or later, a java.sql.SQLSyntaxErrorException
       // could be caught here, but for 1.5 compatibility, only a
       // java.sql.SQLException is caught.
-      case _: SQLException => // expected
+      case e: SQLException => // expected
     }
 
     // perform grants
     migrator.migrate(MigrateToVersion(200811261513L),
-      "com.imageworks.migration.tests.grant_and_revoke",
+      Seq("com.imageworks.migration.tests.grant_and_revoke"),
       false)
 
     // try to select table, should succeed now that grant has been given
@@ -522,7 +508,7 @@ class MigrationTests {
     // IllegalArgumentException.
     try {
       migrator.migrate(MigrateToVersion(20121013072344L),
-        "com.imageworks.migration.tests.grant_and_revoke",
+        Seq("com.imageworks.migration.tests.grant_and_revoke"),
         false)
       // failure if got here
       fail("Expected IllegalArgumentException")
@@ -533,7 +519,7 @@ class MigrationTests {
 
     // preform revoke
     migrator.migrate(RollbackMigration(1),
-      "com.imageworks.migration.tests.grant_and_revoke",
+      Seq("com.imageworks.migration.tests.grant_and_revoke"),
       false)
 
     // try to select table, should give a permissions error again
@@ -554,7 +540,7 @@ class MigrationTests {
   @Test
   def columnsCanHoldTypes() {
     migrator.migrate(InstallAllMigrations,
-      "com.imageworks.migration.tests.types",
+      Seq("com.imageworks.migration.tests.types"),
       false)
 
     val varbinaryArray = (1 to 4).map(_.toByte).toArray

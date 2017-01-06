@@ -32,18 +32,7 @@
  */
 package com.imageworks.migration.tests
 
-import com.imageworks.migration.{
-  DatabaseAdapter,
-  Derby,
-  DerbyDatabaseAdapter,
-  Mysql,
-  MysqlDatabaseAdapter,
-  Oracle,
-  OracleDatabaseAdapter,
-  Postgresql,
-  PostgresqlDatabaseAdapter
-}
-
+import com.imageworks.migration._
 import org.junit.Assert._
 import org.junit.Test
 
@@ -61,6 +50,9 @@ class DatabaseAdapterTests {
 
     assertEquals(classOf[PostgresqlDatabaseAdapter],
       DatabaseAdapter.forVendor(Postgresql, None).getClass)
+
+    assertEquals(classOf[H2DatabaseAdapter],
+      DatabaseAdapter.forVendor(H2, None).getClass)
   }
 
   @Test(expected = classOf[IllegalArgumentException])
@@ -70,7 +62,7 @@ class DatabaseAdapterTests {
 
   @Test
   def roundTrip() {
-    for (vendor <- List(Derby, Mysql, Postgresql, Oracle)) {
+    for (vendor <- List(Derby, Mysql, Mariadb, Postgresql, H2, Oracle)) {
       val adapter = DatabaseAdapter.forVendor(vendor, None)
       assertSame(vendor, adapter.vendor)
     }

@@ -1,3 +1,4 @@
+import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import scalariform.formatter.preferences._
 
 name := "scala-migrations"
@@ -16,9 +17,9 @@ organizationHomepage := Some(url("http://www.imageworks.com/"))
 
 licenses += "New BSD License" -> url("http://opensource.org/licenses/BSD-3-Clause")
 
-version := "1.1.2-SNAPSHOT"
+version := "2.0.0-SNAPSHOT"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.11.7"
 
 // For a single major Scala release, e.g. 2.x.y, include at most one
 // Scala release candidate in crossScalaVersions, e.g. "2.x.y-RC3".
@@ -62,7 +63,8 @@ libraryDependencies ++= Seq(
   "org.jmock" % "jmock-junit4" % "[2.5.1,3.0)" % "test",
   "org.slf4j" % "slf4j-api" % "[1.5.8,2.0)",
   "org.slf4j" % "slf4j-log4j12" % "[1.5.8,2.0)" % "test",
-  "postgresql" % "postgresql" % "9.1-901.jdbc4" % "test")
+  "postgresql" % "postgresql" % "9.1-901.jdbc4" % "test",
+  "com.h2database" % "h2" % "1.3.176" % "test")
 
 // Run unit tests serially otherwise races can occur between two
 // threads checking if the 'schema_migrations' table exists and

@@ -103,27 +103,27 @@ class JavaMigrator private (migrator: Migrator) {
   /**
    * Install all available migrations into the database.
    *
-   * @param packageName the package name that the Migration subclasses
+   * @param packageNames the sequence of package names that the Migration subclasses
    *        should be searched for
    * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    */
-  def installAllMigrations(packageName: String,
+  def installAllMigrations(packageNames: Seq[String],
                            searchSubPackages: Boolean) {
-    migrator.migrate(InstallAllMigrations, packageName, searchSubPackages)
+    migrator.migrate(InstallAllMigrations, packageNames, searchSubPackages)
   }
 
   /**
    * Remove all installed migrations from the database.
    *
-   * @param packageName the package name that the Migration subclasses
+   * @param packageNames the sequence of package names that the Migration subclasses
    *        should be searched for
    * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    */
-  def removeAllMigrations(packageName: String,
+  def removeAllMigrations(packageNames: Seq[String],
                           searchSubPackages: Boolean) {
-    migrator.migrate(RemoveAllMigrations, packageName, searchSubPackages)
+    migrator.migrate(RemoveAllMigrations, packageNames, searchSubPackages)
   }
 
   /**
@@ -131,15 +131,15 @@ class JavaMigrator private (migrator: Migrator) {
    *
    * @param version the version number the database should be migrated
    *        to
-   * @param packageName the package name that the Migration subclasses
+   * @param packageNames the sequence of package names that the Migration subclasses
    *        should be searched for
    * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    */
   def migrateTo(version: Long,
-                packageName: String,
+                packageNames: Seq[String],
                 searchSubPackages: Boolean) {
-    migrator.migrate(MigrateToVersion(version), packageName, searchSubPackages)
+    migrator.migrate(MigrateToVersion(version), packageNames, searchSubPackages)
   }
 
   /**
@@ -147,16 +147,16 @@ class JavaMigrator private (migrator: Migrator) {
    *
    * @param count the number of migrations to rollback
    *        to
-   * @param packageName the package name that the Migration subclasses
+   * @param packageNames the sequence of package names that the Migration subclasses
    *        should be searched for
    * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    */
   def rollback(count: Int,
-               packageName: String,
+               packageNames: Seq[String],
                searchSubPackages: Boolean) {
     migrator.migrate(RollbackMigration(count),
-      packageName,
+      packageNames,
       searchSubPackages)
   }
 
@@ -170,7 +170,7 @@ class JavaMigrator private (migrator: Migrator) {
    * Running this method does not modify the database in any way.  The
    * schema migrations table is not created.
    *
-   * @param packageName the Java package name to search for Migration
+   * @param packageNames the sequence of Java package names to search for Migration
    *        subclasses
    * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
@@ -180,9 +180,9 @@ class JavaMigrator private (migrator: Migrator) {
    *         the not-installed migrations and the installed migrations
    *         that do not have a matching Migration subclass
    */
-  def whyNotMigrated(packageName: String,
+  def whyNotMigrated(packageNames: Seq[String],
                      searchSubPackages: Boolean): String = {
-    migrator.whyNotMigrated(packageName, searchSubPackages) match {
+    migrator.whyNotMigrated(packageNames, searchSubPackages) match {
       case Some(message) => message
       case None => null
     }

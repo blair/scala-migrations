@@ -36,6 +36,7 @@ import com.imageworks.migration.With
 
 import org.jmock.{
   Expectations,
+  AbstractExpectations,
   Mockery
 }
 
@@ -82,7 +83,7 @@ class WithTests {
 
     context.checking(new Expectations {
       oneOf(mockResultSet).close()
-      will(Expectations.throwException(e2))
+      will(AbstractExpectations.throwException(e2))
     })
 
     var caughtExceptionOpt: Option[Exception] = None
@@ -113,7 +114,7 @@ class WithTests {
 
     context.checking(new Expectations {
       oneOf(mockResultSet).close()
-      will(Expectations.throwException(e1))
+      will(AbstractExpectations.throwException(e1))
     })
 
     var caughtExceptionOpt: Option[Exception] = None

@@ -73,14 +73,14 @@ class JavaMigratorTests {
   @Test(expected = classOf[DuplicateMigrationDescriptionException])
   def duplicateDescriptionsThrows() {
     javaMigrator.installAllMigrations(
-      "com.imageworks.migration.tests.duplicate_descriptions",
+      Seq("com.imageworks.migration.tests.duplicate_descriptions"),
       false)
   }
 
   @Test(expected = classOf[DuplicateMigrationVersionException])
   def duplicateVersionsThrows() {
     javaMigrator.installAllMigrations(
-      "com.imageworks.migration.tests.duplicate_versions",
+      Seq("com.imageworks.migration.tests.duplicate_versions"),
       false)
   }
 
@@ -91,12 +91,12 @@ class JavaMigratorTests {
 
     // Migrate down the whole way.
     javaMigrator.removeAllMigrations(
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false)
 
     // The database should not be completely migrated.
     assertNotNull(javaMigrator.whyNotMigrated(
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false))
 
     // An empty array of Strings so that getTableNames.toArray returns
@@ -109,7 +109,7 @@ class JavaMigratorTests {
 
     // Apply all the migrations.
     javaMigrator.installAllMigrations(
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false)
 
     assertEquals(3, javaMigrator.getTableNames.size)
@@ -117,12 +117,12 @@ class JavaMigratorTests {
 
     // The database should be completely migrated.
     assertNull(javaMigrator.whyNotMigrated(
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false))
 
     // Migrate down the whole way.
     javaMigrator.removeAllMigrations(
-      "com.imageworks.migration.tests.up_and_down",
+      Seq("com.imageworks.migration.tests.up_and_down"),
       false)
 
     // There should only be the schema_migrations table now.

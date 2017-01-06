@@ -235,4 +235,18 @@ class TableDefinition(adapter: DatabaseAdapter,
                     options: ColumnOption*): TableDefinition = {
     column(name, VarcharType, options: _*)
   }
+
+  /**
+    * Add a FLOAT column type to the table.  The actual SQL text used
+    * to create the column is chosen by the database adapter and may be
+    * different than the name of the columnType argument.
+    *
+    * @param name the column's name
+    * @param options a possibly empty array of column options to customize the
+    *        column
+    * @return the same instance
+    */
+  final def float(name: String, options: ColumnOption*): TableDefinition = {
+    column(name, FloatType, options: _*)
+  }
 }

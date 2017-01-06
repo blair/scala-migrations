@@ -46,7 +46,8 @@ import scala.collection.{
 
 import java.net.{
   URL,
-  URLDecoder
+  URLDecoder,
+  URLClassLoader
 }
 import java.sql.Connection
 import java.util.jar.JarFile
@@ -226,7 +227,7 @@ object Migrator {
    *    directory or other jars to find other migrations.
    * 3) It does not support remotely loaded classes and jar files.
    *
-   * @param packageName the Java package name to search for Migration
+   * @param packageNames the sequence of Java package names to search for Migration
    *        subclasses
    * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
@@ -234,31 +235,39 @@ object Migrator {
    *         Migration subclasses as the value
    */
   private def findMigrations(
-    packageName: String,
+    packageNames: Seq[String],
     searchSubPackages: Boolean,
     logger: Logger): immutable.SortedMap[Long, Class[_ <: Migration]] = {
-    // Ask the current class loader for the resources corresponding to
-    // the package, which can refer to directories, jar files
-    // accessible via the local filesystem or remotely accessible jar
-    // files.  Only the first two are handled.
-    val pn = packageName.replace('.', '/')
-
-    val urls = this.getClass.getClassLoader.getResources(pn)
-    if (!urls.hasMoreElements) {
-      throw new RuntimeException("Cannot find a resource for package '" +
-        packageName +
-        "'.")
-    }
-
+    var currentClassLoader = this.getClass.getClassLoader
     val classNames = new mutable.HashSet[String]
-    while (urls.hasMoreElements) {
-      val url = urls.nextElement
-      logger.debug("For package '{}' found resource at '{}'.",
-        Array[AnyRef](packageName, url): _*)
+    val depUrls = mutable.ArrayBuffer[URL]()
 
-      classNames ++= classNamesInResource(url,
-        packageName,
-        searchSubPackages)
+    for (packageName <- packageNames) {
+      // Ask the current class loader for the resources corresponding to
+      // the package, which can refer to directories, jar files
+      // accessible via the local filesystem or remotely accessible jar
+      // files.  Only the first two are handled.
+      val pn = packageName.replace('.', '/')
+
+      val urls = currentClassLoader.getResources(pn)
+      if (!urls.hasMoreElements) {
+        throw new RuntimeException("Cannot find a resource for package '" +
+          packageName +
+          "'.")
+      }
+
+      while (urls.hasMoreElements) {
+        val url = urls.nextElement
+        logger.debug("For package '{}' found resource at '{}'.",
+          Array[AnyRef](packageName, url): _*)
+
+        classNames ++= classNamesInResource(url,
+          packageName,
+          searchSubPackages)
+
+        val depUri = url.toURI.toString
+        depUrls += new URL(depUri.substring(0, depUri.lastIndexOf(pn)))
+      }
     }
 
     // Search through the class names for ones that are concrete
@@ -351,7 +360,8 @@ object Migrator {
     for ((version, className) <- seenVersions) {
       var c: Class[_] = null
       try {
-        c = Class.forName(className)
+        val classLoader = new URLClassLoader(depUrls.toArray, currentClassLoader)
+        c = classLoader.loadClass(className)
         if (classOf[Migration].isAssignableFrom(c) &&
           !c.isInterface &&
           !java.lang.reflect.Modifier.isAbstract(c.getModifiers)) {
@@ -565,7 +575,7 @@ class Migrator(connectionBuilder: ConnectionBuilder,
       Array[AnyRef](direction.str, migrationClass.getName): _*)
 
     val migration = migrationClass.getConstructor().newInstance()
-    withConnections(AutoCommit) { connections =>
+    withConnections(CommitUponReturnOrRollbackUponException) { connections =>
       migration.adapterOpt = Some(adapter)
       migration.rawConnectionOpt = Some(connections.raw)
       migration.connectionOpt = Some(connections.logging)
@@ -676,14 +686,14 @@ class Migrator(connectionBuilder: ConnectionBuilder,
    * the schema_migrations table in the database, if it does not
    * currently exist.
    *
-   * @param packageName the Java package name to search for Migration
+   * @param packageNames the sequence of Java package names to search for Migration
    *        subclasses
    * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    * @param operation the migration operation that should be performed
    */
   def migrate(operation: MigratorOperation,
-              packageName: String,
+              packageNames: Seq[String],
               searchSubPackages: Boolean) {
     initializeSchemaMigrationsTable()
 
@@ -709,7 +719,7 @@ class Migrator(connectionBuilder: ConnectionBuilder,
       // missing migration for an installed migration is not fatal
       // unless the migration needs to be rolled back.
       val installedVersions = getInstalledVersions(schemaConnection).toArray
-      val availableMigrations = findMigrations(packageName,
+      val availableMigrations = findMigrations(packageNames,
         searchSubPackages,
         logger)
       val availableVersions = availableMigrations.keySet.toArray
@@ -815,14 +825,14 @@ class Migrator(connectionBuilder: ConnectionBuilder,
    * subclass, installed migration without an associated Migration
    * subclass and Migration subclasses that are not installed.
    *
-   * @param packageName the Java package name to search for Migration
+   * @param packageNames the sequence of Java package names to search for Migration
    *        subclasses
    * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    */
-  def getMigrationStatuses(packageName: String,
+  def getMigrationStatuses(packageNames: Seq[String],
                            searchSubPackages: Boolean): MigrationStatuses = {
-    val availableMigrations = findMigrations(packageName,
+    val availableMigrations = findMigrations(packageNames,
       searchSubPackages,
       logger)
     val installedVersions = if (doesSchemaMigrationsTableExist)
@@ -865,7 +875,7 @@ class Migrator(connectionBuilder: ConnectionBuilder,
    * Running this method does not modify the database in any way.  The
    * schema migrations table is not created.
    *
-   * @param packageName the Java package name to search for Migration
+   * @param packageNames the sequence of Java package names to search for Migration
    *        subclasses
    * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
@@ -876,9 +886,9 @@ class Migrator(connectionBuilder: ConnectionBuilder,
    *         installed migrations that do not have a matching
    *         Migration subclass
    */
-  def whyNotMigrated(packageName: String,
+  def whyNotMigrated(packageNames: Seq[String],
                      searchSubPackages: Boolean): Option[String] = {
-    val migrationStatuses = getMigrationStatuses(packageName,
+    val migrationStatuses = getMigrationStatuses(packageNames,
       searchSubPackages)
 
     val notInstalled = migrationStatuses.notInstalled

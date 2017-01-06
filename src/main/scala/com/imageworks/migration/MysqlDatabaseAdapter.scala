@@ -92,8 +92,18 @@ trait MysqlAutoIncrementingColumnDefinitionMixin
   }
 }
 
+trait MysqlUnsignedColumnDefinitionMixin
+  extends ColumnDefinition
+  with ColumnSupportsUnsigned {
+  override protected abstract def sql: String = {
+    if (isUnsigned) super.sql + " UNSIGNED"
+    else super.sql
+  }
+}
+
 class MysqlBigintColumnDefinition
   extends DefaultBigintColumnDefinition
+  with MysqlUnsignedColumnDefinitionMixin
   with MysqlAutoIncrementingColumnDefinitionMixin
 
 /**
@@ -128,23 +138,35 @@ class MysqlCharColumnDefinition(characterSetOpt: Option[CharacterSet])
 
 class MysqlIntegerColumnDefinition
   extends DefaultIntegerColumnDefinition
+  with MysqlUnsignedColumnDefinitionMixin
   with MysqlAutoIncrementingColumnDefinitionMixin
 
 class MysqlSmallintColumnDefinition
   extends DefaultSmallintColumnDefinition
+  with MysqlUnsignedColumnDefinitionMixin
   with MysqlAutoIncrementingColumnDefinitionMixin
 
 // MySQL does not support size specifiers for the TIMESTAMP data type.
 class MysqlTimestampColumnDefinition
     extends ColumnDefinition
     with ColumnSupportsDefault {
-  override val sql = "TIMESTAMP"
+  protected def sql = {
+    notNullOpt match {
+      case Some(true) => "TIMESTAMP"
+      case _ => "TIMESTAMP NULL"
+    }
+  }
 }
 
 class MysqlVarcharColumnDefinition(characterSetOpt: Option[CharacterSet])
     extends DefaultVarcharColumnDefinition
     with MysqlAppendCharacterSetToColumnDefinitionMixin {
   override protected def sql: String = sql(super.sql, characterSetOpt)
+}
+
+class MysqlFloatColumnDefinition
+  extends DefaultFloatColumnDefinition {
+  override val sql = "FLOAT"
 }
 
 class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
@@ -231,6 +253,8 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
         new DefaultVarbinaryColumnDefinition
       case VarcharType =>
         new MysqlVarcharColumnDefinition(characterSetOpt)
+      case FloatType =>
+        new MysqlFloatColumnDefinition
     }
   }
 

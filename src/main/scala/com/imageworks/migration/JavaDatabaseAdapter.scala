@@ -114,4 +114,23 @@ object JavaDatabaseAdapter {
   def getPostgresqlDatabaseAdapter(schemaName: String): PostgresqlDatabaseAdapter = {
     new PostgresqlDatabaseAdapter(Some(schemaName))
   }
+
+  /**
+    * Create a H2 Database Adapter.
+    *
+    * @return newly constructed H2DatabaseAdapter
+    */
+  def getH2DatabaseAdapter: H2DatabaseAdapter = {
+    new H2DatabaseAdapter(None)
+  }
+
+  /**
+    * Create a H2 Database Adapter.
+    *
+    * @param schemaName the default schema name in the adapter
+    * @return newly constructed H2DatabaseAdapter
+    */
+  def getH2DatabaseAdapter(schemaName: String): H2DatabaseAdapter = {
+    new H2DatabaseAdapter(Some(schemaName))
+  }
 }

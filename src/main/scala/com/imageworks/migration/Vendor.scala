@@ -42,9 +42,13 @@ case object Derby
   extends Vendor
 case object Mysql
   extends Vendor
+case object Mariadb
+  extends Vendor
 case object Oracle
   extends Vendor
 case object Postgresql
+  extends Vendor
+case object H2
   extends Vendor
 
 object Vendor {
@@ -62,6 +66,9 @@ object Vendor {
       case "com.mysql.jdbc.Driver" =>
         Mysql
 
+      case "org.mariadb.jdbc.Driver" =>
+        Mariadb
+
       case "oracle.jdbc.driver.OracleDriver" =>
         Oracle
 
@@ -76,6 +83,9 @@ object Vendor {
 
       case "org.postgresql.Driver" =>
         Postgresql
+
+      case "org.h2.Driver" =>
+        H2
 
       case null =>
         throw new IllegalArgumentException("Must pass a non-null JDBC " +

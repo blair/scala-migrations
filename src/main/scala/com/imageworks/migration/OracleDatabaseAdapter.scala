@@ -218,6 +218,8 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
         new OracleVarbinaryColumnDefinition
       case VarcharType =>
         new OracleVarcharColumnDefinition(useNcharType)
+      case FloatType =>
+        new DefaultFloatColumnDefinition
     }
   }
 
