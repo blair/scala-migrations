@@ -92,9 +92,10 @@ object With {
         }
         catch {
           case e: Throwable =>
-            logger.warn("Suppressing exception when " +
-              closerDescription +
-              ':',
+            logger.warn(
+              "Suppressing exception when " +
+                closerDescription +
+                ':',
               e)
         }
       }
@@ -136,8 +137,9 @@ object With {
    *        connection
    * @return the result of f
    */
-  def autoRestoringConnection[C <: Connection, R](connection: C,
-                                                  mode: Boolean)(f: C => R): R = {
+  def autoRestoringConnection[C <: Connection, R](
+    connection: C,
+    mode:       Boolean)(f: C => R): R = {
     val currentMode = connection.getAutoCommit
     With.resource(connection, "restoring connection auto-commit")(_.setAutoCommit(currentMode)) { c =>
       c.setAutoCommit(mode)
@@ -160,8 +162,9 @@ object With {
    *        connection
    * @return the result of f
    */
-  def autoCommittingConnection[C <: Connection, R](connection: C,
-                                                   commitBehavior: CommitBehavior)(f: C => R): R = {
+  def autoCommittingConnection[C <: Connection, R](
+    connection:     C,
+    commitBehavior: CommitBehavior)(f: C => R): R = {
     val newCommitBehavior =
       commitBehavior match {
         case AutoCommit => true

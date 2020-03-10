@@ -53,8 +53,9 @@ trait MysqlAppendCharacterSetToColumnDefinitionMixin {
    * @param dataTypeSql the SQL for the data type
    * @param characterSetOpt an optional character set
    */
-  protected def sql(dataTypeSql: String,
-                    characterSetOpt: Option[CharacterSet]): String = {
+  protected def sql(
+    dataTypeSql:     String,
+    characterSetOpt: Option[CharacterSet]): String = {
     characterSetOpt match {
       case Some(charset) => {
         val sb = new java.lang.StringBuilder(64)
@@ -208,8 +209,9 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
   // https://dev.mysql.com/doc/refman/5.5/en/alter-table.html
   override val supportsCheckConstraints = false
 
-  override def columnDefinitionFactory(columnType: SqlType,
-                                       characterSetOpt: Option[CharacterSet]): ColumnDefinition = {
+  override def columnDefinitionFactory(
+    columnType:      SqlType,
+    characterSetOpt: Option[CharacterSet]): ColumnDefinition = {
     columnType match {
       case BigintType =>
         new MysqlBigintColumnDefinition
@@ -234,8 +236,9 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
     }
   }
 
-  override def lockTableSql(schemaNameOpt: Option[String],
-                            tableName: String): String = {
+  override def lockTableSql(
+    schemaNameOpt: Option[String],
+    tableName:     String): String = {
     val sb = new java.lang.StringBuilder(64)
     sb.append("LOCK TABLES ")
       .append(quoteTableName(schemaNameOpt, tableName))
@@ -243,8 +246,9 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
       .toString
   }
 
-  override protected def alterColumnSql(schemaNameOpt: Option[String],
-                                        columnDefinition: ColumnDefinition): String = {
+  override protected def alterColumnSql(
+    schemaNameOpt:    Option[String],
+    columnDefinition: ColumnDefinition): String = {
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
       .append(quoteTableName(schemaNameOpt, columnDefinition.getTableName))
@@ -254,9 +258,10 @@ class MysqlDatabaseAdapter(override val schemaNameOpt: Option[String])
       .toString
   }
 
-  override def removeIndexSql(schemaNameOpt: Option[String],
-                              tableName: String,
-                              indexName: String): String = {
+  override def removeIndexSql(
+    schemaNameOpt: Option[String],
+    tableName:     String,
+    indexName:     String): String = {
     new java.lang.StringBuilder(128)
       .append("ALTER TABLE ")
       .append(quoteTableName(schemaNameOpt, tableName))

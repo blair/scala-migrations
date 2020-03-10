@@ -35,8 +35,9 @@ package com.imageworks.migration
 /**
  * A two-tuple containing a table name and a list of column names.
  */
-class TableColumnDefinition(val tableName: String,
-                            val columnNames: Array[String])
+class TableColumnDefinition(
+  val tableName:   String,
+  val columnNames: Array[String])
 
 /**
  * A container class for storing the table and column names a foreign

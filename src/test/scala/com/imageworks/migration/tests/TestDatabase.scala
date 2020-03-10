@@ -113,7 +113,8 @@ object DerbyTestDatabase
 
   // Set the Derby system home directory to "target/test-databases" so
   // the derby.log file and all databases will be placed in there.
-  System.getProperties.setProperty("derby.system.home",
+  System.getProperties.setProperty(
+    "derby.system.home",
     "target/test-databases")
 
   // Load the Derby database driver.
@@ -166,7 +167,7 @@ object DerbyTestDatabase
   }
   catch {
     // For JDBC3 (JDK 1.5)
-    case _: org.apache.derby.impl.jdbc.EmbedSQLException =>
+    //case _: org.apache.derby.impl.jdbc.EmbedSQLException =>
 
     // For JDBC4 (JDK 1.6), a
     // java.sql.SQLNonTransientConnectionException is thrown, but this
@@ -395,8 +396,9 @@ object TestDatabase
 
   override def getDatabaseAdapter = db.getDatabaseAdapter
 
-  def execute(connectionBuilder: ConnectionBuilder,
-              sql: String): Boolean = {
+  def execute(
+    connectionBuilder: ConnectionBuilder,
+    sql:               String): Boolean = {
     connectionBuilder.withConnection(AutoCommit) { c =>
       With.autoClosingStatement(c.prepareStatement(sql)) { s =>
         s.execute()

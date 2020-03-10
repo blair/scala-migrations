@@ -90,28 +90,32 @@ class MigrationTests {
 
   @Test(expected = classOf[DuplicateMigrationDescriptionException])
   def duplicateDescriptionsThrows() {
-    migrator.migrate(InstallAllMigrations,
+    migrator.migrate(
+      InstallAllMigrations,
       "com.imageworks.migration.tests.duplicate_descriptions",
       false)
   }
 
   @Test(expected = classOf[DuplicateMigrationVersionException])
   def duplicateVersionsThrows() {
-    migrator.migrate(InstallAllMigrations,
+    migrator.migrate(
+      InstallAllMigrations,
       "com.imageworks.migration.tests.duplicate_versions",
       false)
   }
 
   @Test
   def vendor() {
-    migrator.migrate(InstallAllMigrations,
+    migrator.migrate(
+      InstallAllMigrations,
       "com.imageworks.migration.tests.vendor",
       false)
   }
 
   @Test(expected = classOf[IllegalArgumentException])
   def scaleWithoutPrecisionThrows() {
-    migrator.migrate(InstallAllMigrations,
+    migrator.migrate(
+      InstallAllMigrations,
       "com.imageworks.migration.tests.scale_without_precision",
       false)
   }
@@ -122,7 +126,8 @@ class MigrationTests {
     assertEquals(0, migrator.getTableNames.size)
 
     // Migrate down the whole way.
-    migrator.migrate(RemoveAllMigrations,
+    migrator.migrate(
+      RemoveAllMigrations,
       "com.imageworks.migration.tests.up_and_down",
       false)
 
@@ -148,7 +153,8 @@ class MigrationTests {
     assertEquals(0, statuses1.installedWithoutAvailableImplementation.size)
 
     // Apply all the migrations.
-    migrator.migrate(InstallAllMigrations,
+    migrator.migrate(
+      InstallAllMigrations,
       "com.imageworks.migration.tests.up_and_down",
       false)
 
@@ -179,7 +185,8 @@ class MigrationTests {
     assertEquals(0, statuses2.installedWithoutAvailableImplementation.size)
 
     // Rollback a single migration.
-    migrator.migrate(RollbackMigration(1),
+    migrator.migrate(
+      RollbackMigration(1),
       "com.imageworks.migration.tests.up_and_down",
       false)
 
@@ -212,7 +219,8 @@ class MigrationTests {
     assertEquals(0, statuses3.installedWithoutAvailableImplementation.size)
 
     // Migrate down the whole way.
-    migrator.migrate(RemoveAllMigrations,
+    migrator.migrate(
+      RemoveAllMigrations,
       "com.imageworks.migration.tests.up_and_down",
       false)
 
@@ -307,7 +315,8 @@ class MigrationTests {
     // Create a table with two columns, the first column as a
     // auto-incrementing integer primary key and the second as a
     // VarcharType column.
-    migrator.migrate(InstallAllMigrations,
+    migrator.migrate(
+      InstallAllMigrations,
       "com.imageworks.migration.tests.auto_increment",
       false)
 
@@ -412,7 +421,8 @@ class MigrationTests {
     assertEquals(0, migrator.getTableNames.size)
 
     // Create the table with a short VarcharType column.
-    migrator.migrate(MigrateToVersion(20110214054347L),
+    migrator.migrate(
+      MigrateToVersion(20110214054347L),
       "com.imageworks.migration.tests.alter_column",
       false)
 
@@ -446,7 +456,8 @@ class MigrationTests {
 
     // Apply the migration that extends the length of the column then
     // assert that the same INSERT that failed now works.
-    migrator.migrate(MigrateToVersion(20110214060042L),
+    migrator.migrate(
+      MigrateToVersion(20110214060042L),
       "com.imageworks.migration.tests.alter_column",
       false)
 
@@ -467,7 +478,8 @@ class MigrationTests {
     val databaseAdapter = TestDatabase.getDatabaseAdapter
 
     // Make a table, migrate with admin account.
-    migrator.migrate(MigrateToVersion(200811241940L),
+    migrator.migrate(
+      MigrateToVersion(200811241940L),
       "com.imageworks.migration.tests.grant_and_revoke",
       false)
 
@@ -501,7 +513,8 @@ class MigrationTests {
     }
 
     // perform grants
-    migrator.migrate(MigrateToVersion(200811261513L),
+    migrator.migrate(
+      MigrateToVersion(200811261513L),
       "com.imageworks.migration.tests.grant_and_revoke",
       false)
 
@@ -521,7 +534,8 @@ class MigrationTests {
     // Migrate to 20121013072344 which show throw an
     // IllegalArgumentException.
     try {
-      migrator.migrate(MigrateToVersion(20121013072344L),
+      migrator.migrate(
+        MigrateToVersion(20121013072344L),
         "com.imageworks.migration.tests.grant_and_revoke",
         false)
       // failure if got here
@@ -532,7 +546,8 @@ class MigrationTests {
     }
 
     // preform revoke
-    migrator.migrate(RollbackMigration(1),
+    migrator.migrate(
+      RollbackMigration(1),
       "com.imageworks.migration.tests.grant_and_revoke",
       false)
 
@@ -553,7 +568,8 @@ class MigrationTests {
 
   @Test
   def columnsCanHoldTypes() {
-    migrator.migrate(InstallAllMigrations,
+    migrator.migrate(
+      InstallAllMigrations,
       "com.imageworks.migration.tests.types",
       false)
 
@@ -562,7 +578,8 @@ class MigrationTests {
 
     migrator.withLoggingConnection(AutoCommit) { c =>
       for (
-        (n, v) <- Array(("bigint_column", java.lang.Long.MIN_VALUE),
+        (n, v) <- Array(
+          ("bigint_column", java.lang.Long.MIN_VALUE),
           ("bigint_column", java.lang.Long.MAX_VALUE),
           ("char_column", "ABCD"),
           ("decimal_column", 3.14),

@@ -84,8 +84,9 @@ object MysqlUser {
    * @param userName a user name
    * @param hostName a host name
    */
-  def apply(userName: String,
-            hostName: String): MysqlUser = {
+  def apply(
+    userName: String,
+    hostName: String): MysqlUser = {
     new MysqlUser(userName, hostName)
   }
 }
@@ -98,8 +99,9 @@ object MysqlUser {
  * @param userName the user name
  * @param hostName the host name
  */
-class MysqlUser(userName: String,
-                hostName: String)
+class MysqlUser(
+  userName: String,
+  hostName: String)
     extends User {
   override def quoted(unquotedNameConverter: UnquotedNameConverter): String = {
     val sb = new java.lang.StringBuilder(64)

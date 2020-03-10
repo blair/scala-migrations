@@ -97,8 +97,9 @@ object CharacterSet {
    * @param name the name of the character set
    * @param collation the name of the collation
    */
-  def apply(name: CharacterSetName,
-            collation: String): CharacterSet = {
+  def apply(
+    name:      CharacterSetName,
+    collation: String): CharacterSet = {
     new CharacterSet(name, collation)
   }
 
@@ -126,8 +127,9 @@ object CharacterSet {
  * @param name the name of the character set
  * @param collationOpt an optional collation for the character set
  */
-case class CharacterSet(name: CharacterSetName,
-                        collationOpt: Option[String])
+case class CharacterSet(
+  name:         CharacterSetName,
+  collationOpt: Option[String])
     extends ColumnOption {
   /**
    * Construct a CharacterSet with the given character set name and
@@ -136,8 +138,9 @@ case class CharacterSet(name: CharacterSetName,
    * @param name the name of the character set
    * @param collation the name of the collation
    */
-  def this(name: CharacterSetName,
-           collation: String) {
+  def this(
+    name:      CharacterSetName,
+    collation: String) {
     this(name, Some(collation))
   }
 

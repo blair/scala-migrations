@@ -188,7 +188,8 @@ abstract class ColumnDefinition {
       options = options filter { _ ne option }
 
       if (isAutoIncrement) {
-        logger.warn("Redundant AutoIncrement specified for the '{}' column.",
+        logger.warn(
+          "Redundant AutoIncrement specified for the '{}' column.",
           getColumnName)
       }
       isAutoIncrement = true
@@ -205,8 +206,9 @@ abstract class ColumnDefinition {
       options = options filter { _ ne option }
 
       if (default.isDefined && default.get != value) {
-        logger.warn("Redefining the default value for the '{}' column " +
-          "from '{}' to '{}'.",
+        logger.warn(
+          "Redefining the default value for the '{}' column " +
+            "from '{}' to '{}'.",
           Array[AnyRef](getColumnName, default.get, value): _*)
       }
       default = Some(value)
@@ -232,8 +234,9 @@ abstract class ColumnDefinition {
       options = options filter { _ ne option }
 
       if (_limitOpt.isDefined && _limitOpt.get != length) {
-        logger.warn("Redefining the limit for the '{}' column " +
-          "from '{}' to '{}'.",
+        logger.warn(
+          "Redefining the limit for the '{}' column " +
+            "from '{}' to '{}'.",
           Array[AnyRef](getColumnName, _limitOpt.get, length): _*)
       }
       _limitOpt = Some(length)
@@ -256,9 +259,11 @@ abstract class ColumnDefinition {
         options = options filter { _ ne option }
 
         if (n1.isDefined && n1 != n2) {
-          logger.warn("Redefining the '{}' column's nullability " +
-            "from {} to {}.",
-            Array[AnyRef](getColumnName,
+          logger.warn(
+            "Redefining the '{}' column's nullability " +
+              "from {} to {}.",
+            Array[AnyRef](
+              getColumnName,
               if (n1.get) "NOT NULL" else "NULL",
               if (n2.get) "NOT NULL" else "NULL"): _*)
         }
@@ -302,9 +307,11 @@ abstract class ColumnDefinition {
       options = options filter { _ ne option }
 
       if (_precisionOpt.isDefined && _precisionOpt.get != value) {
-        logger.warn("Redefining the precision for the '{}' column " +
-          "from '{}' to '{}'.",
-          Array[AnyRef](getColumnName,
+        logger.warn(
+          "Redefining the precision for the '{}' column " +
+            "from '{}' to '{}'.",
+          Array[AnyRef](
+            getColumnName,
             java.lang.Integer.valueOf(_precisionOpt.get),
             java.lang.Integer.valueOf(value)): _*)
       }
@@ -331,9 +338,11 @@ abstract class ColumnDefinition {
       options = options filter { _ ne option }
 
       if (_scaleOpt.isDefined && _scaleOpt.get != value) {
-        logger.warn("Redefining the scale for the '{}' column " +
-          "from '{}' to '{}'.",
-          Array[AnyRef](getColumnName,
+        logger.warn(
+          "Redefining the scale for the '{}' column " +
+            "from '{}' to '{}'.",
+          Array[AnyRef](
+            getColumnName,
             java.lang.Integer.valueOf(_scaleOpt.get),
             java.lang.Integer.valueOf(value)): _*)
       }
@@ -383,8 +392,9 @@ abstract class ColumnDefinition {
 
     if (getAdapter.supportsCheckConstraints) {
       for (option <- options) {
-        def appendCheckSql(name: String,
-                           expr: String) {
+        def appendCheckSql(
+          name: String,
+          expr: String) {
           options = options filter { _ ne option }
 
           sb.append(" CONSTRAINT ")
@@ -400,7 +410,8 @@ abstract class ColumnDefinition {
           }
 
           case Check(expr) => {
-            val tbd = new TableColumnDefinition(getTableName,
+            val tbd = new TableColumnDefinition(
+              getTableName,
               Array(getColumnName))
             val on = new On(tbd)
             val (name, _) = getAdapter.generateCheckConstraintName(on)
@@ -415,7 +426,8 @@ abstract class ColumnDefinition {
 
     // Warn for any unused options.
     if (!options.isEmpty) {
-      logger.warn("The following options for the '{}' column are unused: {}.",
+      logger.warn(
+        "The following options for the '{}' column are unused: {}.",
         Array[AnyRef](getColumnName, options): _*)
     }
 
@@ -447,8 +459,9 @@ abstract class ColumnDefinition {
    * @return the column type name with the limit syntax if a limit was
    *         given
    */
-  protected def optionallyAddLimitToDataType(columnTypeName: String,
-                                             limitOpt: Option[String]): String = {
+  protected def optionallyAddLimitToDataType(
+    columnTypeName: String,
+    limitOpt:       Option[String]): String = {
     limitOpt match {
       case Some(l) => columnTypeName + "(" + l + ")"
       case None => columnTypeName

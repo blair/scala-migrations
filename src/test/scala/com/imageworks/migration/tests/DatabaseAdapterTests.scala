@@ -50,16 +50,20 @@ import org.junit.Test
 class DatabaseAdapterTests {
   @Test
   def forVendor() {
-    assertEquals(classOf[DerbyDatabaseAdapter],
+    assertEquals(
+      classOf[DerbyDatabaseAdapter],
       DatabaseAdapter.forVendor(Derby, None).getClass)
 
-    assertEquals(classOf[MysqlDatabaseAdapter],
+    assertEquals(
+      classOf[MysqlDatabaseAdapter],
       DatabaseAdapter.forVendor(Mysql, None).getClass)
 
-    assertEquals(classOf[OracleDatabaseAdapter],
+    assertEquals(
+      classOf[OracleDatabaseAdapter],
       DatabaseAdapter.forVendor(Oracle, None).getClass)
 
-    assertEquals(classOf[PostgresqlDatabaseAdapter],
+    assertEquals(
+      classOf[PostgresqlDatabaseAdapter],
       DatabaseAdapter.forVendor(Postgresql, None).getClass)
   }
 
