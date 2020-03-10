@@ -47,8 +47,9 @@ class JavaMigrator private (migrator: Migrator) {
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
    */
-  def this(connectionBuilder: ConnectionBuilder,
-           adapter: DatabaseAdapter) {
+  def this(
+    connectionBuilder: ConnectionBuilder,
+    adapter:           DatabaseAdapter) {
     this(new Migrator(connectionBuilder, adapter))
   }
 
@@ -59,8 +60,9 @@ class JavaMigrator private (migrator: Migrator) {
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
    */
-  def this(jdbcUrl: String,
-           adapter: DatabaseAdapter) {
+  def this(
+    jdbcUrl: String,
+    adapter: DatabaseAdapter) {
     this(new ConnectionBuilder(jdbcUrl), adapter)
   }
 
@@ -74,11 +76,13 @@ class JavaMigrator private (migrator: Migrator) {
    * @param adapter a concrete DatabaseAdapter that the migrator uses
    *        to handle database specific features
    */
-  def this(jdbcUrl: String,
-           jdbcUsername: String,
-           jdbcPassword: String,
-           adapter: DatabaseAdapter) {
-    this(new ConnectionBuilder(jdbcUrl, jdbcUsername, jdbcPassword),
+  def this(
+    jdbcUrl:      String,
+    jdbcUsername: String,
+    jdbcPassword: String,
+    adapter:      DatabaseAdapter) {
+    this(
+      new ConnectionBuilder(jdbcUrl, jdbcUsername, jdbcPassword),
       adapter)
   }
 
@@ -108,8 +112,9 @@ class JavaMigrator private (migrator: Migrator) {
    * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    */
-  def installAllMigrations(packageName: String,
-                           searchSubPackages: Boolean) {
+  def installAllMigrations(
+    packageName:       String,
+    searchSubPackages: Boolean) {
     migrator.migrate(InstallAllMigrations, packageName, searchSubPackages)
   }
 
@@ -121,8 +126,9 @@ class JavaMigrator private (migrator: Migrator) {
    * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    */
-  def removeAllMigrations(packageName: String,
-                          searchSubPackages: Boolean) {
+  def removeAllMigrations(
+    packageName:       String,
+    searchSubPackages: Boolean) {
     migrator.migrate(RemoveAllMigrations, packageName, searchSubPackages)
   }
 
@@ -136,9 +142,10 @@ class JavaMigrator private (migrator: Migrator) {
    * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    */
-  def migrateTo(version: Long,
-                packageName: String,
-                searchSubPackages: Boolean) {
+  def migrateTo(
+    version:           Long,
+    packageName:       String,
+    searchSubPackages: Boolean) {
     migrator.migrate(MigrateToVersion(version), packageName, searchSubPackages)
   }
 
@@ -152,10 +159,12 @@ class JavaMigrator private (migrator: Migrator) {
    * @param searchSubPackages true if sub-packages of packageName
    *        should be searched
    */
-  def rollback(count: Int,
-               packageName: String,
-               searchSubPackages: Boolean) {
-    migrator.migrate(RollbackMigration(count),
+  def rollback(
+    count:             Int,
+    packageName:       String,
+    searchSubPackages: Boolean) {
+    migrator.migrate(
+      RollbackMigration(count),
       packageName,
       searchSubPackages)
   }
@@ -180,8 +189,9 @@ class JavaMigrator private (migrator: Migrator) {
    *         the not-installed migrations and the installed migrations
    *         that do not have a matching Migration subclass
    */
-  def whyNotMigrated(packageName: String,
-                     searchSubPackages: Boolean): String = {
+  def whyNotMigrated(
+    packageName:       String,
+    searchSubPackages: Boolean): String = {
     migrator.whyNotMigrated(packageName, searchSubPackages) match {
       case Some(message) => message
       case None => null

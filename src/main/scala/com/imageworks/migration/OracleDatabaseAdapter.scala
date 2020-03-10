@@ -167,8 +167,9 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
 
   override val supportsCheckConstraints = true
 
-  override def columnDefinitionFactory(columnType: SqlType,
-                                       characterSetOpt: Option[CharacterSet]): ColumnDefinition = {
+  override def columnDefinitionFactory(
+    columnType:      SqlType,
+    characterSetOpt: Option[CharacterSet]): ColumnDefinition = {
     val useNcharType =
       characterSetOpt match {
         case None => {
@@ -178,17 +179,19 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
           true
         }
         case Some(charset @ CharacterSet(Unicode, Some(collation))) => {
-          logger.warn("Ignoring collation '{}' in '{}' as Oracle only " +
-            "supports setting the collation using the NLS_SORT " +
-            "session parameter.",
+          logger.warn(
+            "Ignoring collation '{}' in '{}' as Oracle only " +
+              "supports setting the collation using the NLS_SORT " +
+              "session parameter.",
             Array[AnyRef](collation, charset): _*)
           true
         }
         case Some(charset @ CharacterSet(_, _)) => {
-          logger.warn("Ignoring '{}' as Oracle only supports specifying no " +
-            "explicit character set encoding, which defaults the " +
-            "column to use the database's character set, or " +
-            "Unicode.",
+          logger.warn(
+            "Ignoring '{}' as Oracle only supports specifying no " +
+              "explicit character set encoding, which defaults the " +
+              "column to use the database's character set, or " +
+              "Unicode.",
             charset)
           false
         }
@@ -221,8 +224,9 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
     }
   }
 
-  override protected def alterColumnSql(schemaNameOpt: Option[String],
-                                        columnDefinition: ColumnDefinition): String = {
+  override protected def alterColumnSql(
+    schemaNameOpt:    Option[String],
+    columnDefinition: ColumnDefinition): String = {
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
       .append(quoteTableName(schemaNameOpt, columnDefinition.getTableName))
@@ -234,9 +238,10 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
       .toString
   }
 
-  override def removeColumnSql(schemaNameOpt: Option[String],
-                               tableName: String,
-                               columnName: String): String = {
+  override def removeColumnSql(
+    schemaNameOpt: Option[String],
+    tableName:     String,
+    columnName:    String): String = {
     // Oracle requires COLUMN keyword.
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
@@ -246,10 +251,11 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
       .toString
   }
 
-  override def grantOnTableSql(schemaNameOpt: Option[String],
-                               tableName: String,
-                               grantees: Array[User],
-                               privileges: GrantPrivilegeType*): String = {
+  override def grantOnTableSql(
+    schemaNameOpt: Option[String],
+    tableName:     String,
+    grantees:      Array[User],
+    privileges:    GrantPrivilegeType*): String = {
     // Check that no columns are defined for any SELECT privs
     for {
       SelectPrivilege(columns) <- privileges
@@ -263,10 +269,11 @@ class OracleDatabaseAdapter(override val schemaNameOpt: Option[String])
     super.grantOnTableSql(schemaNameOpt, tableName, grantees, privileges: _*)
   }
 
-  override def revokeOnTableSql(schemaNameOpt: Option[String],
-                                tableName: String,
-                                grantees: Array[User],
-                                privileges: GrantPrivilegeType*): String = {
+  override def revokeOnTableSql(
+    schemaNameOpt: Option[String],
+    tableName:     String,
+    grantees:      Array[User],
+    privileges:    GrantPrivilegeType*): String = {
     // Check that no columns are defined for any privs with columns
     for {
       PrivilegeWithColumns(columns) <- privileges

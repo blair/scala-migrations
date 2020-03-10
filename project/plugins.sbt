@@ -1,5 +1,5 @@
-addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.5.1")
+// addSbtPlugin("org.jetbrains" % "sbt-idea-plugin"  % "3.5.0")
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-pgp" % "0.8.1")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.0")
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-scalariform" % "1.2.0")
+addSbtPlugin("org.scalariform"    % "sbt-scalariform"     % "1.8.3")

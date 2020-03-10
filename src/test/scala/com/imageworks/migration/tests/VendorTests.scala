@@ -46,22 +46,28 @@ import org.junit.Test
 class VendorTests {
   @Test
   def forDriver() {
-    assertSame(Derby,
+    assertSame(
+      Derby,
       Vendor.forDriver("org.apache.derby.jdbc.EmbeddedDriver"))
 
-    assertSame(Derby,
-      Vendor.forDriver(classOf[org.apache.derby.jdbc.EmbeddedDriver]))
+    //    assertSame(
+    //      Derby,
+    //      Vendor.forDriver(classOf[org.apache.derby.jdbc.EmbeddedDriver]))
 
-    assertSame(Derby,
+    assertSame(
+      Derby,
       Vendor.forDriver("org.apache.derby.jdbc.ClientDriver"))
 
-    assertSame(Mysql,
+    assertSame(
+      Mysql,
       Vendor.forDriver("com.mysql.jdbc.Driver"))
 
-    assertSame(Oracle,
+    assertSame(
+      Oracle,
       Vendor.forDriver("oracle.jdbc.OracleDriver"))
 
-    assertSame(Postgresql,
+    assertSame(
+      Postgresql,
       Vendor.forDriver("org.postgresql.Driver"))
   }
 

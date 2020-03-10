@@ -216,10 +216,11 @@ abstract class Migration {
    *        a new prepared statement
    */
   final def withPreparedStatement(sql: String)(f: PreparedStatement => Unit) {
-    With.autoCommittingConnection(connection,
+    With.autoCommittingConnection(
+      connection,
       CommitUponReturnOrRollbackUponException) { c =>
-        With.autoClosingStatement(c.prepareStatement(sql))(f)
-      }
+      With.autoClosingStatement(c.prepareStatement(sql))(f)
+    }
   }
 
   /**
@@ -237,8 +238,9 @@ abstract class Migration {
     With.autoClosingResultSet(rs)(f)
   }
 
-  final def createTable(tableName: String,
-                        options: TableOption*)(body: TableDefinition => Unit) {
+  final def createTable(
+    tableName: String,
+    options:   TableOption*)(body: TableDefinition => Unit) {
     val tableDefinition = new TableDefinition(adapter, tableName)
 
     body(tableDefinition)
@@ -253,10 +255,11 @@ abstract class Migration {
     execute(sql)
   }
 
-  final def addColumn(tableName: String,
-                      columnName: String,
-                      columnType: SqlType,
-                      options: ColumnOption*) {
+  final def addColumn(
+    tableName:  String,
+    columnName: String,
+    columnType: SqlType,
+    options:    ColumnOption*) {
     val tableDefinition = new TableDefinition(adapter, tableName)
 
     tableDefinition.column(columnName, columnType, options: _*)
@@ -286,18 +289,21 @@ abstract class Migration {
    * @param options a possibly empty array of column options to
    *        customize the column
    */
-  final def alterColumn(tableName: String,
-                        columnName: String,
-                        columnType: SqlType,
-                        options: ColumnOption*) {
-    execute(adapter.alterColumnSql(tableName,
+  final def alterColumn(
+    tableName:  String,
+    columnName: String,
+    columnType: SqlType,
+    options:    ColumnOption*) {
+    execute(adapter.alterColumnSql(
+      tableName,
       columnName,
       columnType,
       options: _*))
   }
 
-  final def removeColumn(tableName: String,
-                         columnName: String) {
+  final def removeColumn(
+    tableName:  String,
+    columnName: String) {
     execute(adapter.removeColumnSql(tableName, columnName))
   }
 
@@ -309,9 +315,10 @@ abstract class Migration {
     execute(sql)
   }
 
-  private def indexNameFor(tableName: String,
-                           columnNames: Array[String],
-                           options: IndexOption*): (String, List[IndexOption]) = {
+  private def indexNameFor(
+    tableName:   String,
+    columnNames: Array[String],
+    options:     IndexOption*): (String, List[IndexOption]) = {
     var opts = options.toList
 
     var indexNameOpt: Option[String] = None
@@ -319,7 +326,8 @@ abstract class Migration {
     for (opt @ Name(name) <- opts) {
       opts = opts filter { _ ne opt }
       if (indexNameOpt.isDefined && indexNameOpt.get != name) {
-        logger.warn("Redefining the index name from '{}' to '{}'.",
+        logger.warn(
+          "Redefining the index name from '{}' to '{}'.",
           Array[AnyRef](indexNameOpt.get, name): _*)
       }
       indexNameOpt = Some(name)
@@ -346,9 +354,10 @@ abstract class Migration {
    * @param options a possibly empty list of index options to
    *        customize the creation of the index
    */
-  final def addIndex(tableName: String,
-                     columnNames: Array[String],
-                     options: IndexOption*) {
+  final def addIndex(
+    tableName:   String,
+    columnNames: Array[String],
+    options:     IndexOption*) {
     if (columnNames.isEmpty) {
       throw new IllegalArgumentException("Adding an index requires at " +
         "least one column name.")
@@ -392,9 +401,10 @@ abstract class Migration {
    * @param options a possibly empty list of index options to
    *        customize the creation of the index
    */
-  final def addIndex(tableName: String,
-                     columnName: String,
-                     options: IndexOption*) {
+  final def addIndex(
+    tableName:  String,
+    columnName: String,
+    options:    IndexOption*) {
     addIndex(tableName, Array(columnName), options: _*)
   }
 
@@ -409,9 +419,10 @@ abstract class Migration {
    * @param options a possibly empty list of index options to
    *        customize the removal of the index
    */
-  final def removeIndex(tableName: String,
-                        columnNames: Array[String],
-                        options: Name*) {
+  final def removeIndex(
+    tableName:   String,
+    columnNames: Array[String],
+    options:     Name*) {
     if (columnNames.isEmpty) {
       throw new IllegalArgumentException("Removing an index requires at " +
         "least one column name.")
@@ -434,9 +445,10 @@ abstract class Migration {
    * @param options a possibly empty list of index options to
    *        customize the removal of the index
    */
-  final def removeIndex(tableName: String,
-                        columnName: String,
-                        options: Name*) {
+  final def removeIndex(
+    tableName:  String,
+    columnName: String,
+    options:    Name*) {
     removeIndex(tableName, Array(columnName), options: _*)
   }
 
@@ -451,9 +463,10 @@ abstract class Migration {
    * @return a two-tuple with the calculated name or the overridden
    *         name from a Name and the remaining options
    */
-  private def foreignKeyNameFor(on: On,
-                                references: References,
-                                options: ForeignKeyOption*): (String, List[ForeignKeyOption]) = {
+  private def foreignKeyNameFor(
+    on:         On,
+    references: References,
+    options:    ForeignKeyOption*): (String, List[ForeignKeyOption]) = {
     var opts = options.toList
 
     var fkNameOpt: Option[String] = None
@@ -461,7 +474,8 @@ abstract class Migration {
     for (opt @ Name(name) <- opts) {
       opts = opts filter { _ ne opt }
       if (fkNameOpt.isDefined && fkNameOpt.get != name) {
-        logger.warn("Redefining the foreign key name from '{}' to '{}'.",
+        logger.warn(
+          "Redefining the foreign key name from '{}' to '{}'.",
           Array[AnyRef](fkNameOpt.get, name): _*)
       }
       fkNameOpt = Some(name)
@@ -492,9 +506,10 @@ abstract class Migration {
    * @param options a possibly empty list of foreign key options to
    *        customize the creation of the foreign key
    */
-  def addForeignKey(on: On,
-                    references: References,
-                    options: ForeignKeyOption*) {
+  def addForeignKey(
+    on:         On,
+    references: References,
+    options:    ForeignKeyOption*) {
     if (on.columnNames.length == 0) {
       throw new IllegalArgumentException("Adding a foreign key constraint " +
         "requires at least one column name " +
@@ -522,7 +537,8 @@ abstract class Migration {
 
     for (opt @ OnDelete(action) <- opts) {
       if (onDeleteOpt.isDefined && action != onDeleteOpt.get.action) {
-        logger.warn("Overriding the ON DELETE action from '{}' to '{}'.",
+        logger.warn(
+          "Overriding the ON DELETE action from '{}' to '{}'.",
           Array[AnyRef](onDeleteOpt.get.action, action): _*)
       }
       opts = opts filter { _ ne opt }
@@ -533,7 +549,8 @@ abstract class Migration {
 
     for (opt @ OnUpdate(action) <- opts) {
       if (onUpdateOpt.isDefined && action != onUpdateOpt.get.action) {
-        logger.warn("Overriding the ON UPDATE action from '{}' to '{}'.",
+        logger.warn(
+          "Overriding the ON UPDATE action from '{}' to '{}'.",
           Array[AnyRef](onUpdateOpt.get.action, action): _*)
       }
       opts = opts filter { _ ne opt }
@@ -579,9 +596,10 @@ abstract class Migration {
    * @param options a possibly empty list of foreign key options to
    *        customize the creation of the foreign key
    */
-  def addForeignKey(references: References,
-                    on: On,
-                    options: ForeignKeyOption*) {
+  def addForeignKey(
+    references: References,
+    on:         On,
+    options:    ForeignKeyOption*) {
     addForeignKey(on, references, options: _*)
   }
 
@@ -596,9 +614,10 @@ abstract class Migration {
    * @param options a possibly empty list of foreign key options to
    *        customize the removal of the foreign key
    */
-  def removeForeignKey(on: On,
-                       references: References,
-                       options: Name*) {
+  def removeForeignKey(
+    on:         On,
+    references: References,
+    options:    Name*) {
     if (on.columnNames.length == 0) {
       throw new IllegalArgumentException("Removing a foreign key constraint " +
         "requires at least one column name " +
@@ -632,9 +651,10 @@ abstract class Migration {
    * @param options a possibly empty list of foreign key options to
    *        customize the removal of the foreign key
    */
-  def removeForeignKey(references: References,
-                       on: On,
-                       options: Name*) {
+  def removeForeignKey(
+    references: References,
+    on:         On,
+    options:    Name*) {
     removeForeignKey(on, references, options: _*)
   }
 
@@ -646,9 +666,10 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to grant to the
    *        grantees
    */
-  final def grant(tableName: String,
-                  grantees: Array[User],
-                  privileges: GrantPrivilegeType*) {
+  final def grant(
+    tableName:  String,
+    grantees:   Array[User],
+    privileges: GrantPrivilegeType*) {
     if (grantees.isEmpty) {
       throw new IllegalArgumentException("Granting privileges requires " +
         "at least one grantee.")
@@ -672,10 +693,12 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to grant to the
    *        grantees
    */
-  final def grant(tableName: String,
-                  grantees: Array[String],
-                  privileges: GrantPrivilegeType*) {
-    grant(tableName,
+  final def grant(
+    tableName:  String,
+    grantees:   Array[String],
+    privileges: GrantPrivilegeType*) {
+    grant(
+      tableName,
       grantees map { adapter.userFactory.nameToUser(_) },
       privileges: _*)
   }
@@ -688,9 +711,10 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to grant to the
    *        grantee
    */
-  final def grant(tableName: String,
-                  grantee: User,
-                  privileges: GrantPrivilegeType*) {
+  final def grant(
+    tableName:  String,
+    grantee:    User,
+    privileges: GrantPrivilegeType*) {
     grant(tableName, Array(grantee), privileges: _*)
   }
 
@@ -702,10 +726,12 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to grant to the
    *        grantee
    */
-  final def grant(tableName: String,
-                  grantee: String,
-                  privileges: GrantPrivilegeType*) {
-    grant(tableName,
+  final def grant(
+    tableName:  String,
+    grantee:    String,
+    privileges: GrantPrivilegeType*) {
+    grant(
+      tableName,
       Array[User](adapter.userFactory.nameToUser(grantee)),
       privileges: _*)
   }
@@ -718,9 +744,10 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to remove from
    *        the grantees
    */
-  final def revoke(tableName: String,
-                   grantees: Array[User],
-                   privileges: GrantPrivilegeType*) {
+  final def revoke(
+    tableName:  String,
+    grantees:   Array[User],
+    privileges: GrantPrivilegeType*) {
     if (grantees.isEmpty) {
       throw new IllegalArgumentException("Revoking privileges requires " +
         "at least one grantee.")
@@ -744,10 +771,12 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to remove from
    *        the grantees
    */
-  final def revoke(tableName: String,
-                   grantees: Array[String],
-                   privileges: GrantPrivilegeType*) {
-    revoke(tableName,
+  final def revoke(
+    tableName:  String,
+    grantees:   Array[String],
+    privileges: GrantPrivilegeType*) {
+    revoke(
+      tableName,
       grantees map { adapter.userFactory.nameToUser(_) },
       privileges: _*)
   }
@@ -760,9 +789,10 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to remove from
    *        the grantee
    */
-  final def revoke(tableName: String,
-                   grantee: User,
-                   privileges: GrantPrivilegeType*) {
+  final def revoke(
+    tableName:  String,
+    grantee:    User,
+    privileges: GrantPrivilegeType*) {
     revoke(tableName, Array(grantee), privileges: _*)
   }
 
@@ -774,10 +804,12 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to remove from
    *        the grantee
    */
-  final def revoke(tableName: String,
-                   grantee: String,
-                   privileges: GrantPrivilegeType*) {
-    revoke(tableName,
+  final def revoke(
+    tableName:  String,
+    grantee:    String,
+    privileges: GrantPrivilegeType*) {
+    revoke(
+      tableName,
       Array[User](adapter.userFactory.nameToUser(grantee)),
       privileges: _*)
   }
@@ -789,8 +821,9 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to grant to the
    *        grantees
    */
-  final def grantSchemaPrivilege(grantees: Array[User],
-                                 privileges: SchemaPrivilege*) {
+  final def grantSchemaPrivilege(
+    grantees:   Array[User],
+    privileges: SchemaPrivilege*) {
     if (grantees.isEmpty) {
       throw new IllegalArgumentException("Granting privileges requires " +
         "at least one grantee.")
@@ -813,9 +846,11 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to grant to the
    *        grantees
    */
-  final def grantSchemaPrivilege(grantees: Array[String],
-                                 privileges: SchemaPrivilege*) {
-    grantSchemaPrivilege(grantees map { adapter.userFactory.nameToUser(_) },
+  final def grantSchemaPrivilege(
+    grantees:   Array[String],
+    privileges: SchemaPrivilege*) {
+    grantSchemaPrivilege(
+      grantees map { adapter.userFactory.nameToUser(_) },
       privileges: _*)
   }
 
@@ -826,8 +861,9 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to grant to the
    *        grantee
    */
-  final def grantSchemaPrivilege(grantee: User,
-                                 privileges: SchemaPrivilege*) {
+  final def grantSchemaPrivilege(
+    grantee:    User,
+    privileges: SchemaPrivilege*) {
     grantSchemaPrivilege(Array(grantee), privileges: _*)
   }
 
@@ -838,9 +874,11 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to grant to the
    *        grantee
    */
-  final def grantSchemaPrivilege(grantee: String,
-                                 privileges: SchemaPrivilege*) {
-    grantSchemaPrivilege(adapter.userFactory.nameToUser(grantee),
+  final def grantSchemaPrivilege(
+    grantee:    String,
+    privileges: SchemaPrivilege*) {
+    grantSchemaPrivilege(
+      adapter.userFactory.nameToUser(grantee),
       privileges: _*)
   }
 
@@ -851,8 +889,9 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to revoke from the
    *        grantees
    */
-  final def revokeSchemaPrivilege(grantees: Array[User],
-                                  privileges: SchemaPrivilege*) {
+  final def revokeSchemaPrivilege(
+    grantees:   Array[User],
+    privileges: SchemaPrivilege*) {
     if (grantees.isEmpty) {
       throw new IllegalArgumentException("Revoking privileges requires " +
         "at least one grantee.")
@@ -875,9 +914,11 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to revoke from the
    *        grantees
    */
-  final def revokeSchemaPrivilege(grantees: Array[String],
-                                  privileges: SchemaPrivilege*) {
-    revokeSchemaPrivilege(grantees map { adapter.userFactory.nameToUser(_) },
+  final def revokeSchemaPrivilege(
+    grantees:   Array[String],
+    privileges: SchemaPrivilege*) {
+    revokeSchemaPrivilege(
+      grantees map { adapter.userFactory.nameToUser(_) },
       privileges: _*)
   }
 
@@ -888,8 +929,9 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to revoke from
    *        the grantee
    */
-  final def revokeSchemaPrivilege(grantee: User,
-                                  privileges: SchemaPrivilege*) {
+  final def revokeSchemaPrivilege(
+    grantee:    User,
+    privileges: SchemaPrivilege*) {
     revokeSchemaPrivilege(Array(grantee), privileges: _*)
   }
 
@@ -900,9 +942,11 @@ abstract class Migration {
    * @param privileges a non-empty array of privileges to revoke from
    *        the grantee
    */
-  final def revokeSchemaPrivilege(grantee: String,
-                                  privileges: SchemaPrivilege*) {
-    revokeSchemaPrivilege(adapter.userFactory.nameToUser(grantee),
+  final def revokeSchemaPrivilege(
+    grantee:    String,
+    privileges: SchemaPrivilege*) {
+    revokeSchemaPrivilege(
+      adapter.userFactory.nameToUser(grantee),
       privileges: _*)
   }
 
@@ -916,9 +960,10 @@ abstract class Migration {
    * @param options a possibly empty list of check options to
    *        customize the creation of the CHECK constraint
    */
-  def addCheck(on: On,
-               expr: String,
-               options: CheckOption*) {
+  def addCheck(
+    on:      On,
+    expr:    String,
+    options: CheckOption*) {
     if (on.columnNames.isEmpty) {
       throw new IllegalArgumentException("Adding a check constraint " +
         "requires at least one column name " +
@@ -941,8 +986,9 @@ abstract class Migration {
     if (adapter.supportsCheckConstraints)
       execute(sql)
     else
-      logger.warn("Database does not support CHECK constraints; ignoring " +
-        "request to add a CHECK constraint: {}",
+      logger.warn(
+        "Database does not support CHECK constraints; ignoring " +
+          "request to add a CHECK constraint: {}",
         sql)
   }
 
@@ -956,8 +1002,9 @@ abstract class Migration {
    * @param options a possibly empty list of check options to
    *        customize the removal of the CHECK constraint
    */
-  def removeCheck(on: On,
-                  options: Name*) {
+  def removeCheck(
+    on:      On,
+    options: Name*) {
     if (on.columnNames.isEmpty) {
       throw new IllegalArgumentException("Removing a check constraint " +
         "requires at least one column " +
@@ -977,8 +1024,9 @@ abstract class Migration {
     if (adapter.supportsCheckConstraints)
       execute(sql)
     else
-      logger.warn("Database does not support CHECK constraints; ignoring " +
-        "request to remove a CHECK constraint: {}",
+      logger.warn(
+        "Database does not support CHECK constraints; ignoring " +
+          "request to remove a CHECK constraint: {}",
         sql)
   }
 }

@@ -69,7 +69,8 @@ class Migrate_20081118201742_CreatePeopleTable
       t.char("middle_initial", Limit(1), Nullable)
       t.varchar("last_name", Limit(255), NotNull, CharacterSet(Unicode))
       t.timestamp("birthdate", Limit(0), NotNull)
-      t.smallint("height", NotNull, NamedCheck("chk_height_nonnegative",
+      t.smallint("height", NotNull, NamedCheck(
+        "chk_height_nonnegative",
         "height > 0"))
       t.smallint("weight", NotNull, Check("weight > 0"))
       t.integer("vacation_days", NotNull, Default("0"))
@@ -80,8 +81,9 @@ class Migrate_20081118201742_CreatePeopleTable
 
     addIndex(tableName, "ssn", Unique)
 
-    addForeignKey(on(tableName ->
-      "pk_scala_migrations_location"),
+    addForeignKey(
+      on(tableName ->
+        "pk_scala_migrations_location"),
       references("scala_migrations_location" ->
         "pk_scala_migrations_location"),
       OnDelete(Cascade),
@@ -89,7 +91,8 @@ class Migrate_20081118201742_CreatePeopleTable
       Name("fk_smp_pk_sml_sml_pk_sml"))
 
     if (!addingForeignKeyConstraintCreatesIndex) {
-      addIndex(tableName,
+      addIndex(
+        tableName,
         "pk_scala_migrations_location",
         Name("idx_smp_pk_sml"))
     }
@@ -101,13 +104,15 @@ class Migrate_20081118201742_CreatePeopleTable
 
   def down() {
     removeCheck(on(tableName -> "vacation_days"))
-    removeForeignKey(on(tableName ->
-      "pk_scala_migrations_location"),
+    removeForeignKey(
+      on(tableName ->
+        "pk_scala_migrations_location"),
       references("scala_migrations_location" ->
         "pk_scala_migrations_location"),
       Name("fk_smp_pk_sml_sml_pk_sml"))
     if (!addingForeignKeyConstraintCreatesIndex) {
-      removeIndex(tableName,
+      removeIndex(
+        tableName,
         "pk_scala_migrations_location",
         Name("idx_smp_pk_sml"))
     }

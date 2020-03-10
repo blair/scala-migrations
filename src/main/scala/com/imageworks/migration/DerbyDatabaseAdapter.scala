@@ -89,19 +89,22 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
 
   override val supportsCheckConstraints = true
 
-  override def columnDefinitionFactory(columnType: SqlType,
-                                       characterSetOpt: Option[CharacterSet]): ColumnDefinition = {
+  override def columnDefinitionFactory(
+    columnType:      SqlType,
+    characterSetOpt: Option[CharacterSet]): ColumnDefinition = {
     characterSetOpt match {
       case None =>
       case Some(CharacterSet(Unicode, None)) =>
       case Some(charset @ CharacterSet(Unicode, Some(collation))) =>
-        logger.warn("Ignoring collation '{}' in '{}' as Derby only " +
-          "supports setting the collation when the database " +
-          "is created.",
+        logger.warn(
+          "Ignoring collation '{}' in '{}' as Derby only " +
+            "supports setting the collation when the database " +
+            "is created.",
           Array[AnyRef](collation, charset): _*)
       case Some(charset @ CharacterSet(_, _)) =>
-        logger.warn("Ignoring '{}' as Derby uses Unicode sequences to " +
-          "represent character data types.",
+        logger.warn(
+          "Ignoring '{}' as Derby uses Unicode sequences to " +
+            "represent character data types.",
           charset)
     }
 
@@ -132,8 +135,9 @@ class DerbyDatabaseAdapter(override val schemaNameOpt: Option[String])
     }
   }
 
-  override protected def alterColumnSql(schemaNameOpt: Option[String],
-                                        columnDefinition: ColumnDefinition): String = {
+  override protected def alterColumnSql(
+    schemaNameOpt:    Option[String],
+    columnDefinition: ColumnDefinition): String = {
     new java.lang.StringBuilder(512)
       .append("ALTER TABLE ")
       .append(quoteTableName(schemaNameOpt, columnDefinition.getTableName))
