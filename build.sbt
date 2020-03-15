@@ -18,7 +18,7 @@ licenses += "New BSD License" -> url("http://opensource.org/licenses/BSD-3-Claus
 
 version := "1.1.2-SNAPSHOT"
 
-scalaVersion := "2.11.4"
+scalaVersion := "2.11.12"
 
 // For a single major Scala release, e.g. 2.x.y, include at most one
 // Scala release candidate in crossScalaVersions, e.g. "2.x.y-RC3".
