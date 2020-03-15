@@ -56,7 +56,7 @@ scalacOptions <++= scalaVersion map { v: String =>
 libraryDependencies ++= Seq(
   "com.google.code.findbugs" % "jsr305" % "2.0.3",
   "com.novocode" % "junit-interface" % "0.10-M4" % "test",
-  "log4jdbc" % "log4jdbc" % "1.1" from "http://log4jdbc.googlecode.com/files/log4jdbc4-1.1.jar",
+  "log4jdbc" % "log4jdbc" % "1.1" from "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/log4jdbc/log4jdbc4-1.1.jar",
   "mysql" % "mysql-connector-java" % "[5.1.0,5.2)" % "test",
   "org.apache.derby" % "derby" % "[10.5.3.0,11.0)" % "test",
   "org.hamcrest" % "hamcrest-core" % "1.3" % "test",
