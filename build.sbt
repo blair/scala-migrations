@@ -58,7 +58,7 @@ libraryDependencies ++= Seq(
   "com.novocode" % "junit-interface" % "0.10-M4" % "test",
   "log4jdbc" % "log4jdbc" % "1.1" from "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/log4jdbc/log4jdbc4-1.1.jar",
   "mysql" % "mysql-connector-java" % "[5.1.0,5.2)" % "test",
-  "org.apache.derby" % "derby" % "[10.5.3.0,11.0)" % "test",
+  "org.apache.derby" % "derby" % "[10.5.3.0,10.12)" % "test",
   "org.hamcrest" % "hamcrest-core" % "1.3" % "test",
   "org.jmock" % "jmock-junit4" % "[2.5.1,3.0)" % "test",
   "org.slf4j" % "slf4j-api" % "[1.5.8,2.0)",
