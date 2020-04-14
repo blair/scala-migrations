@@ -128,6 +128,9 @@ migrations older than the requested version.
 ```scala
   migrator.migrate(MigrateToVersion(20090731), "com.imageworks.vnp.dao.migrations", false)
 ```
+### Sample Template
+
+Project template for Scala Migrations that implements a SBT command https://github.com/dolcalmi/scala-migrations-template 
 
 ### Supported Databases
 
